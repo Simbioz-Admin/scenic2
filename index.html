@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Tempi-snake - Design interactions by connecting things</title>
+    <!-- Load the script "js/main.js" as our entry point -->
+
+
+	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script data-main="/js/main.js" src="/js/libs/require-jquery.js"></script>
+</head>
+<body>
+		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
+		<header id="header-tempiSnake">
+			<div id="logo"></div>
+			<div class="btn" id="openPanel">&gt;&gt;</div>
+			<div class="btn" id="createOsc" data-type="base.osc.route">Create OSC</div>
+			<div class="btn" id="saveJson">Save</div> 
+		</header>
+
+	    
+		<div id="bgLightbox"></div>
+		<div id="lightBox"></div>
+
+	</body>
+</html>
+

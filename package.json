@@ -1,0 +1,23 @@
+{
+    "name": "scenic2",
+    "description": "UI for interaction design with switcher",
+    "version": "0.0.1",
+    "homepage": "",
+    "repository": {
+        "type" : "git",
+        "url" : ""
+    },
+    "keywords": ["dataflow", "patching", "switcher", "routing"],
+    "main": "./server.js",
+    "dependencies": {
+        "socket.io": "",
+        "express": "",
+        "jQuery": "",
+        "requirejs": "",
+        "underscore": "",
+        "xmlhttprequest": "",
+        "jsdom": "",
+        "backbone": ""
+    }
+}
+

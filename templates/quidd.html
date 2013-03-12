@@ -1,0 +1,24 @@
+<h2><%=title%></h2>
+<div id="close"></div>
+
+<div id="nodes">
+	<ul>
+	<% _.each(classDoc.get("properties"), function(property){ %>
+		<li>
+			<h3><%=property.description.nickname%></h3>
+			<% if(property.description["type description"].type == "float" || property.description["type description"].type == "int"){ %>
+			<input type="text" value="" placeholder="value type <%=property.description["type description"].type%>" />
+			<% } %>
+			<% if(property.description["type description"].type == "enum"){ %>
+			<select>
+				
+				<%=_.each(property.description["type description"].values, function(value){ %>
+  					
+				<% }); %>
+			</select>
+			<% } %>
+		</li>
+	<% }); %>
+	</ul>
+	<div class="btn btn-large" id="saveNodes" data-type="">Save</div>
+</div>

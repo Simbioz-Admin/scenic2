@@ -21,7 +21,10 @@ require.config({
 
 require([
   // Load our app module and pass it to our definition function
-  'app'
+  'app',
+  collections = [],
+  views = [],
+  socket = io.connect()
 ], function(App){
   	App.initialize();
 });

@@ -11,9 +11,8 @@
 			<% } %>
 			<% if(property.description["type description"].type == "enum"){ %>
 			<select>
-				
-				<%=_.each(property.description["type description"].values, function(value){ %>
-  					
+				<% _.each(property.description["type description"].values, function(value){ %>>
+  					<option value="<% value.value%>"><%= value.name%></option>
 				<% }); %>
 			</select>
 			<% } %>

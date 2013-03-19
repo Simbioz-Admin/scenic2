@@ -4,7 +4,7 @@ var express = require("express")
 , http = require('http')
 , requirejs = require('requirejs')
 , server= http.createServer(app)
-, io = require('socket.io').listen(server, { log: true })
+, io = require('socket.io').listen(server, { log: false })
 , logo = require('./js/libs/logo.js')
 , switcher = require('node-switcher');
 
@@ -40,7 +40,7 @@ app.get('/classes_doc', function(request, response) {
 
 app.get('/quidds', function(request, response) {
   response.contentType('application/json');
-  response.send(switcher.get_quiddities_description());
+  response.send(quidditiesWithProperties());
 });
 
 
@@ -50,19 +50,20 @@ app.get('/quidds', function(request, response) {
 
 
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
-
+var test = "test"
+console.log(test.slice(1, -1));
 
 io.sockets.on('connection', function (socket) {
 
-	// socket.on("create", function(className, name, callback){
-	// 	var name = switcher.create(className, name);
-	// 	callback(name);
-	// });
-	  socket.on("create", function(className, name, callback)
-	  {		
-		var quiddName = switcher.create(className, name);
+	  socket.on("create", function(className, name, callback){		
+		var quiddName = switcher.create(className);
 		callback(quiddName);
 	  });
+
+	  socket.on("setPropertyValue", function(nameQuidd, property, value, callback){
+	  	var ok = switcher.set_property_value(nameQuidd, property, value);
+	  	callback(ok);
+	  })
 });
 
 // merge properties of classes with ClassesDoc
@@ -70,9 +71,35 @@ function classesWithProperties(){
 	var doc = $.parseJSON(switcher.get_classes_doc());
 	var classesWithProperties = [];
 	$.each(doc.classes, function(index, classDoc){;
-		var propertyClass = $.parseJSON(switcher.get_properties_description_by_class(classDoc["class name"]));
-		doc.classes[index].properties = propertyClass.properties;
+		console.log(switcher.get_properties_description_by_class(classDoc["class name"]));
+		var propertyClass = $.parseJSON(switcher.get_properties_description_by_class(classDoc["class name"])).properties;
+		doc.classes[index].properties = propertyClass;
 	});
 	return doc;
+}
+
+function quidditiesWithProperties(){
+	//recover the quiddities already existing 
+	var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+	//merge the properties of quiddities with quiddities
+	$.each(quiddities, function(index, quidd){
+
+		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quidd.name)).properties;
+		//recover the value set for the properties
+		$.each(propertiesQuidd, function(index, property){
+			
+			if(property.name != "shmdata-readers"){
+				var valueOfproperty = switcher.get_property_value(quidd.name, property.name);
+				if(property.name == "shmdata-writers"){
+					
+					console.log($.parseJSON(switcher.get_property_value(quidd.name, property.name)));
+					//valueOfproperty = $.parseJSON(valueOfproperty);
+				} 
+				propertiesQuidd[index].value = valueOfproperty;
+			}
+		})
+		quiddities[index].properties = propertiesQuidd;
+	})
+	return quiddities;
 }
 

@@ -1,25 +1,39 @@
 define([
 	'underscore',
-	'backbone',
-	'text!/templates/quidd.html'
-	],function(_, Backbone, quiddTemplate){
+	'backbone'
+	],function(_, Backbone){
 
 		var QuiddView = Backbone.View.extend({
-			el : '#menu',
+			el : '#lightBox',
 			events : {
-				"click .dropdown-menu li" : "addQuidd"
+				'click #create-quidd' : 'create'
 			},
 			initialize : function(){
 				console.log("init QuiddsView");
 			},
-			//open the lightbox and show the properties to define for create the quidd
-			addQuidd : function(){
-				className = $(event.target).data("name");
-				var classDoc = this.collection.get(className);
-				console.log(classDoc.get("properties"));
-				var template = _.template(quiddTemplate, {title : "add Quidd "+className, classDoc : classDoc});
-				$("#lightBox").html(template);
-				$("#lightBox, #bgLightbox").fadeIn(200);
+			create : function(){
+				//recover on format json the value of field
+				var dataForm = $("#form-lightbox").serializeObject()
+				,	className = $("#form-lightbox").data("classname")
+				,	quidName = $("#quidName").val();
+
+				//creation of Quidd and set properties
+				collections.quidds.create(className, quidName, function(quiddName){
+
+					console.log("Define properties of "+quiddName);
+					_.each(dataForm, function(value, index){
+
+						var defaultValue = 	$('[name="'+index+'"]').data("default")
+						,	minValue = $('[name="'+index+'"]').data("min")
+						,	maxValue = $('[name="'+index+'"]').data("max");
+
+						if(value != defaultValue){
+							collections.quidds.setPropertyValue(quiddName, index, value);
+						}
+					});
+				});
+				views.menu.closeLightBox();
+				return false;
 			}
 		});
 

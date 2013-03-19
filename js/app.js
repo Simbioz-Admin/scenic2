@@ -7,9 +7,10 @@ define([
   'collections/classes_doc',
   'collections/quidds',
   'views/menu',
-  'views/quidds'
+  'views/quidds',
+  'views/shmdatas'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, MenuView, QuiddsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, MenuView, QuiddsView, shmdatasView){
   var initialize = function(){
 
     //init the different collection of the project
@@ -23,8 +24,13 @@ define([
     });
 
     collections.quidds = new QuiddsCollection();
+    collections.quidds.fetch({
+      success : function(response){
+        views.shmdatas = new shmdatasView({ collection : collections.quidds});
+      }
+    })
     views.quidds = new QuiddsView({collection : collections.classesDoc});
-
+    //collections.quidds.create("audiotestsrc", "TestAudio", function(name){});
   }
 
   return {

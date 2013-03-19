@@ -12,7 +12,6 @@ define([
 		    },
 		    initialize : function(){
 		    	console.log("init collection quidds");
-		    	this.fetch();
 		    	that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
@@ -28,7 +27,7 @@ define([
 
 		    		_.each(quidd.get("properties"), function(prop, index){
 		    			if(prop.name == property) quidd.get("properties")[index]["value"] = value;		
-		    		})
+		    		});
 		    	});
 
 		    },
@@ -53,6 +52,29 @@ define([
 		    		// }
 		    	});
 
+		    },
+		    getShmdatas : function(){
+		    	var shmdatas = {};
+		    	_.each(this.toJSON(), function(quidd){
+		    		_.each(quidd.properties, function(property){
+		    			if(property.name == "shmdata-writers"){
+		    				shmdatas[quidd.name] = property.value["shmdata_writers"];
+		    			}
+		    		});
+		    	});
+		    	return shmdatas;
+
+
+
+		    },
+		    getShmdata : function(quiddName){
+		    	var shmdatas = {};
+		    	_.filter(this.get(quiddName).get("properties"), function(property){
+		    		if(property.name == "shmdata-writers"){
+		    			shmdatas[quiddName] = property.value["shmdata_writers"]
+		    		}
+		    	});
+		    	return shmdatas;
 		    }
 		});
 

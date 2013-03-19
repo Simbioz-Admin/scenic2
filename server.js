@@ -55,12 +55,11 @@ io.sockets.on('connection', function (socket) {
 
 
 	socket.on("create", function(className, name, callback){        
-		var quiddName = switcher.create(className);
+		var quiddName = switcher.create(className, name);
 		//recover the default properties with values
 		var properties = getPropertiesWithValues(quiddName)
 		//callback is used by the user who has created the Quidd for directly set properties 
 		callback(quiddName);
-		//
 		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
 	});
 

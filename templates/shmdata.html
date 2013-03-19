@@ -1,0 +1,15 @@
+<% var currentQuidd = ""; 
+_.each(quidds, function(shmdatas, quiddName){ %>
+
+	<% _.each(shmdatas, function(shmdata){ %>
+		<tr class="rows" data-quidd="<%=quiddName%>">
+			<td class="td-fixe">
+				<% if(currentQuidd != quiddName){ %>
+					<div class="titleNodesource"><%=quiddName%></div>
+					<% currentQuidd = quiddName; %>
+				<%  } %>
+				<span class="content" title="<%=shmdata.path%>"><% var name = shmdata.path.split("_")  %><%=name[name.length-1]%></span>
+			</td>
+		</tr>
+	<% }); %>
+<% }); %>

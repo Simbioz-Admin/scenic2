@@ -11,7 +11,8 @@ define([
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click .dropdown-menu li" : "createSource"
+				"click .dropdown-menu li" : "createSource",
+				"click #createDestination" : "createDestination"
 			},
 
 			//generation of the main Menu 
@@ -39,6 +40,9 @@ define([
 				console.log(classDoc);
 				$("#lightBox").html(template);
 				this.openLightBox();
+			},
+			createDestination : function(){
+				views.methods.getMethod("defaultrtp", "add_destination");
 			},
 
 			//alert for different message

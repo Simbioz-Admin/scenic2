@@ -1,13 +1,14 @@
 define([
 	'underscore',
 	'backbone',
-	'text!/templates/shmdata.html'
+	'text!/templates/shmdata.html',
+	'util'
 	],function(_, Backbone, templateShmdata){
 
 		var shmdatasView = Backbone.View.extend({
-			el : '#lightBox',
+			el : '#table',
 			events : {
-
+				'click .td-fixe .content' : 'copyToClipboard'
 			},
 			initialize : function(){
 				console.log("init shmdataView");
@@ -25,8 +26,13 @@ define([
 				var quidd = this.getShmdata(quiddName);
 				var template = _.template(templateShmdata, {quidds : quidd});
 				$("#table").append(template);
+				//need to refresh destination because the td of tr source must be recreate
+				views.destinations.render();
+			},
+			copyToClipboard : function(){
+				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(".ui-tooltip-content").html());
 			}
 		});
 
 		return shmdatasView;
-	})
+	});

@@ -43,11 +43,19 @@ app.get('/quidds', function(request, response) {
   response.send(getQuidditiesWithPropertiesAndValues());
 });
 
+app.get('/destinations', function(request, response) {
+  response.contentType('application/json');
+  response.send(switcher.get_property_value("defaultrtp", "destinations-json"));
+});
+
 
 //console.log(switcher.get_properties_description_by_class("videotestsrc") );
 //logo.print();
+switcher.create("logger", "logger");
+switcher.create("rtpsession", "defaultrtp");
 
-
+//console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
+//
 
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
@@ -70,10 +78,18 @@ io.sockets.on('connection', function (socket) {
 	io.sockets.emit("setPropertyValue", quiddName, property, value);
 	});
 
+	socket.on("get_method_description", function(quiddName, method, callback){
 
-	socket.on("getPropertiesDescription", function(quiddName){
-
+		var descriptionJson = switcher.get_method_description(quiddName, method);
+		callback(descriptionJson);
 	});
+
+	socket.on("invoke", function(quiddName, method, parameters, callback){
+		console.log(quiddName, method, parameters);
+		var invoke = switcher.invoke(quiddName, method, parameters);
+		callback(invoke);
+	});
+
 });
 
 // merge properties of classes with ClassesDoc

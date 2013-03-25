@@ -34,13 +34,10 @@ define([
 		    create : function(className, name, callback){
 
 		    	//ask for create a Quidd
-		    	console.log("ask for create "+className+" name :"+name);
 		    	socket.emit("create", className, name, function(name){
 		    		console.log("the Quidd "+name+" is created.");
 		    		callback(name);
 		    	});
-		    	
-
 		    },
 		    setPropertyValue : function(nameQuidd, property, value){
 		    	that = this;

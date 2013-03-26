@@ -35,7 +35,7 @@ app.get('/', function (req, res){
 
 app.get('/classes_doc', function(request, response) {
   response.contentType('application/json');
-  response.send(classesWithProperties());
+  response.send(getClassesDocWithProperties());
 });
 
 app.get('/quidds', function(request, response) {
@@ -51,9 +51,11 @@ app.get('/destinations', function(request, response) {
 
 //console.log(switcher.get_properties_description_by_class("videotestsrc") );
 //logo.print();
-switcher.create("logger", "logger");
+//switcher.create("logger", "logger");
 switcher.create("rtpsession", "defaultrtp");
 
+console.log(switcher.create("SOAPcontrolServer", "soap"));
+switcher.invoke("soap", "set_port", ["8084"]);
 //console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
 //
 
@@ -65,7 +67,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on("create", function(className, name, callback){        
 		var quiddName = switcher.create(className, name);
 		//recover the default properties with values
-		var properties = getPropertiesWithValues(quiddName)
+		var properties = getQuiddPropertiesWithValues(quiddName)
 		//callback is used by the user who has created the Quidd for directly set properties 
 		callback(quiddName);
 		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
@@ -79,7 +81,6 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on("get_method_description", function(quiddName, method, callback){
-
 		var descriptionJson = switcher.get_method_description(quiddName, method);
 		callback(descriptionJson);
 	});
@@ -90,30 +91,41 @@ io.sockets.on('connection', function (socket) {
 		callback(invoke);
 	});
 
+	socket.on("getPropertiesOfClass", function(className, callback){
+
+		var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
+		callback(propertiesofClass);
+	});
+	socket.on("getPropertiesOfQuidd", function(quiddName, callback){
+		var propertiesOfQuidd = getQuiddPropertiesWithValues(quiddName);
+		callback(propertiesOfQuidd);
+	});
+	
+
 });
 
 // merge properties of classes with ClassesDoc
-function classesWithProperties(){
-	var doc = $.parseJSON(switcher.get_classes_doc());
-	var classesWithProperties = [];
-	$.each(doc.classes, function(index, classDoc){;
+function getClassesDocWithProperties(){
+	var docs = $.parseJSON(switcher.get_classes_doc());
+	$.each(docs.classes, function(index, classDoc){;
 		var propertyClass = $.parseJSON(switcher.get_properties_description_by_class(classDoc["class name"])).properties;
-		doc.classes[index].properties = propertyClass;
+		docs.classes[index].properties = propertyClass;
 	});
-	return doc;
+	return docs;
 }
+
 
 function getQuidditiesWithPropertiesAndValues(){
 	//recover the quiddities already existing 
 	var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
 	//merge the properties of quiddities with quiddities
 	$.each(quiddities, function(index, quidd){      
-		quiddities[index].properties = getPropertiesWithValues(quidd.name);
+		quiddities[index].properties = getQuiddPropertiesWithValues(quidd.name);
 	})
 	return quiddities;
 }
 
-function getPropertiesWithValues(quiddName){
+function getQuiddPropertiesWithValues(quiddName){
 
 	var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 	//recover the value set for the properties

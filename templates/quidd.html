@@ -3,20 +3,21 @@
 <h2><%=title%></h2>
 
 <div id="nodes">
-	<form id="form-lightbox" data-classname="<%=classDoc.get("class name")%>">
+	<form id="form-lightbox" data-classname="<%=className%>">
 		<ul>
 			<h3>Name of your Quidd <span class="info" title="Test Info" >i</span></h3> 
 			<input type="text" id="quidName" value="" placeholder="if empty, a default name will be defined">
 
-			<% _.each(classDoc.get("properties"), function(property){ %>
+			<% _.each(properties, function(property){  %>
+
 				<li>
 
 					<% var info = property.description["type description"] %>
-
-					<h3 class="info" title="<%=property.description['short description']%><br>Min : <%=info.minimum%> &nbsp; Max : <%=info.maximum%>" ><%=property.description.nickname%></h3>
+					<% var moreInfo =  info.minimum ? "Min : "+info.minimum+" &nbsp; Max : "+info.maximum : "";  %>
+					<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description.nickname%></h3>
 
 					<!-- Type input for float / int and bool -->
-					<% if(info.type == "float" || info.type == "int" || info.type == "double"){ %>
+					<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string"){ %>
 					<input  
 						data-default="<%=info["default value"]%>"
 						data-min="<%=info.minimum%>"
@@ -26,6 +27,12 @@
 						name="<%=property.name%>" 
 						placeholder="value type <%=info.type%>" />
 					<% } %>
+
+					<!-- Radion button for boolean -->
+					<% if(info.type == "boolean"){ %>
+						<label><input type="checkbox" name="<%=property.name%>" value="<%=info["default value"]%>" > active</label>
+					<% } %>
+
 
 					<!-- Dropdown for enum -->
 					<% if(info.type == "enum"){ %>
@@ -42,6 +49,7 @@
 					<% } %>
 
 				</li>
+
 			<% }); %>
 		</ul>
 		<input type="submit" class="btn btn-large" id="<%=action%>-quidd" value="<%=action%>"/>

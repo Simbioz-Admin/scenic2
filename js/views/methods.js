@@ -7,7 +7,7 @@ define([
 		var MethodsView = Backbone.View.extend({
 			el : '#lightBox',
 			events : {
-				'click #setMethod' : 'setMethod'
+				'click #setMethod' : 'setMethodLightBox'
 			},
 			initialize : function(){
 				console.log("init MethodView");
@@ -22,10 +22,21 @@ define([
 					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName, method : method, description : methodDescription});
 
 					$("#lightBox").html(template);
-					views.menu.openLightBox();
+					views.global.openLightBox();
 				});
 			},
-			setMethod : function(){
+			setMethod : function(quiddName, method, parameters){
+				socket.emit("invoke", quiddName, method, parameters, function(ok){
+					if(ok){
+						//update the properties of quidd
+						var quidd = collections.quidds.get(quiddName);
+						collections.quidds.getProperties(quiddName, function(propertiesOfQuidd){
+							quidd.set({"properties" : propertiesOfQuidd});
+						});
+					}
+				});
+			},
+			setMethodLightBox : function(){
 				var dataForm = $("#form-lightbox").serializeObject()
 				,	parameters = [];
 
@@ -35,16 +46,16 @@ define([
 						parameters.push(value);
 					}
 				});
-				console.log(dataForm);
+
 				socket.emit("invoke", dataForm.quiddName, dataForm.method, parameters, function(invoke){
 					//if the method is set correctly
 					if(invoke){
 						if(dataForm.method == "add_destination"){
 							collections.destinations.add({name : dataForm.name, host_name : dataForm.host_name});
-							views.menu.closeLightBox();
+							views.global.closeLightBox();
 						}
 					}else{
-						views.menu.alertMsg("error", "Oops... We have an error.");
+						views.global.alertMsg("error", "Oops... We have an error.");
 					}
 				});
 				return false;

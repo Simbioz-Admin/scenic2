@@ -13,7 +13,8 @@ define([
 			initialize : function(){
 				console.log("init shmdataView");
 				_.bindAll(this, "render");
-				this.collection.bind("add", this.addShmdata);
+				this.collection.bind("add", this.add);
+				this.collection.bind("change", this.render);
 				this.render();
 			},
 			render : function(){
@@ -21,12 +22,16 @@ define([
 				var template = _.template(templateShmdata, {quidds : quidds});
 				$("#table").html(template);
 			},
-			addShmdata : function(){
+			add : function(){
 				var quiddName = this.last().get("name");
 				var quidd = this.getShmdata(quiddName);
 				var template = _.template(templateShmdata, {quidds : quidd});
 				$("#table").append(template);
 				//need to refresh destination because the td of tr source must be recreate
+				views.destinations.render();
+			},
+			update : function(){
+				this.render();
 				views.destinations.render();
 			},
 			copyToClipboard : function(){

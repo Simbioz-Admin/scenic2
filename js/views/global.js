@@ -6,18 +6,19 @@ define([
 	],function(_, Backbone, menuTemplate, quiddTemplate){
 
 		var MenuView = Backbone.View.extend({
-			el : '#menu',
+			el : 'body',
 
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
 				"click .dropdown-menu li" : "createSource",
-				"click #createDestination" : "createDestination"
+				"click #createDestination" : "createDestination",
+				"click .box" : "createConnection"
 			},
 
 			//generation of the main Menu 
 			initialize : function(){
-				console.log("init menu View");
+				console.log("init global View");
 				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
 				$("#menu").html(template);
 			},
@@ -35,15 +36,34 @@ define([
 			createSource : function(){
 
 				var className = $(event.target).data("name")
-				,	classDoc = this.collection.get(className)
-				,	template = _.template(quiddTemplate, {title : "Create "+className, classDoc : classDoc, action : "create"});
-				console.log(classDoc);
-				$("#lightBox").html(template);
-				this.openLightBox();
+				,	that = this;
+
+				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties){
+					var template = _.template(quiddTemplate, {title : "Create "+className, className : className,  properties : properties, action : "create"});
+					$("#lightBox").html(template);
+					that.openLightBox();
+				});
+
 			},
 			createDestination : function(){
 				views.methods.getMethod("defaultrtp", "add_destination");
 			},
+			createConnection : function(){
+				var box = $(event.target)
+				,	destName = box.data("destname")
+				,	path = box.parent().data("path")
+				,	port = "8050";
+
+				//add to the session the shmdata 
+				views.methods.setMethod("defaultrtp", "add_data_stream", [path]);
+				//connect shmdata to destination
+				views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port]);
+
+				console.log(destName, path);
+			},
+
+
+
 
 			//alert for different message
 			alertMsg : function(type, msg){

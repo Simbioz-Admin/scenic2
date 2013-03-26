@@ -13,6 +13,23 @@ define([
 		    initialize : function(){
 		    	console.log("init collection classesDoc");
 		    },
+		    getProperties : function(className, callback){
+		    	socket.emit("getPropertiesOfClass", className, function(propertiesOfClass){
+		    		callback(propertiesOfClass);
+		    	});
+		    },
+		    getPropertiesWithout: function(className, excludes, callback){
+		    	var properties = {};
+		    	socket.emit("getPropertiesOfClass", className, function(propertiesOfClass){
+		    
+		    		_.filter(propertiesOfClass, function(property, index){
+		    			var exclude = $.inArray(property.name, excludes);
+		    			if(exclude < 0 ) properties[index] = property;
+		    		});
+		    		callback(properties);
+		    	});
+		    },
+
 		    getByCategory : function(category){
 		    	filtered = this.filter(function(classDoc) {
 		    		if(classDoc.get("category").indexOf(category) >= 0){

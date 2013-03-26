@@ -15,9 +15,20 @@ define([
 		    	that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
-		    	socket.on("create", function(quidd){
+		    	socket.on("create", function(quidd, properties){
 		    		that.add(quidd);
-		    		//request for recover the properties of quidd
+
+		    		//if it's video we create automaticlly compress vid shmdata
+		    		if(quidd.class == "videotestsrc"){
+			    		_.each(quidd.properties, function(property){
+			    			if(property.name == "shmdata-writers"){
+				    			var path = property.value.shmdata_writers[1].path;
+				    			collections.quidds.create("x264enc",quidd.name+"_x264enc", function(name){
+				    				views.methods.setMethod(name, "connect", [path]);
+				    			});
+			    			}
+			    		});
+		    		}
 		    	});
 
 		    	//receive notification for set property of quidd
@@ -36,7 +47,13 @@ define([
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(name){
 		    		console.log("the Quidd "+name+" is created.");
+		    		//return name for next step : set properties and methods
 		    		callback(name);
+		    	});
+		    },
+		    getProperties : function(nameQuidd, callback){
+		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd){
+		    		callback(propertiesOfQuidd);
 		    	});
 		    },
 		    setPropertyValue : function(nameQuidd, property, value){

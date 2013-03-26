@@ -7,15 +7,17 @@ define([
   'collections/classes_doc',
   'collections/quidds',
   'collections/destinations',
-  'views/menu',
+  'views/global',
   'views/quidds',
   'views/methods',
   'views/shmdatas',
   'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, DestinationsCollection, MenuView, QuiddsView, MethodsView, shmdatasView, DestinationsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, shmdatasView, DestinationsView){
   var initialize = function(){
+    "use strict";
 
+  
     //*** init the different collection of the project ***//
 
     //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties
@@ -23,7 +25,7 @@ define([
     collections.classesDoc.fetch({
       success : function(response){
         //Need to fetch collection before create view
-        views.menu = new MenuView({collection : collections.classesDoc.getByCategory("source")});
+        views.global = new GlobalView({collection : collections.classesDoc.getByCategory("source")});
 
       }
     });

@@ -2,7 +2,7 @@
 _.each(quidds, function(shmdatas, quiddName){ %>
 
 	<% _.each(shmdatas, function(shmdata){ %>
-		<tr class="rows" data-quidd="<%=quiddName%>">
+		<tr class="rows"  data-path="<%=shmdata.path%>" data-quidd="<%=quiddName%>">
 			<td class="td-fixe">
 				<% if(currentQuidd != quiddName){ %>
 					<div class="titleNodesource"><%=quiddName%></div>

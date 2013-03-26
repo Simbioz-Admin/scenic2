@@ -47,6 +47,12 @@ define([
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(name){
 		    		console.log("the Quidd "+name+" is created.");
+		    		//refresh the shmdata for the table
+		    		collections.shmdatas.fetch({
+		    			success : function(){
+				    		views.shmdatas.render();
+		    			}
+		    		})
 		    		//return name for next step : set properties and methods
 		    		callback(name);
 		    	});

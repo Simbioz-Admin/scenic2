@@ -1,14 +1,14 @@
 <% var currentQuidd = ""; 
-_.each(quidds, function(shmdatas, quiddName){ %>
-
-	<% _.each(shmdatas, function(shmdata){ %>
-		<tr class="rows"  data-path="<%=shmdata.path%>" data-quidd="<%=quiddName%>">
+_.each(shmdatas, function(shmdata){ %>
+	
+	<% _.each(shmdata.paths, function(path){ %>
+		<tr class="rows"  data-path="<%=path.path%>" data-quidd="<%=shmdata.quiddName%>">
 			<td class="td-fixe">
-				<% if(currentQuidd != quiddName){ %>
-					<div class="titleNodesource"><%=quiddName%></div>
-					<% currentQuidd = quiddName; %>
+				<% if(currentQuidd != shmdata.quiddName){ %>
+					<div class="titleNodesource"><%=shmdata.quiddName%></div>
+					<% currentQuidd = shmdata.quiddName; %>
 				<%  } %>
-				<span class="content" title="<%=shmdata.path%>"><% var name = shmdata.path.split("_")  %><%=name[name.length-1]%></span>
+				<span class="content" title="<%=path.path%>"><% var name = path.path.split("_")  %><%=name[name.length-1]%></span>
 			</td>
 		</tr>
 	<% }); %>

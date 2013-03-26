@@ -17,12 +17,17 @@ define([
 			},
 			getMethod : function(quiddName, method){
 				//ask description of method for generate form insertion
-				socket.emit("get_method_description", quiddName, method, function(data){
-					var methodDescription = $.parseJSON(data);
+				socket.emit("getMethodDescription", quiddName, method, function(returnValue){
+					var methodDescription = $.parseJSON(returnValue);
 					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName, method : method, description : methodDescription});
 
 					$("#lightBox").html(template);
 					views.global.openLightBox();
+				});
+			},
+			getMethodsByClass : function(quiddName){
+				socket.emit("getMethodsDescriptionByClass", quiddName, function(returnValue){
+					console.log(returnValue);
 				});
 			},
 			setMethod : function(quiddName, method, parameters){

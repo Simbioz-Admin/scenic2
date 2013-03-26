@@ -43,6 +43,11 @@ app.get('/quidds', function(request, response) {
   response.send(getQuidditiesWithPropertiesAndValues());
 });
 
+app.get('/shmdatas', function(request, response) {
+  response.contentType('application/json');
+  response.send(getShmdatas());
+});
+
 app.get('/destinations', function(request, response) {
   response.contentType('application/json');
   response.send(switcher.get_property_value("defaultrtp", "destinations-json"));
@@ -77,12 +82,17 @@ io.sockets.on('connection', function (socket) {
 	socket.on("setPropertyValue", function(quiddName, property, value, callback){
 		var ok = switcher.set_property_value(quiddName, property, value);
 		callback(ok);
-	io.sockets.emit("setPropertyValue", quiddName, property, value);
+		io.sockets.emit("setPropertyValue", quiddName, property, value);
 	});
 
-	socket.on("get_method_description", function(quiddName, method, callback){
+	socket.on("getMethodDescription", function(quiddName, method, callback){
 		var descriptionJson = switcher.get_method_description(quiddName, method);
 		callback(descriptionJson);
+	});
+
+	socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
+		var methodsDescriptionByClass = switcher.get_methods_description_by_class(quiddName);
+		callback(methodsDescriptionByClass);
 	});
 
 	socket.on("invoke", function(quiddName, method, parameters, callback){
@@ -139,5 +149,21 @@ function getQuiddPropertiesWithValues(quiddName){
 		
 	})
 	return  propertiesQuidd;
+}
+
+function getShmdatas(){
+	var shmdatas = [];
+	var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+	//merge the properties of quiddities with quiddities
+	$.each(quiddities, function(index, quidd){
+		var shmdata = switcher.get_property_value(quidd.name, "shmdata-writers");
+		if(shmdata != "property not found" ){
+			var shmdataJson = $.parseJSON(shmdata);
+			if(shmdataJson.shmdata_writers.length > 0){
+				shmdatas.push({"quiddName" : quidd.name, "paths" : shmdataJson.shmdata_writers});
+			}
+		}
+	})
+	return shmdatas;
 }
 

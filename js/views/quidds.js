@@ -19,7 +19,8 @@ define([
 
 				//creation of Quidd and set properties
 				collections.quidds.create(className, quiddName, function(quiddName){
-
+					
+					//parse properties for set value of this
 					_.each(dataForm, function(value, index){
 
 						var defaultValue = 	$('[name="'+index+'"]').data("default")

@@ -18,9 +18,12 @@ define([
 				this.render();
 			},
 			render : function(){
-				var quidds = this.collection.getShmdatas();
-				var template = _.template(templateShmdata, {quidds : quidds});
+				var shmdatas = this.collection.toJSON();
+				var template = _.template(templateShmdata, {shmdatas : shmdatas});
 				$("#table").html(template);
+				if(collections.destinations.toJSON().length > 0){
+					views.destinations.render();
+				}
 			},
 			add : function(){
 				var quiddName = this.last().get("name");
@@ -28,10 +31,6 @@ define([
 				var template = _.template(templateShmdata, {quidds : quidd});
 				$("#table").append(template);
 				//need to refresh destination because the td of tr source must be recreate
-				views.destinations.render();
-			},
-			update : function(){
-				this.render();
 				views.destinations.render();
 			},
 			copyToClipboard : function(){

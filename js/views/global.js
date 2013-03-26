@@ -38,6 +38,8 @@ define([
 				var className = $(event.target).data("name")
 				,	that = this;
 
+				//views.methods.getMethodsByClass(className);
+
 				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties){
 					var template = _.template(quiddTemplate, {title : "Create "+className, className : className,  properties : properties, action : "create"});
 					$("#lightBox").html(template);

@@ -6,6 +6,7 @@ define([
   'jquery',
   'collections/classes_doc',
   'collections/quidds',
+  'collections/shmdatas',
   'collections/destinations',
   'views/global',
   'views/quidds',
@@ -13,7 +14,7 @@ define([
   'views/shmdatas',
   'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, shmdatasView, DestinationsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, shmdatasView, DestinationsView){
   var initialize = function(){
     "use strict";
 
@@ -34,13 +35,21 @@ define([
     collections.quidds = new QuiddsCollection();
     collections.quidds.fetch({
       success : function(response){
-        views.shmdatas = new shmdatasView({ collection : collections.quidds});
+
+        collections.shmdatas = new ShmdatasCollection();
+        collections.shmdatas.fetch({
+          success : function(response){
+            views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
+          }
+        })
+
         collections.destinations = new DestinationsCollection();
         collections.destinations.fetch({
           success : function(response){
             views.destinations = new DestinationsView({ collection : collections.destinations });
           }
         });
+        
       }
     });
 

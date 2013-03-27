@@ -56,11 +56,16 @@ app.get('/destinations', function(request, response) {
 
 //console.log(switcher.get_properties_description_by_class("videotestsrc") );
 //logo.print();
-//switcher.create("logger", "logger");
+
+switcher.register_log_callback(function (msg){
+      console.log('.....log message: ', msg);
+ });
+
 switcher.create("rtpsession", "defaultrtp");
 
 console.log(switcher.create("SOAPcontrolServer", "soap"));
 switcher.invoke("soap", "set_port", ["8084"]);
+
 //console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
 //
 
@@ -86,12 +91,12 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on("getMethodDescription", function(quiddName, method, callback){
-		var descriptionJson = switcher.get_method_description(quiddName, method);
+		var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
 		callback(descriptionJson);
 	});
 
 	socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
-		var methodsDescriptionByClass = switcher.get_methods_description_by_class(quiddName);
+		var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 		callback(methodsDescriptionByClass);
 	});
 

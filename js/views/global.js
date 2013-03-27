@@ -2,8 +2,9 @@ define([
 	'underscore',
 	'backbone',
 	'text!/templates/menu.html',
-	'text!/templates/quidd.html'
-	],function(_, Backbone, menuTemplate, quiddTemplate){
+	'text!/templates/quidd.html',
+	'text!/templates/setMethod2.html'
+	],function(_, Backbone, menuTemplate, quiddTemplate, setMethodTemplate){
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
@@ -38,12 +39,16 @@ define([
 				var className = $(event.target).data("name")
 				,	that = this;
 
-				//views.methods.getMethodsByClass(className);
 
 				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties){
 					var template = _.template(quiddTemplate, {title : "Create "+className, className : className,  properties : properties, action : "create"});
 					$("#lightBox").html(template);
 					that.openLightBox();
+				});
+				
+				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path"], function(methods){
+					var template = _.template(setMethodTemplate, {methods : methods});
+					$("#lightBox ul").after(template);
 				});
 
 			},
@@ -56,12 +61,17 @@ define([
 				,	path = box.parent().data("path")
 				,	port = "8050";
 
-				//add to the session the shmdata 
-				views.methods.setMethod("defaultrtp", "add_data_stream", [path]);
-				//connect shmdata to destination
-				views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port]);
+				if(!box.hasClass("active")){
+					//add to the session the shmdata 
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path]);
+					//connect shmdata to destination
+					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port]);
 
-				console.log(destName, path);
+					console.log(destName, path);
+				}else{
+					console.log("DEBRANCHE!");
+					views.methods.setMethod("defaultrtp", "remove_udp_dest", [path, destName, port]);
+				}
 			},
 
 

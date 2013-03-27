@@ -4,7 +4,8 @@
 
 <div id="nodes">
 	<form id="form-lightbox" data-classname="<%=className%>">
-		<ul>
+		
+		<ul id="form-quidd">
 			<h3>Name of your Quidd <span class="info" title="Test Info" >i</span></h3> 
 			<input type="text" id="quidName" value="" placeholder="if empty, a default name will be defined">
 
@@ -52,6 +53,7 @@
 
 			<% }); %>
 		</ul>
-		<input type="submit" class="btn btn-large" id="<%=action%>-quidd" value="<%=action%>"/>
+		<input type="submit" class="btn btn-large submit-quidd"  value="<%=action%>"/>
+
 	</form>
 </div>

@@ -6,7 +6,8 @@ var express = require("express")
 , server= http.createServer(app)
 , io = require('socket.io').listen(server, { log: false })
 , logo = require('./js/libs/logo.js')
-, switcher = require('node-switcher');
+, switcher = require('node-switcher')
+, child_process = require('child_process');
 
 server.listen(8085);
 
@@ -25,6 +26,8 @@ process.on('SIGINT', function () {
 	process.exit(0);
 });
 
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+
 // ------------------------------------ WEB APP ---------------------------------------------//
 
 // routing
@@ -37,6 +40,13 @@ app.get('/classes_doc', function(request, response) {
   response.contentType('application/json');
   response.send(getClassesDocWithProperties());
 });
+
+app.get('/methods_doc', function(request, response) {
+  response.contentType('application/json');
+  response.send(getQuidditiesWithMethods());
+});
+
+
 
 app.get('/quidds', function(request, response) {
   response.contentType('application/json');
@@ -58,7 +68,8 @@ app.get('/destinations', function(request, response) {
 //logo.print();
 
 switcher.register_log_callback(function (msg){
-      console.log('.....log message: ', msg);
+		io.sockets.emit("messageLog", msg);
+      //console.log('.....log message: ', msg);
  });
 
 switcher.create("rtpsession", "defaultrtp");
@@ -79,7 +90,8 @@ io.sockets.on('connection', function (socket) {
 		//recover the default properties with values
 		var properties = getQuiddPropertiesWithValues(quiddName)
 		//callback is used by the user who has created the Quidd for directly set properties 
-		callback(quiddName);
+		callback({ name : quiddName, class : className, properties : properties});
+		console.log(className, name);
 		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
 	});
 
@@ -111,11 +123,17 @@ io.sockets.on('connection', function (socket) {
 		var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
 		callback(propertiesofClass);
 	});
+
 	socket.on("getPropertiesOfQuidd", function(quiddName, callback){
 		var propertiesOfQuidd = getQuiddPropertiesWithValues(quiddName);
 		callback(propertiesOfQuidd);
 	});
-	
+
+	socket.on("getQuidditiesWithPropertiesAndValues", function(quiddName, callback){
+		var QuidditiesWithPropertiesAndValues = getQuidditiesWithPropertiesAndValues(quiddName);
+		callback(QuidditiesWithPropertiesAndValues);
+	});
+
 
 });
 
@@ -125,6 +143,17 @@ function getClassesDocWithProperties(){
 	$.each(docs.classes, function(index, classDoc){;
 		var propertyClass = $.parseJSON(switcher.get_properties_description_by_class(classDoc["class name"])).properties;
 		docs.classes[index].properties = propertyClass;
+	});
+	return docs;
+}
+function getQuidditiesWithMethods(){
+	var docs = $.parseJSON(switcher.get_classes_doc());
+	$.each(docs.classes, function(index, classDoc){;
+		if(classDoc["class name"] != "logger"){
+			var propertyClass = $.parseJSON(switcher.get_methods_description_by_class(classDoc["class name"])).methods;
+		}
+
+		docs.classes[index].methods = propertyClass;
 	});
 	return docs;
 }
@@ -139,6 +168,7 @@ function getQuidditiesWithPropertiesAndValues(){
 	})
 	return quiddities;
 }
+
 
 function getQuiddPropertiesWithValues(quiddName){
 

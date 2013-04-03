@@ -8,7 +8,7 @@ define([
 		var shmdatasView = Backbone.View.extend({
 			el : '#table',
 			events : {
-				'click .td-fixe .content' : 'copyToClipboard'
+				//'click .td-fixe .content' : 'copyToClipboard',
 			},
 			initialize : function(){
 				console.log("init shmdataView");
@@ -35,6 +35,9 @@ define([
 			},
 			copyToClipboard : function(){
 				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(".ui-tooltip-content").html());
+			},
+			openShm : function(){
+				socket.emit("shmVid", $(".ui-tooltip-content").html());
 			}
 		});
 

@@ -34,14 +34,32 @@ define([
 		    		callback(methods);
 				});
 			},
-			setMethod : function(quiddName, method, parameters){
+			setMethod : function(quiddName, method, parameters, callback){
 				socket.emit("invoke", quiddName, method, parameters, function(ok){
 					if(ok){
-						//update the properties of quidd
+						//update the properties of quidd because setMethod can change properties or create
 						var quidd = collections.quidds.get(quiddName);
 						collections.quidds.getProperties(quiddName, function(propertiesOfQuidd){
+
 							quidd.set({"properties" : propertiesOfQuidd});
+
+							/**** TEMPORARY CREATE ENC AFTER SET METHOD FOR GSTVIDEOSRC *****************************///
+							if(quidd.get("class") == "gstvideosrc"){
+								console.log(quidd.get("name"));
+					    		_.each(quidd.get("properties"), function(property){
+					    			if(property.name == "shmdata-writers"){
+						    			var path = property.value.shmdata_writers[0].path;
+					    				console.log(property.value.shmdata_writers[0].path);
+
+						    			collections.quidds.create("x264enc",quidd.get("name")+"_x264enc", function(name){
+						    				views.methods.setMethod(name, "connect", [path]);
+						    			});
+					    			}
+					    		});
+				    		}
+
 						});
+
 					}
 				});
 			},

@@ -1,43 +1,53 @@
 <div id="close"></div>
 
 <h2><%=title%></h2>
+<%
 
+%>
 <div id="nodes">
 	<form id="form-lightbox" data-classname="<%=className%>">
 		
 		<ul id="form-quidd">
-			<h3>Name of your Quidd <span class="info" title="Test Info" >i</span></h3> 
-			<input type="text" id="quidName" value="" placeholder="if empty, a default name will be defined">
-
+			<% if(action == "create"){ %>
+				<h3>Name of your Quidd <span class="info" title="Test Info" >i</span></h3> 
+				<input type="text" id="quidName" value="" placeholder="if empty, a default name will be defined">
+			<% } %>
 			<% _.each(properties, function(property){  %>
 
 				<li>
 
-					<% var info = property.description["type description"] %>
+					<% var info = property.description["type description"] 
+						var valueField = info["default value"];
+						if(action != "create"){
+							valueField = "AAAA";
+						}
+					%>
+
 					<% var moreInfo =  info.minimum ? "Min : "+info.minimum+" &nbsp; Max : "+info.maximum : "";  %>
 					<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description.nickname%></h3>
 
 					<!-- Type input for float / int and bool -->
 					<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string"){ %>
-					<input  
-						data-default="<%=info["default value"]%>"
-						data-min="<%=info.minimum%>"
-						data-maximum="<%=info.maximum%>"
+					<input 
+						class="property" 
+						data-default="<%=valueField%>" 
+						data-min="<%=info.minimum%>" 
+						data-maximum="<%=info.maximum%>" 
 						type="text" 
-						value="<%=info["default value"]%>" 
+						value="<%=valueField%>" 
 						name="<%=property.name%>" 
 						placeholder="value type <%=info.type%>" />
 					<% } %>
 
 					<!-- Radion button for boolean -->
 					<% if(info.type == "boolean"){ %>
-						<label><input type="checkbox" name="<%=property.name%>" value="<%=info["default value"]%>" > active</label>
+						<label><input class="property" type="checkbox" name="<%=property.name%>" value="<%=valueField%>" > active</label>
 					<% } %>
 
 
 					<!-- Dropdown for enum -->
 					<% if(info.type == "enum"){ %>
-					<select name="<%=property.name%>"
+					<select class="property" name="<%=property.name%>"
 						data-default="<%=info["default value"].value%>">
 						<% _.each(info.values, function(value){ %>>
 		  					<option value="<%=value.value%>" 

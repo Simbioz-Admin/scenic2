@@ -11,6 +11,16 @@ define([
 			},
 			initialize : function(){
 				console.log("init MethodView");
+
+				socket.on("invoke", function(ok, quiddName, method, parameters){
+					console.log(ok, quiddName, method, parameters);
+					if(ok){
+						if(method == "add_destination"){
+							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
+						}
+					}
+				});
+
 				_.bindAll(this, "render");
 				//this.collection.bind("add", this.addDestination);
 				this.render();
@@ -74,13 +84,10 @@ define([
 					}
 				});
 
-				socket.emit("invoke", dataForm.quiddName, dataForm.method, parameters, function(invoke){
-					//if the method is set correctly
-					if(invoke){
-						if(dataForm.method == "add_destination"){
-							collections.destinations.add({name : dataForm.name, host_name : dataForm.host_name});
-							views.global.closeLightBox();
-						}
+				socket.emit("invoke", dataForm.quiddName, dataForm.method, parameters, function(ok){
+					if(ok){
+						views.global.closeLightBox();
+					
 					}else{
 						views.global.alertMsg("error", "Oops... We have an error.");
 					}

@@ -5,9 +5,9 @@ define([
 	],function(_, Backbone, templateDestination){
 
 		var DestinationsView = Backbone.View.extend({
-			el : '#table',
+			el : 'body',
 			events : {
-				//'click #create-quidd' : 'create'
+				"click #createDestination" : "create",
 			},
 			initialize : function(){
 				console.log("init DestinationsView");
@@ -39,6 +39,10 @@ define([
 						})
 					});
 				}
+			},
+			create : function(){
+				views.methods.getMethod("defaultrtp", "add_destination");
+				
 			}
 		});
 

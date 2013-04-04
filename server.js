@@ -113,9 +113,9 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on("invoke", function(quiddName, method, parameters, callback){
-		console.log(quiddName, method, parameters);
 		var invoke = switcher.invoke(quiddName, method, parameters);
 		callback(invoke);
+		io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 	});
 
 	socket.on("getPropertiesOfClass", function(className, callback){

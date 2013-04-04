@@ -12,7 +12,6 @@ define([
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click #createDestination" : "createDestination",
 				"click .box" : "createConnection"
 			},
 
@@ -38,9 +37,7 @@ define([
 				})
 			},
 
-			createDestination : function(){
-				views.methods.getMethod("defaultrtp", "add_destination");
-			},
+
 			createConnection : function(){
 				var box = $(event.target)
 				,	destName = box.data("destname")
@@ -60,9 +57,6 @@ define([
 					box.removeClass("active");
 				}
 			},
-
-
-
 
 			//alert for different message
 			alertMsg : function(type, msg){

@@ -91,7 +91,6 @@ define([
 					views.global.openLightBox();
 				});
 				//var template = _.template(quiddTemplate, {title : "Edit "+className, className : className,  properties : properties, action : "save"});
-				
 			},
 		});
 

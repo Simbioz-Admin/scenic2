@@ -194,7 +194,7 @@ function getShmdatas(){
 		var shmdata = switcher.get_property_value(quidd.name, "shmdata-writers");
 		if(shmdata != "property not found" ){
 			var shmdataJson = $.parseJSON(shmdata);
-			if(shmdataJson.shmdata_writers.length > 0){
+			if(shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc"){
 				shmdatas.push({"quiddName" : quidd.name, "paths" : shmdataJson.shmdata_writers});
 			}
 		}

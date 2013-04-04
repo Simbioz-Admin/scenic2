@@ -51,7 +51,7 @@ define([
 						    			var path = property.value.shmdata_writers[0].path;
 					    				console.log(property.value.shmdata_writers[0].path);
 
-						    			collections.quidds.create("x264enc",quidd.get("name")+"_x264enc", function(name){
+						    			collections.quidds.create("x264enc",quidd.get("name")+"_enc", function(name){
 						    				views.methods.setMethod(name, "connect", [path]);
 						    			});
 					    			}

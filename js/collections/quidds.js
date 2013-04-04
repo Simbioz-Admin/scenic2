@@ -45,8 +45,7 @@ define([
 			    			if(property.name == "shmdata-writers"){
 
 				    			var path = property.value.shmdata_writers[1].path;
-				    			collections.quidds.create("x264enc",quidd.name+"_x264enc", function(name){
-				    				console.log("MERRDE");
+				    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name){
 				    				views.methods.setMethod(name, "connect", [path]);
 				    			});
 			    			}

@@ -50,11 +50,11 @@ define([
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port]);
 					//display connection is active between shmdata and destination
-					box.addClass("active");
+					//box.addClass("active");
 				}else{
 					console.log("DEBRANCHE!");
 					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName]);
-					box.removeClass("active");
+					//box.removeClass("active");
 				}
 			},
 

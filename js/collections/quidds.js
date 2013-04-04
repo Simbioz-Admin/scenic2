@@ -18,6 +18,12 @@ define([
 		    	socket.on("create", function(quidd, properties){
 		    		that.add(quidd);
 
+		    		//refresh the shmdata for the table
+		    		collections.shmdatas.fetch({
+		    			success : function(){
+				    		views.shmdatas.render();
+		    			}
+		    		})
 		    	});
 
 		    	//receive notification for set property of quidd
@@ -51,13 +57,6 @@ define([
 			    			}
 			    		});
 		    		}
-
-		    		//refresh the shmdata for the table
-		    		collections.shmdatas.fetch({
-		    			success : function(){
-				    		views.shmdatas.render();
-		    			}
-		    		})
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});

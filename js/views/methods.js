@@ -18,6 +18,12 @@ define([
 						if(method == "add_destination"){
 							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
 						}
+						if(method == "add_udp_stream_to_dest"){
+							$("[data-path='"+parameters[0]+"'] [data-destname='"+parameters[1]+"']").addClass("active");
+						}
+						if(method == "remove_udp_stream_to_dest"){
+							$("[data-path='"+parameters[0]+"'] [data-destname='"+parameters[1]+"']").removeClass("active");
+						}
 					}
 				});
 

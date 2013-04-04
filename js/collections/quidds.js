@@ -76,7 +76,7 @@ define([
 		    	that = this;
 		    	console.log("ask for set "+property+" of "+nameQuidd+" to "+value);
 		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok){
-		    		// console.log(ok);
+		    		console.log(ok);
 		    		// if(!ok){
 		    		// 	views.menu.alertMsg("error", "error with set property "+property+" to "+value);
 		    		// }

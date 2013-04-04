@@ -5,21 +5,23 @@
 
 %>
 <div id="nodes">
-	<form id="form-lightbox" data-classname="<%=className%>">
+	<form id="form-lightbox" data-classname="<%=quiddName%>">
 		
 		<ul id="form-quidd">
 			<% if(action == "create"){ %>
-				<h3>Name of your Quidd <span class="info" title="Test Info" >i</span></h3> 
-				<input type="text" id="quidName" value="" placeholder="if empty, a default name will be defined">
+				<h3>Name of your source</h3> 
+				<input type="text" id="quiddName" value="" placeholder="if empty, a default name will be defined">
+			<% }else{ %>
+				<input type="hidden" id="quiddName" value="<%=quiddName%>" placeholder="if empty, a default name will be defined">
 			<% } %>
 			<% _.each(properties, function(property){  %>
-
+				<% if(property.name != "shmdata-readers" && property.name != "shmdata-writers"){ %>
 				<li>
 
 					<% var info = property.description["type description"] 
 						var valueField = info["default value"];
 						if(action != "create"){
-							valueField = "AAAA";
+							valueField = property.value;
 						}
 					%>
 
@@ -27,7 +29,7 @@
 					<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description.nickname%></h3>
 
 					<!-- Type input for float / int and bool -->
-					<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string"){ %>
+					<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>
 					<input 
 						class="property" 
 						data-default="<%=valueField%>" 
@@ -41,7 +43,7 @@
 
 					<!-- Radion button for boolean -->
 					<% if(info.type == "boolean"){ %>
-						<label><input class="property" type="checkbox" name="<%=property.name%>" value="<%=valueField%>" > active</label>
+						<label><input class="property" type="checkbox" name="<%=property.name%>"  value="true" > active</label>
 					<% } %>
 
 
@@ -51,7 +53,8 @@
 						data-default="<%=info["default value"].value%>">
 						<% _.each(info.values, function(value){ %>>
 		  					<option value="<%=value.value%>" 
-		  						<% if(info["default value"].value == value.value){ %> 
+		  						<% 
+		  						if(valueField == value.name){ %> 
 		  							selected="selected"
 		  						<% } %> ><%= value.name%>
 		  					</option>
@@ -60,10 +63,10 @@
 					<% } %>
 
 				</li>
-
+				<% } %>
 			<% }); %>
 		</ul>
-		<input type="submit" class="btn btn-large submit-quidd"  value="<%=action%>"/>
+		<input type="submit" class="btn btn-large submit-quidd <%=action%>"  value="<%=action%>"/>
 
 	</form>
 </div>

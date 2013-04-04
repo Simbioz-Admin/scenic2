@@ -9,7 +9,8 @@ define([
 			el : 'body',
 			events : {
 				"click .dropdown-menu li" : "openPanelCreate",
-				'click .submit-quidd' : 'create',
+				'click .submit-quidd.create' : 'create',
+				'click .submit-quidd.save' : 'edit',
 				'click .edit' : 'openPanelEdit'
 			},
 			initialize : function(){
@@ -24,7 +25,7 @@ define([
 
 
 				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties){
-					var template = _.template(quiddTemplate, {title : "Create "+className, className : className,  properties : properties, action : "create"});
+					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create"});
 					$("#lightBox").html(template);
 					views.global.openLightBox();
 				});
@@ -37,10 +38,31 @@ define([
 			},
 			create : function(){
 
+				var that = this
+				,	quiddName = $("#quiddName").val()
+				,	className = $("#form-lightbox").data("classname");
+
+				//creation of Quidd and set properties
+				collections.quidds.create(className, quiddName, function(quiddName){
+					
+					that.updateProperties(quiddName);
+					that.setMethods(quiddName);
+
+				});
+
+				views.global.closeLightBox();
+				return false;
+			},
+			edit : function(){
+				var	quiddName = $("#quiddName").val();
+				this.updateProperties(quiddName);
+				views.global.closeLightBox();
+				return false;
+			},
+			updateProperties: function(quiddName){
+
 				// recover on format json the value of field for properties
-				var className = $("#form-lightbox").data("classname")
-				,	quiddName = $("#quidName").val()
-				,	dataFormProp = {};
+				var dataFormProp = {};
 
 				$("#form-quidd .property").each(function(index, value){
 
@@ -49,7 +71,19 @@ define([
 					}
 				});
 
-				// //recover on format json the value of field for methods
+				//parse properties for set value of this
+				_.each(dataFormProp, function(value, index){
+					var defaultValue = 	$('[name="'+index+'"]').data("default")
+					,	minValue = $('[name="'+index+'"]').data("min")
+					,	maxValue = $('[name="'+index+'"]').data("max");
+					if(value != defaultValue){
+						console.log(value, defaultValue);
+						collections.quidds.setPropertyValue(quiddName, index, value);
+					}
+				});
+			},
+			setMethods : function(quiddName){
+				//recover on format json the value of field for methods
 				var dataFormMeth = {};
 				$("#form-methods input").each(function(index, value){
 					if($(this).attr("name")){
@@ -58,35 +92,17 @@ define([
 					}
 				});
 
-
-				//creation of Quidd and set properties
-				collections.quidds.create(className, quiddName, function(quiddName){
-					
-					//parse properties for set value of this
-					_.each(dataFormProp, function(value, index){
-						var defaultValue = 	$('[name="'+index+'"]').data("default")
-						,	minValue = $('[name="'+index+'"]').data("min")
-						,	maxValue = $('[name="'+index+'"]').data("max");
-						if(value != defaultValue){
-							console.log(value, defaultValue);
-							collections.quidds.setPropertyValue(quiddName, index, value);
-						}
-					});
-
-					_.each(dataFormMeth, function(value, index){
-						if(value != ""){
-							views.methods.setMethod(quiddName, index, [value]);
-						}
-					});
+				_.each(dataFormMeth, function(value, index){
+					if(value != ""){
+						views.methods.setMethod(quiddName, index, [value]);
+					}
 				});
-
-				views.global.closeLightBox();
-				return false;
 			},
 			openPanelEdit : function(){
 				var quiddName = $(event.target).parent().parent().data("quidd");
 				collections.quidds.getProperties(quiddName, function(properties){
-					var template = _.template(quiddTemplate, {title : "Edit "+quiddName, className : quiddName,  properties : properties, action : "save"});
+					console.log(properties);
+					var template = _.template(quiddTemplate, {title : "Edit "+quiddName, quiddName : quiddName,  properties : properties, action : "save"});
 					$("#lightBox").html(template);
 					views.global.openLightBox();
 				});

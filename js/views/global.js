@@ -52,9 +52,6 @@ define([
 				});
 
 			},
-			createDestination : function(){
-				views.methods.getMethod("defaultrtp", "add_destination");
-			},
 			createConnection : function(){
 				var box = $(event.target)
 				,	destName = box.data("destname")

@@ -2,12 +2,13 @@ define([
 	'underscore',
 	'backbone',
 	'text!/templates/destination.html',
-	],function(_, Backbone, templateDestination){
+	'text!/templates/setMethod.html'
+	],function(_, Backbone, templateDestination, templateMethod){
 
 		var DestinationsView = Backbone.View.extend({
-			el : '#table',
+			el : 'body',
 			events : {
-				//'click #create-quidd' : 'create'
+				"click #createDestination" : "createPanel",
 			},
 			initialize : function(){
 				console.log("init DestinationsView");
@@ -39,6 +40,33 @@ define([
 						})
 					});
 				}
+			},			
+			createPanel : function(){
+				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription){
+					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName, method : method, description : methodDescription});
+					$("#lightBox").html(template);
+					views.global.openLightBox();
+				});
+			},
+			create : function(){
+				var dataForm = $("#form-lightbox").serializeObject()
+				,	parameters = [];
+
+				//recover the values of fields
+				_.each(dataForm, function(value, index){
+					//exclude method and name for generate parameters array
+					if(index != "method" && index != "quiddName"){
+						parameters.push(value);
+					}
+				});
+				//ask for 
+				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok){
+					if(ok){
+							collections.destinations.add({name : dataForm.name, host_name : dataForm.host_name});
+							views.global.closeLightBox();
+					}
+				});
+
 			}
 		});
 

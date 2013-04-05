@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Tempi-snake - Design interactions by connecting things</title>
+    <title>Scenic2 - SAT</title>
     <!-- Load the script "js/main.js" as our entry point -->
 
     <!-- /**** CSS ****/ -->
@@ -9,7 +9,7 @@
 	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
 
 	 <!-- /**** JAVSCRIPT ****/ -->
 
@@ -20,7 +20,7 @@
 <body class="scenic2">
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
 		<header id="header">
-			<div id="logo"></div>
+			<div id="logo">SCENIC2</div>
 			<!-- <div class="btn" id="openPanel">&gt;&gt;</div> -->
 			<!-- <div class="btn" id="saveJson">Save</div>  -->
 			<div id="menu"></div>
@@ -40,7 +40,29 @@
 	    
 		<div id="bgLightbox"></div>
 		<div id="lightBox"></div>
+		<div id="log">
+			<h3>Log</h3>
+			<class class="content"></class>
+		</div>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$(function(){
+				var state = "close";
+				$("#log h3").click(function(){
+					if(state == "open"){
+						$("#log").animate({"right" : -$("#log").width()-61}, function(){
+							state = "close";
+						});
+					}else{
+						$("#log").animate({"right" : 0});
+						console.log("open");
+						state = "open";
+					}
+				});
 
+			})
+		});
+		</script>
 	</body>
 </html>
 

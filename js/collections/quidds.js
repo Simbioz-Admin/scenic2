@@ -18,17 +18,12 @@ define([
 		    	socket.on("create", function(quidd, properties){
 		    		that.add(quidd);
 
-		    		//if it's video we create automaticlly compress vid shmdata
-		    		if(quidd.class == "videotestsrc"){
-			    		_.each(quidd.properties, function(property){
-			    			if(property.name == "shmdata-writers"){
-				    			var path = property.value.shmdata_writers[1].path;
-				    			collections.quidds.create("x264enc",quidd.name+"_x264enc", function(name){
-				    				views.methods.setMethod(name, "connect", [path]);
-				    			});
-			    			}
-			    		});
-		    		}
+		    		//refresh the shmdata for the table
+		    		collections.shmdatas.fetch({
+		    			success : function(){
+				    		views.shmdatas.render();
+		    			}
+		    		})
 		    	});
 
 		    	//receive notification for set property of quidd
@@ -45,16 +40,25 @@ define([
 		    create : function(className, name, callback){
 
 		    	//ask for create a Quidd
-		    	socket.emit("create", className, name, function(name){
+		    	console.log("ASK FOR CREATE : "+className, name);
+		    	socket.emit("create", className, name, function(quidd){
 		    		console.log("the Quidd "+name+" is created.");
-		    		//refresh the shmdata for the table
-		    		collections.shmdatas.fetch({
-		    			success : function(){
-				    		views.shmdatas.render();
-		    			}
-		    		})
+
+		    		console.log("ask for create temporary enc for videotestsrc");
+		    		//if it's video we create automaticlly compress vid shmdata
+		    		if(quidd.class == "videotestsrc"){
+			    		_.each(quidd.properties, function(property){
+			    			if(property.name == "shmdata-writers"){
+
+				    			var path = property.value.shmdata_writers[1].path;
+				    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name){
+				    				views.methods.setMethod(name, "connect", [path]);
+				    			});
+			    			}
+			    		});
+		    		}
 		    		//return name for next step : set properties and methods
-		    		callback(name);
+		    		callback(quidd.name);
 		    	});
 		    },
 		    getProperties : function(nameQuidd, callback){
@@ -62,11 +66,16 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
+		    getPropertiesWithValues : function(nameQuidd, callback){
+		    	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd){
+		    		callback(propertiesOfQuidd);
+		    	});
+		    },
 		    setPropertyValue : function(nameQuidd, property, value){
 		    	that = this;
 		    	console.log("ask for set "+property+" of "+nameQuidd+" to "+value);
 		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok){
-		    		// console.log(ok);
+		    		console.log(ok);
 		    		// if(!ok){
 		    		// 	views.menu.alertMsg("error", "error with set property "+property+" to "+value);
 		    		// }

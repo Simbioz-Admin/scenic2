@@ -8,7 +8,9 @@ define([
 		var DestinationsView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click #createDestination" : "createPanel",
+				"click #createDestination" : "createPanel", 
+				"click #setMethod_add_destination" : "create"
+
 			},
 			initialize : function(){
 				console.log("init DestinationsView");
@@ -43,7 +45,7 @@ define([
 			},			
 			createPanel : function(){
 				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription){
-					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName, method : method, description : methodDescription});
+					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName,  method : method, description : methodDescription});
 					$("#lightBox").html(template);
 					views.global.openLightBox();
 				});
@@ -59,14 +61,10 @@ define([
 						parameters.push(value);
 					}
 				});
-				//ask for 
-				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok){
-					if(ok){
-							collections.destinations.add({name : dataForm.name, host_name : dataForm.host_name});
-							views.global.closeLightBox();
-					}
-				});
 
+				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok){
+					if(ok) views.global.closeLightBox();
+				});
 			}
 		});
 

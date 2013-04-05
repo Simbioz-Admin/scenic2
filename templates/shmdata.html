@@ -5,9 +5,11 @@ _.each(shmdatas, function(shmdata){ %>
 		<tr class="rows"  data-path="<%=path.path%>" data-quidd="<%=shmdata.quiddName%>">
 			<td class="td-fixe">
 				<% if(currentQuidd != shmdata.quiddName){ %>
+					<span class="edit">edit</span>
 					<div class="titleNodesource"><%=shmdata.quiddName%></div>
 					<% currentQuidd = shmdata.quiddName; %>
 				<%  } %>
+
 				<span class="content" title="<%=path.path%>"><% var name = path.path.split("_")  %><%=name[name.length-1]%></span>
 			</td>
 		</tr>

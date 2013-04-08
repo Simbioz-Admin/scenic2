@@ -1,21 +1,30 @@
 define([
 	'underscore',
 	'backbone',
-	'models/quidd'
-	],function(_, Backbone, QuiddModel){
+	'models/quidd',
+	'views/quidd',
+	],function(_, Backbone, QuiddModel, QuiddsView){
 
 		var QuiddsCollection = Backbone.Collection.extend({
 			model : QuiddModel,
 			url : '/quidds/',
 			parse : function(results, xhr){
 		        return results;
+
 		    },
-		    initialize : function(){
+		    initialize : function()
+		    {
 		    	console.log("init collection quidds");
 		    	that = this;
 
+		    	this.bind("add", function(model)
+		    	{
+		    		var view = new QuiddsView({model : model});
+		    		view.render();
+		    	});
 		    	//receive notification for add quidd to the collection Quidds
-		    	socket.on("create", function(quidd, properties){
+		    	socket.on("create", function(quidd, properties)
+		    	{
 		    		that.add(quidd);
 
 		    		//refresh the shmdata for the table
@@ -27,31 +36,42 @@ define([
 		    	});
 
 		    	//receive notification for set property of quidd
-		    	socket.on("setPropertyValue", function(nameQuidd, property, value){
+		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
+		    	{
 		    		var quidd = that.get(nameQuidd);
 		    		//quidd.get("properties")
 
-		    		_.each(quidd.get("properties"), function(prop, index){
+		    		_.each(quidd.get("properties"), function(prop, index)
+		    		{
 		    			if(prop.name == property) quidd.get("properties")[index]["value"] = value;		
 		    		});
 		    	});
 
 		    },
+		    render : function()
+		    {
+		    	collections.quidds.each(function(model)
+				{
+					var v = new QuiddsView({model : model});
+				});
+		    },
 		    create : function(className, name, callback){
 
 		    	//ask for create a Quidd
-		    	console.log("ASK FOR CREATE : "+className, name);
-		    	socket.emit("create", className, name, function(quidd){
-		    		console.log("the Quidd "+name+" is created.");
-
+		    	socket.emit("create", className, name, function(quidd)
+		    	{
 		    		console.log("ask for create temporary enc for videotestsrc");
 		    		//if it's video we create automaticlly compress vid shmdata
-		    		if(quidd.class == "videotestsrc"){
-			    		_.each(quidd.properties, function(property){
-			    			if(property.name == "shmdata-writers"){
-
+		    		if(quidd.class == "videotestsrc")
+		    		{
+			    		_.each(quidd.properties, function(property)
+			    		{
+			    			if(property.name == "shmdata-writers")
+			    			{
 				    			var path = property.value.shmdata_writers[1].path;
-				    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name){
+
+				    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+				    			{
 				    				views.methods.setMethod(name, "connect", [path]);
 				    			});
 			    			}
@@ -61,45 +81,55 @@ define([
 		    		callback(quidd.name);
 		    	});
 		    },
-		    getProperties : function(nameQuidd, callback){
-		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd){
+		    getProperties : function(nameQuidd, callback)
+		    {
+		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
+		    	{
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    getPropertiesWithValues : function(nameQuidd, callback){
-		    	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd){
+		    getPropertiesWithValues : function(nameQuidd, callback)
+		    {
+		    	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd)
+		    	{
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    setPropertyValue : function(nameQuidd, property, value){
+		    setPropertyValue : function(nameQuidd, property, value)
+		    {
 		    	that = this;
 		    	console.log("ask for set "+property+" of "+nameQuidd+" to "+value);
-		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok){
+
+		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
+		    	{
 		    		console.log(ok);
-		    		// if(!ok){
-		    		// 	views.menu.alertMsg("error", "error with set property "+property+" to "+value);
-		    		// }
 		    	});
 
 		    },
-		    getShmdatas : function(){
+		    getShmdatas : function()
+		    {
 		    	var shmdatas = {};
-		    	_.each(this.toJSON(), function(quidd){
-		    		_.each(quidd.properties, function(property){
-		    			if(property.name == "shmdata-writers"){
+
+		    	_.each(this.toJSON(), function(quidd)
+		    	{
+		    		_.each(quidd.properties, function(property)
+		    		{
+		    			if(property.name == "shmdata-writers")
+		    			{
 		    				shmdatas[quidd.name] = property.value["shmdata_writers"];
 		    			}
 		    		});
 		    	});
+
 		    	return shmdatas;
-
-
-
 		    },
-		    getShmdata : function(quiddName){
+		    getShmdata : function(quiddName)
+		    {
 		    	var shmdatas = {};
-		    	_.filter(this.get(quiddName).get("properties"), function(property){
-		    		if(property.name == "shmdata-writers"){
+		    	_.filter(this.get(quiddName).get("properties"), function(property)
+		    	{
+		    		if(property.name == "shmdata-writers")
+		    		{
 		    			shmdatas[quiddName] = property.value["shmdata_writers"]
 		    		}
 		    	});

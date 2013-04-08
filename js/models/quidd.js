@@ -10,7 +10,8 @@ define([
 				"class" : null,
 				"properties" : []
 			},
-			initialize : function(){
+			initialize : function()
+			{
 				//ask for create node osc-receive\
 			}
 		});

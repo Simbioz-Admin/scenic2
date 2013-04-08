@@ -9,7 +9,7 @@ define([
   'collections/shmdatas',
   'collections/destinations',
   'views/global',
-  'views/quidds',
+  'views/quidd',
   'views/methods',
   'views/shmdatas',
   'views/destinations'
@@ -24,28 +24,35 @@ define([
     //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties
     collections.classesDoc = new ClassesDocCollection();
     collections.classesDoc.fetch({
-      success : function(response){
+      success : function(response)
+      {
         //Need to fetch collection before create view
         views.global = new GlobalView({collection : collections.classesDoc.getByCategory("source")});
-
       }
     });
 
     //init the Collections of quidd where is stocked all informations about the quidds existing.
     collections.quidds = new QuiddsCollection();
-    collections.quidds.fetch({
-      success : function(response){
-
-        collections.shmdatas = new ShmdatasCollection();
-        collections.shmdatas.fetch({
-          success : function(response){
-            views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
-          }
-        })
+    collections.quidds.fetch
+    ({
+      success : function(response)
+      {
+        collections.quidds.render();
+        //views.quidds = new QuiddsView({collection : collections.classesDoc});
+        // collections.shmdatas = new ShmdatasCollection();
+        // collections.shmdatas.fetch
+        // ({
+        //   success : function(response)
+        //   {
+        //     views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
+        //   }
+        // });
 
         collections.destinations = new DestinationsCollection();
-        collections.destinations.fetch({
-          success : function(response){
+        collections.destinations.fetch
+        ({
+          success : function(response)
+          {
             views.destinations = new DestinationsView({ collection : collections.destinations });
           }
         });
@@ -53,7 +60,6 @@ define([
       }
     });
 
-    views.quidds = new QuiddsView({collection : collections.classesDoc});
     views.methods = new MethodsView();
   }
 

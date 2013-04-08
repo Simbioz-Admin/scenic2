@@ -73,7 +73,8 @@ switcher.register_log_callback(function (msg){
  });
 
 switcher.create("rtpsession", "defaultrtp");
-
+switcher.create("videotestsrc", "video");
+switcher.create("videotestsrc");
 console.log(switcher.create("SOAPcontrolServer", "soap"));
 switcher.invoke("soap", "set_port", ["8084"]);
 

@@ -12,18 +12,21 @@ define([
 				"click #setMethod_add_destination" : "create"
 
 			},
-			initialize : function(){
+			initialize : function()
+			{
 				console.log("init DestinationsView");
 				_.bindAll(this, "render");
 				this.collection.bind("add", this.render);
 				this.render();
 			},
-			render : function(){
+			render : function()
+			{
 				//remove all box
 				$(".box").remove();
 				var destinations = this.collection.toJSON();
 				
-				if(destinations.length > 0 ){
+				if(destinations.length > 0 )
+				{
 					var templateHeader = _.template(templateDestination, {header : true, destinations : destinations});
 					var template = _.template(templateDestination, { header : false, destinations : destinations});
 
@@ -36,35 +39,45 @@ define([
 					});
 
 					//add active connection between shmdata and destination
-					_.each(destinations, function(destination){
-						_.each(destination.data_streams, function(shmdata){
+					_.each(destinations, function(destination)
+					{
+						_.each(destination.data_streams, function(shmdata)
+						{
 							$("[data-path='"+shmdata.path+"'] [data-destname='"+destination.name+"']").addClass("active");
 						})
 					});
 				}
 			},			
-			createPanel : function(){
-				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription){
-					var template = _.template(templateMethod, { title : "set Method "+method, quiddName : quiddName,  method : method, description : methodDescription});
+			createPanel : function()
+			{
+				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription)
+				{
+					console.log(methodDescription);
+					var template = _.template(templateMethod, { title : "set Method "+methodDescription.name, quiddName : "defaultrtp",  method : "add_destination", description : methodDescription});
 					$("#lightBox").html(template);
 					views.global.openLightBox();
 				});
 			},
-			create : function(){
+			create : function()
+			{
 				var dataForm = $("#form-lightbox").serializeObject()
 				,	parameters = [];
 
 				//recover the values of fields
-				_.each(dataForm, function(value, index){
+				_.each(dataForm, function(value, index)
+				{
 					//exclude method and name for generate parameters array
 					if(index != "method" && index != "quiddName"){
 						parameters.push(value);
 					}
 				});
 
-				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok){
+				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok)
+				{
 					if(ok) views.global.closeLightBox();
 				});
+
+			return false;
 			}
 		});
 

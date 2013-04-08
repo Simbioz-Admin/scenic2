@@ -27,23 +27,72 @@
 
 		</header>
 
-		<div id="globalTable">
-			<table id="headerDest"></table>
+		<div id="windowTable">
 
-			<div id="tableau">
-				<div id="cache-join"></div>
-				<table  id="table" cellspacing="0" cellpadding="0"></table>
+			<div id="headerTable">
+							<div class="btnCreate" style="margin-top:4px;">SAVE</div>
+				<div class="btnCreate btnCreateDestination">+ OUT</div>
+				<div class="btnCreate btnCreateSource">+ IN</div>
+
 			</div>
+
+			<table id="testTable">
+				<colgroup>
+				<col colspan="2" class="source"></col>
+				<col colspan="2" class="source"></col>
+				<col class="osc"  id="/snake/out/0"></col>
+				<col class="osc" style="border-right:1px solid #aaa;" id="/snake/out/1"></col>
+				<col class="midi" id="/snake/out/0"></col>
+				<col class="midi" id="/snake/out/1"></col>
+				</colgroup>
+
+				<thead>
+					<tr>
+						<th rowspan="2" colspan="2" >
+							<div id="titleIn"><span class="rotate">IN</span></div>
+							<div id="titleOut">OUT</div>
+						</th>
+						<th colspan="2" scope="col" class="group groupDestination" >OSC</th>
+						<th colspan="3" scope="col" class="group groupDestination" >DMX</th>
+
+					</tr>
+					<tr class="sourceNames">
+						<th scope="col" class="nameInOut">/snake/out/0</th>
+						<th scope="col" class="nameInOut" >/snake/out/1</th>
+						<th scope="col"class="nameInOut" >R</th>
+						<th scope="col"class="nameInOut" >V</th>
+						<th scope="col"class="nameInOut" >B</th>
+					</tr>
+
+				</thead>
+				<tbody id="sources"></tbody>
+			</table>
 		</div>
+
 
 		<div id="panel"></div>
 	    
 		<div id="bgLightbox"></div>
 		<div id="lightBox"></div>
-		<div id="log">
+		<div id="log" style="display:none;">
 			<h3>Log</h3>
 			<class class="content"></class>
 		</div>
+
+		<script id="item-template" type="text/x-jquery-tmpl">
+		<% var stateTitle = false;
+		 _.each(shmdatas, function(shmdata){ %>
+
+			<% if(!stateTitle){ %>
+			<td rowspan="<%=shmdatas.length%>" class="group groupSource" ><div class="vertical"><%=name%></div></td>
+			<% stateTitle = true; }%>
+
+			<th scope="row" class="nameInOut"  title="<%=shmdata.path%>" ><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></th>
+
+			<!-- here td of destinations -->
+		<% }); %>
+		 </script>
+
 		<script type="text/javascript">
 		$(document).ready(function(){
 			$(function(){

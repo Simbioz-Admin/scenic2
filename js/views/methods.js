@@ -21,11 +21,11 @@ define([
 						}
 						if(method == "add_udp_stream_to_dest")
 						{
-							$("[data-path='"+parameters[0]+"'] [data-destname='"+parameters[1]+"']").addClass("active");
+							$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");
 						}
 						if(method == "remove_udp_stream_to_dest")
 						{
-							$("[data-path='"+parameters[0]+"'] [data-destname='"+parameters[1]+"']").removeClass("active");
+							$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
 						}
 					}
 				});
@@ -87,7 +87,7 @@ define([
 
 						});
 
-						//callback(ok);
+						callback(ok);
 					}
 				});
 			}

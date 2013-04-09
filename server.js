@@ -68,13 +68,15 @@ app.get('/destinations', function(request, response) {
 //logo.print();
 
 switcher.register_log_callback(function (msg){
-		io.sockets.emit("messageLog", msg);
-      //console.log('.....log message: ', msg);
+		//io.sockets.emit("messageLog", msg);
+      	console.log('.....log message: ', msg);
  });
 
 switcher.create("rtpsession", "defaultrtp");
+
 switcher.create("videotestsrc", "video");
-switcher.create("videotestsrc");
+switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
+
 console.log(switcher.create("SOAPcontrolServer", "soap"));
 switcher.invoke("soap", "set_port", ["8084"]);
 

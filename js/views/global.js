@@ -38,20 +38,25 @@ define([
 			},
 			createConnection : function(){
 				var box = $(event.target)
-				,	destName = box.data("destname")
+				,	destName = box.data("hostname")
 				,	path = box.parent().data("path")
 				,	port = "8050";
 
+				console.log(destName, path, port);
+
 				if(!box.hasClass("active")){
 					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path]);
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){
+
+					});
 					//connect shmdata to destination
-					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port]);
+					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
+
+					});
 					//display connection is active between shmdata and destination
 					//box.addClass("active");
 				}else{
-					console.log("DEBRANCHE!");
-					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName]);
+					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
 					//box.removeClass("active");
 				}
 			},

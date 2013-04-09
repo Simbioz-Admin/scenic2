@@ -20,7 +20,6 @@ define([
 				collections.quidds.each(function(model)
 				{
 					var view = new ModelQuidd({model : model});
-					console.log(model);
 				});
 			},
 			//open the lightbox and show the properties to define for create the quidd Source

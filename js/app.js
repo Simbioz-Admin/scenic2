@@ -9,7 +9,7 @@ define([
   'collections/shmdatas',
   'collections/destinations',
   'views/global',
-  'views/quidd',
+  'views/quidds',
   'views/methods',
   'views/shmdatas',
   'views/destinations'
@@ -31,34 +31,38 @@ define([
       }
     });
 
-    //init the Collections of quidd where is stocked all informations about the quidds existing.
-    collections.quidds = new QuiddsCollection();
-    collections.quidds.fetch
-    ({
-      success : function(response)
-      {
-        collections.quidds.render();
-        //views.quidds = new QuiddsView({collection : collections.classesDoc});
-        // collections.shmdatas = new ShmdatasCollection();
-        // collections.shmdatas.fetch
-        // ({
-        //   success : function(response)
-        //   {
-        //     views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
-        //   }
-        // });
 
-        collections.destinations = new DestinationsCollection();
-        collections.destinations.fetch
-        ({
-          success : function(response)
-          {
-            views.destinations = new DestinationsView({ collection : collections.destinations });
-          }
-        });
-        
-      }
-    });
+
+   collections.destinations = new DestinationsCollection();
+      collections.destinations.fetch
+      ({
+        success : function(response)
+        {
+          collections.destinations.render();
+          views.destinations = new DestinationsView({ collection : collections.destinations });
+
+          //init the Collections of quidd where is stocked all informations about the quidds existing.
+          collections.quidds = new QuiddsCollection();
+          collections.quidds.fetch
+          ({
+            success : function(response)
+            {
+              collections.quidds.render();
+              views.quidds = new QuiddsView({collection : collections.classesDoc});
+              // collections.shmdatas = new ShmdatasCollection();
+              // collections.shmdatas.fetch
+              // ({
+              //   success : function(response)
+              //   {
+              //     views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
+              //   }
+              // });
+            }
+          });
+        }
+      });
+
+
 
     views.methods = new MethodsView();
   }

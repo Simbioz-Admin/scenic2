@@ -30,44 +30,31 @@
 		<div id="windowTable">
 
 			<div id="headerTable">
-							<div class="btnCreate" style="margin-top:4px;">SAVE</div>
+				<div class="btnCreate" style="margin-top:4px;">SAVE</div>
 				<div class="btnCreate btnCreateDestination">+ OUT</div>
 				<div class="btnCreate btnCreateSource">+ IN</div>
-
 			</div>
 
 			<table id="testTable">
-				<colgroup>
-				<col colspan="2" class="source"></col>
-				<col colspan="2" class="source"></col>
-				<col class="osc"  id="/snake/out/0"></col>
-				<col class="osc" style="border-right:1px solid #aaa;" id="/snake/out/1"></col>
-				<col class="midi" id="/snake/out/0"></col>
-				<col class="midi" id="/snake/out/1"></col>
-				</colgroup>
 
 				<thead>
+
 					<tr>
-						<th rowspan="2" colspan="2" >
+						<th rowspan="2" colspan="2" class="infoTable">
 							<div id="titleIn"><span class="rotate">IN</span></div>
 							<div id="titleOut">OUT</div>
 						</th>
-						<th colspan="2" scope="col" class="group groupDestination" >OSC</th>
-						<th colspan="3" scope="col" class="group groupDestination" >DMX</th>
 
 					</tr>
-					<tr class="sourceNames">
-						<th scope="col" class="nameInOut">/snake/out/0</th>
-						<th scope="col" class="nameInOut" >/snake/out/1</th>
-						<th scope="col"class="nameInOut" >R</th>
-						<th scope="col"class="nameInOut" >V</th>
-						<th scope="col"class="nameInOut" >B</th>
-					</tr>
+
+					<tr id="destinations"></tr>
 
 				</thead>
-				<tbody id="sources"></tbody>
+				<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
 			</table>
 		</div>
+
+
 
 
 		<div id="panel"></div>

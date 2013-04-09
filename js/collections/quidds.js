@@ -17,22 +17,15 @@ define([
 		    	console.log("init collection quidds");
 		    	that = this;
 
-		    	this.bind("add", function(model)
-		    	{
-		    		var view = new QuiddsView({model : model});
-		    		view.render();
-		    	});
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd, properties)
 		    	{
 		    		that.add(quidd);
+		    	});
 
-		    		//refresh the shmdata for the table
-		    		collections.shmdatas.fetch({
-		    			success : function(){
-				    		views.shmdatas.render();
-		    			}
-		    		})
+		    	this.bind("add", function(model)
+		    	{
+		    		var view = new QuiddsView({model : model});
 		    	});
 
 		    	//receive notification for set property of quidd
@@ -46,7 +39,6 @@ define([
 		    			if(prop.name == property) quidd.get("properties")[index]["value"] = value;		
 		    		});
 		    	});
-
 		    },
 		    render : function()
 		    {
@@ -62,21 +54,22 @@ define([
 		    	{
 		    		console.log("ask for create temporary enc for videotestsrc");
 		    		//if it's video we create automaticlly compress vid shmdata
-		    		if(quidd.class == "videotestsrc")
-		    		{
-			    		_.each(quidd.properties, function(property)
-			    		{
-			    			if(property.name == "shmdata-writers")
-			    			{
-				    			var path = property.value.shmdata_writers[1].path;
+		    		// if(quidd.class == "videotestsrc")
+		    		// {
+			    	// 	_.each(quidd.properties, function(property)
+			    	// 	{
+			    	// 		if(property.name == "shmdata-writers")
+			    	// 		{
+				    // 			var path = property.value.shmdata_writers[1].path;
 
-				    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-				    			{
-				    				views.methods.setMethod(name, "connect", [path]);
-				    			});
-			    			}
-			    		});
-		    		}
+				    // 			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+				    // 			{
+				    // 				views.methods.setMethod(name, "connect", [path]);
+				    // 				console.log("SET !!!!");
+				    // 			});
+			    	// 		}
+			    	// 	});
+		    		// }
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});

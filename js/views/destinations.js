@@ -15,39 +15,38 @@ define([
 			initialize : function()
 			{
 				console.log("init DestinationsView");
-				_.bindAll(this, "render");
-				this.collection.bind("add", this.render);
-				this.render();
 			},
-			render : function()
-			{
-				//remove all box
-				$(".box").remove();
-				var destinations = this.collection.toJSON();
+
+			// render2 : function()
+			// {
+			// 	//remove all box
+			// 	$(".box").remove();
+			// 	var destinations = this.collection.toJSON();
 				
-				if(destinations.length > 0 )
-				{
-					var templateHeader = _.template(templateDestination, {header : true, destinations : destinations});
-					var template = _.template(templateDestination, { header : false, destinations : destinations});
+			// 	if(destinations.length > 0 )
+			// 	{
+			// 		var templateHeader = _.template(templateDestination, {header : true, destinations : destinations});
+			// 		var template = _.template(templateDestination, { header : false, destinations : destinations});
 
-					//add Header destinations
-					$("#headerDest").html(templateHeader);
+			// 		//add Header destinations
+			// 		$("#headerDest").html(templateHeader);
 
-					//add the destination il all tr of table
-					$(".rows").each(function(index){
-						$(this).append(template);
-					});
+			// 		//add the destination il all tr of table
+			// 		$(".rows").each(function(index){
+			// 			$(this).append(template);
+			// 		});
 
-					//add active connection between shmdata and destination
-					_.each(destinations, function(destination)
-					{
-						_.each(destination.data_streams, function(shmdata)
-						{
-							$("[data-path='"+shmdata.path+"'] [data-destname='"+destination.name+"']").addClass("active");
-						})
-					});
-				}
-			},			
+			// 		//add active connection between shmdata and destination
+			// 		_.each(destinations, function(destination)
+			// 		{
+			// 			_.each(destination.data_streams, function(shmdata)
+			// 			{
+			// 				$("[data-path='"+shmdata.path+"'] [data-destname='"+destination.name+"']").addClass("active");
+			// 			})
+			// 		});
+			// 	}
+			// },
+					
 			createPanel : function()
 			{
 				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription)

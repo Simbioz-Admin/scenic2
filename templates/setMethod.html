@@ -1,0 +1,26 @@
+<div id="close">X</div>
+
+<div id="title"><%=title%></div>
+
+<div id="nodes">
+	<form id="form-lightbox">
+		<ul>
+			<h3>Set Method <%=description.description%></h3>
+
+			<% _.each(description.arguments, function(argument){ %>
+				<li>
+
+					<h3 class="info" title="<%=argument.description%>" ><%=argument.name%></h3>
+
+					<!-- Type input for float / int and bool -->
+					<input type="text" name="<%=argument.name%>" value="" />
+
+				</li>
+			<% }); %>
+		</ul>
+		<input type="hidden" name="method" value="<%=method%>">
+		<input type="hidden" name="quiddName" value="<%=quiddName%>">
+
+		<input type="submit" class="btn btn-large" id="setMethod_<%=description.name%>" value="Add destination"/>
+	</form>
+</div>

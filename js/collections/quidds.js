@@ -23,10 +23,14 @@ define([
 		    		that.add(quidd);
 		    	});
 
-		    	this.bind("add", function(model)
-		    	{
-		    		var view = new QuiddsView({model : model});
+		    	socket.on("remove", function(quiddName){
+		    		that.remove(quiddName);
 		    	});
+
+		    	// this.bind("add", function(model)
+		    	// {
+		    	// 	var view = new QuiddsView({model : model});
+		    	// });
 
 		    	//receive notification for set property of quidd
 		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
@@ -39,13 +43,6 @@ define([
 		    			if(prop.name == property) quidd.get("properties")[index]["value"] = value;		
 		    		});
 		    	});
-		    },
-		    render : function()
-		    {
-		    	collections.quidds.each(function(model)
-				{
-					var v = new QuiddsView({model : model});
-				});
 		    },
 		    create : function(className, name, callback){
 
@@ -74,6 +71,9 @@ define([
 		    		callback(quidd.name);
 		    	});
 		    },
+		    delete : function(quiddName){
+		    	socket.emit("remove", quiddName);
+		    },
 		    getProperties : function(nameQuidd, callback)
 		    {
 		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
@@ -98,35 +98,6 @@ define([
 		    		console.log(ok);
 		    	});
 
-		    },
-		    getShmdatas : function()
-		    {
-		    	var shmdatas = {};
-
-		    	_.each(this.toJSON(), function(quidd)
-		    	{
-		    		_.each(quidd.properties, function(property)
-		    		{
-		    			if(property.name == "shmdata-writers")
-		    			{
-		    				shmdatas[quidd.name] = property.value["shmdata_writers"];
-		    			}
-		    		});
-		    	});
-
-		    	return shmdatas;
-		    },
-		    getShmdata : function(quiddName)
-		    {
-		    	var shmdatas = {};
-		    	_.filter(this.get(quiddName).get("properties"), function(property)
-		    	{
-		    		if(property.name == "shmdata-writers")
-		    		{
-		    			shmdatas[quiddName] = property.value["shmdata_writers"]
-		    		}
-		    	});
-		    	return shmdatas;
 		    }
 		});
 

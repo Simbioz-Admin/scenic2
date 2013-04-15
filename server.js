@@ -98,6 +98,12 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
 	});
 
+	socket.on("remove", function(quiddName){
+		console.log(quiddName);
+		var quiddDelete = switcher.remove(quiddName);
+
+		io.sockets.emit("remove", quiddName);
+	});
 
 	socket.on("setPropertyValue", function(quiddName, property, value, callback){
 		var ok = switcher.set_property_value(quiddName, property, value);

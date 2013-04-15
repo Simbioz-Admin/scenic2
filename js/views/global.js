@@ -72,12 +72,13 @@ define([
 					$(this).remove();
 				})
 			},
-			openPanel : function(){
+			openPanel : function()
+			{
 				$("#panelLeft").animate({width : "70%"});
 				$("#panelRight").delay(100).animate({width : "30%"});
-
 			},
-			closePanel : function(){
+			closePanel : function()
+			{
 				$("#panelLeft").delay(100).animate({width : "100%"});
 				$("#panelRight").animate({width : "0px"});
 			},

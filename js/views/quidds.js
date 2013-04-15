@@ -1,26 +1,32 @@
 define([
 	'underscore',
 	'backbone',
-	'models/quidd',
+	'views/quidd',
 	'text!/templates/quidd.html',
 	'text!/templates/setMethod2.html'
-	],function(_, Backbone, ModelQuidd, quiddTemplate, setMethodTemplate){
+	],function(_, Backbone, ViewQuidd, quiddTemplate, setMethodTemplate){
 
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
 				"click .createSource li" : "openPanelCreate",
 				'click .submit-quidd.create' : 'create',
-				'click .submit-quidd.save' : 'edit',
-				'click .edit' : 'openPanelEdit'
+				//'click .submit-quidd.save' : 'edit',
+				'click .delete-quidd' : 'delete'
+				//'click .edit' : 'openPanelEdit'
 			},
 			initialize : function()
 			{
 				console.log("init QuiddsView");
-				collections.quidds.each(function(model)
+				this.collection.each(function(model)
 				{
-					var view = new ModelQuidd({model : model});
+					var view = new ViewQuidd({model : model});
 				});
+
+				this.collection.bind("add", function(model){
+					var view = new ViewQuidd({model : model});
+				});
+
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
 			openPanelCreate : function()
@@ -30,7 +36,7 @@ define([
 				,	that = this;
 				console.log(className);
 
-				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
+				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
 					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create"});
 					$("#panelRight .content").html(template);
@@ -62,12 +68,18 @@ define([
 				views.global.closePanel();
 				return false;
 			},
+			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS
 			edit : function()
 			{
 				var	quiddName = $("#quiddName").val();
 				this.updateProperties(quiddName);
 				views.global.closePanel();
 				return false;
+			},
+			delete : function(){
+				var quiddName = $("#quiddName").val();
+				this.collection.delete(quiddName);
+				views.global.closePanel();
 			},
 			updateProperties: function(quiddName)
 			{
@@ -118,19 +130,7 @@ define([
 					}
 				});
 			},
-			openPanelEdit : function()
-			{
-				var quiddName = $(event.target).parent().parent().data("quiddname");
-				console.log(quiddName);
-				collections.quidds.getProperties(quiddName, function(properties)
-				{
-					console.log(properties);
-					var template = _.template(quiddTemplate, {title : "Edit "+quiddName, quiddName : quiddName,  properties : properties, action : "save"});
-					$("#panelRight .content").html(template);
-					views.global.openPanel();
-				});
-				//var template = _.template(quiddTemplate, {title : "Edit "+className, className : className,  properties : properties, action : "save"});
-			},
+			
 		});
 
 		return QuiddView;

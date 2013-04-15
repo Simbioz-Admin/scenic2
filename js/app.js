@@ -46,8 +46,8 @@ define([
           ({
             success : function(response)
             {
-              collections.quidds.render();
-              views.quidds = new QuiddsView({collection : collections.classesDoc});
+              //collections.quidds.render();
+              views.quidds = new QuiddsView({collection : collections.quidds});
             }
           });
         }

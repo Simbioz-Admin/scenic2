@@ -8,8 +8,18 @@ define([
 		var QuiddsCollection = Backbone.Collection.extend({
 			model : QuiddModel,
 			url : '/quidds/',
-			parse : function(results, xhr){
-		        return results;
+			parse : function(results, xhr)
+			{
+				//exclude specific node not use in interface
+				var quidds = [];
+				_.each(results, function(quidd)
+				{
+					if(quidd.class != "rtpsession" && quidd.class != "logger" && quidd.class != "runtime" && quidd.class != "logger" && quidd.class != "SOAPcontrolServer" )
+					{
+						quidds.push(quidd);
+					}
+				})
+		        return quidds;
 
 		    },
 		    initialize : function()
@@ -26,11 +36,6 @@ define([
 		    	socket.on("remove", function(quiddName){
 		    		that.remove(quiddName);
 		    	});
-
-		    	// this.bind("add", function(model)
-		    	// {
-		    	// 	var view = new QuiddsView({model : model});
-		    	// });
 
 		    	//receive notification for set property of quidd
 		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
@@ -79,6 +84,11 @@ define([
 		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
 		    	{
 		    		callback(propertiesOfQuidd);
+		    	});
+		    },
+		    getPropertyValue : function(nameQuidd, property, callback){
+		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
+		    		callback(propertyValue);
 		    	});
 		    },
 		    getPropertiesWithValues : function(nameQuidd, callback)

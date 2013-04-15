@@ -50,7 +50,7 @@ app.get('/methods_doc', function(request, response) {
 
 app.get('/quidds', function(request, response) {
   response.contentType('application/json');
-  response.send(getQuidditiesWithPropertiesAndValues());
+  response.send(getQuidds());
 });
 
 app.get('/shmdatas', function(request, response) {
@@ -71,6 +71,10 @@ switcher.register_log_callback(function (msg){
 		//io.sockets.emit("messageLog", msg);
       	console.log('.....log message: ', msg);
  });
+
+switcher.register_prop_callback(function (qname, qprop, pvalue){
+    console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+});
 
 switcher.create("rtpsession", "defaultrtp");
 
@@ -98,6 +102,7 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
 	});
 
+
 	socket.on("remove", function(quiddName){
 		console.log(quiddName);
 		var quiddDelete = switcher.remove(quiddName);
@@ -105,21 +110,25 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit("remove", quiddName);
 	});
 
+
 	socket.on("setPropertyValue", function(quiddName, property, value, callback){
 		var ok = switcher.set_property_value(quiddName, property, value);
 		callback(ok);
 		io.sockets.emit("setPropertyValue", quiddName, property, value);
 	});
 
+
 	socket.on("getMethodDescription", function(quiddName, method, callback){
 		var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
 		callback(descriptionJson);
 	});
 
+
 	socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
 		var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 		callback(methodsDescriptionByClass);
 	});
+
 
 	socket.on("invoke", function(quiddName, method, parameters, callback){
 		var invoke = switcher.invoke(quiddName, method, parameters);
@@ -127,24 +136,42 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 	});
 
-	socket.on("getPropertiesOfClass", function(className, callback){
 
+	socket.on("getPropertiesOfClass", function(className, callback){
 		var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
 		callback(propertiesofClass);
 	});
+
 
 	socket.on("getPropertiesOfQuidd", function(quiddName, callback){
 		var propertiesOfQuidd = getQuiddPropertiesWithValues(quiddName);
 		callback(propertiesOfQuidd);
 	});
 
+
 	socket.on("getQuidditiesWithPropertiesAndValues", function(quiddName, callback){
 		var QuidditiesWithPropertiesAndValues = getQuidditiesWithPropertiesAndValues(quiddName);
 		callback(QuidditiesWithPropertiesAndValues);
 	});
 
+	socket.on("get_property_value", function(quiddName, property, callback){
+		var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
+		console.log("PROPERTIES", quidds);
+		callback(quidds);
+	});
+
 
 });
+
+function getQuidds(){
+	var quidds =  $.parseJSON(switcher.get_quiddities_description()).quiddities;
+	return quidds;
+}
+
+function get_property_value(nameQuidd, property){
+	var property = $.parse.JSON(switcher.get_property_value(nameQuidd, property));
+	return property;
+}
 
 // merge properties of classes with ClassesDoc
 function getClassesDocWithProperties(){
@@ -155,6 +182,8 @@ function getClassesDocWithProperties(){
 	});
 	return docs;
 }
+
+
 function getQuidditiesWithMethods(){
 	var docs = $.parseJSON(switcher.get_classes_doc());
 	$.each(docs.classes, function(index, classDoc){;

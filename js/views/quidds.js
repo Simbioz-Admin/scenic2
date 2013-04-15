@@ -11,17 +11,14 @@ define([
 			events : {
 				"click .createSource li" : "openPanelCreate",
 				'click .submit-quidd.create' : 'create',
-				//'click .submit-quidd.save' : 'edit',
+				'click .submit-quidd.save' : 'edit',
 				'click .delete-quidd' : 'delete'
 				//'click .edit' : 'openPanelEdit'
 			},
 			initialize : function()
 			{
 				console.log("init QuiddsView");
-				this.collection.each(function(model)
-				{
-					var view = new ViewQuidd({model : model});
-				});
+
 
 				this.collection.bind("add", function(model){
 					var view = new ViewQuidd({model : model});
@@ -59,10 +56,8 @@ define([
 				//creation of Quidd and set properties
 				collections.quidds.create(className, quiddName, function(quiddName)
 				{
-					
 					that.updateProperties(quiddName);
 					that.setMethods(quiddName);
-
 				});
 
 				views.global.closePanel();

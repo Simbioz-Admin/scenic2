@@ -11,10 +11,9 @@ define([
   'views/global',
   'views/quidds',
   'views/methods',
-  'views/shmdatas',
   'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, shmdatasView, DestinationsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, DestinationsView){
   var initialize = function(){
     "use strict";
 
@@ -49,14 +48,6 @@ define([
             {
               collections.quidds.render();
               views.quidds = new QuiddsView({collection : collections.classesDoc});
-              // collections.shmdatas = new ShmdatasCollection();
-              // collections.shmdatas.fetch
-              // ({
-              //   success : function(response)
-              //   {
-              //     views.shmdatas = new shmdatasView({ collection : collections.shmdatas});
-              //   }
-              // });
             }
           });
         }

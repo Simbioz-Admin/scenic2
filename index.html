@@ -21,50 +21,44 @@
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
 		<header id="header">
 			<div id="logo">SCENIC2</div>
-			<!-- <div class="btn" id="openPanel">&gt;&gt;</div> -->
-			<!-- <div class="btn" id="saveJson">Save</div>  -->
-			<div id="menu"></div>
-
 		</header>
 
-		<div id="windowTable">
 
-			<div id="headerTable">
-				<div class="btnCreate" style="margin-top:4px;">SAVE</div>
-				<div class="btnCreate btnCreateDestination">+ OUT</div>
-				<div class="btnCreate btnCreateSource">+ IN</div>
-			</div>
+		<div id="panelLeft">
+			<div id="globalTable">
 
-			<table id="testTable">
+				<div id="headerTable">
+					<ul id="menuTable"></ul>
+				</div><!-- headerTable -->
 
-				<thead>
-
-					<tr>
-						<th rowspan="2" colspan="2" class="infoTable">
-							<div id="titleIn"><span class="rotate">IN</span></div>
-							<div id="titleOut">OUT</div>
-						</th>
-
-					</tr>
-
-					<tr id="destinations"></tr>
-
-				</thead>
-				<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
+				<table id="testTable">
+					<thead>
+						<tr>
+							<th rowspan="2" colspan="2" class="infoTable">
+								<div id="titleIn"><span class="rotate">IN</span></div>
+								<div id="titleOut">OUT</div>
+							</th>
+						</tr>
+						<tr id="destinations"></tr>
+					</thead>
+					<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
 			</table>
+
+			</div><!-- end globalTable -->
+		</div><!-- end panelLeft -->
+
+		<div id="panelRight">
+			<class class="content clearfix"></class>
 		</div>
-
-
-
-
-		<div id="panel"></div>
 	    
-		<div id="bgLightbox"></div>
-		<div id="lightBox"></div>
+
 		<div id="log" style="display:none;">
 			<h3>Log</h3>
 			<class class="content"></class>
 		</div>
+
+
+
 
 		<script id="item-template" type="text/x-jquery-tmpl">
 		<% var stateTitle = false;

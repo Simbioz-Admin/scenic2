@@ -12,14 +12,16 @@ define([
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click .box" : "createConnection"
+				"click .box" : "createConnection",
+				"click #close" : "closePanel",
+				"change .checkbox" : 'stateCheckbox'
 			},
 
 			//generation of the main Menu 
 			initialize : function(){
 				console.log("init global View");
 				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
-				$("#menu").html(template);
+				$("#menuTable").html(template);
 
 				socket.on("messageLog", function(msg){
 					$("#log .content").append(msg+"<br><br>");
@@ -70,11 +72,33 @@ define([
 					$(this).remove();
 				})
 			},
-			openLightBox : function(){
-				$("#lightBox, #bgLightbox").fadeIn(50);
+			openPanel : function(){
+				$("#panelLeft").animate({width : "70%"});
+				$("#panelRight").delay(100).animate({width : "30%"});
+
 			},
-			closeLightBox : function(){
-				$("#lightBox, #bgLightbox").fadeOut(50);
+			closePanel : function(){
+				$("#panelLeft").delay(100).animate({width : "100%"});
+				$("#panelRight").animate({width : "0px"});
+			},
+			stateCheckbox : function(){
+					
+					var check = $(event.target);
+
+					if (check.is(':checked')) {
+						console.log("check");
+						check.val('true').attr('checked', true);
+					}else{
+						console.log("uncheck");
+						check.val('false').attr('checked', false);
+					}
+				     // if($(this).attr('checked')){
+				     //      $(this).val('TRUE');
+				     // }else{
+
+				     //      $(this).val('FALSE');
+				     // }
+	
 			}
 		});
 

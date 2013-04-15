@@ -9,7 +9,7 @@ define([
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .dropdown-menu li" : "openPanelCreate",
+				"click .createSource li" : "openPanelCreate",
 				'click .submit-quidd.create' : 'create',
 				'click .submit-quidd.save' : 'edit',
 				'click .edit' : 'openPanelEdit'
@@ -28,13 +28,13 @@ define([
 
 				var className = $(event.target).data("name")
 				,	that = this;
-
+				console.log(className);
 
 				this.collection.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
 					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create"});
-					$("#lightBox").html(template);
-					views.global.openLightBox();
+					$("#panelRight .content").html(template);
+					views.global.openPanel();
 				});
 				
 				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata"], function(methods)
@@ -59,14 +59,14 @@ define([
 
 				});
 
-				views.global.closeLightBox();
+				views.global.closePanel();
 				return false;
 			},
 			edit : function()
 			{
 				var	quiddName = $("#quiddName").val();
 				this.updateProperties(quiddName);
-				views.global.closeLightBox();
+				views.global.closePanel();
 				return false;
 			},
 			updateProperties: function(quiddName)
@@ -120,13 +120,14 @@ define([
 			},
 			openPanelEdit : function()
 			{
-				var quiddName = $(event.target).parent().parent().data("quidd");
+				var quiddName = $(event.target).parent().parent().data("quiddname");
+				console.log(quiddName);
 				collections.quidds.getProperties(quiddName, function(properties)
 				{
 					console.log(properties);
 					var template = _.template(quiddTemplate, {title : "Edit "+quiddName, quiddName : quiddName,  properties : properties, action : "save"});
-					$("#lightBox").html(template);
-					views.global.openLightBox();
+					$("#panelRight .content").html(template);
+					views.global.openPanel();
 				});
 				//var template = _.template(quiddTemplate, {title : "Edit "+className, className : className,  properties : properties, action : "save"});
 			},

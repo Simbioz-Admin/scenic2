@@ -53,8 +53,8 @@ define([
 				{
 					console.log(methodDescription);
 					var template = _.template(templateMethod, { title : "set Method "+methodDescription.name, quiddName : "defaultrtp",  method : "add_destination", description : methodDescription});
-					$("#lightBox").html(template);
-					views.global.openLightBox();
+					$("#panelRight .content").html(template);
+					views.global.openPanel();
 				});
 			},
 			create : function()
@@ -73,7 +73,7 @@ define([
 
 				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok)
 				{
-					if(ok) views.global.closeLightBox();
+					if(ok) views.global.closePanel();
 				});
 
 			return false;

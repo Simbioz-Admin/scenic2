@@ -21,29 +21,59 @@
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
 		<header id="header">
 			<div id="logo">SCENIC2</div>
-			<!-- <div class="btn" id="openPanel">&gt;&gt;</div> -->
-			<!-- <div class="btn" id="saveJson">Save</div>  -->
-			<div id="menu"></div>
-
 		</header>
 
-		<div id="globalTable">
-			<table id="headerDest"></table>
 
-			<div id="tableau">
-				<div id="cache-join"></div>
-				<table  id="table" cellspacing="0" cellpadding="0"></table>
-			</div>
+		<div id="panelLeft">
+			<div id="globalTable">
+
+				<div id="headerTable">
+					<ul id="menuTable"></ul>
+				</div><!-- headerTable -->
+
+				<table id="testTable">
+					<thead>
+						<tr>
+							<th rowspan="2" colspan="2" class="infoTable">
+								<div id="titleIn"><span class="rotate">IN</span></div>
+								<div id="titleOut">OUT</div>
+							</th>
+						</tr>
+						<tr id="destinations"></tr>
+					</thead>
+					<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
+			</table>
+
+			</div><!-- end globalTable -->
+		</div><!-- end panelLeft -->
+
+		<div id="panelRight">
+			<class class="content clearfix"></class>
 		</div>
-
-		<div id="panel"></div>
 	    
-		<div id="bgLightbox"></div>
-		<div id="lightBox"></div>
-		<div id="log">
+
+		<div id="log" style="display:none;">
 			<h3>Log</h3>
 			<class class="content"></class>
 		</div>
+
+
+
+
+		<script id="item-template" type="text/x-jquery-tmpl">
+		<% var stateTitle = false;
+		 _.each(shmdatas, function(shmdata){ %>
+
+			<% if(!stateTitle){ %>
+			<td rowspan="<%=shmdatas.length%>" class="group groupSource" ><div class="vertical"><%=name%></div></td>
+			<% stateTitle = true; }%>
+
+			<th scope="row" class="nameInOut"  title="<%=shmdata.path%>" ><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></th>
+
+			<!-- here td of destinations -->
+		<% }); %>
+		 </script>
+
 		<script type="text/javascript">
 		$(document).ready(function(){
 			$(function(){

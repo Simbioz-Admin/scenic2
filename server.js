@@ -14,6 +14,7 @@ server.listen(8085);
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
+app.use(express.bodyParser());
 
 //please quit switcher properly
 process.on('exit', function () {
@@ -36,10 +37,67 @@ app.get('/', function (req, res){
   res.sendfile(__dirname + '/index.html');
 });
 
-app.get('/classes_doc', function(request, response) {
-  response.contentType('application/json');
-  response.send(getClassesDocWithProperties());
+
+
+// app.get('/classes_doc', function(request, response) {
+//   response.contentType('application/json');
+//   response.send(getClassesDocWithProperties());
+// });
+
+app.get('/classes_doc/:className?/:type?/:value?', function(req, res){
+
+	if(req.params.type == "properties")
+	{
+		if(req.params.value) 	res.send(get_property_description_by_class(req.params.className, req.params.value));
+		else 					res.send(get_properties_description_by_class(req.params.className));
+	}
+	else if(req.params.type == "methods")
+	{
+		if(req.params.value)	res.send(get_method_description_by_class(req.params.className, req.params.value));
+		else					res.send(get_methods_description_by_class(req.params.className));
+	}
+	else if(req.params.className)
+	{
+		res.send(get_class_doc(req.params.className));
+	}
+	else
+	{
+		if(req.query.category) res.send(get_classes_docs_type(req.query.category));
+		else res.send(get_classes_docs());
+	}
 });
+
+
+
+app.get('/quidds/:quiddName?/:type?/:value?', function(req, res)
+{
+	if(req.params.type == "properties")
+	{
+		if(req.params.value)	res.send(get_property_description(req.params.quiddName, req.params.value))
+		else					res.send(get_properties_description(req.params.quiddName));
+  	}
+	else if(req.params.type == "methods")
+	{
+		if(req.params.value)	res.send(get_method_description(req.params.quiddName, req.params.value));
+		else					res.send(get_methods_description(req.params.quiddName));
+	}
+  	else if(req.params.quiddName)
+  	{
+		res.send(get_quiddity_description(req.params.quiddName));
+  	}
+  	else
+  	{
+		res.send(getQuidds());
+  	}
+});
+
+
+
+// app.get('/classes_doc/:className', function(req, res){
+// 	console.log(req.query);
+// 	res.send(get_class_doc(req.params.className));
+// });
+
 
 app.get('/methods_doc', function(request, response) {
   response.contentType('application/json');
@@ -47,11 +105,6 @@ app.get('/methods_doc', function(request, response) {
 });
 
 
-
-app.get('/quidds', function(request, response) {
-  response.contentType('application/json');
-  response.send(getQuidds());
-});
 
 app.get('/shmdatas', function(request, response) {
   response.contentType('application/json');
@@ -69,11 +122,11 @@ app.get('/destinations', function(request, response) {
 
 switcher.register_log_callback(function (msg){
 		//io.sockets.emit("messageLog", msg);
-      	console.log('.....log message: ', msg);
+		//console.log('.....log message: ', msg);
  });
 
 switcher.register_prop_callback(function (qname, qprop, pvalue){
-    console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 });
 
 switcher.create("rtpsession", "defaultrtp");
@@ -81,7 +134,7 @@ switcher.create("rtpsession", "defaultrtp");
 switcher.create("videotestsrc", "video");
 switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
 
-console.log(switcher.create("SOAPcontrolServer", "soap"));
+switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", ["8084"]);
 
 //console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
@@ -92,7 +145,8 @@ switcher.invoke("soap", "set_port", ["8084"]);
 io.sockets.on('connection', function (socket) {
 
 
-	socket.on("create", function(className, name, callback){        
+	socket.on("create", function(className, name, callback)
+	{        
 		var quiddName = switcher.create(className, name);
 		//recover the default properties with values
 		var properties = getQuiddPropertiesWithValues(quiddName)
@@ -156,7 +210,6 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on("get_property_value", function(quiddName, property, callback){
 		var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
-		console.log("PROPERTIES", quidds);
 		callback(quidds);
 	});
 
@@ -168,9 +221,75 @@ function getQuidds(){
 	return quidds;
 }
 
-function get_property_value(nameQuidd, property){
-	var property = $.parse.JSON(switcher.get_property_value(nameQuidd, property));
+function get_classes_docs(){
+	var docs = $.parseJSON(switcher.get_classes_doc());
+	return docs;
+}
+
+function get_classes_docs_type(type){
+	var docsType = { classes : []};
+	var docs = get_classes_docs();
+	$.each(docs.classes, function(index, doc)
+	{
+		if(doc["category"].indexOf(type) > -1) docsType.classes.push(doc);
+	});
+	return docsType;
+}
+
+function get_class_doc(className){
+	var doc = $.parseJSON(switcher.get_class_doc(className));
+	return doc;
+}
+
+function get_properties_description_by_class(nameClass){
+	var properties = $.parseJSON(switcher.get_properties_description_by_class(nameClass));
+	return properties;
+}
+
+function get_property_description_by_class(nameClass, property){
+	var properties = $.parseJSON(switcher.get_property_description_by_class(nameClass, property));
+	return properties;
+}
+
+function get_property_value(nameClass, property){
+	var property = $.parse.JSON(switcher.get_property_value(nameClass, property));
 	return property;
+}
+
+function get_methods_description_by_class(nameClass){
+	var methods = $.parseJSON(switcher.get_methods_description_by_class(nameClass));
+	return methods;
+}
+
+function get_method_description_by_class(nameClass, method){
+	var method = $.parseJSON(switcher.get_method_description_by_class(nameClass, method));
+	return method;
+}
+
+function get_quiddity_description(nameQuidd){
+	var quidd = $.parseJSON(switcher.get_quiddity_description(nameQuidd));
+	return quidd;
+}
+
+function get_properties_description(nameQuidd){
+	var properties = $.parseJSON(switcher.get_properties_description(nameQuidd));
+	return properties
+}
+
+function get_property_description(nameQuidd, property){
+	var property = $.parseJSON(switcher.get_property_description(nameQuidd, property));
+	return property
+}
+
+function get_methods_description(nameQuidd){
+	console.log(nameQuidd);
+	var methods = $.parseJSON(switcher.get_methods_description(nameQuidd));
+	return methods
+}
+
+function get_method_description(nameQuidd, method){
+	var method = $.parseJSON(switcher.get_method_description(nameQuidd, method));
+	return method
 }
 
 // merge properties of classes with ClassesDoc
@@ -209,7 +328,6 @@ function getQuidditiesWithPropertiesAndValues(){
 
 
 function getQuiddPropertiesWithValues(quiddName){
-
 	var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 	//recover the value set for the properties
 	$.each(propertiesQuidd, function(index, property){

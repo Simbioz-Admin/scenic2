@@ -2,9 +2,10 @@ define([
 	'underscore',
 	'backbone',
 	'views/quidd',
+	'models	/quidd',
 	'text!/templates/quidd.html',
 	'text!/templates/setMethod2.html'
-	],function(_, Backbone, ViewQuidd, quiddTemplate, setMethodTemplate){
+	],function(_, Backbone, ViewQuidd, QuiddModel, quiddTemplate, setMethodTemplate){
 
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
@@ -31,10 +32,10 @@ define([
 
 				var className = $(event.target).data("name")
 				,	that = this;
-				console.log(className);
 
 				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
+					
 					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create"});
 					$("#panelRight .content").html(template);
 					views.global.openPanel();
@@ -43,7 +44,7 @@ define([
 				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata"], function(methods)
 				{
 					var template = _.template(setMethodTemplate, {methods : methods});
-					$("#lightBox ul").after(template);
+					$("#panelRight .content ul").after(template);
 				});
 
 			},
@@ -68,7 +69,7 @@ define([
 			{
 				var	quiddName = $("#quiddName").val();
 				this.updateProperties(quiddName);
-				views.global.closePanel();
+				//views.global.closePanel();
 				return false;
 			},
 			delete : function(){

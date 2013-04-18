@@ -12,6 +12,7 @@ define([
 			template : SourceTemplate,
 			events : {
 				'click .edit' : 'openPanelEdit',
+				'click .preview' : 'preview'
 			},
 			initialize : function()
 			{
@@ -48,15 +49,29 @@ define([
 			openPanelEdit : function()
 			{
 					var quiddName = this.model.get("name");
-					console.log(quiddName);
+					
 					collections.quidds.getProperties(quiddName, function(properties)
 					{
-						console.log(properties);
+						//console.log(properties);
 						var template = _.template(quiddTemplate, {title : "Edit "+quiddName, quiddName : quiddName,  properties : properties, action : "save"});
 						$("#panelRight .content").html(template);
 						views.global.openPanel();
 					});
 			},
+			preview : function(){
+				var quidd = this.model.get("name")
+				,	path = $(event.target).parent().parent().data("path");
+				var type = null;
+				console.log(this.model.get("class"));
+
+				if(this.model.get("class") == "videotestsrc" || this.model.get("class") == "gstvideosrc"  || this.model.get("class") ==  "x264enc") type = "videosink";
+				if(this.model.get("class") == "audiotestsrc")  type = "pulsesink";
+
+				collections.quidds.create(type, "sink-"+quidd, function(quidd){
+					console.log(quidd);
+					views.methods.setMethod(quidd, "connect", [ path ]);
+				});
+			}
 			
 		});
 

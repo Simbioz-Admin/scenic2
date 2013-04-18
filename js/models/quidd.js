@@ -5,6 +5,7 @@ define([
 	],function(_, Backbone, ViewQuidd){
 
 		var QuiddModel = Backbone.Model.extend({
+			url : "/quidd/",
 			idAttribute: "name",
 			defaults : {
 				"name" : null,
@@ -15,9 +16,12 @@ define([
 			initialize : function()
 			{
 				var that = this;
-				this.getShmdatas(function(ok){
-					var view = new ViewQuidd({ model : that });
-				});
+				if(this.collection)
+				{
+					this.getShmdatas(function(ok){
+						var view = new ViewQuidd({ model : that });
+					});
+				}
 			},
 			getShmdatas : function(callback){
 				var that = this;
@@ -30,6 +34,10 @@ define([
 			},
 			getProperties : function(){
 				
+			},
+			remove : function(){
+				console.log("DESTROY !!!");
+				this.destroy();
 			}
 		});
 

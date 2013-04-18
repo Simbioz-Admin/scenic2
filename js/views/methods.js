@@ -64,30 +64,32 @@ define([
 					{
 						//update the properties of quidd because setMethod can change properties or create
 						var quidd = collections.quidds.get(quiddName);
-						collections.quidds.getProperties(quiddName, function(propertiesOfQuidd)
+						if(quidd)
 						{
-							quidd.set({"properties" : propertiesOfQuidd});
-
-							/**** TEMPORARY CREATE ENC AFTER SET METHOD FOR GSTVIDEOSRC *****************************///
-							if(quidd.get("class") == "gstvideosrc")
+							collections.quidds.getProperties(quiddName, function(propertiesOfQuidd)
 							{
-					    		_.each(quidd.get("properties"), function(property)
-					    		{
-					    			if(property.name == "shmdata-writers")
-					    			{
-						    			var path = property.value.shmdata_writers[0].path;
+								quidd.set({"properties" : propertiesOfQuidd});
 
-						    			collections.quidds.create("x264enc",quidd.get("name")+"_enc", function(name)
+								/**** TEMPORARY CREATE ENC AFTER SET METHOD FOR GSTVIDEOSRC *****************************///
+								if(quidd.get("class") == "gstvideosrc")
+								{
+						    		_.each(quidd.get("properties"), function(property)
+						    		{
+						    			if(property.name == "shmdata-writers")
 						    			{
-						    				views.methods.setMethod(name, "connect", [path]);
-						    			});
-					    			}
-					    		});
-				    		}
+							    			var path = property.value.shmdata_writers[0].path;
 
-						});
+							    			collections.quidds.create("x264enc",quidd.get("name")+"_enc", function(name)
+							    			{
+							    				views.methods.setMethod(name, "connect", [path]);
+							    			});
+						    			}
+						    		});
+					    		}
 
-						callback(ok);
+							});
+						}
+						if(callback) callback(ok);
 					}
 				});
 			}

@@ -44,8 +44,6 @@ define([
 				,	path = box.parent().data("path")
 				,	port = "8050";
 
-				console.log(destName, path, port);
-
 				if(!box.hasClass("active")){
 					//add to the session the shmdata 
 					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){

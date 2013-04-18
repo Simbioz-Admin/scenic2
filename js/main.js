@@ -31,8 +31,11 @@ require([
   'util',
   collections = [],
   views = [],
+  config = {
+      propertiesExclude : ["shmdata-readers", "shmdata-writers"]
+    },
   socket = io.connect()
 ], function(App){
-  	App.initialize();
+  App.initialize();
 });
 

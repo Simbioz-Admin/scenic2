@@ -1,6 +1,9 @@
-<a href="#" class="dropdown-toggle">Add sources</a>
-<ul class="dropdown-menu">
-	<% _.each(menu, function(category){ %>
-		<li data-name="<%=category["class name"] %>"><%=category["class name"] %></li>
-	<% }); %>
-</ul>
+<!-- 	<li><div class="btnCreate">SAVE</div></li> -->
+	<li><div class="btnCreate" id="createDestination">+ OUT</div></li>
+	<li><div class="btnCreate">+ IN</div>
+		<ul class="createSource">
+			<% _.each(menu, function(category){ %>
+				<li data-name="<%=category["class name"] %>"><%=category["class name"] %></li>
+			<% }); %>
+		</ul>
+	</li>

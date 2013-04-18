@@ -6,25 +6,56 @@ define([
   'jquery',
   'collections/classes_doc',
   'collections/quidds',
-  'views/menu',
-  'views/quidds'
+  'collections/shmdatas',
+  'collections/destinations',
+  'views/global',
+  'views/quidds',
+  'views/methods',
+  'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, MenuView, QuiddsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, DestinationsView){
   var initialize = function(){
+    "use strict";
 
-    //init the different collection of the project
+  
+    //*** init the different collection of the project ***//
+
+    //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties
     collections.classesDoc = new ClassesDocCollection();
     collections.classesDoc.fetch({
-      success : function(response){
+      success : function(response)
+      {
         //Need to fetch collection before create view
-        views.menu = new MenuView({collection : collections.classesDoc.getByCategory("source")});
-
+        views.global = new GlobalView({collection : collections.classesDoc.getByCategory("source")});
       }
     });
 
-    collections.quidds = new QuiddsCollection();
-    views.quidds = new QuiddsView({collection : collections.classesDoc});
 
+
+   collections.destinations = new DestinationsCollection();
+      collections.destinations.fetch
+      ({
+        success : function(response)
+        {
+          collections.destinations.render();
+          views.destinations = new DestinationsView({ collection : collections.destinations });
+
+          //init the Collections of quidd where is stocked all informations about the quidds existing.
+          collections.quidds = new QuiddsCollection();
+          collections.quidds.fetch
+          ({
+            success : function(response)
+            {
+              //collections.quidds.render();
+              views.quidds = new QuiddsView({collection : collections.quidds});
+            }
+          });
+        }
+      });
+
+
+
+    views.methods = new MethodsView();
   }
 
   return {

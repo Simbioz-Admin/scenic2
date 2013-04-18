@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Tempi-snake - Design interactions by connecting things</title>
+    <title>Scenic2 - SAT</title>
     <!-- Load the script "js/main.js" as our entry point -->
 
     <!-- /**** CSS ****/ -->
@@ -9,7 +9,7 @@
 	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
 
 	 <!-- /**** JAVSCRIPT ****/ -->
 
@@ -17,20 +17,82 @@
     <script data-main="/js/main.js" src="/js/libs/require-jquery.js"></script>
 
 </head>
-<body>
+<body class="scenic2">
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
-		<header id="header-tempiSnake">
-			<div id="logo"></div>
-			<!-- <div class="btn" id="openPanel">&gt;&gt;</div> -->
-			<!-- <div class="btn" id="saveJson">Save</div>  -->
-			<div id="menu"></div>
-
+		<header id="header">
+			<div id="logo">SCENIC2</div>
 		</header>
 
-	    
-		<div id="bgLightbox"></div>
-		<div id="lightBox"></div>
 
+		<div id="panelLeft">
+			<div id="globalTable">
+
+				<div id="headerTable">
+					<ul id="menuTable"></ul>
+				</div><!-- headerTable -->
+
+				<table id="testTable">
+					<thead>
+						<tr>
+							<th rowspan="2" colspan="2" class="infoTable">
+								<div id="titleIn"><span class="rotate">IN</span></div>
+								<div id="titleOut">OUT</div>
+							</th>
+						</tr>
+						<tr id="destinations"></tr>
+					</thead>
+					<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
+			</table>
+
+			</div><!-- end globalTable -->
+		</div><!-- end panelLeft -->
+
+		<div id="panelRight">
+			<class class="content clearfix"></class>
+		</div>
+	    
+
+		<div id="log" style="display:none;">
+			<h3>Log</h3>
+			<class class="content"></class>
+		</div>
+
+
+
+
+		<script id="item-template" type="text/x-jquery-tmpl">
+		<% var stateTitle = false;
+		 _.each(shmdatas, function(shmdata){ %>
+
+			<% if(!stateTitle){ %>
+			<td rowspan="<%=shmdatas.length%>" class="group groupSource" ><div class="vertical"><%=name%></div></td>
+			<% stateTitle = true; }%>
+
+			<th scope="row" class="nameInOut"  title="<%=shmdata.path%>" ><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></th>
+
+			<!-- here td of destinations -->
+		<% }); %>
+		 </script>
+
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$(function(){
+				var state = "close";
+				$("#log h3").click(function(){
+					if(state == "open"){
+						$("#log").animate({"right" : -$("#log").width()-61}, function(){
+							state = "close";
+						});
+					}else{
+						$("#log").animate({"right" : 0});
+						console.log("open");
+						state = "open";
+					}
+				});
+
+			})
+		});
+		</script>
 	</body>
 </html>
 

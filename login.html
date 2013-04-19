@@ -1,18 +1,22 @@
 <html>
 <head>
 	<title></title>
+	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
+	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
 </head>
-<body>
-<form action="/login" method="post">
-        
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password"/>
-    </div>
-    <div>
+<body id="login-page">
+<form id="form" action="/login" method="post">
+        <div id="header-form">
+        	<div id="logo">SCENIC2</div>
+        </div>
+  
+        <input type="password" name="password" placeholder="password"/>
+
     	<input type="hidden" name="username" value="bob"/>
         <input type="submit" value="Log In"/>
-    </div>
+
 </form>
 </body>
 </html>

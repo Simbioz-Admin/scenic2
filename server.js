@@ -7,7 +7,10 @@ var express = require("express")
 , io = require('socket.io').listen(server, { log: false })
 , logo = require('./js/libs/logo.js')
 , switcher = require('node-switcher')
-, child_process = require('child_process');
+, child_process = require('child_process')
+, readline = require('readline')
+, passport = require('passport')
+, LocalStrategy = require('passport-local').Strategy;
 
 server.listen(8085);
 
@@ -15,6 +18,21 @@ app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
+
+// configure Express
+app.configure(function() {
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
+
+
 
 //please quit switcher properly
 process.on('exit', function () {
@@ -29,14 +47,48 @@ process.on('SIGINT', function () {
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 
-// ------------------------------------ WEB APP ---------------------------------------------//
+// ------------------------------------ AUTHENTIFICATION ---------------------------------------------//
 
-// routing
-
-app.get('/', function (req, res){
-  res.sendfile(__dirname + '/index.html');
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
+
+
+process.stdin.on('keypress', function(s, key){
+	    process.stdout.write('\u001B[0D\u001B[2K');
+	
+});
+  
+
+var pass = false;
+
+process.argv.forEach(function (val, index, array)
+{
+  if(val == "--p") pass = true;
+});
+
+if(pass)
+{
+	rl.question("choose a password : \n", function(password) {
+	  // TODO: Log the answer in a database
+
+	console.log("Thank for the password!");
+	require("./auth.js")(app, express, passport, LocalStrategy, password);
+	  rl.close();
+	});
+
+} 
+else
+{
+	app.get('/', function (req, res){
+		  res.sendfile(__dirname + '/index.html');
+	});
+}
+
+
+// ------------------------------------ WEB APP ---------------------------------------------//
 
 
 // app.get('/classes_doc', function(request, response) {

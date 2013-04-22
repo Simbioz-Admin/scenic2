@@ -2,7 +2,7 @@ module.exports = function (app, express, passport, DigestStrategy, password) {
 
 
 	var users = [
-	    { id: 1, username: 'bob', password: password }
+	    { id: 1, username: 'scenic2', password: password }
 	];
 
 	function findByUsername(username, fn)

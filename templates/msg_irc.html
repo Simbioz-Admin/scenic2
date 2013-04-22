@@ -1,4 +1,4 @@
 <div class="msg">
-	<div class="user"><%=user%> :</div>
-	<div class="text"><%=msg%></div>
+	<div data-username="<%=user%>" class="user"><%=user%> :</div>
+	<div class="text"><% if(type != "public"){ %> <div class="msgPrivate"><%=type%> </div><% } %><%=msg%></div>
 </div>

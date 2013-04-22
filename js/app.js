@@ -11,9 +11,10 @@ define([
   'views/global',
   'views/quidds',
   'views/methods',
+  'views/irc',
   'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, DestinationsView){
+], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, IrcView, DestinationsView){
   var initialize = function(){
     "use strict";
 
@@ -56,6 +57,7 @@ define([
 
 
     views.methods = new MethodsView();
+    views.irc = new IrcView();
   }
 
   return {

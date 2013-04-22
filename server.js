@@ -10,7 +10,8 @@ var express = require("express")
 , child_process = require('child_process')
 , readline = require('readline')
 , passport = require('passport')
-, DigestStrategy = require('passport-http').DigestStrategy;
+, DigestStrategy = require('passport-http').DigestStrategy
+, irc = require('irc');
 
 server.listen(8085);
 
@@ -86,6 +87,9 @@ else
 		  res.sendfile(__dirname + '/index.html');
 	});
 }
+
+
+
 
 
 // ------------------------------------ WEB APP ---------------------------------------------//
@@ -195,6 +199,11 @@ switcher.invoke("soap", "set_port", ["8084"]);
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
 io.sockets.on('connection', function (socket) {
+
+
+	// ------------------------------------ IRC-CHAT ---------------------------------------------//
+
+	require("./irc.js")(io, socket, irc);
 
 
 	socket.on("create", function(className, name, callback)

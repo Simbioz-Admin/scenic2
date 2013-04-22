@@ -10,7 +10,7 @@ var express = require("express")
 , child_process = require('child_process')
 , readline = require('readline')
 , passport = require('passport')
-, LocalStrategy = require('passport-local').Strategy;
+, DigestStrategy = require('passport-http').DigestStrategy;
 
 server.listen(8085);
 
@@ -75,7 +75,7 @@ if(pass)
 	  // TODO: Log the answer in a database
 
 	console.log("Thank for the password!");
-	require("./auth.js")(app, express, passport, LocalStrategy, password);
+	require("./auth.js")(app, express, passport, DigestStrategy, password);
 	  rl.close();
 	});
 

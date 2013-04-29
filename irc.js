@@ -11,9 +11,9 @@ module.exports = function (io, socket, irc) {
 		//var socket = id;
 		var username = username;
 
-		var client = new irc.Client('irc.freenode.net', username, {
-		    channels: [channelIrc],
-		});
+		var client = new irc.Client('irc.freenode.net', usernames);
+
+
 
 		client.join(channelIrc, function(realUsername){
 			console.log(realUsername, "is connected now!");
@@ -68,7 +68,7 @@ module.exports = function (io, socket, irc) {
 			socket.emit("remove-user", name);
 		});
 
-
+		this.join = function()
 		
 
 		this.send = function(target, msg){ client.say(target, msg); }

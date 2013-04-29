@@ -11,10 +11,22 @@ define([
   'views/global',
   'views/quidds',
   'views/methods',
-  'views/irc',
+  'collections/channels-irc',
   'views/destinations'
 
-], function(_, Backbone, $, ClassesDocCollection, QuiddsCollection, ShmdatasCollection, DestinationsCollection, GlobalView, QuiddsView, MethodsView, IrcView, DestinationsView){
+], function(_, 
+          Backbone, 
+          $, 
+          ClassesDocCollection, 
+          QuiddsCollection, 
+          ShmdatasCollection, 
+          DestinationsCollection, 
+          GlobalView, 
+          QuiddsView, 
+          MethodsView, 
+          ChannelsCollection, 
+          DestinationsView
+  ){
   var initialize = function(){
     "use strict";
 
@@ -55,9 +67,12 @@ define([
       });
 
 
+    collections.irc = new ChannelsCollection();
+    // collections.irc.add({channel : "channel_priv"});
+    // collections.irc.add({channel : "channel"});
 
     views.methods = new MethodsView();
-    views.irc = new IrcView();
+    //views.irc = new IrcView();
   }
 
   return {

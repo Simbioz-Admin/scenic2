@@ -1,4 +1,4 @@
-module.exports = function (io, irc) {
+module.exports = function (io, irc, $) {
 
 	var usersIrc = [];
 	var idChannelIrc = null;
@@ -99,12 +99,15 @@ module.exports = function (io, irc) {
 		//receive list names on channel and send to the interface
 		client.addListener('names', function (channel, names) {
 			console.log(channel, names);
-			socket.emit("list-users", names);
+			var users = [];
+			$.each(names, function(name){ users.push(name)});
+			console.log("list-users-irc",users);
+			socket.emit("list-users-irc",channel, users);
 		});
 
 		client.addListener('join', function (channel, name) {
 			console.log(name, "as joined "+channel);
-			socket.emit("add-user-irc", channel, name)
+			socket.emit("add-user-irc", channel, name);
 			socket.emit("receiveMsg-irc", "info", channel, name+" as joined");
 		});
 

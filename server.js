@@ -198,7 +198,7 @@ switcher.invoke("soap", "set_port", ["8084"]);
 
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
-require("./irc2.js")(io, irc);
+require("./irc2.js")(io, irc, $);
 
 
 io.sockets.on('connection', function (socket) {

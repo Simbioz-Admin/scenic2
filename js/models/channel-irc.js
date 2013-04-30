@@ -10,7 +10,7 @@ define([
 			defaults : {
 				"channel" : null,
 				"username" : "default",
-				"nbConnected" : null
+				"users" : []
 			},
 			initialize : function(){
 				

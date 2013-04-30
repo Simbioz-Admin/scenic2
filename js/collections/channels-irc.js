@@ -12,17 +12,34 @@ define([
 		    initialize : function(){
 		    	console.log("init collection channels-irc");
 		    	var that = this; 
+		    	//create standard channel IRC (#scenic / #scenic_idNodeServer)
 		    	socket.on("join-irc", function(channel)
 		    	{
-			    	//create standard channel IRC (#scenic / #scenic_idNodeServer)
 			    	that.add({channel : channel, username : that.username});
 		    	});
 
-		    	socket.on("receiveMsg-irc", function(from, to, msg)
-				{	
-					console.log("Receive msg : ", from, to, msg);
-					that.addMessage(to, from, msg);
+		    	socket.on("receiveMsg-irc", function(from, to, msg){ that.addMessage(to, from, msg); });
+
+
+		    	socket.on("list-users-irc", function(channel, names)
+				{
+					that.setListUsers(channel, names);
 				});
+
+				socket.on("add-user-irc", function(channel, name)
+				{
+					console.log("user in : ", channel, name);
+					that.addlistUser(channel, name);
+
+				});
+
+				socket.on("remove-user-irc", function(channel, name)
+				{
+					console.log("user in : ", channel, name);
+					that.removelistUser(channel, name);
+
+				});
+
 
 				$("#submit-chat").click(function()
 				{  
@@ -32,6 +49,8 @@ define([
 
 		    	// views.irc = new ViewIrc({collection : this});
 		    	//this.connectClient();
+		    	 // $("#channels").show();
+		    	 // $("#login").hide();
 		    },
 		    connectClient : function()
 			{
@@ -64,6 +83,33 @@ define([
 				// var objDiv = document.getElementById(channel.replace("#",""));
 				// objDiv.scrollTop = objDiv.scrollHeight;
 
+			},
+			setListUsers : function(channel, names)
+			{
+				var channel = this.get(channel.replace("#",""));
+				channel.set({users : names});
+			},
+			addlistUser : function(channel, name)
+			{
+				
+				//var users = this.get(channel).get("users");
+				//users.push(name);
+				var model = this.get(channel.replace("#",""));
+				if(model)
+				{
+					var newUsers = _.clone(model.get("users"));
+					newUsers.push(name);
+					model.set("users", newUsers);
+				}		
+			},
+			removelistUser : function(channel, name)
+			{
+				var model = this.get(channel.replace("#",""));
+				var users = _.clone(model.get("users"));
+				var index = users.indexOf(name);
+				users.splice(index, 1);
+				model.set("users", users);
+				console.log(users);
 			}
 		});
 

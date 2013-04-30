@@ -68,8 +68,8 @@ define([
 
 
     collections.irc = new ChannelsCollection();
-    // collections.irc.add({channel : "channel_priv"});
-    // collections.irc.add({channel : "channel"});
+    //collections.irc.add({channel : "channel_priv"});
+    //collections.irc.add({channel : "channel"});
 
     views.methods = new MethodsView();
     //views.irc = new IrcView();

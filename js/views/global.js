@@ -39,15 +39,17 @@ define([
 				})
 			},
 			createConnection : function(){
+				
 				var box = $(event.target)
 				,	destName = box.data("hostname")
 				,	path = box.parent().data("path")
 				,	port = "8050";
 
 				if(!box.hasClass("active")){
+					console.log(path);
 					//add to the session the shmdata 
 					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){
-
+						console.log("OK@");
 					});
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){

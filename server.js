@@ -187,8 +187,8 @@ switcher.register_prop_callback(function (qname, qprop, pvalue){
 
 switcher.create("rtpsession", "defaultrtp");
 
-switcher.create("videotestsrc", "video");
-switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
+//switcher.create("videotestsrc", "video");
+//switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
 
 switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", ["8084"]);

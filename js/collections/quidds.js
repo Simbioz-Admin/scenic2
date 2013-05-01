@@ -32,20 +32,7 @@ define([
 		    	{
 		    		var model = new QuiddModel(quidd);
 		    		that.add(model);
-		    		var type = model.get("class");
 
-		    		if(type == "videotestsrc" || type == "gstvideosrc")
-		    		{
-		    			model.getShmdatas(function(shmdatas)
-		    			{
-		    				var pathShmdata = shmdatas[1].path;
-		    				that.create("x264enc", model.get("name")+"_enc", function(name)
-		    				{
-		    					console.log("need to set method");
-		    					views.methods.setMethod(name, "connect", [pathShmdata]);
-		    				})
-		    			})
-		    		}
 		    	});
 
 		    	socket.on("remove", function(quiddName){
@@ -69,24 +56,39 @@ define([
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
+
 		    		console.log("ask for create temporary enc for videotestsrc");
 		    		//if it's video we create automaticlly compress vid shmdata
-		    		// if(quidd.class == "videotestsrc")
-		    		// {
-			    	// 	_.each(quidd.properties, function(property)
-			    	// 	{
-			    	// 		if(property.name == "shmdata-writers")
-			    	// 		{
-				    // 			var path = property.value.shmdata_writers[1].path;
+		    		if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
+		    		{
+		    			setTimeout(function(){
+			    			console.log(quidd.name);
+			    			var model = collections.quidds.get(quidd.name);
+			    			var path = model.get("shmdatas")[0]["path"];
+			    			console.log(path);
+			    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+			    			{
+			    				views.methods.setMethod(name, "connect", [path]);
+			    				console.log("SET !!!!");
+			    			});
 
-				    // 			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-				    // 			{
-				    // 				views.methods.setMethod(name, "connect", [path]);
-				    // 				console.log("SET !!!!");
-				    // 			});
-			    	// 		}
-			    	// 	});
-		    		// }
+		    			},1000);
+
+			    		// _.each(quidd.properties, function(property)
+			    		// {
+			    		// 	if(property.name == "shmdata-writers")
+			    		// 	{
+			    		// 		console.log(property);
+				    	// 		var path = property.value.shmdata_writers[0].path;
+
+				    	// 		collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+				    	// 		{
+				    	// 			views.methods.setMethod(name, "connect", [path]);
+				    	// 			console.log("SET !!!!");
+				    	// 		});
+			    		// 	}
+			    		// });
+		    		}
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});

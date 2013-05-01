@@ -30,7 +30,22 @@ define([
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd, properties)
 		    	{
-		    		that.add(quidd);
+		    		var model = new QuiddModel(quidd);
+		    		that.add(model);
+		    		var type = model.get("class");
+
+		    		if(type == "videotestsrc" || type == "gstvideosrc")
+		    		{
+		    			model.getShmdatas(function(shmdatas)
+		    			{
+		    				var pathShmdata = shmdatas[1].path;
+		    				that.create("x264enc", model.get("name")+"_enc", function(name)
+		    				{
+		    					console.log("need to set method");
+		    					views.methods.setMethod(name, "connect", [pathShmdata]);
+		    				})
+		    			})
+		    		}
 		    	});
 
 		    	socket.on("remove", function(quiddName){

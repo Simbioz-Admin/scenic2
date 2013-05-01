@@ -21,25 +21,29 @@ define([
 			},
 			render : function()
 			{
-
+				console.log("RENDER SOURCES");
 				var model = this.model
 				, 	that = this
-				, propertiesShmdata = this.model.get("shmdatas");
-	
-				_.each(propertiesShmdata, function(shmdata, index){
 
-					var template = _.template(SourceTemplate, 
-									{
-										shmdata : shmdata, 
-										index : index, 
-										nbShmdata :  propertiesShmdata.length, 
-										sourceName : model.get("name"),
-										destinations : collections.destinations.toJSON()
-									});
+				this.model.getShmdatas(function(shmdatas)
+				{
 
-					$(that.el).append(template);
-					$("#sources").prepend($(that.el));
+					_.each(shmdatas, function(shmdata, index){
+
+						var template = _.template(SourceTemplate, 
+										{
+											shmdata : shmdata, 
+											index : index, 
+											nbShmdata :  shmdatas.length, 
+											sourceName : model.get("name"),
+											destinations : collections.destinations.toJSON()
+										});
+
+						$(that.el).append(template);
+						$("#sources").prepend($(that.el));
+					})
 				})
+	
 
 			},
 			remove : function(){

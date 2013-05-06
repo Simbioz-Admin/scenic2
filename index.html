@@ -21,11 +21,15 @@
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
 		<header id="header">
 			<div id="logo">SCENIC2</div>
+			<div class="btn" id="btn-irc" style="float:right">IRC</div>
 		</header>
 
 
 		<div id="panelLeft">
 			<div id="globalTable">
+				
+				<div id="titleIn"></div>
+				<div id="titleOut"></div>
 
 				<div id="headerTable">
 					<ul id="menuTable" class="headerMenu"></ul>
@@ -34,14 +38,15 @@
 				<table id="testTable">
 					<thead>
 						<tr>
-							<th rowspan="2" colspan="2" class="infoTable">
-								<div id="titleIn"><span class="rotate">IN</span></div>
-								<div id="titleOut">OUT</div>
+							<th rowspan="2" colspan="3" class="infoTable">
 							</th>
 						</tr>
 						<tr id="destinations"></tr>
 					</thead>
-					<tbody ><tr><td colspan="7" id="sources" ></td></tr></tbody>
+					<tbody >
+						<!-- <tr > <td rowspan="2">test</td> </tr> -->
+						<tr><td colspan="7" id="sources" ></td></tr>
+					</tbody>
 			</table>
 
 			</div><!-- end globalTable -->

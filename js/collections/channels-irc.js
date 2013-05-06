@@ -45,7 +45,9 @@ define([
 				{  
 					that.connectClient(); 
 					return false;
-				})
+				});
+
+				$("#chat").draggable({ cursor: "move", handle: ".title"});
 
 		    	// views.irc = new ViewIrc({collection : this});
 		    	//this.connectClient();

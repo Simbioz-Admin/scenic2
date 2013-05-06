@@ -8,13 +8,14 @@ define([
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
-
+			statePanelIrc : false,
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
 				"click .box" : "createConnection",
 				"click #close" : "closePanel",
-				"change .checkbox" : 'stateCheckbox'
+				"change .checkbox" : 'stateCheckbox',
+				"click #btn-irc" : 'panelIrc'
 			},
 
 			//generation of the main Menu 
@@ -26,7 +27,9 @@ define([
 				socket.on("messageLog", function(msg){
 					$("#log .content").append(msg+"<br><br>");
 					$("#log .content").scrollTop(100000000000000000);
-				})
+				});
+
+				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
 
 			},
 
@@ -46,10 +49,8 @@ define([
 				,	port = "8050";
 
 				if(!box.hasClass("active")){
-					console.log(path);
 					//add to the session the shmdata 
 					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){
-						console.log("OK@");
 					});
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
@@ -86,11 +87,12 @@ define([
 					
 					var check = $(event.target);
 
-					if (check.is(':checked')) {
-						console.log("check");
+					if (check.is(':checked'))
+					{
 						check.val('true').attr('checked', true);
-					}else{
-						console.log("uncheck");
+					}
+					else
+					{
 						check.val('false').attr('checked', false);
 					}
 				     // if($(this).attr('checked')){
@@ -100,6 +102,18 @@ define([
 				     //      $(this).val('FALSE');
 				     // }
 	
+			},
+			panelIrc : function(){
+				if(!this.statePanelIrc)
+				{
+					$("#chat").show();
+					this.statePanelIrc = true;		
+				}
+				else
+				{
+					$("#chat").hide();	
+					this.statePanelIrc = false;
+				}
 			}
 		});
 

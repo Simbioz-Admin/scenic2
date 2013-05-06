@@ -2,7 +2,13 @@
 	<% if(index == 0){ %>
 		<td rowspan="<%=nbShmdata%>" class="group groupSource" ><div class="vertical"><%=sourceName%></div> <div class="edit"></div></td>
 	<% } %>
-	<th scope="row" class="nameInOut"  title="<%=shmdata.path%>" ><a href="#" class="preview" ><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></a></th>
+	<th scope="row" class="nameInOut"  title="<%=shmdata.path%>" >
+		<% if(shmdata.path.indexOf("enc") < 0){ %>
+		<a href="#" class="preview" ><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></a>
+		<% }else{ %>
+			<% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%>
+		<% }%>
+	</th>
 	<% _.each(destinations, function(destination){
 		var active = false;
 		_.each(destination.data_streams, function(path){

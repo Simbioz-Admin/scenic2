@@ -17,7 +17,7 @@ module.exports = function (io, irc, $) {
 
 			usersIrc[socket.id] = new User(username, socket, callback);
 			usersIrc[socket.id].join(idChannelIrc);
-			usersIrc[socket.id].join("#scenicTest");
+			usersIrc[socket.id].join("#scenic");
 
 		});
 

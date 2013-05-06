@@ -25,7 +25,7 @@ define([
 		    initialize : function()
 		    {
 		    	console.log("init collection quidds");
-		    	that = this;
+		    	var that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd, properties)
@@ -74,20 +74,6 @@ define([
 
 		    			},1000);
 
-			    		// _.each(quidd.properties, function(property)
-			    		// {
-			    		// 	if(property.name == "shmdata-writers")
-			    		// 	{
-			    		// 		console.log(property);
-				    	// 		var path = property.value.shmdata_writers[0].path;
-
-				    	// 		collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-				    	// 		{
-				    	// 			views.methods.setMethod(name, "connect", [path]);
-				    	// 			console.log("SET !!!!");
-				    	// 		});
-			    		// 	}
-			    		// });
 		    		}
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);

@@ -36,7 +36,7 @@ process.on('SIGINT', function () {
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 
-// ------------------------------------ AUTHENTIFICATION ---------------------------------------------//
+
 
 
 var pass = false;
@@ -45,14 +45,14 @@ var soap_port = 8084;
 
 process.argv.forEach(function (val, index, array)
 {
-  if(val == "--password" || val == "-p") pass = true;
-  if(val == "--soap_port" || val == "-s" && process.argv[index+1]) soap_port = process.argv[index+1];
+  if( val == "--password"  || val == "-p") pass = true;
+  if( val == "--soap_port" || val == "-s" && process.argv[index+1]) soap_port = process.argv[index+1];
 });
-
 
 console.log("soap port is set to ", soap_port);
 if(pass)
-{
+{	
+	//------ authentification ---------------------------//
 	require("./auth.js")(app, express, passport, DigestStrategy, readline);
 } 
 else
@@ -61,8 +61,6 @@ else
 		  res.sendfile(__dirname + '/index.html');
 	});
 }
-
-
 
 
 
@@ -195,7 +193,10 @@ io.sockets.on('connection', function (socket) {
 		//callback is used by the user who has created the Quidd for directly set properties 
 		callback({ name : quiddName, class : className, properties : properties});
 		console.log(className, name);
-		io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
+		if(className != "videosink")
+		{
+			io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
+		}
 	});
 
 

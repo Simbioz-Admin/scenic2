@@ -85,7 +85,7 @@ define([
 					}
 				});
 
-				// views.global.closePanel();
+				views.global.closePanel();
 				return false;
 			},
 			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS

@@ -29,7 +29,7 @@ define([
 				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(propertyValue){
 					that.set({ shmdatas  : propertyValue.shmdata_writers});
 					console.log("add shmdatas");
-					callback("ok");
+					callback(propertyValue.shmdata_writers);
 				});
 			},
 			getProperties : function(){

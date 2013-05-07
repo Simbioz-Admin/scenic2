@@ -25,12 +25,14 @@ define([
 		    initialize : function()
 		    {
 		    	console.log("init collection quidds");
-		    	that = this;
+		    	var that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd, properties)
 		    	{
-		    		that.add(quidd);
+		    		var model = new QuiddModel(quidd);
+		    		that.add(model);
+
 		    	});
 
 		    	socket.on("remove", function(quiddName){
@@ -54,27 +56,29 @@ define([
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
-		    		console.log("ask for create temporary enc for videotestsrc");
-		    		//if it's video we create automaticlly compress vid shmdata
-		    		// if(quidd.class == "videotestsrc")
-		    		// {
-			    	// 	_.each(quidd.properties, function(property)
-			    	// 	{
-			    	// 		if(property.name == "shmdata-writers")
-			    	// 		{
-				    // 			var path = property.value.shmdata_writers[1].path;
 
-				    // 			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-				    // 			{
-				    // 				views.methods.setMethod(name, "connect", [path]);
-				    // 				console.log("SET !!!!");
-				    // 			});
-			    	// 		}
-			    	// 	});
+		    		// console.log("ask for create temporary enc for videotestsrc");
+		    		// //if it's video we create automaticlly compress vid shmdata
+		    		// if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
+		    		// {
+		    		// 	setTimeout(function(){
+			    	// 		console.log(quidd.name);
+			    	// 		var model = collections.quidds.get(quidd.name);
+			    	// 		var path = model.get("shmdatas")[0]["path"];
+			    	// 		console.log(path);
+			    	// 		collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+			    	// 		{
+			    	// 			views.methods.setMethod(name, "connect", [path]);
+			    	// 			console.log("SET !!!!");
+			    	// 		});
+
+		    		// 	},1000);
+
 		    		// }
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});
+		    	
 		    },
 		    delete : function(quiddName){
 		    	socket.emit("remove", quiddName);

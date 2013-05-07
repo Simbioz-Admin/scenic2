@@ -88,6 +88,9 @@ else
 }
 
 
+
+
+
 // ------------------------------------ WEB APP ---------------------------------------------//
 
 
@@ -183,8 +186,8 @@ switcher.register_prop_callback(function (qname, qprop, pvalue){
 
 switcher.create("rtpsession", "defaultrtp");
 
-switcher.create("videotestsrc", "video");
-switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
+//switcher.create("videotestsrc", "video");
+//switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
 
 switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", ["8084"]);
@@ -194,12 +197,23 @@ switcher.invoke("soap", "set_port", ["8084"]);
 
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
+// ------------------------------------ IRC-CHAT ---------------------------------------------//
+require("./irc2.js")(io, $);
+
+
 io.sockets.on('connection', function (socket) {
+
+
+	
+
+
 
 
 	socket.on("create", function(className, name, callback)
 	{        
 		var quiddName = switcher.create(className, name);
+		console.log(quiddName);
+		switcher.subscribe_to_property (quiddName, "shmdata-writers");
 		//recover the default properties with values
 		var properties = getQuiddPropertiesWithValues(quiddName)
 		//callback is used by the user who has created the Quidd for directly set properties 

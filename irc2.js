@@ -32,10 +32,6 @@ module.exports = function (io, $) {
 			console.log("msg for irc :",target,  msg);
 			usersIrc[socket.id].send(target, msg);
 		});
-
-
-
-
 	});
 
 
@@ -48,7 +44,7 @@ module.exports = function (io, $) {
 		,	socket = socket
 		,	 client = new irc.Client('irc.freenode.net', username, {
 				autoConnect: false,
-    			channels: ['#scenicTest', idChannelIrc],
+    			channels: ['#scenic', idChannelIrc],
 		});
 		
 		client.connect(function(info){

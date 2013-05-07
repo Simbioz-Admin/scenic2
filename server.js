@@ -12,25 +12,14 @@ var express = require("express")
 , passport = require('passport')
 , DigestStrategy = require('passport-http').DigestStrategy;
 
+require("./irc2.js")(io, $);
+
 server.listen(8085);
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
-
-// configure Express
-app.configure(function() {
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-});
 
 
 
@@ -49,36 +38,22 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 
 // ------------------------------------ AUTHENTIFICATION ---------------------------------------------//
 
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-
-
-process.stdin.on('keypress', function(s, key){
-	    process.stdout.write('\u001B[0D\u001B[2K');
-	
-});
-  
 
 var pass = false;
+var soap_port = 8084;
+
 
 process.argv.forEach(function (val, index, array)
 {
-  if(val == "--p") pass = true;
+  if(val == "--password" || val == "-p") pass = true;
+  if(val == "--soap_port" || val == "-s" && process.argv[index+1]) soap_port = process.argv[index+1];
 });
 
+
+console.log("soap port is set to ", soap_port);
 if(pass)
 {
-	rl.question("choose a password : \n", function(password) {
-	  // TODO: Log the answer in a database
-
-	console.log("Thank for the password!");
-	require("./auth.js")(app, express, passport, DigestStrategy, password);
-	  rl.close();
-	});
-
+	require("./auth.js")(app, express, passport, DigestStrategy, readline);
 } 
 else
 {
@@ -191,7 +166,7 @@ switcher.create("rtpsession", "defaultrtp");
 //switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
 
 switcher.create("SOAPcontrolServer", "soap");
-switcher.invoke("soap", "set_port", ["8084"]);
+switcher.invoke("soap", "set_port", [soap_port]);
 
 //console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
 //
@@ -199,7 +174,7 @@ switcher.invoke("soap", "set_port", ["8084"]);
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
 // ------------------------------------ IRC-CHAT ---------------------------------------------//
-require("./irc2.js")(io, $);
+
 
 
 io.sockets.on('connection', function (socket) {

@@ -12,7 +12,9 @@ define([
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click .box" : "createConnection",
+				"click .box" : "connection",
+				"keypress #port_destination" : "setConnection",
+				"blur #port_destination" : "removeInputDestination",
 				"click #close" : "closePanel",
 				"change .checkbox" : 'stateCheckbox',
 				"click #btn-irc" : 'panelIrc'
@@ -32,38 +34,56 @@ define([
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
 
 			},
-
 			//action for open the sub-menu
-			openDropdown : function(){
+			openDropdown : function()
+			{
 				var menu = $(event.target);
 				menu.next(".dropdown-menu").show();
 				$(".dropdown-menu").mouseleave(function(){
 					$(this).hide();
 				})
 			},
-			createConnection : function(){
+			connection : function()
+			{
+				console.log("AAA");
 				
 				var box = $(event.target)
 				,	destName = box.data("hostname")
-				,	path = box.parent().data("path")
-				,	port = "8050";
+				,	path = box.parent().data("path");
 
-				if(!box.hasClass("active")){
-					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){
-					});
-					//connect shmdata to destination
-					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
-
-					});
-					//display connection is active between shmdata and destination
-					//box.addClass("active");
-				}else{
+				if(box.hasClass("active"))
+				{
 					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
-					//box.removeClass("active");
 				}
+				else
+				{
+					box.html("<input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'>");
+				}
+				
 			},
+			setConnection : function(event)
+			{
+				if(event.which == 13) //touch enter
+				{
 
+					var box = $(event.target).parent()
+					,	destName = box.data("hostname")
+					,	path = box.parent().data("path")
+					,	port = $(event.target).val();
+
+					//add to the session the shmdata 
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){});
+					//connect shmdata to destination
+					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){});
+
+					this.removeInputDestination(event);
+				}
+
+			},
+			removeInputDestination : function(event)
+			{
+				$(event.target).parent().html("");
+			},
 			//alert for different message
 			alertMsg : function(type, msg){
 				$("#msgHighLight").remove();

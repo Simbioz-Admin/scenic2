@@ -10,8 +10,7 @@ var express = require("express")
 , child_process = require('child_process')
 , readline = require('readline')
 , passport = require('passport')
-, DigestStrategy = require('passport-http').DigestStrategy
-, irc = require('irc');
+, DigestStrategy = require('passport-http').DigestStrategy;
 
 server.listen(8085);
 
@@ -198,13 +197,14 @@ switcher.invoke("soap", "set_port", ["8084"]);
 
 // ------------------------------------ SOCKET.IO ---------------------------------------------//
 
-require("./irc2.js")(io, irc, $);
+// ------------------------------------ IRC-CHAT ---------------------------------------------//
+require("./irc2.js")(io, $);
 
 
 io.sockets.on('connection', function (socket) {
 
 
-	// ------------------------------------ IRC-CHAT ---------------------------------------------//
+	
 
 
 
@@ -212,6 +212,8 @@ io.sockets.on('connection', function (socket) {
 	socket.on("create", function(className, name, callback)
 	{        
 		var quiddName = switcher.create(className, name);
+		console.log(quiddName);
+		switcher.subscribe_to_property (quiddName, "shmdata-writers");
 		//recover the default properties with values
 		var properties = getQuiddPropertiesWithValues(quiddName)
 		//callback is used by the user who has created the Quidd for directly set properties 

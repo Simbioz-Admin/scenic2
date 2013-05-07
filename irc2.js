@@ -1,5 +1,5 @@
-module.exports = function (io, irc, $) {
-
+module.exports = function (io, $) {
+	var irc = require('irc');
 	var usersIrc = [];
 	var idChannelIrc = null;
 

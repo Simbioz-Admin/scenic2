@@ -57,27 +57,28 @@ define([
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
 
-		    		console.log("ask for create temporary enc for videotestsrc");
-		    		//if it's video we create automaticlly compress vid shmdata
-		    		if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
-		    		{
-		    			setTimeout(function(){
-			    			console.log(quidd.name);
-			    			var model = collections.quidds.get(quidd.name);
-			    			var path = model.get("shmdatas")[0]["path"];
-			    			console.log(path);
-			    			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-			    			{
-			    				views.methods.setMethod(name, "connect", [path]);
-			    				console.log("SET !!!!");
-			    			});
+		    		// console.log("ask for create temporary enc for videotestsrc");
+		    		// //if it's video we create automaticlly compress vid shmdata
+		    		// if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
+		    		// {
+		    		// 	setTimeout(function(){
+			    	// 		console.log(quidd.name);
+			    	// 		var model = collections.quidds.get(quidd.name);
+			    	// 		var path = model.get("shmdatas")[0]["path"];
+			    	// 		console.log(path);
+			    	// 		collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
+			    	// 		{
+			    	// 			views.methods.setMethod(name, "connect", [path]);
+			    	// 			console.log("SET !!!!");
+			    	// 		});
 
-		    			},1000);
+		    		// 	},1000);
 
-		    		}
+		    		// }
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});
+		    	
 		    },
 		    delete : function(quiddName){
 		    	socket.emit("remove", quiddName);

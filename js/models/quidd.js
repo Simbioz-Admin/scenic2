@@ -18,25 +18,22 @@ define([
 				var that = this;
 				if(this.collection)
 				{
-					this.getShmdatas(function(ok){
+					this.setShmdatas(function(ok){
 						var view = new ViewQuidd({ model : that });
 					});
 				}
 			},
-			getShmdatas : function(callback){
+			setShmdatas : function(callback){
 				var that = this;
 				//ask for value of shmdatas and stock in model
-				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(propertyValue){
+				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(propertyValue)
+				{
 					that.set({ shmdatas  : propertyValue.shmdata_writers});
-					console.log("add shmdatas");
 					callback(propertyValue.shmdata_writers);
 				});
 			},
-			getProperties : function(){
-				
-			},
-			remove : function(){
-				console.log("DESTROY !!!");
+			remove : function()
+			{
 				this.destroy();
 			}
 		});

@@ -21,17 +21,24 @@ define([
 			},
 
 			//generation of the main Menu 
-			initialize : function(){
+			initialize : function()
+			{
 				console.log("init global View");
+				var that = this;
 				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
 				$("#menuTable").html(template);
 
-				socket.on("messageLog", function(msg){
+				socket.on("messageLog", function(msg)
+				{
 					$("#log .content").append(msg+"<br><br>");
 					$("#log .content").scrollTop(100000000000000000);
 				});
 
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
+
+				$(document).keyup(function(e){
+					that.keyboardAction(e);
+				});
 
 			},
 			//action for open the sub-menu
@@ -59,13 +66,11 @@ define([
 				{
 					box.html("<input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'>");
 				}
-				
 			},
 			setConnection : function(event)
 			{
 				if(event.which == 13) //touch enter
 				{
-
 					var box = $(event.target).parent()
 					,	destName = box.data("hostname")
 					,	path = box.parent().data("path")
@@ -78,7 +83,6 @@ define([
 
 					this.removeInputDestination(event);
 				}
-
 			},
 			removeInputDestination : function(event)
 			{
@@ -103,25 +107,17 @@ define([
 				$("#panelLeft").delay(100).animate({width : "100%"});
 				$("#panelRight").animate({width : "0px"});
 			},
+			keyboardAction : function(event)
+			{
+				var that = this;
+			    if(event.which == 27) that.closePanel();
+			},
 			stateCheckbox : function(){
 					
 					var check = $(event.target);
 
-					if (check.is(':checked'))
-					{
-						check.val('true').attr('checked', true);
-					}
-					else
-					{
-						check.val('false').attr('checked', false);
-					}
-				     // if($(this).attr('checked')){
-				     //      $(this).val('TRUE');
-				     // }else{
-
-				     //      $(this).val('FALSE');
-				     // }
-	
+					if (check.is(':checked')) check.val('true').attr('checked', true);
+					else check.val('false').attr('checked', false);
 			},
 			panelIrc : function(){
 				if(!this.statePanelIrc)

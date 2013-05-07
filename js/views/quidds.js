@@ -31,12 +31,20 @@ define([
 			{
 
 				var className = $(event.target).data("name")
-				,	that = this;
+				,	categoryQuidd = collections.classesDoc.get(className).get("category")
+				,	that = this
+				,	category = "encoder";
 
+				//check category of the quidd and get specific encoder
+				if(categoryQuidd.indexOf("video") >= 0) category = "video encoder";
+				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
+				var encoders = collections.classesDoc.getByCategory(category).toJSON();
+
+				
 				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
 					
-					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create"});
+					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create", encoders : encoders});
 					$("#panelRight .content").html(template);
 					views.global.openPanel();
 				});
@@ -52,16 +60,32 @@ define([
 			{
 				var that = this
 				,	quiddName = $("#quiddName").val()
-				,	className = $("#form-lightbox").data("classname");
+				,	className = $("#form-quidd").data("classname")
+				,	encoder = $("#form-quidd [name='encoder']").val();
+
 
 				//creation of Quidd and set properties
 				collections.quidds.create(className, quiddName, function(quiddName)
 				{
 					that.updateProperties(quiddName);
 					that.setMethods(quiddName);
+
+					if(encoder != "none")
+					{
+						setTimeout(function()
+						{
+							var model = collections.quidds.get(quiddName);
+			    			var path = model.get("shmdatas")[0]["path"];
+			    			collections.quidds.create(encoder,quiddName+"_enc", function(name)
+			    			{
+			    				views.methods.setMethod(name, "connect", [path]);
+			    			});
+							
+						}, 700)
+					}
 				});
 
-				views.global.closePanel();
+				// views.global.closePanel();
 				return false;
 			},
 			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS
@@ -72,32 +96,22 @@ define([
 				//views.global.closePanel();
 				return false;
 			},
-			delete : function(){
+			delete : function()
+			{
 				var quiddName = $("#quiddName").val();
 				this.collection.delete(quiddName);
 				views.global.closePanel();
 			},
 			updateProperties: function(quiddName)
 			{
-
-				// recover on format json the value of field for properties
-				var dataFormProp = {};
-
-				$("#form-quidd .property").each(function(index, value)
-				{
-
-					if($(this).attr("name"))
-					{
-						dataFormProp[$(this).attr("name")] = $(this).val();
-					}
-				});
-
+				var dataFormProp =  $('#form-quidd ').serializeObject();
 				//parse properties for set value of this
 				_.each(dataFormProp, function(value, index)
 				{
 					var defaultValue = 	$('[name="'+index+'"]').data("default")
 					,	minValue = $('[name="'+index+'"]').data("min")
 					,	maxValue = $('[name="'+index+'"]').data("max");
+
 					if(value != defaultValue)
 					{
 						console.log(value, defaultValue);
@@ -107,6 +121,7 @@ define([
 			},
 			setMethods : function(quiddName)
 			{
+
 				//recover on format json the value of field for methods
 				var dataFormMeth = {};
 				$("#form-methods input").each(function(index, value)

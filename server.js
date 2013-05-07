@@ -182,6 +182,7 @@ switcher.register_log_callback(function (msg){
 
 switcher.register_prop_callback(function (qname, qprop, pvalue){
 	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+	io.sockets.emit("signals_properties", qname, qprop, pvalue);
 });
 
 switcher.create("rtpsession", "defaultrtp");

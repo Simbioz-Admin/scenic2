@@ -21,13 +21,11 @@ define([
 			},
 			render : function()
 			{
-				console.log("RENDER SOURCES");
 				var model = this.model
 				, 	that = this
 
-				this.model.getShmdatas(function(shmdatas)
+				this.model.setShmdatas(function(shmdatas)
 				{
-
 					_.each(shmdatas, function(shmdata, index){
 
 						var template = _.template(SourceTemplate, 
@@ -47,7 +45,6 @@ define([
 
 			},
 			remove : function(){
-				console.log(this.model.get("name"));
 				$(this.el).remove();
 			},
 			openPanelEdit : function()

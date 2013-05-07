@@ -20,7 +20,6 @@ define([
 					}
 				})
 		        return quidds;
-
 		    },
 		    initialize : function()
 		    {
@@ -28,22 +27,26 @@ define([
 		    	var that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
-		    	socket.on("create", function(quidd, properties)
+		    	socket.on("create", function(quidd)
 		    	{
 		    		var model = new QuiddModel(quidd);
 		    		that.add(model);
-
 		    	});
 
-		    	socket.on("remove", function(quiddName){
+		    	socket.on("remove", function(quiddName)
+		    	{
 		    		that.remove(quiddName);
 		    	});
+
+		    	socket.on("signals_properties", function(name, prop, value)
+		    	{
+		    		//console.log("prop : ", name, prop, value);
+		    	})
 
 		    	//receive notification for set property of quidd
 		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
 		    	{
 		    		var quidd = that.get(nameQuidd);
-		    		//quidd.get("properties")
 
 		    		_.each(quidd.get("properties"), function(prop, index)
 		    		{
@@ -57,8 +60,8 @@ define([
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
 
-		    		// console.log("ask for create temporary enc for videotestsrc");
-		    		// //if it's video we create automaticlly compress vid shmdata
+		    		console.log("ask for create temporary enc for videotestsrc");
+		    		//if it's video we create automaticlly compress vid shmdata
 		    		// if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
 		    		// {
 		    		// 	setTimeout(function(){
@@ -78,9 +81,9 @@ define([
 		    		//return name for next step : set properties and methods
 		    		callback(quidd.name);
 		    	});
-		    	
 		    },
-		    delete : function(quiddName){
+		    delete : function(quiddName)
+		    {
 		    	socket.emit("remove", quiddName);
 		    },
 		    getProperties : function(nameQuidd, callback)
@@ -90,7 +93,8 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    getPropertyValue : function(nameQuidd, property, callback){
+		    getPropertyValue : function(nameQuidd, property, callback)
+		    {
 		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
 		    		callback(propertyValue);
 		    	});
@@ -105,13 +109,7 @@ define([
 		    setPropertyValue : function(nameQuidd, property, value)
 		    {
 		    	that = this;
-		    	console.log("ask for set "+property+" of "+nameQuidd+" to "+value);
-
-		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
-		    	{
-		    		console.log(ok);
-		    	});
-
+		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok){});
 		    }
 		});
 

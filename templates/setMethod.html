@@ -7,13 +7,13 @@
 		<ul>
 			<h3>Set Method <%=description.description%></h3>
 
-			<% _.each(description.arguments, function(argument){ %>
+			<% _.each(description.arguments, function(argument, index){ %>
 				<li>
 
 					<h3 class="info" title="<%=argument.description%>" ><%=argument.name%></h3>
 
 					<!-- Type input for float / int and bool -->
-					<input type="text" name="<%=argument.name%>" value="" />
+					<input type="text" name="<%=argument.name%>" <%if(index ==0){ %>autofocus="autofocus"<% } %> value="" />
 
 				</li>
 			<% }); %>

@@ -26,6 +26,7 @@ app.use(express.bodyParser());
 //please quit switcher properly
 process.on('exit', function () {
 	switcher.close();
+	io.sockets.emit("shutdown", "bang");
 	console.log('About to exit.');
 });
 process.on('SIGINT', function () {

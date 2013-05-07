@@ -34,6 +34,10 @@ define([
 					$("#log .content").scrollTop(100000000000000000);
 				});
 
+				socket.on("shutdown", function(){
+					$("body").html("<div id='shutdown'>the server has been shutdown...</div>");
+				});
+
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
 
 				$(document).keyup(function(e){

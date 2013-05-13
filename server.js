@@ -10,9 +10,10 @@ var express = require("express")
 , child_process = require('child_process')
 , readline = require('readline')
 , passport = require('passport')
-, DigestStrategy = require('passport-http').DigestStrategy;
+, DigestStrategy = require('passport-http').DigestStrategy
+, sys = require('sys');
 
-require("./irc2.js")(io, $);
+require("./irc.js")(io, $);
 
 server.listen(8085);
 
@@ -21,7 +22,7 @@ app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
-
+var exec = require('child_process').exec;
 
 //please quit switcher properly
 process.on('exit', function () {
@@ -36,9 +37,6 @@ process.on('SIGINT', function () {
 });
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
-
-
-
 
 var pass = false;
 var soap_port = 8084;
@@ -63,6 +61,41 @@ else
 	});
 }
 
+app.get('/panel', function (req, res){
+	  res.sendfile(__dirname + '/panel.html', {url : "http:localhost:8085"});
+});
+
+
+var appjs = require("appjs");
+
+var window = appjs.createWindow({
+  width  : 440,
+  height : 200,
+  resizable : false,
+  url : 'http://localhost:8085/panel/',
+  icons  : __dirname + '/content/icons'
+});
+
+window.on('create', function(){
+  console.log("Window Created");
+  window.frame.show();
+  window.frame.center();
+});
+
+window.on('ready', function(){
+  console.log("Window Ready");
+
+  window.addEventListener('keydown', function(e){
+    if (e.keyIdentifier === 'F12') {
+      window.frame.openDevTools();
+    }
+  });
+});
+
+window.on('close', function(){
+  console.log("Window Closed");
+  process.exit(0);
+});
 
 
 // ------------------------------------ WEB APP ---------------------------------------------//
@@ -180,7 +213,11 @@ io.sockets.on('connection', function (socket) {
 
 
 	
-
+	socket.on("openBrowser", function(val)
+	{
+		console.log("open browser");
+		exec("xdg-open http://localhost:8085", puts);
+	});
 
 
 

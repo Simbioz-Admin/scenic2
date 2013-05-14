@@ -14,23 +14,12 @@ module.exports = function (app, express, passport, DigestStrategy, readline) {
 	});
 	
 
-	var rl = readline.createInterface({
-	  input: process.stdin,
-	  output: process.stdout
-	});
 
-	process.stdin.on('keypress', function(s, key)
-	{
-		process.stdout.write('\u001B[0D\u001B[2K');
-	});
-  
-
-	rl.question("choose a password : \n", function(password) {
 
 		console.log("Thank for the password!");
 
 		var users = [
-		    { id: 1, username: 'scenic2', password: password }
+		    { id: 1, username: 'scenic2', password: "patate" }
 		];
 
 		function findByUsername(username, fn)
@@ -67,6 +56,7 @@ module.exports = function (app, express, passport, DigestStrategy, readline) {
 		  }
 		));
 		//http://advosys.ca/papers/web/63-http-digest-authentication.html
+		
 		app.all('/',
 		  // Authenticate using HTTP Digest credentials, with session support disabled.
 		  passport.authenticate('digest', { session: false }),
@@ -101,9 +91,7 @@ module.exports = function (app, express, passport, DigestStrategy, readline) {
 
 		// app.get('/', passport.authenticate('digest', { session: false }), function (req, res){
 		//   res.sendfile(__dirname + '/index.html');
-		// });
-		rl.close();
-	});
+
 	
 
 

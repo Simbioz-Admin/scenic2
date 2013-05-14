@@ -13,9 +13,14 @@ var express = require("express")
 , DigestStrategy = require('passport-http').DigestStrategy
 , sys = require('sys')
 , appjs = require("appjs")
-, start = false;
+, start = false
+, scenicStart = false
+, serverScenic = null;
 
-
+app.use("/assets", express.static(__dirname + "/assets"));
+app.use("/js", express.static(__dirname + "/js"));
+app.use("/templates", express.static(__dirname + "/templates"));
+app.use(express.bodyParser());
 
 
 var exec = require('child_process').exec;
@@ -57,7 +62,10 @@ var soap_port = 8084;
 // 	});
 // }
 
-// ------------------------------------ SECNIC WINDOW ---------------------------------------------//
+
+// ------------------------------------ SCENIC WINDOW ---------------------------------------------//
+
+//require("./auth.js")(app, express, passport, DigestStrategy, readline);
 
 app.get('/panel', function (req, res)
 {
@@ -71,6 +79,19 @@ app.get('/panel', function (req, res)
 		res.send("sorry you can't access to the page");
 	}
 });	
+
+app.get('/', function (req, res){
+	if(scenicStart)
+	{
+	  res.sendfile(__dirname +'/index.html');
+	}
+	else
+	{
+		res.send("Sorry server is shutdown");
+	}
+});
+
+
 
 var window = appjs.createWindow({
   width  : 440,
@@ -102,18 +123,47 @@ window.on('close', function(){
 });
 
 
-// ------------------------------------ SECNIC CONFIGURATION ---------------------------------------------//
-
-function startScenic()
+io.sockets.on('connection', function (socket)
 {
-	var serverScenic = http.createServer(app).listen(8082)
-	, 	ioScenic = require('socket.io').listen(serverScenic, { log: false });
+	socket.on("openBrowser", function(val)
+	{
+		if(!scenicStart)
+		{
+			serverScenic = new startScenic(8085);
+			exec("xdg-open http://localhost:8085", puts);
+		}
+		else
+		{
+			serverScenic.close();
+			console.log("closing");
+		}
+	});
+});
+
+
+
+
+// ------------------------------------ SCENIC CONFIGURATION ---------------------------------------------//
+
+
+
+function startScenic(port)
+{
+	var server = http.createServer(app).listen(port);
+	var	ioScenic = require('socket.io').listen(server, { log: false });
 
 	var scenic = require("./scenic/scenic.js")($, soap_port);
-
-	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname);
+	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
 	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic);
 
-	//require("./irc.js")(io, $);
+	this.close = function()
+	{ 
+		//io.sockets.emit("shutdown", "bang");
+		scenicStart = false;
+		console.log("server closed.");
+		ioScenic.sockets.emit("shutdown", "bang");
+	}
+
+	scenicStart = true;
 }
 

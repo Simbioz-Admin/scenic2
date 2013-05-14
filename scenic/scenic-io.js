@@ -2,11 +2,7 @@ module.exports = function (io, scenic)
 {
 	io.sockets.on('connection', function (socket)
 	{
-		socket.on("openBrowser", function(val)
-		{
-			console.log("open browser");
-			exec("xdg-open http://localhost:8085", puts);
-		});
+
 
 		socket.on("create", function(className, name, callback)
 		{        

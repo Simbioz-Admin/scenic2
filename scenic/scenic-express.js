@@ -1,17 +1,11 @@
 
-module.exports = function ($, app, scenic, dir)
+module.exports = function ($, app, scenic, dir, scenicStart)
 {
 	var express = require("express");
 
 
-	app.get('/', function (req, res){
-		  res.sendfile(  fjksjfksdjfksdfjsdkljf'/index.html');
-	});
 	console.log(dir);
-	app.use("/assets", express.static(dir + "/assets"));
-	app.use("/js", express.static(dir + "/js"));
-	app.use("/templates", express.static(dir + "/templates"));
-	app.use(express.bodyParser());
+
 
 
 	// ------------------------------------ EXPRESS CONFIGURATION ---------------------------------------------//

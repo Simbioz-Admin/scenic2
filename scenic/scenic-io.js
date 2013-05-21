@@ -3,7 +3,6 @@ module.exports = function (io, scenic)
 	io.sockets.on('connection', function (socket)
 	{
 
-
 		socket.on("create", function(className, name, callback)
 		{        
 			var quiddName = scenic.create(className, name);

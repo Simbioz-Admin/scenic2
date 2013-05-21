@@ -9,18 +9,36 @@ var express = require("express")
 , switcher = require('node-switcher')
 , child_process = require('child_process')
 , readline = require('readline')
-, passport = require('passport')
-, DigestStrategy = require('passport-http').DigestStrategy
 , sys = require('sys')
 , appjs = require("appjs")
 , start = false
 , scenicStart = false
-, serverScenic = null;
+, serverScenic = null
+, passSet = false;
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
+
+
+
+//----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
+
+var passport = require('passport')
+, 	DigestStrategy = require('passport-http').DigestStrategy;
+
+app.configure(function() {
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
+
 
 
 var exec = require('child_process').exec;
@@ -65,33 +83,19 @@ var soap_port = 8084;
 
 // ------------------------------------ SCENIC WINDOW ---------------------------------------------//
 
-//require("./auth.js")(app, express, passport, DigestStrategy, readline);
 
 app.get('/panel', function (req, res)
 {
 	if(!start)
 	{
 	  res.sendfile(__dirname + '/panel.html');
-	  start = true;
+	  //start = true;
 	}
 	else
 	{
 		res.send("sorry you can't access to the page");
 	}
 });	
-
-app.get('/', function (req, res){
-	if(scenicStart)
-	{
-	  res.sendfile(__dirname +'/index.html');
-	}
-	else
-	{
-		res.send("Sorry server is shutdown");
-	}
-});
-
-
 
 var window = appjs.createWindow({
   width  : 440,
@@ -125,18 +129,25 @@ window.on('close', function(){
 
 io.sockets.on('connection', function (socket)
 {
+
+	socket.on("setPass", function(pass, callback)
+	{
+		require("./auth.js")(app, express, passport, DigestStrategy, pass);
+		passSet = true;
+		console.log("password set!");
+		callback(true);
+	});
+
+	socket.on("statusScenic", function(state)
+	{
+		scenicStart = (state ? true : false);
+		if(!serverScenic) serverScenic = new startScenic(8085);
+	});
+
 	socket.on("openBrowser", function(val)
 	{
-		if(!scenicStart)
-		{
-			serverScenic = new startScenic(8085);
-			exec("xdg-open http://localhost:8085", puts);
-		}
-		else
-		{
-			serverScenic.close();
-			console.log("closing");
-		}
+		exec("xdg-open http://localhost:8085", puts);
+		
 	});
 });
 
@@ -152,6 +163,7 @@ function startScenic(port)
 	var server = http.createServer(app).listen(port);
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
+
 	var scenic = require("./scenic/scenic.js")($, soap_port);
 	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
 	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic);
@@ -162,6 +174,28 @@ function startScenic(port)
 		scenicStart = false;
 		console.log("server closed.");
 		ioScenic.sockets.emit("shutdown", "bang");
+	}
+	if(passSet)
+	{
+		app.all('/',
+		  // Authenticate using HTTP Digest credentials, with session support disabled.
+		  passport.authenticate('digest', { session: false }),
+		  function(req, res){
+		     res.sendfile(__dirname + '/index.html');
+	  	});
+	}
+	else
+	{
+		app.get('/', function (req, res){
+			if(scenicStart)
+			{
+			  res.sendfile(__dirname +'/index.html');
+			}
+			else
+			{
+				res.send("Sorry server is shutdown");
+			}
+		});
 	}
 
 	scenicStart = true;

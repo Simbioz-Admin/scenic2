@@ -10,6 +10,7 @@
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
 
 	 <!-- /**** JAVSCRIPT ****/ -->
 
@@ -26,6 +27,57 @@
             socket.emit("openBrowser", true);
         });
 
+
+        //choose for password
+        $("#questionPass .yes").click(function()
+        {
+            $("#questionPass").animate({left : 340}, 300, function(){ $(this).remove()});
+            $(".setPass").show().delay(300).animate({left : 80}, 300);
+
+        });
+
+        $("#questionPass .no").click(function(){
+            $("#questionPass").animate({left : 340}, 300, function(){ $(this).remove()});
+            $("#btnServer").show().delay(300).animate({left : 80});
+        });
+
+        $("#startServer").click(function()
+        {
+            if ($('#startServer').is(':checked')) {
+                console.log("CHECK");
+                $("#msg").animate({"width" : 0}, 200);
+                $("#url").animate({"width" : 215}, 200);
+                socket.emit("statusScenic", true);
+            } else {
+                console.log("uncheck");
+                socket.emit("statusScenic", false);
+
+                $("#url").animate({"width" : 0}, 200);
+                $("#msg").delay(400).animate({"width" : 180}, 200);
+            }
+        });
+
+        $("#submitPass").click(function(){
+            if($("#inputPass").val() == "")
+            {
+                $("#inputPass").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+            }
+            else if($("#inputConfirmPass").val() == "" )
+            {
+                 $("#inputConfirmPass").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+            }else if($("#inputPass").val() != $("#inputConfirmPass").val())
+            {
+                alert("password different");
+            }
+            socket.emit("setPass", $("#inputPass").val(), function()
+            {
+                $(".setPass").animate({left : 340}, 300, function(){ $(this).remove()});
+                $("#btnServer").show().delay(300).animate({left : 80});
+            });
+
+            return false;
+        });
+
     });
         
     </script>
@@ -36,6 +88,33 @@
             <br><br>
             
         </header>
-        <div id="url">Open scenic2 in your browser</div>
+        
+        <div id="password">
+            <div id="questionPass">
+                <div class="info">set a password ? </div>
+                <div class="response">
+                    <div class="yes">yes</div><div class="no">no</div>
+                </div>
+            </div>
+            <div class="setPass">
+                <form>
+                    <input type="password" id="inputPass" placeholder="password" >
+                    <input type="password" id="inputConfirmPass" placeholder="confirm password">
+                    <input type="submit" value="confirm" id="submitPass">
+                </form>
+            </div>
+
+        </div>
+        
+        <div id="btnServer">
+            <div class="switch">
+                <input type="checkbox" id="startServer">
+                <label><i class="icon-off"></i></label>
+            </div> 
+
+            <div id="url">open the interface</div>
+            <div id="msg">start server</div>
+        </div>
+
     </body>
 </head>

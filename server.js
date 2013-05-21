@@ -130,18 +130,19 @@ window.on('close', function(){
 io.sockets.on('connection', function (socket)
 {
 
-	socket.on("setPass", function(pass, callback)
+	socket.on("setPass", function(username, pass, callback)
 	{
-		require("./auth.js")(app, express, passport, DigestStrategy, pass);
+		require("./auth.js")(app, express, passport, DigestStrategy, username, pass);
 		passSet = true;
 		console.log("password set!");
 		callback(true);
 	});
 
-	socket.on("statusScenic", function(state)
+	socket.on("statusScenic", function(state, callback)
 	{
 		scenicStart = (state ? true : false);
 		if(!serverScenic) serverScenic = new startScenic(8085);
+		callback("http://localhost:8085");
 	});
 
 	socket.on("openBrowser", function(val)
@@ -177,24 +178,19 @@ function startScenic(port)
 	}
 	if(passSet)
 	{
-		app.all('/',
-		  // Authenticate using HTTP Digest credentials, with session support disabled.
-		  passport.authenticate('digest', { session: false }),
+
+		app.all('/', passport.authenticate('digest', { session: false }),
 		  function(req, res){
-		     res.sendfile(__dirname + '/index.html');
+		  	if(scenicStart) res.sendfile(__dirname + '/index.html');
+			else res.send("Sorry server is shutdown");
 	  	});
+
 	}
 	else
 	{
 		app.get('/', function (req, res){
-			if(scenicStart)
-			{
-			  res.sendfile(__dirname +'/index.html');
-			}
-			else
-			{
-				res.send("Sorry server is shutdown");
-			}
+			if(scenicStart) res.sendfile(__dirname +'/index.html');
+			else res.send("Sorry server is shutdown");
 		});
 	}
 

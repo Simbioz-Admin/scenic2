@@ -45,12 +45,18 @@
         {
             if ($('#startServer').is(':checked')) {
                 console.log("CHECK");
-                $("#msg").animate({"width" : 0}, 200);
-                $("#url").animate({"width" : 215}, 200);
-                socket.emit("statusScenic", true);
-            } else {
+
+                socket.emit("statusScenic", true, function(address)
+                {
+                    $("#msg").animate({"width" : 0}, 200);
+                    $("#url").animate({"width" : 215}, 200);
+                    console.log($(".address").html(address));
+                });
+            }
+            else
+            {
                 console.log("uncheck");
-                socket.emit("statusScenic", false);
+                socket.emit("statusScenic", false , function(){});
 
                 $("#url").animate({"width" : 0}, 200);
                 $("#msg").delay(400).animate({"width" : 180}, 200);
@@ -58,7 +64,11 @@
         });
 
         $("#submitPass").click(function(){
-            if($("#inputPass").val() == "")
+            if($("#username").val() == "")
+            {
+                 $("#username").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+            }
+            else if($("#inputPass").val() == "")
             {
                 $("#inputPass").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
             }
@@ -68,12 +78,14 @@
             }else if($("#inputPass").val() != $("#inputConfirmPass").val())
             {
                 alert("password different");
-            }
-            socket.emit("setPass", $("#inputPass").val(), function()
+            }else
             {
-                $(".setPass").animate({left : 340}, 300, function(){ $(this).remove()});
-                $("#btnServer").show().delay(300).animate({left : 80});
-            });
+                socket.emit("setPass", $("#username").val(),  $("#inputPass").val(), function()
+                {
+                    $(".setPass").animate({left : 340}, 300, function(){ $(this).remove()});
+                    $("#btnServer").show().delay(300).animate({left : 80});
+                });
+            }
 
             return false;
         });
@@ -98,6 +110,7 @@
             </div>
             <div class="setPass">
                 <form>
+                    <input type="text" id="username" value="scenic2" >
                     <input type="password" id="inputPass" placeholder="password" >
                     <input type="password" id="inputConfirmPass" placeholder="confirm password">
                     <input type="submit" value="confirm" id="submitPass">
@@ -112,7 +125,9 @@
                 <label><i class="icon-off"></i></label>
             </div> 
 
-            <div id="url">open the interface</div>
+            <div id="url">open the interface
+                <div class="address">http://localhost</div>
+            </div>
             <div id="msg">start server</div>
         </div>
 

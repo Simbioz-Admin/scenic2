@@ -1,4 +1,4 @@
-module.exports = function (app, express, passport, DigestStrategy, pass, scenicStart) {
+module.exports = function (app, express, passport, DigestStrategy, username, pass, scenicStart) {
 
 	// configure Express
 
@@ -7,7 +7,7 @@ module.exports = function (app, express, passport, DigestStrategy, pass, scenicS
 		console.log("Thank for the password!");
 
 		var users = [
-		    { id: 1, username: 'scenic2', password: pass }
+		    { id: 1, username: username, password: pass }
 		];
 
 		function findByUsername(username, fn)

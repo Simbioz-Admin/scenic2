@@ -73,15 +73,16 @@ define([
 			},
 			setConnection : function(event)
 			{
+				console.log(event.which);
 				if(event.which == 13) //touch enter
 				{
 					var box = $(event.target).parent()
 					,	destName = box.data("hostname")
 					,	path = box.parent().data("path")
 					,	port = $(event.target).val();
-
+					console.log(destName, path, port);
 					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){});
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("OK");});
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){});
 

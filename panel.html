@@ -20,7 +20,6 @@
     $(document).ready(function(){
 
         var socket = io.connect();
-        console.log($("#url").html());
 
         $("#url").click(function()
         {
@@ -80,6 +79,7 @@
                 alert("password different");
             }else
             {
+            console.log($("#username").val(), $("#inputPass").val(), $("#inputConfirmPass").val());
                 socket.emit("setPass", $("#username").val(),  $("#inputPass").val(), function()
                 {
                     $(".setPass").animate({left : 340}, 300, function(){ $(this).remove()});

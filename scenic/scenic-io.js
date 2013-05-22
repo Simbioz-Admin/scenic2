@@ -48,6 +48,7 @@ module.exports = function (io, scenic)
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
+			console.log(quiddName, method, parameters);
 			var invoke = scenic.invoke(quiddName, method, parameters);
 			callback(invoke);
 			io.sockets.emit("invoke", invoke, quiddName, method, parameters);

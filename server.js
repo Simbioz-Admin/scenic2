@@ -22,7 +22,7 @@ app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
 
-
+console.log("TEST");
 //----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
 
 var passport = require('passport')
@@ -97,6 +97,7 @@ app.get('/panel', function (req, res)
 	}
 });	
 
+
 var window = appjs.createWindow({
   width  : 440,
   height : 200,
@@ -129,7 +130,7 @@ window.on('close', function(){
 
 io.sockets.on('connection', function (socket)
 {
-
+	console.log(socket.id);
 	socket.on("setPass", function(username, pass, callback)
 	{
 		require("./auth.js")(app, express, passport, DigestStrategy, username, pass);

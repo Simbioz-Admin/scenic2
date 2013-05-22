@@ -6,7 +6,7 @@ module.exports = function ($, soap_port)
 	switcher.register_log_callback(function (msg)
 	{
 			//io.sockets.emit("messageLog", msg);
-			//console.log('.....log message: ', msg);
+			//console.log('log : ', msg);
 	 });
 
 	// switcher.register_prop_callback(function (qname, qprop, pvalue)

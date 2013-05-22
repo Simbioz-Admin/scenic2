@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./bin/node --harmony ./boxScenic.js 
+./bin/node --harmony ./server.js 

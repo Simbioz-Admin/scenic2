@@ -22,7 +22,14 @@ app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
 
-console.log("TEST");
+
+var freeport = require("freeport");
+
+freeport(function(err, port)
+{
+	console.log(port);
+})
+
 //----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
 
 var passport = require('passport')
@@ -61,26 +68,6 @@ var pass = false;
 var soap_port = 8084;
 
 
-// process.argv.forEach(function (val, index, array)
-// {
-//   if( val == "--password"  || val == "-p") pass = true;
-//   if( val == "--soap_port" || val == "-s" && process.argv[index+1]) soap_port = process.argv[index+1];
-// });
-
-// console.log("soap port is set to ", soap_port);
-// if(pass)
-// {	
-// 	//------ authentification ---------------------------//
-// 	require("./auth.js")(app, express, passport, DigestStrategy, readline);
-// } 
-// else
-// {
-// 	app.get('/', function (req, res){
-// 		  res.sendfile(__dirname + '/index.html');
-// 	});
-// }
-
-
 // ------------------------------------ SCENIC WINDOW ---------------------------------------------//
 
 
@@ -100,7 +87,7 @@ app.get('/panel', function (req, res)
 
 var window = appjs.createWindow({
   width  : 440,
-  height : 200,
+  height : 300,
   resizable : false,
   url : 'http://localhost:8086/panel/',
   icons  : __dirname + '/content/icons'

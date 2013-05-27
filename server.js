@@ -11,7 +11,8 @@ var express = require("express")
 , readline = require('readline')
 , sys = require('sys')
 , appjs = require("appjs")
-, start = false
+, portchecker = require("portchecker")
+, idPanel = false
 , scenicStart = false
 , serverScenic = null
 , passSet = false;
@@ -21,14 +22,12 @@ app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
+var pass = false;
+var portSoap = false
+,	portScenic = false
 
 
-var freeport = require("freeport");
 
-freeport(function(err, port)
-{
-	console.log(port);
-})
 
 //----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
 
@@ -64,8 +63,6 @@ process.on('SIGINT', function () {
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 
-var pass = false;
-var soap_port = 8084;
 
 
 // ------------------------------------ SCENIC WINDOW ---------------------------------------------//
@@ -73,7 +70,7 @@ var soap_port = 8084;
 
 app.get('/panel', function (req, res)
 {
-	if(!start)
+	if(!idPanel)
 	{
 	  res.sendfile(__dirname + '/panel.html');
 	  //start = true;
@@ -117,7 +114,24 @@ window.on('close', function(){
 
 io.sockets.on('connection', function (socket)
 {
-	console.log(socket.id);
+	
+	if(!idPanel)
+	{
+		//check if port for soap and scenic is available
+		portchecker.getFirstAvailable(8084, 8090, 'localhost', function(p, host)
+		{ 
+			portSoap = p;
+			portchecker.getFirstAvailable(8090, 8100, 'localhost', function(p, host)
+			{ 
+				portScenic = p;
+				console.log("port", portSoap, portScenic);
+				socket.emit("sendPort", portSoap, portScenic)
+			});
+
+		});
+		//idPanel = socket.id;
+	} 
+
 	socket.on("setPass", function(username, pass, callback)
 	{
 		require("./auth.js")(app, express, passport, DigestStrategy, username, pass);
@@ -153,7 +167,7 @@ function startScenic(port)
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
 	require("./irc.js")(ioScenic, $)
-	var scenic = require("./scenic/scenic.js")($, soap_port);
+	var scenic = require("./scenic/scenic.js")($, portSoap);
 	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
 	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic);
 

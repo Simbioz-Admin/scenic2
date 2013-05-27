@@ -26,6 +26,11 @@
             socket.emit("openBrowser", true);
         });
 
+        socket.on("sendPort", function(portSoap, portScenic)
+        {
+            $("#portSoap").val(portSoap);
+            $("#portScenic").val(portScenic);
+        })
 
         //choose for password
         $("#questionPass .yes").click(function()
@@ -101,15 +106,28 @@
             
         </header>
         
-        <div id="password">
-            <div class="setPass">
+        <div id="config">
+            
                 <form>
-                    <input type="text" id="username" value="scenic2" >
-                    <input type="password" id="inputPass" placeholder="password" >
-                    <input type="password" id="inputConfirmPass" placeholder="confirm password">
+
+                    <div class="identification">
+                        <label>Identification</label>
+                        <input type="text" id="username" value="scenic2" >
+                        <input type="password" id="inputPass" placeholder="password" >
+                        <input type="password" id="inputConfirmPass" placeholder="confirm password">
+                        <div class="info">if password is empty the page will not be secured</div>
+                    </div>
+
+                    <div class="port">
+                        <label>Port Soap</label>
+                        <input type="text" id="portSoap" >
+                        <label>Port Scenic</label>
+                        <input type="text" id="portScenic" >
+                    </div>
+
                     <input type="submit" value="confirm" id="submitPass">
                 </form>
-            </div>
+            
 
         </div>
         

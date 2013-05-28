@@ -184,7 +184,7 @@ function startScenic(port)
 	require("./irc.js")(ioScenic, $)
 	var scenic = require("./scenic/scenic.js")($, portSoap);
 	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
-	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic);
+	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic, $);
 
 	this.close = function()
 	{ 

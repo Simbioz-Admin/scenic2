@@ -9,11 +9,11 @@ module.exports = function ($, soap_port)
 			//console.log('log : ', msg);
 	 });
 
-	// switcher.register_prop_callback(function (qname, qprop, pvalue)
-	// {
-	// 	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
-	// 	io.sockets.emit("signals_properties", qname, qprop, pvalue);
-	// });
+	switcher.register_prop_callback(function (qname, qprop, pvalue)
+	{
+		console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+		//io.sockets.emit("signals_properties", qname, qprop, pvalue);
+	});
 	
 	switcher.register_signal_callback(function (qname, qprop, pvalue){
 	    //console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
@@ -124,7 +124,13 @@ module.exports = function ($, soap_port)
 			var method = $.parseJSON(switcher.get_method_description(nameQuidd, method));
 			return method
 		},
-
+		subscribe_to_property : function(nameQuidd, property){
+			var ok = switcher.subscribe_to_property(nameQuidd, property);
+			return ok;
+		},
+		list_subscribed_properties : function(){
+			return switcher.list_subscribed_properties();
+		},
 		// merge properties of classes with ClassesDoc
 		getClassesDocWithProperties : function(){
 			var docs = $.parseJSON(switcher.get_classes_doc());

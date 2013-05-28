@@ -1,4 +1,4 @@
-module.exports = function (io, scenic)
+module.exports = function (io, scenic, $)
 {
 	io.sockets.on('connection', function (socket)
 	{
@@ -10,7 +10,15 @@ module.exports = function (io, scenic)
 			//recover the default properties with values
 			var properties = scenic.getQuiddPropertiesWithValues(quiddName);
 			var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
-			//callback is used by the user who has created the Quidd for directly set properties 
+
+			$.each(shmdatas["shmdata_writers"], function(index, shmdata)
+			{
+				var vumeter = scenic.create("fakesink", "vumeter_"+shmdata.path);
+				var ok = scenic.invoke(vumeter, "connect", [shmdata.path]);
+				scenic.subscribe_to_property(vumeter, "byte-rate");
+			});
+
+			//callback is used by the user who has created the Quidd for directly set properties or create encoder
 			callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
 
 			if(className != "videosink")

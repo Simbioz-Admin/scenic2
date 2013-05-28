@@ -14,6 +14,10 @@ module.exports = function ($, soap_port)
 	// 	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 	// 	io.sockets.emit("signals_properties", qname, qprop, pvalue);
 	// });
+	
+	switcher.register_signal_callback(function (qname, qprop, pvalue){
+	    //console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+	});
 
 	switcher.create("rtpsession", "defaultrtp");
 	switcher.create("SOAPcontrolServer", "soap");
@@ -112,7 +116,6 @@ module.exports = function ($, soap_port)
 		},
 
 		get_methods_description : function(nameQuidd){
-			console.log(nameQuidd);
 			var methods = $.parseJSON(switcher.get_methods_description(nameQuidd));
 			return methods
 		},
@@ -170,13 +173,16 @@ module.exports = function ($, soap_port)
 			var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
 			//merge the properties of quiddities with quiddities
 			$.each(quiddities, function(index, quidd){
+
 				var shmdata = switcher.get_property_value(quidd.name, "shmdata-writers");
-				if(shmdata != "property not found" ){
+
+				if(shmdata != "property not found"){
 					var shmdataJson = $.parseJSON(shmdata);
 					if(shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc"){
 						shmdatas.push({"quiddName" : quidd.name, "paths" : shmdataJson.shmdata_writers});
 					}
 				}
+			
 			})
 			return shmdatas;
 		}

@@ -72,23 +72,18 @@ define([
 
 
 				//creation of Quidd and set properties
-				collections.quidds.create(className, quiddName, function(quiddName)
+				collections.quidds.create(className, quiddName, function(quidd)
 				{
-					that.updateProperties(quiddName);
-					that.setMethods(quiddName);
+					that.updateProperties(quidd.name);
+					that.setMethods(quidd.name);
+					var shmdata = quidd.shmdatas["shmdata_writers"][0]["path"];
 
 					if(encoder != "none")
 					{
-						setTimeout(function()
-						{
-							var model = collections.quidds.get(quiddName);
-			    			var path = model.get("shmdatas")[0]["path"];
-			    			collections.quidds.create(encoder,quiddName+"_enc", function(name)
-			    			{
-			    				views.methods.setMethod(name, "connect", [path]);
-			    			});
-							
-						}, 700)
+		    			collections.quidds.create(encoder,quidd.name+"_enc", function(quidd)
+		    			{
+		    				views.methods.setMethod(quidd.name, "connect", [shmdata]);
+		    			});
 					}
 				});
 
@@ -121,7 +116,6 @@ define([
 
 					if(value != defaultValue)
 					{
-						console.log(value, defaultValue);
 						collections.quidds.setPropertyValue(quiddName, index, value);
 					}
 				});
@@ -135,7 +129,6 @@ define([
 				{
 					if($(this).attr("name"))
 					{
-						console.log($(this).attr("name"));
 						dataFormMeth[$(this).attr("name")] = $(this).val();
 					}
 				});
@@ -150,7 +143,7 @@ define([
 			},
 			displayTitle : function()
 			{
-				console.log("check title", this.collection.size());
+				console.log("check title In", this.collection.size());
 				//check number of quidd for titleIn
 				if(this.collection.size() != 0) $("#titleIn").show();
 				else $("#titleIn").hide();

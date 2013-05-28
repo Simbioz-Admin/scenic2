@@ -6,13 +6,13 @@ module.exports = function (io, scenic)
 		socket.on("create", function(className, name, callback)
 		{        
 			var quiddName = scenic.create(className, name);
-			console.log(quiddName);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
-			var properties = scenic.getQuiddPropertiesWithValues(quiddName)
+			var properties = scenic.getQuiddPropertiesWithValues(quiddName);
+			var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
 			//callback is used by the user who has created the Quidd for directly set properties 
-			callback({ name : quiddName, class : className, properties : properties});
-			console.log(className, name);
+			callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
+
 			if(className != "videosink")
 			{
 				io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
@@ -21,7 +21,6 @@ module.exports = function (io, scenic)
 
 
 		socket.on("remove", function(quiddName){
-			console.log(quiddName);
 			var quiddDelete = scenic.remove(quiddName);
 
 			io.sockets.emit("remove", quiddName);
@@ -48,7 +47,6 @@ module.exports = function (io, scenic)
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
-			console.log(quiddName, method, parameters);
 			var invoke = scenic.invoke(quiddName, method, parameters);
 			callback(invoke);
 			io.sockets.emit("invoke", invoke, quiddName, method, parameters);

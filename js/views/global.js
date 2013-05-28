@@ -39,6 +39,8 @@ define([
 				});
 
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
+				$("#panelRight .content").draggable({ cursor: "move", handle: "#title"});
+				$( "#panelRight .content" ).resizable();
 
 				$(document).keyup(function(e){
 					that.keyboardAction(e);
@@ -104,13 +106,15 @@ define([
 			},
 			openPanel : function()
 			{
-				$("#panelLeft").animate({width : "70%"});
-				$("#panelRight").delay(100).animate({width : "30%"});
+				$("#panelRight").show();
+				// $("#panelLeft").animate({width : "70%"});
+				// $("#panelRight").delay(100).animate({width : "30%"});
 			},
 			closePanel : function()
 			{
-				$("#panelLeft").delay(100).animate({width : "100%"});
-				$("#panelRight").animate({width : "0px"});
+				$("#panelRight").hide();
+				// $("#panelLeft").delay(100).animate({width : "100%"});
+				// $("#panelRight").animate({width : "0px"});
 			},
 			keyboardAction : function(event)
 			{

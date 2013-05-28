@@ -84,8 +84,8 @@ app.get('/panel', function (req, res)
 
 var window = appjs.createWindow({
   width  : 440,
-  height : 300,
-  resizable : false,
+  height : 320,
+  //resizable : false,
   url : 'http://localhost:8086/panel/',
   icons  : __dirname + '/content/icons'
 });
@@ -112,10 +112,11 @@ window.on('close', function(){
 });
 
 
+
 io.sockets.on('connection', function (socket)
 {
 	
-	if(!idPanel)
+	socket.on("getPort", function(callback)
 	{
 		//check if port for soap and scenic is available
 		portchecker.getFirstAvailable(8084, 8090, 'localhost', function(p, host)
@@ -124,32 +125,46 @@ io.sockets.on('connection', function (socket)
 			portchecker.getFirstAvailable(8090, 8100, 'localhost', function(p, host)
 			{ 
 				portScenic = p;
-				console.log("port", portSoap, portScenic);
-				socket.emit("sendPort", portSoap, portScenic)
+				callback(portSoap, portScenic);
+
 			});
 
 		});
-		//idPanel = socket.id;
-	} 
+	});
 
-	socket.on("setPass", function(username, pass, callback)
+
+
+
+	socket.on("setConfig", function(conf, callback)
 	{
-		require("./auth.js")(app, express, passport, DigestStrategy, username, pass);
-		passSet = true;
-		console.log("password set!");
+		if(conf.pass && conf.confirmPass)
+		{
+			require("./auth.js")(app, express, passport, DigestStrategy, conf.username, conf.pass);
+			passSet = true;
+			console.log("password set!");
+		}
+
+		if(conf.portSoap != portSoap) portSoap = conf.portSoap;
+		if(conf.portScenic != portScenic) portScenic = conf.portScenic;
+
+		window.frame.resize(440, 200);
+		//window.frame.resizable = false;
+		console.log(window.frame.resizable);
+
 		callback(true);
 	});
 
 	socket.on("statusScenic", function(state, callback)
 	{
+
 		scenicStart = (state ? true : false);
-		if(!serverScenic) serverScenic = new startScenic(8085);
-		callback("http://localhost:8085");
+		if(!serverScenic) serverScenic = new startScenic(portScenic);
+		callback("http://localhost:"+portScenic);
 	});
 
 	socket.on("openBrowser", function(val)
 	{
-		exec("xdg-open http://localhost:8085", puts);
+		exec("xdg-open http://localhost:"+portScenic, puts);
 		
 	});
 });

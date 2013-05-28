@@ -13,29 +13,13 @@ define([
         {
             socket.emit("openBrowser", true);
         });
-        
-        socket.on("TEST", function(test){ console.log(test)});    
-
-        socket.on("sendPort", function(portSoap, portScenic)
+          
+        socket.emit("getPort", function(portSoap, portScenic)
         {
-            console.log("PORT");
-            $("#portSoap").val(portSoap);
-            $("#portScenic").val(portScenic);
-        });
-        console.log("test")
-
-        //choose for password
-        $("#questionPass .yes").click(function()
-        {
-            $("#questionPass").animate({left : 340}, 300, function(){ $(this).remove()});
-            $(".setPass").show().delay(300).animate({left : 80}, 300);
-
+            $("[name=portSoap]").val(portSoap);
+            $("[name=portScenic]").val(portScenic);
         });
 
-        $("#questionPass .no").click(function(){
-            $("#questionPass").animate({left : 340}, 300, function(){ $(this).remove()});
-            $("#btnServer").show().delay(300).animate({left : 80});
-        });
 
         $("#startServer").click(function()
         {
@@ -46,7 +30,8 @@ define([
                 {
                     $("#msg").animate({"width" : 0}, 200);
                     $("#url").animate({"width" : 215}, 200);
-                    console.log($(".address").html(address));
+                    console.log(address);
+                    $(".address").html(address);
                 });
             }
             else
@@ -59,29 +44,32 @@ define([
             }
         });
 
-        $("#submitPass").click(function(){
-            if($("#username").val() == "")
+        $("#form-config").submit(function(){
+
+            var config = $("#form-config").serializeObject();
+
+            if(config.username == "" )
             {
-                 $("#username").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+                 $("[name=username]").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
             }
-            else if($("#inputPass").val() == "")
+            else if(config.pass != "" && config.confirmPass == "" )
             {
-                $("#inputPass").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+                $("[name=confirmPass]").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
             }
-            else if($("#inputConfirmPass").val() == "" )
+            else if(config.pass != config.confirmPass)
             {
-                 $("#inputConfirmPass").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
-            }else if($("#inputPass").val() != $("#inputConfirmPass").val())
+                $("[name=pass], [name=confirmPass]").animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500).animate({borderColor : "red"}, 500).animate({borderColor : "#eee"}, 500);
+            }
+            else
             {
-                alert("password different");
-            }else
-            {
-            console.log($("#username").val(), $("#inputPass").val(), $("#inputConfirmPass").val());
-                socket.emit("setPass", $("#username").val(),  $("#inputPass").val(), function()
+                console.log(config);
+
+                socket.emit("setConfig", config, function()
                 {
-                    $(".setPass").animate({left : 340}, 300, function(){ $(this).remove()});
-                    $("#btnServer").show().delay(300).animate({left : 80});
+                    $("#btnServer").show().delay(100).animate({left : 80});
+                    $("#config").animate({ marginLeft: 500});
                 });
+
             }
 
             return false;

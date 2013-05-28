@@ -27,28 +27,28 @@
         
         <div id="config">
             
-                <form>
+                <form id="form-config" >
 
                     <div class="identification">
                         <label>Identification</label>
-                        <input type="text" id="username" value="scenic2" >
-                        <input type="password" id="inputPass" placeholder="password" >
-                        <input type="password" id="inputConfirmPass" placeholder="confirm password">
+                        <input type="text" name="username" value="scenic2" >
+                        <input type="password" name="pass" placeholder="password" >
+                        <input type="password" name="confirmPass" placeholder="confirm password">
                         <div class="info">* if password is empty the page will not be secured</div>
                     </div>
 
                     <div class="ports">
                         <div class="port">
                             <label>Port Soap</label>
-                            <input type="text" id="portSoap" >
+                            <input type="text" name="portSoap" >
                         </div>
                         <div class="port">
                             <label>Port Scenic</label>
-                            <input type="text" id="portScenic" >
+                            <input type="text" name="portScenic" >
                         </div>
                     </div>
 
-                    <input type="submit" value="confirm" id="submitPass">
+                    <input type="submit" value="Valid" id="submitPass">
                 </form>
             
 

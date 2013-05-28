@@ -18,6 +18,8 @@ define([
 		    	{
 		    		var view = new ViewDestination({model : model});
 		    	});
+
+		    	
 		    	
 		    },
 		    render : function()

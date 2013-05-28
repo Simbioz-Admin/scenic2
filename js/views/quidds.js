@@ -19,11 +19,18 @@ define([
 			initialize : function()
 			{
 				console.log("init QuiddsView");
+				this.displayTitle();
 
-
+				var that = this;
 				this.collection.bind("add", function(model){
 					var view = new ViewQuidd({model : model});
+					that.displayTitle();
+
 				});
+				this.collection.bind("remove", function(model)
+				{
+					that.displayTitle();
+				})
 
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
@@ -141,6 +148,13 @@ define([
 					}
 				});
 			},
+			displayTitle : function()
+			{
+				console.log("check title", this.collection.size());
+				//check number of quidd for titleIn
+				if(this.collection.size() != 0) $("#titleIn").show();
+				else $("#titleIn").hide();
+			}
 			
 		});
 

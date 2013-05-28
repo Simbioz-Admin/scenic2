@@ -19,6 +19,10 @@ define([
 						if(method == "add_destination")
 						{
 							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
+							
+							//check number of quidd for titleIn
+							if(collections.destinations.size() != 0) $("#titleOut").show();
+							else $("#titleOut").hide();
 						}
 						if(method == "add_udp_stream_to_dest")
 						{

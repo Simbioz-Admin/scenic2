@@ -1,5 +1,5 @@
 
-module.exports = function ($, soap_port)
+module.exports = function ($, soap_port, io)
 {
 	var switcher = require('node-switcher');
 
@@ -11,17 +11,39 @@ module.exports = function ($, soap_port)
 
 	switcher.register_prop_callback(function (qname, qprop, pvalue)
 	{
-		console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
-		//io.sockets.emit("signals_properties", qname, qprop, pvalue);
+		//console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+		if(qprop == "shmdata-writers")
+		{
+			createVuMeter($.parseJSON(pvalue));
+			switcher.unsubscribe_to_property(qname, qprop);
+		}
+		io.sockets.emit("signals_properties", qname, qprop, pvalue);
 	});
 	
 	switcher.register_signal_callback(function (qname, qprop, pvalue){
-	    //console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+	    console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+	    //subscrire to shmdata-writers proprety for create byte-rate
+	    if(qprop == "on-quiddity-created") switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+	    
 	});
 
 	switcher.create("rtpsession", "defaultrtp");
 	switcher.create("SOAPcontrolServer", "soap");
 	switcher.invoke("soap", "set_port", [soap_port]);
+
+
+	//TODO : find way to acces function in return
+	//create the vumeter for shmdata
+	function createVuMeter(shmdatas)
+	{
+		$.each(shmdatas["shmdata_writers"], function(index, shmdata)
+		{
+			var vumeter = switcher.create("fakesink", "vumeter_"+shmdata.path);
+			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
+			switcher.subscribe_to_property(vumeter, "byte-rate");
+		});
+	}
+
 
 	return {
 		create : function(quidd, name)
@@ -191,6 +213,10 @@ module.exports = function ($, soap_port)
 			
 			})
 			return shmdatas;
+		},
+		createVuMeter : function(shmdatas)
+		{
+			createVuMeter(shmdatas);
 		}
 	}
 

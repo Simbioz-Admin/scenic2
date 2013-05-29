@@ -70,7 +70,8 @@ define([
 
 				collections.quidds.create(type, "sink-"+quidd, function(quidd){
 					console.log(quidd);
-					views.methods.setMethod(quidd, "connect", [ path ]);
+					console.log(quidd.name, "connect", [path]);
+					views.methods.setMethod(quidd.name, "connect", [path]);
 				});
 			}
 			

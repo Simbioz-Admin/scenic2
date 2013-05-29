@@ -141,6 +141,13 @@ define([
 					}
 				});
 			},
+			stateShmdata : function(name, value)
+			{	
+				var shmdata = name.replace("vumeter_", "");
+				if(value > 0) $("[data-path='"+shmdata+"']").removeClass("inactive").addClass("active");
+				else $("[data-path='"+shmdata+"']").removeClass("active").addClass("inactive");
+				
+			},
 			displayTitle : function()
 			{
 				console.log("check title In", this.collection.size());

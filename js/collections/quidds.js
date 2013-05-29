@@ -40,7 +40,7 @@ define([
 
 		    	socket.on("signals_properties", function(name, prop, value)
 		    	{
-		    		//console.log("prop : ", name, prop, value);
+		    		if(prop == "byte-rate") views.quidds.stateShmdata(name, value);
 		    	})
 
 		    	//receive notification for set property of quidd

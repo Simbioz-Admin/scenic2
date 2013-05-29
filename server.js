@@ -182,7 +182,7 @@ function startScenic(port)
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
 	require("./irc.js")(ioScenic, $)
-	var scenic = require("./scenic/scenic.js")($, portSoap);
+	var scenic = require("./scenic/scenic.js")($, portSoap, ioScenic);
 	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
 	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic, $);
 

@@ -9,6 +9,7 @@ define([
 		var MenuView = Backbone.View.extend({
 			el : 'body',
 			statePanelIrc : false,
+			statePanelLog : false,
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
@@ -17,7 +18,8 @@ define([
 				"blur #port_destination" : "removeInputDestination",
 				"click #close" : "closePanel",
 				"change .checkbox" : 'stateCheckbox',
-				"click #btn-irc" : 'panelIrc'
+				"click #btn-irc" : 'panelIrc',
+				"click #btn-log" : 'panelLog'
 			},
 
 			//generation of the main Menu 
@@ -139,6 +141,26 @@ define([
 					$("#chat").hide();	
 					this.statePanelIrc = false;
 				}
+			},
+			panelLog : function()
+			{
+				var that = this;
+				if(!this.statePanelLog)
+				{
+					$("#log").animate({"right" : 0}, function()
+					{
+						console.log("open");
+						that.statePanelLog = true;
+					});
+				}
+				else
+				{
+					$("#log").animate({"right" : -$("#log").width()-61}, function()
+					{
+						that.statePanelLog = false;
+					});
+				}
+				
 			}
 		});
 

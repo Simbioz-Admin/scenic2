@@ -23,6 +23,7 @@
 		<header id="header">
 			<div id="logo">SCENIC2</div>
 			<div class="btn" id="btn-irc" style="float:right">IRC</div>
+			<div class="btn" id="btn-log" style="float:right">LOG</div>
 		</header>
 
 
@@ -75,34 +76,8 @@
 
 	    </div>
 
-		<div id="log" style="display:none;">
-			<h3>Log</h3>
-			<class class="content"></class>
-		</div>
+		<div id="log" > <class class="content"></class> </div>
 
-
-
-
-
-		<script type="text/javascript">
-		$(document).ready(function(){
-			$(function(){
-				var state = "close";
-				$("#log h3").click(function(){
-					if(state == "open"){
-						$("#log").animate({"right" : -$("#log").width()-61}, function(){
-							state = "close";
-						});
-					}else{
-						$("#log").animate({"right" : 0});
-						console.log("open");
-						state = "open";
-					}
-				});
-
-			})
-		});
-		</script>
 	</body>
 </html>
 

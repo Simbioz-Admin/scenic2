@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Scenic2 - SAT</title>
+    <!-- Load the script "js/main.js" as our entry point -->
+
+    <!-- /**** CSS ****/ -->
+
+	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
+	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+
+	 <!-- /**** JAVSCRIPT ****/ -->
+    <script type="text/javascript"> var page = "panel";</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script data-main="/js/main.js" src="/js/libs/require-jquery.js"></script>
+
+</head>
+    <body class="scenic2 windowPanel">
+        <header id="header">
+            <div id="logo">SCENIC2</div>
+            <br><br>
+            
+        </header>
+        
+        <div id="config">
+            
+                <form id="form-config" >
+
+                    <div class="identification">
+                        <label>Identification</label>
+                        <input type="text" name="username" value="scenic2" >
+                        <input type="password" name="pass" placeholder="password" >
+                        <input type="password" name="confirmPass" placeholder="confirm password">
+                        <div class="info">* if password is empty the page will not be secured</div>
+                    </div>
+
+                    <div class="ports">
+                        <div class="port">
+                            <label>Port Soap</label>
+                            <input type="text" name="portSoap" >
+                        </div>
+                        <div class="port">
+                            <label>Port Scenic</label>
+                            <input type="text" name="portScenic" >
+                        </div>
+                    </div>
+
+                    <input type="submit" value="Valid" id="submitPass">
+                </form>
+            
+
+        </div>
+        
+        <div id="btnServer">
+            <div class="switch">
+                <input type="checkbox" id="startServer">
+                <label><i class="icon-off"></i></label>
+            </div> 
+
+            <div id="url">open the interface
+                <div class="address">http://localhost</div>
+            </div>
+            <div id="msg">start server</div>
+        </div>
+
+    </body>
+</head>

@@ -39,6 +39,8 @@ define([
 				});
 
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
+				$("#panelRight .content").draggable({ cursor: "move", handle: "#title"});
+				$( "#panelRight .content" ).resizable();
 
 				$(document).keyup(function(e){
 					that.keyboardAction(e);
@@ -73,15 +75,16 @@ define([
 			},
 			setConnection : function(event)
 			{
+				console.log(event.which);
 				if(event.which == 13) //touch enter
 				{
 					var box = $(event.target).parent()
 					,	destName = box.data("hostname")
 					,	path = box.parent().data("path")
 					,	port = $(event.target).val();
-
+					console.log(destName, path, port);
 					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){});
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("OK");});
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){});
 
@@ -103,13 +106,15 @@ define([
 			},
 			openPanel : function()
 			{
-				$("#panelLeft").animate({width : "70%"});
-				$("#panelRight").delay(100).animate({width : "30%"});
+				$("#panelRight").show();
+				// $("#panelLeft").animate({width : "70%"});
+				// $("#panelRight").delay(100).animate({width : "30%"});
 			},
 			closePanel : function()
 			{
-				$("#panelLeft").delay(100).animate({width : "100%"});
-				$("#panelRight").animate({width : "0px"});
+				$("#panelRight").hide();
+				// $("#panelLeft").delay(100).animate({width : "100%"});
+				// $("#panelRight").animate({width : "0px"});
 			},
 			keyboardAction : function(event)
 			{

@@ -1,26 +1,42 @@
 {
-    "name": "scenic2",
-    "description": "UI for interaction design with switcher",
-    "version": "0.0.1",
-    "homepage": "",
-    "repository": {
-        "type" : "git",
-        "url" : ""
-    },
-    "keywords": ["dataflow", "patching", "switcher", "routing"],
-    "main": "./server.js",
-    "dependencies": {
-        "socket.io": "",
-        "express": "",
-        "jQuery": "",
-        "requirejs": "",
-        "underscore": "",
-        "xmlhttprequest": "",
-        "jsdom": "",
-        "backbone": "",
-        "passport" : "",
-        "passport-local" : "",
-        "colors" : ""
-    }
+  "name": "scenic2",
+  "version": "0.0.2",
+  "description": "UI for interaction design with switcher",
+  "main": "app.sh",
+  "dependencies": {
+    "node-switcher": "~0.1",
+    "express": "~3.1.0",
+    "appjs-linux-x64": "~0.0.19",
+    "colors": "~0.6.0-1",
+    "passport-http": "~0.2.1",
+    "passport": "~0.1.16",
+    "appjs": "~0.0.20",
+    "jsdom": "~0.5.4",
+    "irc": "~0.3.6",
+    "portchecker": "~0.1.2",
+    "requirejs": "~2.1.5",
+    "jQuery": "~1.7.4",
+    "socket.io": "~0.9.13",
+    "backbone": "~1.0.0",
+    "underscore": "~1.4.4",
+    "xmlhttprequest": "~1.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://pachesnel@code.sat.qc.ca/redmine/scenic2.git"
+  },
+  "keywords": [
+    "dataflow",
+    "patching",
+    "switcher",
+    "routing"
+  ],
+  "author": "Nicolas Bouillot, Pierre-Antoine Chesnel",
+  "license": "GPL",
+  "gitHead": "ec52edd4f881924bdf90126cd5b77117dc96ab43"
 }
-

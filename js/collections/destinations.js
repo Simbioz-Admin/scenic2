@@ -17,7 +17,10 @@ define([
 		    	this.bind("add", function(model)
 		    	{
 		    		var view = new ViewDestination({model : model});
+		    		views.destinations.displayTitle();
 		    	});
+
+		    	
 		    	
 		    },
 		    render : function()

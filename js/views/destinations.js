@@ -15,6 +15,7 @@ define([
 			initialize : function()
 			{
 				console.log("init DestinationsView");
+				this.displayTitle();
 			},					
 			createPanel : function()
 			{
@@ -46,6 +47,12 @@ define([
 				});
 
 			return false;
+			},
+			displayTitle : function()
+			{
+				//check number of quidd for titleIn
+				if(this.collection.size() != 0) $("#titleOut").show();
+				else $("#titleOut").hide();
 			}
 		});
 

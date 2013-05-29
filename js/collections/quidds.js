@@ -14,7 +14,7 @@ define([
 				var quidds = [];
 				_.each(results, function(quidd)
 				{
-					if(quidd.class != "rtpsession" && quidd.class != "logger" && quidd.class != "runtime" && quidd.class != "logger" && quidd.class != "SOAPcontrolServer" )
+					if(quidd.class != "create_remove_spy" && quidd.class != "rtpsession" && quidd.class != "logger" && quidd.class != "runtime" && quidd.class != "logger" && quidd.class != "SOAPcontrolServer" )
 					{
 						quidds.push(quidd);
 					}
@@ -40,7 +40,7 @@ define([
 
 		    	socket.on("signals_properties", function(name, prop, value)
 		    	{
-		    		//console.log("prop : ", name, prop, value);
+		    		if(prop == "byte-rate") views.quidds.stateShmdata(name, value);
 		    	})
 
 		    	//receive notification for set property of quidd
@@ -79,7 +79,7 @@ define([
 
 		    		// }
 		    		//return name for next step : set properties and methods
-		    		callback(quidd.name);
+		    		callback(quidd);
 		    	});
 		    },
 		    delete : function(quiddName)

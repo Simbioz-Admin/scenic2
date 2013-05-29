@@ -10,7 +10,7 @@ define([
 			className : 'nameInOut',
 			template : templateDestination,
 			events : {
-				"click" : "test",
+				//"click" : "test",
 
 			},
 			initialize : function()
@@ -20,15 +20,12 @@ define([
 			render : function()
 			{
 				that = this;
-				$(this.el).append(this.model.get("name"));
+				$(this.el).append("<div class='short'>"+this.model.get("name")+"</div>");
 				$("#destinations").append($(this.el));
 				$(".shmdata").each(function(index, source){
 					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");
 				});
-			},
-			test : function()
-			{
-				console.log(this.model);
+				//views.destinations.displayTitle();
 			}
 			
 		});

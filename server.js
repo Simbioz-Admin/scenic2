@@ -3,30 +3,56 @@ var express = require("express")
 , app = express()
 , http = require('http')
 , requirejs = require('requirejs')
-, server= http.createServer(app)
+, server = http.createServer(app).listen(8086)
 , io = require('socket.io').listen(server, { log: false })
 , logo = require('./js/libs/logo.js')
 , switcher = require('node-switcher')
 , child_process = require('child_process')
 , readline = require('readline')
-, passport = require('passport')
-, DigestStrategy = require('passport-http').DigestStrategy;
-
-require("./irc2.js")(io, $);
-
-server.listen(8085);
+, sys = require('sys')
+, appjs = require("appjs")
+, portchecker = require("portchecker")
+, idPanel = false
+, scenicStart = false
+, serverScenic = null
+, passSet = false;
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
+var pass = false;
+var portSoap = false
+,	portScenic = false
 
+
+
+
+//----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
+
+var passport = require('passport')
+, 	DigestStrategy = require('passport-http').DigestStrategy;
+
+app.configure(function() {
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
+
+
+
+var exec = require('child_process').exec;
 
 //please quit switcher properly
 process.on('exit', function () {
 	switcher.close();
-	io.sockets.emit("shutdown", "bang");
+	//io.sockets.emit("shutdown", "bang");
 	console.log('About to exit.');
 });
 process.on('SIGINT', function () {
@@ -39,366 +65,152 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 
 
 
-
-var pass = false;
-var soap_port = 8084;
+// ------------------------------------ SCENIC WINDOW ---------------------------------------------//
 
 
-process.argv.forEach(function (val, index, array)
+app.get('/panel', function (req, res)
 {
-  if( val == "--password"  || val == "-p") pass = true;
-  if( val == "--soap_port" || val == "-s" && process.argv[index+1]) soap_port = process.argv[index+1];
-});
-
-console.log("soap port is set to ", soap_port);
-if(pass)
-{	
-	//------ authentification ---------------------------//
-	require("./auth.js")(app, express, passport, DigestStrategy, readline);
-} 
-else
-{
-	app.get('/', function (req, res){
-		  res.sendfile(__dirname + '/index.html');
-	});
-}
-
-
-
-// ------------------------------------ WEB APP ---------------------------------------------//
-
-
-// app.get('/classes_doc', function(request, response) {
-//   response.contentType('application/json');
-//   response.send(getClassesDocWithProperties());
-// });
-
-app.get('/classes_doc/:className?/:type?/:value?', function(req, res){
-
-	if(req.params.type == "properties")
+	if(!idPanel)
 	{
-		if(req.params.value) 	res.send(get_property_description_by_class(req.params.className, req.params.value));
-		else 					res.send(get_properties_description_by_class(req.params.className));
-	}
-	else if(req.params.type == "methods")
-	{
-		if(req.params.value)	res.send(get_method_description_by_class(req.params.className, req.params.value));
-		else					res.send(get_methods_description_by_class(req.params.className));
-	}
-	else if(req.params.className)
-	{
-		res.send(get_class_doc(req.params.className));
+	  res.sendfile(__dirname + '/panel.html');
+	  //start = true;
 	}
 	else
 	{
-		if(req.query.category) res.send(get_classes_docs_type(req.query.category));
-		else res.send(get_classes_docs());
+		res.send("sorry you can't access to the page");
 	}
+});	
+
+
+var window = appjs.createWindow({
+  width  : 440,
+  height : 320,
+  //resizable : false,
+  url : 'http://localhost:8086/panel/',
+  icons  : __dirname + '/content/icons'
+});
+
+window.on('create', function(){
+  console.log("Window Created");
+  window.frame.show();
+  window.frame.center();
+});
+
+window.on('ready', function(){
+  console.log("Window Ready");
+
+  window.addEventListener('keydown', function(e){
+    if (e.keyIdentifier === 'F12') {
+      window.frame.openDevTools();
+    }
+  });
+});
+
+window.on('close', function(){
+  console.log("Window Closed");
+  process.exit(0);
 });
 
 
 
-app.get('/quidds/:quiddName?/:type?/:value?', function(req, res)
+io.sockets.on('connection', function (socket)
 {
-	if(req.params.type == "properties")
-	{
-		if(req.params.value)	res.send(get_property_description(req.params.quiddName, req.params.value))
-		else					res.send(get_properties_description(req.params.quiddName));
-  	}
-	else if(req.params.type == "methods")
-	{
-		if(req.params.value)	res.send(get_method_description(req.params.quiddName, req.params.value));
-		else					res.send(get_methods_description(req.params.quiddName));
-	}
-  	else if(req.params.quiddName)
-  	{
-		res.send(get_quiddity_description(req.params.quiddName));
-  	}
-  	else
-  	{
-		res.send(getQuidds());
-  	}
-});
-
-
-
-// app.get('/classes_doc/:className', function(req, res){
-// 	console.log(req.query);
-// 	res.send(get_class_doc(req.params.className));
-// });
-
-
-app.get('/methods_doc', function(request, response) {
-  response.contentType('application/json');
-  response.send(getQuidditiesWithMethods());
-});
-
-
-
-app.get('/shmdatas', function(request, response) {
-  response.contentType('application/json');
-  response.send(getShmdatas());
-});
-
-app.get('/destinations', function(request, response) {
-  response.contentType('application/json');
-  response.send(switcher.get_property_value("defaultrtp", "destinations-json"));
-});
-
-
-//console.log(switcher.get_properties_description_by_class("videotestsrc") );
-//logo.print();
-
-switcher.register_log_callback(function (msg){
-		//io.sockets.emit("messageLog", msg);
-		//console.log('.....log message: ', msg);
- });
-
-switcher.register_prop_callback(function (qname, qprop, pvalue){
-	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
-	io.sockets.emit("signals_properties", qname, qprop, pvalue);
-});
-
-switcher.create("rtpsession", "defaultrtp");
-
-//switcher.create("videotestsrc", "video");
-//switcher.invoke("defaultrtp", "add_destination", ["pacman", "poseidon.local"]);
-
-switcher.create("SOAPcontrolServer", "soap");
-switcher.invoke("soap", "set_port", [soap_port]);
-
-//console.log(switcher.invoke("defaultrtp", "add_udp_stream_to_dest", ["Nico", "/tmp/switcher_nodeserver_audiotestsrc10_audio", "8585"]));
-//
-
-// ------------------------------------ SOCKET.IO ---------------------------------------------//
-
-// ------------------------------------ IRC-CHAT ---------------------------------------------//
-
-
-
-io.sockets.on('connection', function (socket) {
-
-
 	
+	socket.on("getPort", function(callback)
+	{
+		//check if port for soap and scenic is available
+		portchecker.getFirstAvailable(8084, 8090, 'localhost', function(p, host)
+		{ 
+			portSoap = p;
+			portchecker.getFirstAvailable(8090, 8100, 'localhost', function(p, host)
+			{ 
+				portScenic = p;
+				callback(portSoap, portScenic);
+
+			});
+
+		});
+	});
 
 
 
 
-	socket.on("create", function(className, name, callback)
-	{        
-		var quiddName = switcher.create(className, name);
-		console.log(quiddName);
-		switcher.subscribe_to_property (quiddName, "shmdata-writers");
-		//recover the default properties with values
-		var properties = getQuiddPropertiesWithValues(quiddName)
-		//callback is used by the user who has created the Quidd for directly set properties 
-		callback({ name : quiddName, class : className, properties : properties});
-		console.log(className, name);
-		if(className != "videosink")
+	socket.on("setConfig", function(conf, callback)
+	{
+		if(conf.pass && conf.confirmPass)
 		{
-			io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
+			require("./auth.js")(app, express, passport, DigestStrategy, conf.username, conf.pass);
+			passSet = true;
+			console.log("password set!");
 		}
+
+		if(conf.portSoap != portSoap) portSoap = conf.portSoap;
+		if(conf.portScenic != portScenic) portScenic = conf.portScenic;
+
+		window.frame.resize(440, 200);
+		//window.frame.resizable = false;
+		console.log(window.frame.resizable);
+
+		callback(true);
 	});
 
+	socket.on("statusScenic", function(state, callback)
+	{
 
-	socket.on("remove", function(quiddName){
-		console.log(quiddName);
-		var quiddDelete = switcher.remove(quiddName);
-
-		io.sockets.emit("remove", quiddName);
+		scenicStart = (state ? true : false);
+		if(!serverScenic) serverScenic = new startScenic(portScenic);
+		callback("http://localhost:"+portScenic);
 	});
 
-
-	socket.on("setPropertyValue", function(quiddName, property, value, callback){
-		var ok = switcher.set_property_value(quiddName, property, value);
-		callback(ok);
-		io.sockets.emit("setPropertyValue", quiddName, property, value);
+	socket.on("openBrowser", function(val)
+	{
+		exec("xdg-open http://localhost:"+portScenic, puts);
+		
 	});
-
-
-	socket.on("getMethodDescription", function(quiddName, method, callback){
-		var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
-		callback(descriptionJson);
-	});
-
-
-	socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
-		var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
-		callback(methodsDescriptionByClass);
-	});
-
-
-	socket.on("invoke", function(quiddName, method, parameters, callback){
-		var invoke = switcher.invoke(quiddName, method, parameters);
-		callback(invoke);
-		io.sockets.emit("invoke", invoke, quiddName, method, parameters);
-	});
-
-
-	socket.on("getPropertiesOfClass", function(className, callback){
-		var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
-		callback(propertiesofClass);
-	});
-
-
-	socket.on("getPropertiesOfQuidd", function(quiddName, callback){
-		var propertiesOfQuidd = getQuiddPropertiesWithValues(quiddName);
-		callback(propertiesOfQuidd);
-	});
-
-
-	socket.on("getQuidditiesWithPropertiesAndValues", function(quiddName, callback){
-		var QuidditiesWithPropertiesAndValues = getQuidditiesWithPropertiesAndValues(quiddName);
-		callback(QuidditiesWithPropertiesAndValues);
-	});
-
-	socket.on("get_property_value", function(quiddName, property, callback){
-		var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
-		callback(quidds);
-	});
-
-
 });
 
-function getQuidds(){
-	var quidds =  $.parseJSON(switcher.get_quiddities_description()).quiddities;
-	return quidds;
-}
 
-function get_classes_docs(){
-	var docs = $.parseJSON(switcher.get_classes_doc());
-	return docs;
-}
 
-function get_classes_docs_type(type){
-	var docsType = { classes : []};
-	var docs = get_classes_docs();
-	$.each(docs.classes, function(index, doc)
+
+// ------------------------------------ SCENIC CONFIGURATION ---------------------------------------------//
+
+
+
+function startScenic(port)
+{
+	var server = http.createServer(app).listen(port);
+	var	ioScenic = require('socket.io').listen(server, { log: false });
+
+	require("./irc.js")(ioScenic, $)
+	var scenic = require("./scenic/scenic.js")($, portSoap, ioScenic);
+	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
+	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic, $);
+
+	this.close = function()
+	{ 
+		//io.sockets.emit("shutdown", "bang");
+		scenicStart = false;
+		console.log("server closed.");
+		ioScenic.sockets.emit("shutdown", "bang");
+	}
+	if(passSet)
 	{
-		if(doc["category"].indexOf(type) > -1) docsType.classes.push(doc);
-	});
-	return docsType;
-}
 
-function get_class_doc(className){
-	var doc = $.parseJSON(switcher.get_class_doc(className));
-	return doc;
-}
+		app.all('/', passport.authenticate('digest', { session: false }),
+		  function(req, res){
+		  	if(scenicStart) res.sendfile(__dirname + '/index.html');
+			else res.send("Sorry server is shutdown");
+	  	});
 
-function get_properties_description_by_class(nameClass){
-	var properties = $.parseJSON(switcher.get_properties_description_by_class(nameClass));
-	return properties;
-}
+	}
+	else
+	{
+		app.get('/', function (req, res){
+			if(scenicStart) res.sendfile(__dirname +'/index.html');
+			else res.send("Sorry server is shutdown");
+		});
+	}
 
-function get_property_description_by_class(nameClass, property){
-	var properties = $.parseJSON(switcher.get_property_description_by_class(nameClass, property));
-	return properties;
-}
-
-function get_property_value(nameClass, property){
-	var property = $.parse.JSON(switcher.get_property_value(nameClass, property));
-	return property;
-}
-
-function get_methods_description_by_class(nameClass){
-	var methods = $.parseJSON(switcher.get_methods_description_by_class(nameClass));
-	return methods;
-}
-
-function get_method_description_by_class(nameClass, method){
-	var method = $.parseJSON(switcher.get_method_description_by_class(nameClass, method));
-	return method;
-}
-
-function get_quiddity_description(nameQuidd){
-	var quidd = $.parseJSON(switcher.get_quiddity_description(nameQuidd));
-	return quidd;
-}
-
-function get_properties_description(nameQuidd){
-	var properties = $.parseJSON(switcher.get_properties_description(nameQuidd));
-	return properties
-}
-
-function get_property_description(nameQuidd, property){
-	var property = $.parseJSON(switcher.get_property_description(nameQuidd, property));
-	return property
-}
-
-function get_methods_description(nameQuidd){
-	console.log(nameQuidd);
-	var methods = $.parseJSON(switcher.get_methods_description(nameQuidd));
-	return methods
-}
-
-function get_method_description(nameQuidd, method){
-	var method = $.parseJSON(switcher.get_method_description(nameQuidd, method));
-	return method
-}
-
-// merge properties of classes with ClassesDoc
-function getClassesDocWithProperties(){
-	var docs = $.parseJSON(switcher.get_classes_doc());
-	$.each(docs.classes, function(index, classDoc){;
-		var propertyClass = $.parseJSON(switcher.get_properties_description_by_class(classDoc["class name"])).properties;
-		docs.classes[index].properties = propertyClass;
-	});
-	return docs;
-}
-
-
-function getQuidditiesWithMethods(){
-	var docs = $.parseJSON(switcher.get_classes_doc());
-	$.each(docs.classes, function(index, classDoc){;
-		if(classDoc["class name"] != "logger"){
-			var propertyClass = $.parseJSON(switcher.get_methods_description_by_class(classDoc["class name"])).methods;
-		}
-
-		docs.classes[index].methods = propertyClass;
-	});
-	return docs;
-}
-
-
-function getQuidditiesWithPropertiesAndValues(){
-	//recover the quiddities already existing 
-	var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
-	//merge the properties of quiddities with quiddities
-	$.each(quiddities, function(index, quidd){      
-		quiddities[index].properties = getQuiddPropertiesWithValues(quidd.name);
-	})
-	return quiddities;
-}
-
-
-function getQuiddPropertiesWithValues(quiddName){
-	var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-	//recover the value set for the properties
-	$.each(propertiesQuidd, function(index, property){
-		
-		var valueOfproperty = switcher.get_property_value(quiddName, property.name);
-		if(property.name == "shmdata-writers"){ 
-			valueOfproperty = $.parseJSON(valueOfproperty);
-		} 
-		propertiesQuidd[index].value = valueOfproperty;
-		
-	})
-	return  propertiesQuidd;
-}
-
-function getShmdatas(){
-	var shmdatas = [];
-	var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
-	//merge the properties of quiddities with quiddities
-	$.each(quiddities, function(index, quidd){
-		var shmdata = switcher.get_property_value(quidd.name, "shmdata-writers");
-		if(shmdata != "property not found" ){
-			var shmdataJson = $.parseJSON(shmdata);
-			if(shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc"){
-				shmdatas.push({"quiddName" : quidd.name, "paths" : shmdataJson.shmdata_writers});
-			}
-		}
-	})
-	return shmdatas;
+	scenicStart = true;
 }
 

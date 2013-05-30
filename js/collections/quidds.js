@@ -10,16 +10,7 @@ define([
 			url : '/quidds/',
 			parse : function(results, xhr)
 			{
-				//exclude specific node not use in interface
-				var quidds = [];
-				_.each(results, function(quidd)
-				{
-					if(quidd.class != "create_remove_spy" && quidd.class != "rtpsession" && quidd.class != "logger" && quidd.class != "runtime" && quidd.class != "logger" && quidd.class != "SOAPcontrolServer" )
-					{
-						quidds.push(quidd);
-					}
-				})
-		        return quidds;
+		        return results;
 		    },
 		    initialize : function()
 		    {

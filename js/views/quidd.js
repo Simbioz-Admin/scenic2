@@ -21,11 +21,13 @@ define([
 			},
 			render : function()
 			{
+
 				var model = this.model
 				, 	that = this
-
 				this.model.setShmdatas(function(shmdatas)
 				{
+					//HERE ERROR NOT SHMDATAS SOME TIMES !!!!
+					console.log("ADD GUI", shmdatas);
 					_.each(shmdatas, function(shmdata, index){
 
 						var template = _.template(SourceTemplate, 
@@ -36,6 +38,7 @@ define([
 											sourceName : model.get("name"),
 											destinations : collections.destinations.toJSON()
 										});
+
 
 						$(that.el).append(template);
 						$("#sources").prepend($(that.el));

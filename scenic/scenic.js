@@ -1,5 +1,5 @@
 
-module.exports = function ($, soap_port, io)
+module.exports = function (config, $, _, soap_port, io)
 {
 	var switcher = require('node-switcher');
 
@@ -22,8 +22,17 @@ module.exports = function ($, soap_port, io)
 	
 	switcher.register_signal_callback(function (qname, qprop, pvalue){
 	    console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
-	    //subscrire to shmdata-writers proprety for create byte-rate
-	    if(qprop == "on-quiddity-created") switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+	    
+    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
+
+	    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
+	    {
+	    	console.log(quiddClass);
+	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
+		    //subscrire to shmdata-writers proprety for create byte-rate
+		    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+	    }
+
 	    
 	});
 

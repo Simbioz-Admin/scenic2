@@ -1,4 +1,4 @@
-module.exports = function (io, scenic, $)
+module.exports = function (config, io, scenic, $, _)
 {
 	io.sockets.on('connection', function (socket)
 	{
@@ -16,10 +16,11 @@ module.exports = function (io, scenic, $)
 			//callback is used by the user who has created the Quidd for directly set properties or create encoder
 			callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
 
-			if(className != "videosink")
-			{
-				io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
-			}
+			// if(!_.contains(config.quiddExclude, className))
+			// {
+			// 	io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
+			// }
+			
 		});
 
 

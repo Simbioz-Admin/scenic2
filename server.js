@@ -1,5 +1,7 @@
 var express = require("express")
+, config = require('./scenic/config.js')
 , $ = require('jQuery')
+, _ = require('underscore')
 , app = express()
 , http = require('http')
 , requirejs = require('requirejs')
@@ -15,17 +17,13 @@ var express = require("express")
 , idPanel = false
 , scenicStart = false
 , serverScenic = null
-, passSet = false;
+, passSet = false
+, pass = false;
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
-
-var pass = false;
-var portSoap = false
-,	portScenic = false
-
 
 
 
@@ -38,8 +36,6 @@ app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(app.router);
@@ -121,18 +117,16 @@ io.sockets.on('connection', function (socket)
 		//check if port for soap and scenic is available
 		portchecker.getFirstAvailable(8084, 8090, 'localhost', function(p, host)
 		{ 
-			portSoap = p;
+			config.port.soap = p;
 			portchecker.getFirstAvailable(8090, 8100, 'localhost', function(p, host)
 			{ 
-				portScenic = p;
-				callback(portSoap, portScenic);
+				config.port.scenic = p;
+				callback(config.port.soap, config.port.scenic);
 
 			});
 
 		});
 	});
-
-
 
 
 	socket.on("setConfig", function(conf, callback)
@@ -144,8 +138,8 @@ io.sockets.on('connection', function (socket)
 			console.log("password set!");
 		}
 
-		if(conf.portSoap != portSoap) portSoap = conf.portSoap;
-		if(conf.portScenic != portScenic) portScenic = conf.portScenic;
+		if(conf.portSoap != config.port.soap) config.port.soap = conf.portSoap;
+		if(conf.portScenic != config.port.scenic) config.port.scenic = conf.portScenic;
 
 		window.frame.resize(440, 200);
 		//window.frame.resizable = false;
@@ -158,13 +152,13 @@ io.sockets.on('connection', function (socket)
 	{
 
 		scenicStart = (state ? true : false);
-		if(!serverScenic) serverScenic = new startScenic(portScenic);
-		callback("http://localhost:"+portScenic);
+		if(!serverScenic) serverScenic = new startScenic(config.port.scenic);
+		callback("http://localhost:"+config.port.scenic);
 	});
 
 	socket.on("openBrowser", function(val)
 	{
-		exec("xdg-open http://localhost:"+portScenic, puts);
+		exec("xdg-open http://localhost:"+config.port.scenic, puts);
 		
 	});
 });
@@ -182,9 +176,9 @@ function startScenic(port)
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
 	require("./irc.js")(ioScenic, $)
-	var scenic = require("./scenic/scenic.js")($, portSoap, ioScenic);
-	var scenicExpress = require("./scenic/scenic-express.js")($, app, scenic, __dirname, scenicStart);
-	var scenicIo = require("./scenic/scenic-io.js")(ioScenic, scenic, $);
+	var scenic = require("./scenic/scenic.js")(config, $, _, config.port.soap, ioScenic);
+	var scenicExpress = require("./scenic/scenic-express.js")(config, $, _, app, scenic, __dirname, scenicStart);
+	var scenicIo = require("./scenic/scenic-io.js")(config, ioScenic, scenic, $, _);
 
 	this.close = function()
 	{ 

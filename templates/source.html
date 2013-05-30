@@ -1,4 +1,4 @@
-<tr class="shmdata" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
+<tr class="shmdata inactive" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
 	<% if(index == 0){ %>
 		<td rowspan="<%=nbShmdata%>" class="group groupSource" ><div class="vertical short"><%=sourceName%></div> <div class="edit"></div></td>
 	<% } %>
@@ -11,6 +11,7 @@
 	</th>
 	<% _.each(destinations, function(destination){
 		var active = false;
+		console.log(destination.data_streams);
 		_.each(destination.data_streams, function(path){
 			if(path.path == shmdata.path){
 				active = true;

@@ -1,8 +1,7 @@
 
-module.exports = function ($, app, scenic, dir, scenicStart)
+module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 {
 	var express = require("express");
-
 
 	console.log(dir);
 
@@ -53,7 +52,15 @@ module.exports = function ($, app, scenic, dir, scenicStart)
 	  	}
 	  	else
 	  	{
-			res.send(scenic.getQuidds());
+	  		//return the quidds without the excludes
+	  		var quidds = scenic.getQuidds();
+	  		var quiddsFiltered = [];
+	  		_.each(quidds, function(quidd, index)
+	  		{
+	  			if(!_.contains(config.quiddExclude, quidd.class)) quiddsFiltered.push(quidds[index]);
+	  		});
+
+			res.send(quiddsFiltered);
 	  	}
 	});
 

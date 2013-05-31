@@ -11,7 +11,7 @@ module.exports = function (config, $, _, soap_port, io)
 
 	switcher.register_prop_callback(function (qname, qprop, pvalue)
 	{
-		//console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+		console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
 		if(qprop == "shmdata-writers")
 		{
 			createVuMeter($.parseJSON(pvalue));
@@ -29,17 +29,27 @@ module.exports = function (config, $, _, soap_port, io)
     	
 	    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
 	    {
+	    	console.log("NEW QUIDD NEED TO ABONNE");
 			var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
 	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass, shmdatas : shmdatas});
 		    //subscrire to shmdata-writers proprety for create byte-rate
 		    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+
+			    
+		    setTimeout(function(){
+				var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
+				console.log(shmdatas);
+		    }, 3000)
+		    
 	    }
+
 
 	    
 	});
 
 	switcher.create("rtpsession", "defaultrtp");
 	switcher.create("SOAPcontrolServer", "soap");
+	switcher.create("SOAPcontrolClient", "soap");
 	switcher.invoke("soap", "set_port", [soap_port]);
 
 

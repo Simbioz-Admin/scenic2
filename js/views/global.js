@@ -60,8 +60,6 @@ define([
 			},
 			connection : function()
 			{
-				console.log("AAA");
-				
 				var box = $(event.target)
 				,	destName = box.data("hostname")
 				,	path = box.parent().data("path");
@@ -77,7 +75,7 @@ define([
 			},
 			setConnection : function(event)
 			{
-				console.log(event.which);
+	
 				if(event.which == 13) //touch enter
 				{
 					var box = $(event.target).parent()
@@ -86,7 +84,7 @@ define([
 					,	port = $(event.target).val();
 					console.log(destName, path, port);
 					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("OK");});
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){});
 
@@ -149,7 +147,7 @@ define([
 				{
 					$("#log").animate({"right" : 0}, function()
 					{
-						console.log("open");
+						//console.log("open");
 						that.statePanelLog = true;
 					});
 				}

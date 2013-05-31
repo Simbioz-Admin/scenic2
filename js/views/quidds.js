@@ -150,7 +150,7 @@ define([
 			},
 			displayTitle : function()
 			{
-				console.log("check title In", this.collection.size());
+				//console.log("check title In", this.collection.size());
 				//check number of quidd for titleIn
 				if(this.collection.size() != 0) $("#titleIn").show();
 				else $("#titleIn").hide();

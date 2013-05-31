@@ -24,6 +24,11 @@ define([
 		    		that.add(model);
 		    	});
 
+		    	socket.on("updateShmdatas", function(qname, qprop, shmdatas)
+		    	{
+		    		that.get(qname).set("shmdatas", shmdatas);
+		    	});
+
 		    	socket.on("remove", function(quiddName)
 		    	{
 		    		that.remove(quiddName);
@@ -50,26 +55,6 @@ define([
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
-
-		    		console.log("ask for create temporary enc for videotestsrc");
-		    		//if it's video we create automaticlly compress vid shmdata
-		    		// if(quidd.class == "videotestsrc" || quidd.class == "gstvideosrc")
-		    		// {
-		    		// 	setTimeout(function(){
-			    	// 		console.log(quidd.name);
-			    	// 		var model = collections.quidds.get(quidd.name);
-			    	// 		var path = model.get("shmdatas")[0]["path"];
-			    	// 		console.log(path);
-			    	// 		collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-			    	// 		{
-			    	// 			views.methods.setMethod(name, "connect", [path]);
-			    	// 			console.log("SET !!!!");
-			    	// 		});
-
-		    		// 	},1000);
-
-		    		// }
-		    		//return name for next step : set properties and methods
 		    		callback(quidd);
 		    	});
 		    },

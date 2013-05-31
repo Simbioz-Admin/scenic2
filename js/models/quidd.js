@@ -18,6 +18,7 @@ define([
 				var that = this;
 				if(this.collection)
 				{
+					//var view = new ViewQuidd({ model : that });
 					this.setShmdatas(function(ok){
 						var view = new ViewQuidd({ model : that });
 					});
@@ -26,10 +27,10 @@ define([
 			setShmdatas : function(callback){
 				var that = this;
 				//ask for value of shmdatas and stock in model
-				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(propertyValue)
+				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
 				{
-					that.set({ shmdatas  : propertyValue.shmdata_writers});
-					callback(propertyValue.shmdata_writers);
+					that.set({ shmdatas  : shmdatas.shmdata_writers});
+					callback(shmdatas.shmdata_writers);
 				});
 			},
 			remove : function()

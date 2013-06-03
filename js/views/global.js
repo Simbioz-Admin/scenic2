@@ -88,11 +88,13 @@ define([
 					//connect shmdata to destination
 					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
 						console.log("uridecodebin remote", destName);
-
-							views.methods.setMethod("soapClient-"+destName, "invoke1", ['remote', 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
-								function(ok){
-									console.log("ok?", ok);
-								})
+						setTimeout(function()
+							{
+								views.methods.setMethod("soapClient-"+destName, "invoke1", ['remote', 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+									function(ok){
+										console.log("ok?", ok);
+									})
+							},1000)
 
 						
 					});

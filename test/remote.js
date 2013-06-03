@@ -58,7 +58,8 @@ switcher.invoke("soapClient-bob", "create", ["uridecodebin", 'video']);
 
 setTimeout(function()
 {
-	switcher.invoke("soapClient-bob", "invoke1", ['video', 'to_shmdata', 'http://poseidon.local:8074/sdp?rtpsession=defaultrtp&destination=bob'])
+	switcher.invoke("soapClient-bob", "invoke1", ['video', 'to_shmdata', 'http://poseidon.local:8074/sdp?rtpsession=defaultrtp&destination=bob']);
+
 },1000)
 
 

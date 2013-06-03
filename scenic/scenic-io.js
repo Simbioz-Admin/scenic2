@@ -8,21 +8,30 @@ module.exports = function (config, io, scenic, $, _)
 			var quiddName = scenic.create(className, name);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
-			var properties = scenic.getQuiddPropertiesWithValues(quiddName);
-			var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
 
-			scenic.createVuMeter(shmdatas);
+			if(!_.contains(config.quiddExclude, className))
+			{
+				var properties = scenic.getQuiddPropertiesWithValues(quiddName);
+				var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
 
-			//callback is used by the user who has created the Quidd for directly set properties or create encoder
-			callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
+				scenic.createVuMeter(shmdatas);
 
-			// if(!_.contains(config.quiddExclude, className))
-			// {
-			// 	io.sockets.emit("create", { name : quiddName, class : className, properties : properties});
-			// }
+				//callback is used by the user who has created the Quidd for directly set properties or create encoder
+				callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
+			}
+			else
+			{
+				callback({ name : quiddName, class : className});
+			}
+
 			
 		});
 
+
+		socket.on("getConfig", function(callback)
+		{
+			callback(config);
+		});
 
 		socket.on("remove", function(quiddName){
 			var quiddDelete = scenic.remove(quiddName);

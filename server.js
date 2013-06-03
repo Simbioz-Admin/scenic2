@@ -26,6 +26,12 @@ app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
 
 
+//----------------- INIT CONFIGURATION -----------------//
+
+config.ipLocal = require("./scenic/local-address.js");
+// check if port express panel, express GUI, and soap port is available
+
+
 
 //----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
 
@@ -142,8 +148,6 @@ io.sockets.on('connection', function (socket)
 		if(conf.portScenic != config.port.scenic) config.port.scenic = conf.portScenic;
 		console.log("port soap : ", config.port.soap);
 		window.frame.resize(440, 200);
-		//window.frame.resizable = false;
-		console.log(window.frame.resizable);
 
 		callback(true);
 	});

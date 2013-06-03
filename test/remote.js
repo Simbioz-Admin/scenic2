@@ -12,11 +12,20 @@ switcher.register_log_callback(function (msg)
 	//console.log('log : ', msg);
 });
 
+switcher.register_signal_callback(function (qname, qprop, pvalue){
+	console.log('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+});
 
+
+switcher.register_prop_callback(function (qname, qprop, pvalue)
+{
+	console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+});
 
 switcher.create("rtpsession", "defaultrtp");
 switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", [8074]);
+
 
 
 //create Destination
@@ -44,6 +53,7 @@ $.each(shmdatas, function(index, shmdata)
 //**create connection between shmdata and destination
 
 switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [shmdatas[0].path, "bob", '4444']);
+
 switcher.invoke("soapClient-bob", "create", ["uridecodebin", 'video']);
 
 setTimeout(function()

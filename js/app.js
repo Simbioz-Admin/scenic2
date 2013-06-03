@@ -30,7 +30,10 @@ define([
   var initialize = function(){
     "use strict";
 
-  
+    //recovery config information from the server
+    socket.emit("getConfig", function(configServer) { config = configServer; });
+    
+
     //*** init the different collection of the project ***//
 
     //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties

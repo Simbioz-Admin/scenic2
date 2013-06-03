@@ -22,7 +22,7 @@ define([
 				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription)
 				{
 					console.log(methodDescription);
-					var template = _.template(templateMethod, { title : "set Method "+methodDescription.name, quiddName : "defaultrtp",  method : "add_destination", description : methodDescription});
+					var template = _.template(templateMethod, { title : "set Method "+methodDescription.name, className : "defaultrtp",  method : "add_destination", description : methodDescription});
 					$("#panelRight .content").html(template);
 					views.global.openPanel();
 				});
@@ -32,19 +32,48 @@ define([
 				var dataForm = $("#form-lightbox").serializeObject()
 				,	parameters = [];
 
+				
+
 				//recover the values of fields
 				_.each(dataForm, function(value, index)
 				{
 					//exclude method and name for generate parameters array
-					if(index != "method" && index != "quiddName"){
+					if(index != "method" && index != "className" && index != "port_soap"){
 						parameters.push(value);
 					}
 				});
 
-				views.methods.setMethod(dataForm.quiddName, dataForm.method, parameters, function(ok)
+				views.methods.setMethod(dataForm.className, dataForm.method, parameters, function(ok)
 				{
 					if(ok) views.global.closePanel();
 				});
+
+
+				///*** set connection with another scenic computer ***//
+				if(dataForm.host_name.indexOf("http://") < 0) dataForm.host_name = "http://"+dataForm.host_name;
+				if(dataForm.port_soap)
+				{
+
+					var soapClient = "soapClient-"+dataForm.name
+					,	addressClient = dataForm.host_name+":"+dataForm.port_soap;
+
+
+					console.log("soapClient", soapClient);
+					
+					collections.quidds.create("SOAPcontrolClient", soapClient, function(ok)
+					{
+
+						var ok = views.methods.setMethod(soapClient, "set_remote_url", [addressClient]);
+						views.methods.setMethod(soapClient, "create", ["uridecodebin", 'remote'], function(ok){});
+
+						if(!ok)
+						{
+							console.log("not existing");
+							//collections.quidds.remove(soapClient);
+						}
+					});
+				}
+
 
 			return false;
 			},

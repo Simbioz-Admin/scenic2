@@ -33,11 +33,10 @@ require([
   collections = [],
   views = [],
   socket = io.connect(),
-  config = {
-      propertiesExclude : ["shmdata-readers", "shmdata-writers"]
-    }
+  config = {}
 ], function(App, util, panel, socket)
 {
+
   if(page == "app") App.initialize();
   if(page == "panel") panel.initialize();
 });

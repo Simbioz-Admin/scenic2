@@ -74,8 +74,8 @@ define([
 								quidd.set({"properties" : propertiesOfQuidd});
 							});
 						}
-						if(callback) callback(ok);
 					}
+					if(callback) callback(ok);
 				});
 			}
 		});	

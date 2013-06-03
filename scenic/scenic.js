@@ -29,7 +29,6 @@ module.exports = function (config, $, _, soap_port, io)
     	
 	    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
 	    {
-	    	console.log("NEW QUIDD NEED TO ABONNE");
 			var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
 	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass, shmdatas : shmdatas});
 		    //subscrire to shmdata-writers proprety for create byte-rate

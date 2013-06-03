@@ -1,2 +1,0 @@
-
-require("./scenic.js");

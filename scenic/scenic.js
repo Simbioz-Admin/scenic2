@@ -77,6 +77,7 @@ module.exports = function (config, $, _, soap_port, io)
 			shmdatas = $.parseJSON(switcher.get_property_value(quidd, "shmdata-writers")).shmdata_writers;
 			$.each(shmdatas, function(index, shmdata)
 			{
+				//console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
 				//switcher.remove('vumeter_'+shmdata.path);
 			});

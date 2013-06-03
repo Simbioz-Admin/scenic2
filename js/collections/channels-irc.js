@@ -9,6 +9,8 @@ define([
 		var ChannelsCollection = Backbone.Collection.extend({
 			model : ChannelModel,
 			username : null,
+			totalMsg  : 0,
+			active : false,
 		    initialize : function(){
 		    	console.log("init collection channels-irc");
 		    	var that = this; 
@@ -16,9 +18,13 @@ define([
 		    	socket.on("join-irc", function(channel)
 		    	{
 			    	that.add({channel : channel, username : that.username});
+			    	that.active = true;
 		    	});
 
-		    	socket.on("receiveMsg-irc", function(from, to, msg){ that.addMessage(to, from, msg); });
+		    	socket.on("receiveMsg-irc", function(from, to, msg)
+		    		{ 
+		    			that.addMessage(to, from, msg);
+		    		});
 
 
 		    	socket.on("list-users-irc", function(channel, names)
@@ -75,11 +81,15 @@ define([
 			{
 				socket.emit("sendMsg-irc", "#"+channel, msg);
 			},
-			addMessage : function(channel, user, msg)
+			addMessage : function(chann, user, msg)
 			{
-				var message = _.template(TemplateMsg, {user : user, msg : msg});
-				$("#"+channel.replace("#","")+" .content-channel").append(message);
 
+				//increment number message not view for the channel
+				var channel = this.get(chann.replace("#",""));
+				if(!channel.get("active")) channel.set({msgNotView : channel.get("msgNotView")+1});
+
+				var message = _.template(TemplateMsg, {user : user, msg : msg});
+				$("#"+chann.replace("#","")+" .content-channel").append(message);
 
 				//TODO : FIX AUTO SCROLL
 				// var objDiv = document.getElementById(channel.replace("#",""));

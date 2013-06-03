@@ -145,12 +145,20 @@ define([
 				if(!this.statePanelIrc)
 				{
 					$("#chat").show();
-					this.statePanelIrc = true;		
+					this.statePanelIrc = true;
+					if(collections.irc.active)
+					{
+						var modelIrc = collections.irc.get($(".channel.active").attr("id"));
+						modelIrc.set({active : true});
+						collections.irc.totalMsg = collections.irc.totalMsg - modelIrc.get("msgNotView");
+						modelIrc.set({msgNotView : 0});
+					}
 				}
 				else
 				{
 					$("#chat").hide();	
 					this.statePanelIrc = false;
+					collections.irc.each(function(channel){ channel.set({active : false}) });
 				}
 			},
 			panelLog : function()

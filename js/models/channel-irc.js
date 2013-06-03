@@ -10,7 +10,9 @@ define([
 			defaults : {
 				"channel" : null,
 				"username" : "default",
-				"users" : []
+				"users" : [],
+				"msgNotView" : 0,
+				"active" : false,
 			},
 			initialize : function(){
 				

@@ -38,8 +38,7 @@ define([
 
 				socket.on("remove-user", function(name)
 				{
-					that.removeListUser(name);
-					
+					that.removeListUser(name);	
 				});
 			},
 			connect : function()
@@ -76,9 +75,6 @@ define([
 						socket.emit("sendMsg-irc", "#scenicTest", msg);
 						this.add_msg($("#your-user").html(), msg, "public");
 					}
-
-					
-
 				}
 			},
 			add_msg : function(user, msg, userPrivate)
@@ -100,7 +96,6 @@ define([
 					{
 						$("#list-names").append("<li class='user' data-username='"+name+"'>"+name+"</li>");
 						nbConnected++;
-						
 					}
 				});
 				$("#nb-connected").html(nbConnected);

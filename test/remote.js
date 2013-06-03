@@ -15,21 +15,24 @@ switcher.register_log_callback(function (msg)
 
 
 switcher.create("rtpsession", "defaultrtp");
+switcher.create("SOAPcontrolServer", "soap");
+switcher.invoke("soap", "set_port", [8074]);
 
 
 //create Destination
-switcher.invoke("defaultrtp", "add_destination", ['poseidon', 'poseidon.local']);
-switcher.create("SOAPcontrolClient", "soapClient-poseidon");
-var scenicMachine = switcher.invoke("soapClient-poseidon", "set_remote_url", ["http://localhost:8084"]);
+switcher.invoke("defaultrtp", "add_destination", ['bob', 'poseidon.local']);
+switcher.create("SOAPcontrolClient", "soapClient-bob");
+var scenicMachine = switcher.invoke("soapClient-bob", "set_remote_url", ["http://poseidon.local:8084"]);
 if(!scenicMachine)
 {
-	console.log("soapClient-poseidon removed because is not necessary");
-	switcher.remove("soapClient-poseidon");
+	console.log("soapClient-bob removed because is not necessary");
+	switcher.remove("soapClient-bob");
 }
 
 //*** Create quiddity and add shmdata to the defaultrtp ***///
 
 var qname = switcher.create("videotestsrc", "video");
+
 var shmdatas = $.parseJSON(switcher.get_property_value(qname, "shmdata-writers")).shmdata_writers;
 $.each(shmdatas, function(index, shmdata)
 {
@@ -40,11 +43,14 @@ $.each(shmdatas, function(index, shmdata)
 
 //**create connection between shmdata and destination
 
-switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [shmdatas[0].path, "poseidon", '4444']);
-switcher.invoke("soapClient-poseidon", "create", ["uridecodebin", 'video']);
-console.log(shmdatas[0].path);
-var test = switcher.invoke("soapClient-poseidon", "invoke1", ['video', 'to_shmdata', shmdatas[0].path])
-console.log("test", test);
+switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [shmdatas[0].path, "bob", '4444']);
+switcher.invoke("soapClient-bob", "create", ["uridecodebin", 'video']);
+
+setTimeout(function()
+{
+	switcher.invoke("soapClient-bob", "invoke1", ['video', 'to_shmdata', 'http://poseidon.local:8074/sdp?rtpsession=defaultrtp&destination=bob'])
+},1000)
+
 
 
 

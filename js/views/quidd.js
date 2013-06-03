@@ -90,7 +90,11 @@ define([
 				var type = null;
 				console.log(this.model.get("class"));
 
-				if(this.model.get("class") == "videotestsrc" || this.model.get("class") == "gstvideosrc"  || this.model.get("class") ==  "x264enc") type = "videosink";
+				if(this.model.get("class") == "videotestsrc" 
+					|| this.model.get("class") == "gstvideosrc"  
+					|| this.model.get("class") ==  "x264enc"
+					|| this.model.get("class") ==  "uridecodebin") type = "videosink";
+
 				if(this.model.get("class") == "audiotestsrc")  type = "pulsesink";
 
 				collections.quidds.create(type, "sink-"+quidd, function(quidd){

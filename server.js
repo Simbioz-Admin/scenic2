@@ -140,7 +140,7 @@ io.sockets.on('connection', function (socket)
 
 		if(conf.portSoap != config.port.soap) config.port.soap = conf.portSoap;
 		if(conf.portScenic != config.port.scenic) config.port.scenic = conf.portScenic;
-
+		console.log("port soap : ", config.port.soap);
 		window.frame.resize(440, 200);
 		//window.frame.resizable = false;
 		console.log(window.frame.resizable);

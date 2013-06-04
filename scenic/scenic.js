@@ -17,7 +17,7 @@ module.exports = function (config, $, _, soap_port, io)
 			createVuMeter($.parseJSON(pvalue));
 			var shmdatas = $.parseJSON(switcher.get_property_value(qname, "shmdata-writers")).shmdata_writers;
 			io.sockets.emit("updateShmdatas", qname, qprop, shmdatas);
-			switcher.unsubscribe_to_property(qname, qprop);
+			//switcher.unsubscribe_to_property(qname, qprop);
 		}
 		io.sockets.emit("signals_properties", qname, qprop, pvalue);
 	});
@@ -37,7 +37,7 @@ module.exports = function (config, $, _, soap_port, io)
 			    
 		    setTimeout(function(){
 				var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-				console.log("method shmdata : ", shmdatas);
+				//console.log("method shmdata : ", shmdatas);
 		    }, 1000)
 		    
 	    }
@@ -77,9 +77,9 @@ module.exports = function (config, $, _, soap_port, io)
 			shmdatas = $.parseJSON(switcher.get_property_value(quidd, "shmdata-writers")).shmdata_writers;
 			$.each(shmdatas, function(index, shmdata)
 			{
-				//console.log("remove vumeter", 'vumeter_'+shmdata.path);
+				console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
-				//switcher.remove('vumeter_'+shmdata.path);
+				switcher.remove('vumeter_'+shmdata.path);
 			});
 
 			return switcher.remove(quidd);

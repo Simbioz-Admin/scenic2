@@ -11,7 +11,7 @@ module.exports = function (config, $, _, soap_port, io)
 
 	switcher.register_prop_callback(function (qname, qprop, pvalue)
 	{
-		//console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+		console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
 		if(qprop == "shmdata-writers")
 		{
 			createVuMeter($.parseJSON(pvalue));

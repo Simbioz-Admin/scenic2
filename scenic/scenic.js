@@ -11,7 +11,7 @@ module.exports = function (config, $, _, soap_port, io)
 
 	switcher.register_prop_callback(function (qname, qprop, pvalue)
 	{
-		console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+		//console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
 		if(qprop == "shmdata-writers")
 		{
 			createVuMeter($.parseJSON(pvalue));
@@ -79,7 +79,7 @@ module.exports = function (config, $, _, soap_port, io)
 			{
 				console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
-				switcher.remove('vumeter_'+shmdata.path);
+				//switcher.remove('vumeter_'+shmdata.path);
 			});
 
 			return switcher.remove(quidd);

@@ -22,7 +22,8 @@ define([
 				this.displayTitle();
 
 				var that = this;
-				this.collection.bind("add", function(model){
+				this.collection.bind("add", function(model)
+				{
 					var view = new ViewQuidd({model : model});
 					that.displayTitle();
 
@@ -47,15 +48,16 @@ define([
 				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
 				var encoders = collections.classesDoc.getByCategory(category).toJSON();
 
-				
+				//get properties for set in panelRight
 				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
-					
 					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create", encoders : encoders});
 					$("#panelRight .content").html(template);
 					views.global.openPanel();
 				});
-				
+
+
+				//get methods for set in panelRight
 				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata"], function(methods)
 				{
 					var template = _.template(setMethodTemplate, {methods : methods});
@@ -76,10 +78,10 @@ define([
 				{
 					that.updateProperties(quidd.name);
 					that.setMethods(quidd.name);
-					var shmdata = quidd.shmdatas["shmdata_writers"][0]["path"];
 
 					if(encoder != "none")
 					{
+						var shmdata = quidd.shmdatas["shmdata_writers"][0]["path"];
 		    			collections.quidds.create(encoder,quidd.name+"_enc", function(quidd)
 		    			{
 		    				views.methods.setMethod(quidd.name, "connect", [shmdata]);

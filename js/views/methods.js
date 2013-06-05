@@ -19,8 +19,6 @@ define([
 						if(method == "add_destination")
 						{
 							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
-							
-
 						}
 						if(method == "add_udp_stream_to_dest")
 						{

@@ -30,11 +30,11 @@
 				<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>
 				<input 
 					class="property" 
-					data-default="<%=valueField%>" 
+					data-current="<%=valueField%>" 
 					data-min="<%=info.minimum%>" 
 					data-maximum="<%=info.maximum%>" 
 					type="text" 
-					value="<%=valueField%>" 
+					value="<%=valueField%>"
 					name="<%=property.name%>" 
 					placeholder="value type <%=info.type%>" />
 				<% } %>
@@ -48,11 +48,9 @@
 				<!-- Dropdown for enum -->
 				<% if(info.type == "enum"){ %>
 				<select class="property" name="<%=property.name%>"
-					data-default="<%=info["default value"].value%>">
+					data-current="<%=valueField%>"
 					<% _.each(info.values, function(value){ %>>
-	  					<option value="<%=value.value%>"  <%  if(valueField == value.name){ %>  selected="selected" <% } %>  >
-	  						<%= value.name%>
-	  					</option>
+	  					<option value="<%=value.value%>"  <%  if(valueField == value.name){ %>  selected="selected" <% } %>  ><%= value.name%></option>
 					<% }); %>
 				</select>
 				<% } %>

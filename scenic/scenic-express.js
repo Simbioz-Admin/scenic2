@@ -34,12 +34,16 @@ module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 
 
 
-	app.get('/quidds/:quiddName?/:type?/:value?', function(req, res)
+	app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res)
 	{
-		if(req.params.type == "properties")
+		if(req.params.val)
 		{
+			res.send(scenic.get_property_value(req.params.quiddName, req.params.value))
+		}
+		else if(req.params.type == "properties")
+		{	
 			if(req.params.value)	res.send(scenic.get_property_description(req.params.quiddName, req.params.value))
-			else					res.send(scenic.get_properties_description(req.params.quiddName));
+			else						res.send(scenic.get_properties_description(req.params.quiddName));
 	  	}
 		else if(req.params.type == "methods")
 		{

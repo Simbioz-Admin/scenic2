@@ -23,6 +23,9 @@ define([
 			},
 			render : function()
 			{
+
+				views.quidds.displayTitle();
+
 				var model = this.model
 				, 	that = this
 				,	shmdatas = this.model.get("shmdatas");
@@ -44,30 +47,6 @@ define([
 					$(that.el).append(template);
 					$("#sources").prepend($(that.el));
 				})
-
-
-				// this.model.setShmdatas(function(shmdatas)
-				// {
-				// 	//HERE ERROR NOT SHMDATAS SOME TIMES !!!!
-				// 	console.log("ADD GUI", shmdatas);
-				// 	_.each(shmdatas, function(shmdata, index){
-
-				// 		var template = _.template(SourceTemplate, 
-				// 						{
-				// 							shmdata : shmdata, 
-				// 							index : index, 
-				// 							nbShmdata :  shmdatas.length, 
-				// 							sourceName : model.get("name"),
-				// 							destinations : collections.destinations.toJSON()
-				// 						});
-
-
-				// 		$(that.el).append(template);
-				// 		$("#sources").prepend($(that.el));
-				// 	})
-				// });
-	
-	
 			},
 			remove : function(){
 				$(this.el).remove();

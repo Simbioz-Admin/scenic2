@@ -82,10 +82,13 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    setPropertyValue : function(nameQuidd, property, value)
+		    setPropertyValue : function(nameQuidd, property, value, callback)
 		    {
 		    	that = this;
-		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok){});
+		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
+		    		{
+		    			if(callback) callback(ok);
+		    		});
 		    }
 		});
 

@@ -33,7 +33,6 @@ define([
 				,	parameters = [];
 
 				
-
 				//recover the values of fields
 				_.each(dataForm, function(value, index)
 				{
@@ -64,7 +63,7 @@ define([
 					{
 
 						var ok = views.methods.setMethod(soapClient, "set_remote_url", [addressClient]);
-						views.methods.setMethod(soapClient, "create", ["uridecodebin", 'remote'], function(ok){});
+						views.methods.setMethod(soapClient, "create", ["uridecodebin", 'poseidon'], function(ok){});
 
 						if(!ok)
 						{
@@ -80,6 +79,7 @@ define([
 			displayTitle : function()
 			{
 				//check number of quidd for titleIn
+
 				if(this.collection.size() != 0) $("#titleOut").show();
 				else $("#titleOut").hide();
 			}

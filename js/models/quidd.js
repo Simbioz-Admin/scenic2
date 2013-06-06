@@ -11,7 +11,7 @@ define([
 				"name" : null,
 				"class" : null,
 				"properties" : [],
-				"shmdatas" : {}
+				"shmdatas" : null
 			},
 			initialize : function()
 			{

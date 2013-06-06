@@ -19,14 +19,13 @@ define([
 			initialize : function()
 			{
 				console.log("init QuiddsView");
-				this.displayTitle();
+				//this.displayTitle();
 
 				var that = this;
 				this.collection.bind("add", function(model)
 				{
 					var view = new ViewQuidd({model : model});
-					that.displayTitle();
-
+					
 				});
 				this.collection.bind("remove", function(model)
 				{
@@ -109,16 +108,28 @@ define([
 			updateProperties: function(quiddName)
 			{
 				var dataFormProp =  $('#form-quidd ').serializeObject();
+
 				//parse properties for set value of this
 				_.each(dataFormProp, function(value, index)
 				{
-					var defaultValue = 	$('[name="'+index+'"]').data("default")
-					,	minValue = $('[name="'+index+'"]').data("min")
-					,	maxValue = $('[name="'+index+'"]').data("max");
 
-					if(value != defaultValue)
+					var currentValue = 	$('[name="'+index+'"]').data("current")
+					,	minValue = $('[name="'+index+'"]').data("min")
+					,	maxValue = $('[name="'+index+'"]').data("max")
+					,	valueSend = value
+					,	select = $('[name="'+index+'"]').is('select');
+
+					if(select)
+						value = $('[name="'+index+'"] option:selected').text();
+
+
+					if(value != currentValue)
 					{
-						collections.quidds.setPropertyValue(quiddName, index, value);
+						collections.quidds.setPropertyValue(quiddName, index, valueSend, function(ok)
+							{
+								if(ok)
+									$('[name="'+index+'"]').data("current", value);
+							});
 					}
 				});
 			},
@@ -154,7 +165,14 @@ define([
 			{
 				//console.log("check title In", this.collection.size());
 				//check number of quidd for titleIn
-				if(this.collection.size() != 0) $("#titleIn").show();
+				var shmdata = false;
+				this.collection.find(function(quidd)
+				{
+					var shms = quidd.get("shmdatas");
+					if(shms && shms.length > 0) shmdata = true;
+				});
+
+				if(shmdata) $("#titleIn").show();
 				else $("#titleIn").hide();
 			}
 			

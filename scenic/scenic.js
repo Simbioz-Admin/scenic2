@@ -79,7 +79,8 @@ module.exports = function (config, $, _, soap_port, io)
 			{
 				console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
-				//switcher.remove('vumeter_'+shmdata.path);
+				var test = switcher.remove('vumeter_'+shmdata.path);
+				console.log(test, "remove vumeter");
 			});
 
 			return switcher.remove(quidd);

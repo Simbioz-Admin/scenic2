@@ -80,11 +80,14 @@ define([
 
 					if(encoder != "none")
 					{
-						var shmdata = quidd.shmdatas["shmdata_writers"][0]["path"];
-		    			collections.quidds.create(encoder,quidd.name+"_enc", function(quidd)
-		    			{
-		    				views.methods.setMethod(quidd.name, "connect", [shmdata]);
-		    			});
+						//add to the list the encoder ask to create with shmdata
+						collections.quidds.listEncoder.push({quiddName : quidd.name, encoder : encoder});
+
+						// var shmdata = quidd.shmdatas["shmdata_writers"][0]["path"];
+		    // 			collections.quidds.create(encoder,quidd.name+"_enc", function(quidd)
+		    // 			{
+		    // 				views.methods.setMethod(quidd.name, "connect", [shmdata]);
+		    // 			});
 					}
 				});
 

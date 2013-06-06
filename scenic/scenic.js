@@ -15,9 +15,7 @@ module.exports = function (config, $, _, soap_port, io)
 		if(qprop == "shmdata-writers")
 		{
 			createVuMeter($.parseJSON(pvalue));
-			var shmdatas = $.parseJSON(switcher.get_property_value(qname, "shmdata-writers")).shmdata_writers;
-			io.sockets.emit("updateShmdatas", qname, qprop, shmdatas);
-			//switcher.unsubscribe_to_property(qname, qprop);
+			sendShmdatas(qname);
 		}
 		io.sockets.emit("signals_properties", qname, qprop, pvalue);
 	});
@@ -29,8 +27,8 @@ module.exports = function (config, $, _, soap_port, io)
     	
 	    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
 	    {
-			var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass, shmdatas : shmdatas});
+	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
+			sendShmdatas(pvalue[0]);
 		    //subscrire to shmdata-writers proprety for create byte-rate
 		    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
 
@@ -46,9 +44,15 @@ module.exports = function (config, $, _, soap_port, io)
 	    
 	});
 
+	function sendShmdatas(quiddName)
+	{
+		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
+		if(shmdatas.length > 0)
+			io.sockets.emit("updateShmdatas", quiddName, shmdatas);
+	}
+
 	switcher.create("rtpsession", "defaultrtp");
 	switcher.create("SOAPcontrolServer", "soap");
-	//switcher.create("SOAPcontrolClient", "soap");
 	switcher.invoke("soap", "set_port", [soap_port]);
 
 
@@ -79,8 +83,8 @@ module.exports = function (config, $, _, soap_port, io)
 			{
 				console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
-				var test = switcher.remove('vumeter_'+shmdata.path);
-				console.log(test, "remove vumeter");
+				switcher.remove('vumeter_'+shmdata.path);
+
 			});
 
 			return switcher.remove(quidd);

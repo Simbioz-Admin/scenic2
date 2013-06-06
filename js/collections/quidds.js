@@ -8,6 +8,7 @@ define([
 		var QuiddsCollection = Backbone.Collection.extend({
 			model : QuiddModel,
 			url : '/quidds/',
+			listEncoder : [],
 			parse : function(results, xhr)
 			{
 		        return results;
@@ -24,9 +25,21 @@ define([
 		    		that.add(model);
 		    	});
 
-		    	socket.on("updateShmdatas", function(qname, qprop, shmdatas)
+		    	socket.on("updateShmdatas", function(qname, shmdatas)
 		    	{
 		    		that.get(qname).set("shmdatas", shmdatas);
+		    		//control if encoder is ask for this quidd
+		    		_.each(that.listEncoder, function(encoder, index)
+		    		{
+		    			if(encoder.quiddName == qname)
+		    			{
+		    				that.create(encoder.encoder,qname+"_enc", function(quidd)
+			    			{
+			    				views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
+			    				that.listEncoder.splice(index, 1);
+			    			});
+		    			}
+		    		})
 		    	});
 
 		    	socket.on("remove", function(quiddName)
@@ -50,8 +63,8 @@ define([
 		    		});
 		    	});
 		    },
-		    create : function(className, name, callback){
-
+		    create : function(className, name, callback)
+		    {
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
 		    	{

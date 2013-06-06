@@ -15,7 +15,6 @@ module.exports = function (config, io, scenic, $, _)
 				var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
 
 				scenic.createVuMeter(shmdatas);
-
 				//callback is used by the user who has created the Quidd for directly set properties or create encoder
 				callback({ name : quiddName, class : className, properties : properties, shmdatas : shmdatas});
 			}

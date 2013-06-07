@@ -91,7 +91,7 @@ define([
 						
 						setTimeout(function()
 							{
-								views.methods.setMethod("soapClient-"+destName, "invoke1", ["poseidon", 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+								views.methods.setMethod("soapClient-"+destName, "invoke1", ["remote", 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
 									function(ok){
 										console.log("ok?", ok);
 									})

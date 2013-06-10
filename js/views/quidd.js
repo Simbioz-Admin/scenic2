@@ -66,22 +66,20 @@ define([
 					});
 			},
 			preview : function(){
+
 				var quidd = this.model.get("name")
-				,	path = $(event.target).parent().parent().data("path");
-				var type = null;
-				console.log(this.model.get("class"));
+				,	path = $(event.target).closest('tr').data("path")
+				,	type = null;
+				
+				collections.quidds.getPropertyValue("vumeter_"+path, "caps", function(info)
+				{
+					info = info.split(",");
+					if(info[0].indexOf("video") >= 0) type = "videosink";
+					if(info[0].indexOf("audio") >= 0) type = "pulsesink";
 
-				if(this.model.get("class") == "videotestsrc" 
-					|| this.model.get("class") == "gstvideosrc"  
-					|| this.model.get("class") ==  "x264enc"
-					|| this.model.get("class") ==  "uridecodebin") type = "videosink";
-
-				if(this.model.get("class") == "audiotestsrc")  type = "pulsesink";
-
-				collections.quidds.create(type, "sink-"+quidd, function(quidd){
-					console.log(quidd);
-					console.log(quidd.name, "connect", [path]);
-					views.methods.setMethod(quidd.name, "connect", [path]);
+					collections.quidds.create(type, "sink-"+quidd, function(quidd){
+						views.methods.setMethod(quidd.name, "connect", [path]);
+					});
 				});
 			},
 			info : function(event)

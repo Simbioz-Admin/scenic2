@@ -20,6 +20,10 @@ define([
 						{
 							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
 						}
+						if(method == "remove_destination")
+						{
+							collections.destinations.remove(parameters[0]);
+						}
 						if(method == "add_udp_stream_to_dest")
 						{
 							$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");

@@ -17,6 +17,7 @@ define([
 				"keypress #port_destination" : "setConnection",
 				"blur #port_destination" : "removeInputDestination",
 				"click .close" : "closePanel",
+				"click #close-panelInfo" : "closePanelInfo",
 				"change .checkbox" : 'stateCheckbox',
 				"click #btn-irc" : 'panelIrc',
 				"click #btn-log" : 'panelLog'
@@ -119,25 +120,26 @@ define([
 			},
 			openPanel : function()
 			{
+
 				$("#panelRight").show();
 				// $("#panelLeft").animate({width : "70%"});
 				// $("#panelRight").delay(100).animate({width : "30%"});
 			},
 			closePanel : function(e)
 			{
-				var panel = $(e.target).attr("id");
-				console.log(panel);
-				if(panel == "close-panelRight") 
-					$("#panelRight").hide();
-				if(panel == "close-panelInfo")
-					$("#info").remove();
+
+				$("#panelRight").hide();
 				// $("#panelLeft").delay(100).animate({width : "100%"});
 				// $("#panelRight").animate({width : "0px"});
+			},
+			closePanelInfo : function()
+			{
+				$(".panelInfo").remove();
 			},
 			keyboardAction : function(event)
 			{
 				var that = this;
-			    if(event.which == 27) that.closePanel();
+			    if(event.which == 27) 	$("#panelRight").hide();
 			},
 			stateCheckbox : function(){
 					

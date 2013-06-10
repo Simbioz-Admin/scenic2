@@ -4,7 +4,8 @@ define([
 	'models/quidd',
 	'text!/templates/source.html',
 	'text!/templates/quidd.html',
-	],function(_, Backbone, ModelQuidd, SourceTemplate, quiddTemplate){
+	'text!/templates/panelInfo.html'
+	],function(_, Backbone, ModelQuidd, SourceTemplate, quiddTemplate, infoTemplate){
 
 		var QuiddView = Backbone.View.extend({
 			tagName : 'table',
@@ -12,7 +13,8 @@ define([
 			template : SourceTemplate,
 			events : {
 				'click .edit' : 'openPanelEdit',
-				'click .preview' : 'preview'
+				'click .preview' : 'preview',
+				'click .info' : 'info'
 			},
 			initialize : function()
 			{
@@ -80,6 +82,20 @@ define([
 					console.log(quidd);
 					console.log(quidd.name, "connect", [path]);
 					views.methods.setMethod(quidd.name, "connect", [path]);
+				});
+			},
+			info : function(event)
+			{
+				var shmdata = $(event.target).closest('tr').data("path");
+				var that = this;
+				collections.quidds.getPropertyValue("vumeter_"+shmdata, "caps", function(val)
+				{
+					val = val.replace(/,/g,"<br>");
+					var template = _.template(infoTemplate, { info : val, shmdata : shmdata });
+					$("#info").remove();
+					$("body").prepend(template);
+					$("#info").css({top : event.pageY, left : event.pageX}).show();
+					$(".panelInfo").draggable({ cursor: "move", handle: "#title"});
 				});
 			}
 			

@@ -142,7 +142,12 @@ module.exports = function (config, $, _, soap_port, io)
 		},
 
 		get_property_value : function(nameClass, property){
-			var property = $.parseJSON(switcher.get_property_value(nameClass, property));
+			var property = switcher.get_property_value(nameClass, property);
+			try
+			{
+				property = $.parseJSON(property);
+			}
+			catch(error){}
 			return property;
 		},
 

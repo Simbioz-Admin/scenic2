@@ -16,7 +16,7 @@ define([
 				"click .box" : "connection",
 				"keypress #port_destination" : "setConnection",
 				"blur #port_destination" : "removeInputDestination",
-				"click #close" : "closePanel",
+				"click .close" : "closePanel",
 				"change .checkbox" : 'stateCheckbox',
 				"click #btn-irc" : 'panelIrc',
 				"click #btn-log" : 'panelLog'
@@ -41,8 +41,7 @@ define([
 				});
 
 				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
-				$("#panelRight .content").draggable({ cursor: "move", handle: "#title"});
-				$( "#panelRight .content" ).resizable();
+				$("#panelRight .content, .panelInfo").draggable({ cursor: "move", handle: "#title"});
 
 				$(document).keyup(function(e){
 					that.keyboardAction(e);
@@ -124,9 +123,14 @@ define([
 				// $("#panelLeft").animate({width : "70%"});
 				// $("#panelRight").delay(100).animate({width : "30%"});
 			},
-			closePanel : function()
+			closePanel : function(e)
 			{
-				$("#panelRight").hide();
+				var panel = $(e.target).attr("id");
+				console.log(panel);
+				if(panel == "close-panelRight") 
+					$("#panelRight").hide();
+				if(panel == "close-panelInfo")
+					$("#info").remove();
 				// $("#panelLeft").delay(100).animate({width : "100%"});
 				// $("#panelRight").animate({width : "0px"});
 			},

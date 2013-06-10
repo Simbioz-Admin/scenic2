@@ -95,7 +95,7 @@ define([
 									function(ok){
 										console.log("ok?", ok);
 									})
-							},5000)
+							},2000)
 
 						
 					});

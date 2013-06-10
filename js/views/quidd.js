@@ -73,6 +73,7 @@ define([
 				
 				collections.quidds.getPropertyValue("vumeter_"+path, "caps", function(info)
 				{
+
 					info = info.split(",");
 					if(info[0].indexOf("video") >= 0) type = "videosink";
 					if(info[0].indexOf("audio") >= 0) type = "pulsesink";

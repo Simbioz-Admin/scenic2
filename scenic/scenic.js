@@ -147,7 +147,7 @@ module.exports = function (config, $, _, soap_port, io)
 			{
 				property = $.parseJSON(property);
 			}
-			catch(error){}
+			catch(error){ }
 			return property;
 		},
 

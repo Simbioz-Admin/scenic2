@@ -25,7 +25,6 @@ define([
 			},
 			render : function()
 			{
-
 				views.quidds.displayTitle();
 
 				var model = this.model
@@ -45,9 +44,18 @@ define([
 										destinations : collections.destinations.toJSON()
 									});
 
+					// $(template).find(".status").before('<div class="preview"></div> ');
 
-					$(that.el).append(template);
+					$(that.el).append($(template));
 					$("#sources").prepend($(that.el));
+
+					//add btn preview only for video and audio
+					collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+					{
+						info = info.split(",");
+						if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
+							$("[data-path='"+shmdata.path+"'] .status").before("<div class='preview'></div>");
+					});
 				})
 			},
 			remove : function(){
@@ -75,12 +83,16 @@ define([
 				{
 
 					info = info.split(",");
+					console.log(info);
 					if(info[0].indexOf("video") >= 0) type = "videosink";
 					if(info[0].indexOf("audio") >= 0) type = "pulsesink";
 
-					collections.quidds.create(type, "sink-"+quidd, function(quidd){
-						views.methods.setMethod(quidd.name, "connect", [path]);
-					});
+					if(type != null)
+					{
+						collections.quidds.create(type, "sink-"+quidd, function(quidd){
+							views.methods.setMethod(quidd.name, "connect", [path]);
+						});
+					}
 				});
 			},
 			info : function(event)

@@ -43,7 +43,7 @@ define([
 					$("body").html("<div id='shutdown'>the server has been shutdown...</div>");
 				});
 
-				$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
+				//$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
 				$("#panelRight .content, .panelInfo").draggable({ cursor: "move", handle: "#title"});
 
 				$(document).keyup(function(e){

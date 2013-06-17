@@ -117,7 +117,6 @@ window.on('close', function(){
 
 io.sockets.on('connection', function (socket)
 {
-	
 	socket.on("getPort", function(callback)
 	{
 		//check if port for soap and scenic is available
@@ -128,7 +127,6 @@ io.sockets.on('connection', function (socket)
 			{ 
 				config.port.scenic = p;
 				callback(config.port.soap, config.port.scenic);
-
 			});
 
 		});
@@ -143,7 +141,7 @@ io.sockets.on('connection', function (socket)
 			passSet = true;
 			console.log("password set!");
 		}
-
+		if(conf.username) config.nameComputer = conf.username;
 		if(conf.portSoap != config.port.soap) config.port.soap = conf.portSoap;
 		if(conf.portScenic != config.port.scenic) config.port.scenic = conf.portScenic;
 		console.log("port soap : ", config.port.soap);
@@ -154,8 +152,9 @@ io.sockets.on('connection', function (socket)
 
 	socket.on("statusScenic", function(state, callback)
 	{
-
 		scenicStart = (state ? true : false);
+		if(!scenicStart)
+			ioScenic.sockets.emit("shutdown");
 		if(!serverScenic) serverScenic = new startScenic(config.port.scenic);
 		callback("http://localhost:"+config.port.scenic);
 	});
@@ -171,7 +170,6 @@ io.sockets.on('connection', function (socket)
 
 
 // ------------------------------------ SCENIC CONFIGURATION ---------------------------------------------//
-
 
 
 function startScenic(port)

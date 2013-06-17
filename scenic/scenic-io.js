@@ -87,6 +87,23 @@ module.exports = function (config, io, scenic, $, _)
 			callback(quidds);
 		});
 
+		socket.on("save", function(name, callback)
+		{
+			var save = scenic.save_history(name);
+			callback(save);
+		});
+
+		socket.on("load_from_scratch", function(name, callback)
+		{
+			var load = scenic.load_history_from_scratch(name);
+			callback(load);
+		});
+
+		socket.on("load_from_current_state", function(name, callback)
+		{
+			var load = scenic.load_history_from_current_state(name);
+			callback(load);
+		});
 
 	});
 

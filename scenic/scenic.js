@@ -256,6 +256,18 @@ module.exports = function (config, $, _, soap_port, io)
 		createVuMeter : function(shmdatas)
 		{
 			createVuMeter(shmdatas);
+		},
+		save_history : function(name)
+		{
+			return switcher.save_history(name+".switcher");
+		},
+		load_history_from_scratch : function(name)
+		{
+			return switcher.load_history_from_scratch(name+".switcher");
+		},
+		load_history_from_current_state : function(name)
+		{
+			return switcher.load_history_from_current_state(name+".switcher");
 		}
 	}
 

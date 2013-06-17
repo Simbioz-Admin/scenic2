@@ -20,7 +20,9 @@ define([
 				"click #close-panelInfo" : "closePanelInfo",
 				"change .checkbox" : 'stateCheckbox',
 				"click #btn-irc" : 'panelIrc',
-				"click #btn-log" : 'panelLog'
+				"click #btn-log" : 'panelLog',
+				"click #btnSave" : 'save',
+				"click #btnLoadScratch" : 'load_from_scratch',
 			},
 
 			//generation of the main Menu 
@@ -91,7 +93,7 @@ define([
 						
 						setTimeout(function()
 							{
-								views.methods.setMethod("soapClient-"+destName, "invoke1", ["remote", 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+								views.methods.setMethod("soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
 									function(ok){
 										console.log("ok?", ok);
 									})
@@ -167,6 +169,31 @@ define([
 					this.statePanelIrc = false;
 					collections.irc.each(function(channel){ channel.set({active : false}) });
 				}
+			},
+			save : function()
+			{
+				console.log("ask for saving");
+				socket.emit("save", "save", function(ok)
+				{
+					console.log("save return :", ok);
+				})
+
+			},
+			load_from_scratch : function()
+			{
+				console.log("ask for load history from scratch");
+				socket.emit("load_from_scratch", "save", function(ok)
+				{
+					console.log("load from scratch return :", ok);
+				})
+			},
+			load_from_current_state : function()
+			{
+				console.log("ask for load history from current state");
+				socket.emit("load_from_current_state", "save", function(ok)
+				{
+					console.log("load from current state return :", ok);
+				})
 			},
 			panelLog : function()
 			{

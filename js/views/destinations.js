@@ -63,7 +63,7 @@ define([
 					{
 
 						var ok = views.methods.setMethod(soapClient, "set_remote_url", [addressClient]);
-						views.methods.setMethod(soapClient, "create", ["httpsdpdec", 'remote'], function(ok){});
+						views.methods.setMethod(soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){});
 
 						if(!ok)
 						{

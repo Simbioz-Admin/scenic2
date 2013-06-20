@@ -16,15 +16,15 @@ class TermKitView(object):
         self.container.add(self.view)
         
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title("TermKit")
+        self.window.set_title("Scenic2")
         self.window.set_position(gtk.WIN_POS_CENTER)
-        self.window.set_default_size(600, 500)
+        self.window.set_default_size(440, 320)
         self.window.connect("destroy", self.destroy)
 
         self.window.add(self.container)
         self.window.show_all()
         
-        self.view.open("http://localhost:8085")
+        self.view.open("http://localhost:8086")
     
     def start(self):
         gtk.main()
@@ -35,7 +35,7 @@ class TermKitView(object):
         gtk.main_quit()
     
     def __startProcess(self):
-        os.system("node server.js")
+        os.system("./bin/node --harmony ./server.js ")
 
 if __name__ == '__main__':
     termkit = TermKitView()

@@ -3,10 +3,6 @@ module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 {
 	var express = require("express");
 
-	console.log(dir);
-
-
-
 	// ------------------------------------ EXPRESS CONFIGURATION ---------------------------------------------//
 
 	app.get('/classes_doc/:className?/:type?/:value?', function(req, res){

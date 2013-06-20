@@ -1,44 +1,45 @@
 var express = require("express")
 , config = require('./scenic/config.js')
+, log = require('./scenic/logger.js')(config)
+, switcher = require('node-switcher')
 , $ = require('jQuery')
 , _ = require('underscore')
 , app = express()
 , http = require('http')
 , requirejs = require('requirejs')
-, server = http.createServer(app).listen(8086)
-, io = require('socket.io').listen(server, { log: false })
-, switcher = require('node-switcher')
-, child_process = require('child_process')
+, network = require("./scenic/settings-network.js")(config, log)
+, server = http.createServer(app)
+, io = require('socket.io').listen(server, { log: config.logSocketIo })
 , readline = require('readline')
-, sys = require('sys')
 , appjs = require("appjs")
-, portchecker = require("portchecker")
+, passport = require('passport')
+, DigestStrategy = require('passport-http').DigestStrategy
 , idPanel = false
 , scenicStart = false
 , serverScenic = null
 , passSet = false;
 
 
+//----------------- INIT CONFIGURATION -----------------//
+// check if port express panel, express GUI, and soap port is available
+
+network.checkPort(config.port.soap, function(port){ config.port.soap = port; });
+network.checkPort(config.port.scenic, function(port){ config.port.scenic = port; });
+network.checkPort(config.port.panel, function(port)
+{ 
+	config.port.panel = port;
+	server.listen(config.port.panel);
+});
+
+
+
+//-------------- CONFIGURATION EXPRESS ---------------------//
+//param necessart for access file and use authentification
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 app.use(express.bodyParser());
-
-
-//----------------- INIT CONFIGURATION -----------------//
-
-config.ipLocal = require("./scenic/local-address.js");
-// check if port express panel, express GUI, and soap port is available
-
-
-
-
-//----------------- CONFIGURATION PASSPORT AUTHENTIFICATION -----------------//
-
-var passport = require('passport')
-, 	DigestStrategy = require('passport-http').DigestStrategy;
-
 app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.bodyParser());
@@ -47,127 +48,6 @@ app.configure(function() {
   app.use(passport.session());
   app.use(app.router);
 });
-
-
-
-var exec = require('child_process').exec;
-
-//please quit switcher properly
-process.on('exit', function () {
-	switcher.close();
-	//io.sockets.emit("shutdown", "bang");
-	console.log('About to exit.');
-});
-process.on('SIGINT', function () {
-	switcher.close();
-	console.log('Got SIGINT.  About to exit.');
-	process.exit(0);
-});
-
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-
-
-
-// ------------------------------------ SCENIC WINDOW ---------------------------------------------//
-
-
-app.get('/panel', function (req, res)
-{
-	if(!idPanel)
-	{
-	  res.sendfile(__dirname + '/panel.html');
-	  //start = true;
-	}
-	else
-	{
-		res.send("sorry you can't access to the page");
-	}
-});	
-
-
-var window = appjs.createWindow({
-  width  : 440,
-  height : 320,
-  //resizable : false,
-  url : 'http://localhost:8086/panel/',
-  icons  : __dirname + '/content/icons'
-});
-
-window.on('create', function(){
-  console.log("Window Created");
-  window.frame.show();
-  window.frame.center();
-});
-
-window.on('ready', function(){
-  console.log("Window Ready");
-
-  window.addEventListener('keydown', function(e){
-    if (e.keyIdentifier === 'F12') {
-      window.frame.openDevTools();
-    }
-  });
-});
-
-window.on('close', function(){
-  console.log("Window Closed");
-  process.exit(0);
-});
-
-
-
-io.sockets.on('connection', function (socket)
-{
-	socket.on("getPort", function(callback)
-	{
-		//check if port for soap and scenic is available
-		portchecker.getFirstAvailable(8084, 8090, 'localhost', function(p, host)
-		{ 
-			config.port.soap = p;
-			portchecker.getFirstAvailable(8090, 8100, 'localhost', function(p, host)
-			{ 
-				config.port.scenic = p;
-				callback(config.port.soap, config.port.scenic);
-			});
-
-		});
-	});
-
-
-	socket.on("setConfig", function(conf, callback)
-	{
-		if(conf.pass && conf.confirmPass)
-		{
-			require("./auth.js")(app, express, passport, DigestStrategy, conf.username, conf.pass);
-			passSet = true;
-			console.log("password set!");
-		}
-		if(conf.username) config.nameComputer = conf.username;
-		if(conf.portSoap != config.port.soap) config.port.soap = conf.portSoap;
-		if(conf.portScenic != config.port.scenic) config.port.scenic = conf.portScenic;
-		console.log("port soap : ", config.port.soap);
-		window.frame.resize(440, 200);
-
-		callback(true);
-	});
-
-	socket.on("statusScenic", function(state, callback)
-	{
-		scenicStart = (state ? true : false);
-		if(!scenicStart)
-			ioScenic.sockets.emit("shutdown");
-		if(!serverScenic) serverScenic = new startScenic(config.port.scenic);
-		callback("http://localhost:"+config.port.scenic);
-	});
-
-	socket.on("openBrowser", function(val)
-	{
-		exec("xdg-open http://localhost:"+config.port.scenic, puts);
-		
-	});
-});
-
-
 
 
 // ------------------------------------ SCENIC CONFIGURATION ---------------------------------------------//
@@ -187,8 +67,7 @@ function startScenic(port)
 	{ 
 		//io.sockets.emit("shutdown", "bang");
 		scenicStart = false;
-		console.log("server closed.");
-		ioScenic.sockets.emit("shutdown", "bang");
+		log("info","server closed.");
 	}
 	if(passSet)
 	{
@@ -210,4 +89,25 @@ function startScenic(port)
 
 	scenicStart = true;
 }
+
+
+// --------------- APPJS  -------------------------//
+
+require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log);
+
+
+
+//----------- PROCESS --------------------------//
+
+process.on('exit', function () {
+	switcher.close();
+	//io.sockets.emit("shutdown", "bang");
+	console.log('About to exit.');
+});
+process.on('SIGINT', function () {
+	switcher.close();
+	console.log('Got SIGINT.  About to exit.');
+	process.exit(0);
+});
+
 

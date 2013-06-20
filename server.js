@@ -7,7 +7,6 @@ var express = require("express")
 , requirejs = require('requirejs')
 , server = http.createServer(app).listen(8086)
 , io = require('socket.io').listen(server, { log: false })
-, logo = require('./js/libs/logo.js')
 , switcher = require('node-switcher')
 , child_process = require('child_process')
 , readline = require('readline')
@@ -17,8 +16,9 @@ var express = require("express")
 , idPanel = false
 , scenicStart = false
 , serverScenic = null
-, passSet = false
-, pass = false;
+, passSet = false;
+
+
 
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
@@ -30,6 +30,7 @@ app.use(express.bodyParser());
 
 config.ipLocal = require("./scenic/local-address.js");
 // check if port express panel, express GUI, and soap port is available
+
 
 
 
@@ -177,7 +178,7 @@ function startScenic(port)
 	var server = http.createServer(app).listen(port);
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
-	require("./irc.js")(ioScenic, $)
+	require("./scenic/irc.js")(ioScenic, $);
 	var scenic = require("./scenic/scenic.js")(config, $, _, config.port.soap, ioScenic);
 	var scenicExpress = require("./scenic/scenic-express.js")(config, $, _, app, scenic, __dirname, scenicStart);
 	var scenicIo = require("./scenic/scenic-io.js")(config, ioScenic, scenic, $, _);

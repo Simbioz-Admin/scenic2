@@ -26,6 +26,10 @@ module.exports = function (config, io, scenic, $, _)
 			
 		});
 
+		function shutdown()
+		{
+			io.socket
+		}
 
 		socket.on("getConfig", function(callback)
 		{

@@ -54,7 +54,7 @@ define([
 					{
 						info = info.split(",");
 						if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
-							$("[data-path='"+shmdata.path+"'] .status").before("<div class='preview'></div>");
+							$("[data-path='"+shmdata.path+"'] .nameInOut").append("<div class='preview'></div>");
 					});
 				})
 			},

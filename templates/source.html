@@ -1,13 +1,14 @@
 <tr class="shmdata inactive" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
 	<% if(index == 0){ %>
-		<td rowspan="<%=nbShmdata%>" class="group groupSource" ><div class="vertical short"><%=sourceName%></div> <div class="edit"></div></td>
+		<td rowspan="<%=nbShmdata%>" class="group groupSource" >
+			<div style="position:relative"><div class="edit"></div></div>
+			<div class="vertical short"><%=sourceName%></div>
+		</td>
 	<% } %>
 	<th scope="row" class="nameInOut" >
 		<div class="short">
 			<a href="#" class='info'><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></a>
 		</div>
-		<!-- <div class="preview"></div> -->
-		<div class="status"></div>
 
 	</th>
 	<% _.each(destinations, function(destination){

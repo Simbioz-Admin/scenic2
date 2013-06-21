@@ -34,7 +34,7 @@ define([
 
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
-			openPanelCreate : function()
+			openPanelCreate : function(event)
 			{
 
 				var className = $(event.target).data("name")

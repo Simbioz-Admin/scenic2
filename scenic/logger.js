@@ -1,12 +1,13 @@
-module.exports = function (config)
+module.exports = function (config, _)
 {
-  var log = function(level, message) {
-    var levels = ['error', 'warn', 'info'];
-    if (levels.indexOf(level) >= levels.indexOf(config.debugLevel) ) {
-      if (typeof message !== 'string') {
-        message = JSON.stringify(message);
-      };
-      console.log(level+': '+message);
+  var log = function() {
+    var levels = ['error', 'warn', 'debug', 'info'];
+    if (levels.indexOf(arguments[0]) >= levels.indexOf(config.debugLevel) ) {
+      var message = ": "
+      ,   level = arguments[0];
+
+      for(i=1; i<arguments.length; i++) message = message+arguments[i];
+      console.log(level, message);
     }
   }
 

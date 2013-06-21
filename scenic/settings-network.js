@@ -4,7 +4,9 @@ module.exports = function (config, log)
 	var portchecker = require("portchecker");
 	var os = require('os');
 
-	//check if port soap is in use
+
+	//*** check if port soap is in use ***//
+	
 	function checkPort(port, callback)
 	{
 		portchecker.isOpen(port, config.host, function(isOpen)

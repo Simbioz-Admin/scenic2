@@ -1,5 +1,5 @@
 
-module.exports = function (config, $, _, app, scenic, dir, scenicStart)
+module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 {
 	var express = require("express");
 
@@ -9,22 +9,22 @@ module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 
 		if(req.params.type == "properties")
 		{
-			if(req.params.value) 	res.send(scenic.get_property_description_by_class(req.params.className, req.params.value));
-			else 					res.send(scenic.get_properties_description_by_class(req.params.className));
+			if(req.params.value) 	res.send($.parseJSON(switcher.get_property_description_by_class(req.params.className, req.params.value)));
+			else 					res.send($.parseJSON(switcher.get_properties_description_by_class(req.params.className)));
 		}
 		else if(req.params.type == "methods")
 		{
-			if(req.params.value)	res.send(scenic.get_method_description_by_class(req.params.className, req.params.value));
-			else					res.send(scenic.get_methods_description_by_class(req.params.className));
+			if(req.params.value)	res.send($.parseJSON(switcher.get_method_description_by_class(req.params.className, req.params.value)));
+			else					res.send($.parseJSON(switcher.get_methods_description_by_class(req.params.className)));
 		}
 		else if(req.params.className)
 		{
-			res.send(scenic.get_class_doc(req.params.className));
+			res.send($.parseJSON(switcher.get_class_doc(req.params.className)));
 		}
 		else
 		{
 			if(req.query.category) res.send(scenic.get_classes_docs_type(req.query.category));
-			else res.send(scenic.get_classes_docs());
+			else res.send($.parseJSON(switcher.get_classes_doc()));
 		}
 	});
 
@@ -34,26 +34,26 @@ module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 	{
 		if(req.params.val)
 		{
-			res.send(scenic.get_property_value(req.params.quiddName, req.params.value))
+			res.send($.parseJSON(switcher.get_property_value(req.params.quiddName, req.params.value)))
 		}
 		else if(req.params.type == "properties")
 		{	
-			if(req.params.value)	res.send(scenic.get_property_description(req.params.quiddName, req.params.value))
-			else						res.send(scenic.get_properties_description(req.params.quiddName));
+			if(req.params.value)	res.send($.parseJSON(switcher.get_property_description(req.params.quiddName, req.params.value)));
+			else						res.send($.parseJSON(switcher.get_properties_description(req.params.quiddName)));
 	  	}
 		else if(req.params.type == "methods")
 		{
-			if(req.params.value)	res.send(scenic.get_method_description(req.params.quiddName, req.params.value));
-			else					res.send(scenic.get_methods_description(req.params.quiddName));
+			if(req.params.value)	res.send($.parseJSON(switcher.get_method_description(req.params.quiddName, req.params.value)));
+			else					res.send($.parseJSON(switcher.get_methods_description(req.params.quiddName)));
 		}
 	  	else if(req.params.quiddName)
 	  	{
-			res.send(scenic.get_quiddity_description(req.params.quiddName));
+			res.send($.parseJSON(switcher.get_quiddity_description(req.params.quiddName)));
 	  	}
 	  	else
 	  	{
 	  		//return the quidds without the excludes
-	  		var quidds = scenic.getQuidds();
+	  		var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
 	  		var quiddsFiltered = [];
 	  		_.each(quidds, function(quidd, index)
 	  		{
@@ -81,6 +81,6 @@ module.exports = function (config, $, _, app, scenic, dir, scenicStart)
 
 	app.get('/destinations', function(request, response) {
 	  response.contentType('application/json');
-	  response.send(scenic.get_property_value("defaultrtp", "destinations-json"));
+	  response.send($.parseJSON(switcher.get_property_value("defaultrtp", "destinations-json")));
 	});	
 }

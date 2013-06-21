@@ -1,18 +1,18 @@
-module.exports = function (config, io, scenic, $, _)
+module.exports = function (config, io, switcher, scenic, $, _, log)
 {
 	io.sockets.on('connection', function (socket)
 	{
 
 		socket.on("create", function(className, name, callback)
 		{        
-			var quiddName = scenic.create(className, name);
+			var quiddName = switcher.create(className, name);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
 			if(!_.contains(config.quiddExclude, className))
 			{
 				var properties = scenic.getQuiddPropertiesWithValues(quiddName);
-				var shmdatas = scenic.get_property_value(quiddName, "shmdata-writers");
+				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
 				
 				scenic.createVuMeter(shmdatas);
 				//callback is used by the user who has created the Quidd for directly set properties or create encoder
@@ -26,51 +26,45 @@ module.exports = function (config, io, scenic, $, _)
 			
 		});
 
-		function shutdown()
-		{
-			io.socket
-		}
-
 		socket.on("getConfig", function(callback)
 		{
 			callback(config);
 		});
 
-		socket.on("remove", function(quiddName){
+		socket.on("remove", function(quiddName)
+		{
 			var quiddDelete = scenic.remove(quiddName);
-
 			io.sockets.emit("remove", quiddName);
 		});
 
-
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
-			var ok = scenic.set_property_value(quiddName, property, value);
+			var ok = switcher.set_property_value(quiddName, property, value);
 			callback(ok);
 			io.sockets.emit("setPropertyValue", quiddName, property, value);
 		});
 
 
 		socket.on("getMethodDescription", function(quiddName, method, callback){
-			var descriptionJson = scenic.get_method_description(quiddName, method);
+			var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
 			callback(descriptionJson);
 		});
 
 
 		socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
-			var methodsDescriptionByClass = scenic.get_methods_description_by_class(quiddName).methods;
+			var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 			callback(methodsDescriptionByClass);
 		});
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
-			var invoke = scenic.invoke(quiddName, method, parameters);
+			var invoke = switcher.invoke(quiddName, method, parameters);
 			callback(invoke);
 			io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});
 
 
 		socket.on("getPropertiesOfClass", function(className, callback){
-			var propertiesofClass = scenic.get_properties_description_by_class(className).properties;
+			var propertiesofClass =  $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
 			callback(propertiesofClass);
 		});
 
@@ -81,31 +75,34 @@ module.exports = function (config, io, scenic, $, _)
 		});
 
 
-		socket.on("getQuidditiesWithPropertiesAndValues", function(quiddName, callback){
-			var QuidditiesWithPropertiesAndValues = scenic.getQuidditiesWithPropertiesAndValues(quiddName);
-			callback(QuidditiesWithPropertiesAndValues);
-		});
-
 		socket.on("get_property_value", function(quiddName, property, callback){
-			var quidds = scenic.get_property_value(quiddName, property);
+			try{
+				var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
+				
+			}
+			catch(e){
+				//log('info', e);
+				var quidds = switcher.get_property_value(quiddName, property);
+			}
 			callback(quidds);
 		});
 
+
 		socket.on("save", function(name, callback)
 		{
-			var save = scenic.save_history(name);
+			var save = switcher.save_history(name);
 			callback(save);
 		});
 
 		socket.on("load_from_scratch", function(name, callback)
 		{
-			var load = scenic.load_history_from_scratch(name);
+			var load = switcher.load_history_from_scratch(name);
 			callback(load);
 		});
 
 		socket.on("load_from_current_state", function(name, callback)
 		{
-			var load = scenic.load_history_from_current_state(name);
+			var load = switcher.load_history_from_current_state(name);
 			callback(load);
 		});
 

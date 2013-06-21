@@ -1,9 +1,9 @@
 var express = require("express")
 , config = require('./scenic/config.js')
-, log = require('./scenic/logger.js')(config)
 , switcher = require('node-switcher')
 , $ = require('jQuery')
 , _ = require('underscore')
+, log = require('./scenic/logger.js')(config, _)
 , app = express()
 , http = require('http')
 , requirejs = require('requirejs')
@@ -14,9 +14,7 @@ var express = require("express")
 , appjs = require("appjs")
 , passport = require('passport')
 , DigestStrategy = require('passport-http').DigestStrategy
-, idPanel = false
 , scenicStart = false
-, serverScenic = null
 , passSet = false;
 
 
@@ -59,9 +57,9 @@ function startScenic(port)
 	var	ioScenic = require('socket.io').listen(server, { log: false });
 
 	require("./scenic/irc.js")(ioScenic, $);
-	var scenic = require("./scenic/scenic.js")(config, $, _, config.port.soap, ioScenic);
-	var scenicExpress = require("./scenic/scenic-express.js")(config, $, _, app, scenic, __dirname, scenicStart);
-	var scenicIo = require("./scenic/scenic-io.js")(config, ioScenic, scenic, $, _);
+	var scenic = require("./scenic/scenic.js")(config, $, _, ioScenic, log);
+	var scenicExpress = require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
+	var scenicIo = require("./scenic/scenic-io.js")(config, ioScenic,switcher, scenic, $, _, log);
 
 	this.close = function()
 	{ 

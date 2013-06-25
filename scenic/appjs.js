@@ -31,7 +31,7 @@ module.exports = function (app, config, startScenic, scenicStart, io, log)
 	  height : 320,
 	  //resizable : false,
 	  url : 'http://'+config.host+':'+config.port.panel+'/panel/',
-	  icons  : __dirname + '/content/icons'
+	  icons  : path.join(__dirname, '..', '/assets/images/icons')
 	});
 
 	window.on('create', function(){

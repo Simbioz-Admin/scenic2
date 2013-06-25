@@ -1,4 +1,4 @@
-module.exports = function (io, $) {
+module.exports = function (io, $, log) {
 	var irc = require('irc');
 	var usersIrc = [];
 	var idChannelIrc = null;
@@ -29,7 +29,7 @@ module.exports = function (io, $) {
 
 
 		socket.on("sendMsg-irc", function(target, msg){
-			console.log("msg for irc :",target,  msg);
+			log("info","msg for irc :",target,  msg);
 			usersIrc[socket.id].send(target, msg);
 		});
 	});
@@ -48,16 +48,16 @@ module.exports = function (io, $) {
 		});
 		
 		client.connect(function(info){
-			console.log("CONNECT ! : ", info.args[0]);
+			log("info","CONNECT ! : ", info.args[0]);
 			callback(info.args[0]);
 		});
 
 		this.join = function(channel)
 		{
-			console.log("ask for joining : ", channel);
+			log("info","ask for joining : ", channel);
 			client.join(channel, function(realUsername)
 			{
-				console.log(realUsername, "is connected now!");
+				log("info",realUsername, "is connected now!");
 				socket.emit("join-irc", channel.replace("#", ""));
 				//client.list();
 			});
@@ -68,7 +68,7 @@ module.exports = function (io, $) {
 		
 		//receive message from all
 		client.addListener('message', function (from, to, message, info) {
-			console.log("message : ", from, to, message, info)
+			log("info","message : ", from, to, message, info)
 
 			socket.emit("receiveMsg-irc", from, to, message);
 		});
@@ -76,13 +76,13 @@ module.exports = function (io, $) {
 
 		client.addListener('pm', function (from, message, info)
 		{
-			console.log("pm : ", from, message, info);
+			log("info","pm : ", from, message, info);
 			//socket.emit("receiveMsg-irc", from, message, "priv");
 		});
 
 
 		client.addListener('notice', function (from, message, info) {
-			console.log("notice : ", from, message, info);
+			log("info","notice : ", from, message, info);
 			if(!from)
 			{
 				var from = "info";
@@ -94,21 +94,21 @@ module.exports = function (io, $) {
 
 		//receive list names on channel and send to the interface
 		client.addListener('names', function (channel, names) {
-			console.log(channel, names);
+			log("info",channel, names);
 			var users = [];
 			$.each(names, function(name){ users.push(name)});
-			console.log("list-users-irc",users);
+			log("info","list-users-irc",users);
 			socket.emit("list-users-irc",channel, users);
 		});
 
 		client.addListener('join', function (channel, name) {
-			console.log(name, "as joined "+channel);
+			log("info",name, "as joined "+channel);
 			socket.emit("add-user-irc", channel, name);
 			socket.emit("receiveMsg-irc", "info", channel, name+" as joined");
 		});
 
 		client.addListener('part', function (channel, name) {
-			console.log(name, "as quit "+channel);
+			log("info",name, "as quit "+channel);
 			socket.emit("remove-user-irc",channel, name);
 			socket.emit("receiveMsg-irc", "info", channel, name+" as quit");
 		});
@@ -116,7 +116,7 @@ module.exports = function (io, $) {
 		//for message error
 		client.addListener('error', function(message)
 		{
-		    console.log('error: ', message);
+		    log("info",'error: ', message);
 		});
 
 		//this.join = function(target )

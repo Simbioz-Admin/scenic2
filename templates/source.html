@@ -1,8 +1,11 @@
 <tr class="shmdata inactive" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
 	<% if(index == 0){ %>
 		<td rowspan="<%=nbShmdata%>" class="group groupSource" >
-			<div style="position:relative"><div class="edit"></div></div>
-			<div class="vertical short"><%=sourceName%></div>
+			<div style="position:relative">
+				<div class="edit"></div>
+				<div class="vertical short"><%=sourceName%></div>
+			</div>
+			
 		</td>
 	<% } %>
 	<th scope="row" class="nameInOut" >

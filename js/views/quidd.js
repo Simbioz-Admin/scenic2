@@ -54,8 +54,9 @@ define([
 					{
 						info = info.split(",");
 						if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
-							$("[data-path='"+shmdata.path+"'] .nameInOut").append("<div class='preview'></div>");
+							$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
 					});
+
 				})
 			},
 			remove : function(){
@@ -73,7 +74,7 @@ define([
 						views.global.openPanel();
 					});
 			},
-			preview : function(){
+			preview : function(event){
 
 				var quidd = this.model.get("name")
 				,	path = $(event.target).closest('tr').data("path")

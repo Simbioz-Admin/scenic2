@@ -5,7 +5,8 @@ module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 
 	// ------------------------------------ EXPRESS CONFIGURATION ---------------------------------------------//
 
-	app.get('/classes_doc/:className?/:type?/:value?', function(req, res){
+	app.get('/classes_doc/:className?/:type?/:value?', function(req, res)
+	{
 
 		if(req.params.type == "properties")
 		{
@@ -27,7 +28,6 @@ module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 			else res.send($.parseJSON(switcher.get_classes_doc()));
 		}
 	});
-
 
 
 	app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res)
@@ -64,15 +64,10 @@ module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 	  	}
 	});
 
-
-
-
 	app.get('/methods_doc', function(request, response) {
 	  response.contentType('application/json');
 	  response.send(scenic.getQuidditiesWithMethods());
 	});
-
-
 
 	app.get('/shmdatas', function(request, response) {
 	  response.contentType('application/json');

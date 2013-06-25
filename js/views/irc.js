@@ -1,144 +1,96 @@
 define([
 	'underscore',
 	'backbone',
-	"text!/templates/msg_irc.html"
-	],function(_, Backbone, TemplateMsg){
+	"text!/templates/channel-irc.html"
+	],function(_, Backbone, TemplateChannel){
 
 		var ircView = Backbone.View.extend({
-			el : '#chat',
-			userPrivate : null,
-			username : null,
-			usersConnected : [],
+			//el : '#chat',
+			tagName : "div",
+			className : "channel",
 			events : {
-				"click #submit-chat" : "connect",
-				"keypress #value-input-msg" : "send_msg",
-				"click .user" : "selectPrivateUser",
-				"click #remove-userPrivate" : "removePrivateUser"
-
+				"keypress .value-input-msg" : "send_msg"
 			},
 			initialize : function()
 			{
-				console.log("init chat-irc");
 				var that = this;
-				socket.on("receiveMsg-irc", function(user, msg, type)
-				{	
-					that.add_msg(user, msg, type);
-				});
 
-				socket.on("list-users", function(names)
-				{
-					that.setListUsers(names);
-				});
+				this.model.bind("change:users", this.setListUsers, this);
+				this.model.bind("change:msgNotView", this.countMsg, this);
 
-				socket.on("add-user", function(name)
-				{
-					that.addlistUser(name);
 
-				});
-
-				socket.on("remove-user", function(name)
-				{
-					that.removeListUser(name);	
-				});
-			},
-			connect : function()
-			{
-				var username = $("#username-chat").val();
-				that = this;
-				console.log("ask for connection to irc with : ", username);
-				socket.emit("connect-irc", username, function(user)
-				{	
-					that.username = user;
-					$("#your-user").html(user);
-					$("#chat #login").hide();
-					$("#chat #connect-chat").show();
-				});
-
-				$("#login").html("Please, wait...");
+				//add to the top the channel
+				$("#chat .headerMenu li").removeClass("active");
+				$("#chat .headerMenu").append('<li class="channel active" id='+this.model.get("channel")+' >#'+this.model.get("channel")+'<span class="countMsgIrc"></span></li>');
 				
+				//listen outside of element associate to the view (for the menu)
+				$("#"+this.model.get("channel")).click(function(){ that.showChannel(this) })
 
-				return false;
+				//create box for message
+				var html = _.template(TemplateChannel, { channel : this.model.get("channel"), username : this.model.get("username")})
+				$(this.el).append(html).attr("id", this.model.get("channel"));
+				$("#channels").append($(this.el));
+
+			},
+			showChannel : function(event)
+			{
+				//remove satus for the channel
+				$("#chat .headerMenu li").removeClass("active");
+				collections.irc.each(function(channel){ channel.set({active : false}) });
+				this.model.set({active : true});
+				$(event).addClass("active");
+
+
+				collections.irc.totalMsg = collections.irc.totalMsg - this.model.get("msgNotView");
+				this.model.set({msgNotView : 0});
+
+
+				$("#channels .channel").hide();
+				$(this.el).show();
 			},
 			send_msg : function(event)
 			{
-				if(event.which == 13) {
-					var msg = $("#value-input-msg").val();
-					$("#value-input-msg").val("");
-
-					if(this.userPrivate)
-					{
-						socket.emit("sendMsg-irc", this.userPrivate, msg);
-						this.add_msg($("#your-user").html(), msg, this.userPrivate);
-					}
-					else
-					{
-						socket.emit("sendMsg-irc", "#scenicTest", msg);
-						this.add_msg($("#your-user").html(), msg, "public");
-					}
+				if(event.which == 13) //touch enter
+				{
+					var msg = $(".value-input-msg", this.el).val();
+					$(".value-input-msg", this.el).val("");
+					collections.irc.addMessage(this.model.get("channel"), this.model.get("username") ,msg);
+					collections.irc.sendMessage(this.model.get("channel"), msg);
 				}
 			},
-			add_msg : function(user, msg, userPrivate)
+			setListUsers : function()
 			{
-				var message = _.template(TemplateMsg, {user : user, msg : msg, type : userPrivate});
-				$("#content-chat").append(message);
+				console.log("refresh connected");
+				var usersConnected = this.model.get("users")
+				,	listConnected = ""
+				,	channel = this.model.get("channel");
 
-				var objDiv = document.getElementById("content-chat");
-				objDiv.scrollTop = objDiv.scrollHeight;
+				//update nb connected
+				$(".nb-connected", this.el).html(_.size(usersConnected));
+				//$("#chat .headerMenu #"+channel+" .newMsg").html(connected.length);
 
+				//update list connected
+				_.each(usersConnected, function(name){ listConnected+="<li>"+name+"</li>"; });
+				$(".list-connected", this.el).html(listConnected);
 			},
-			setListUsers : function(names)
+			countMsg : function()
 			{
-				var nbConnected = parseInt($("#nb-connected").html());
-
-				_.each(names, function(index, name)
+				if(this.model.get("msgNotView") == 0)
 				{
-					if($("#list-names [data-username='"+name+"']").length == 0)
+					$("#"+this.model.get("channel")+" .countMsgIrc").html("").hide();
+					if(collections.irc.totalMsg <= 0)
 					{
-						$("#list-names").append("<li class='user' data-username='"+name+"'>"+name+"</li>");
-						nbConnected++;
+						collections.irc.totalMsg = 0;
+						$("#btn-irc .countMsgIrc").hide();
 					}
-				});
-				$("#nb-connected").html(nbConnected);
-			},
-			addlistUser : function(name)
-			{
-				if($("#list-names [data-username='"+name+"']").length == 0)
-				{
-					var nbConnected = parseInt($("#nb-connected").html());
-					$("#list-names").append("<li class='user' data-username='"+name+"'>"+name+"</li>");
-					$("#nb-connected").html(nbConnected+1);
-					this.add_msg("info", name+" as joined the channel #scenic", "public");
 				}
-				
-			},
-			removeListUser : function(name)
-			{
-				var nbConnected = parseInt($("#nb-connected").html());
-				$("#list-names [data-name='"+name+"']").remove();
-				$("#nb-connected").html(nbConnected-1);
-				this.add_msg("info", name+" as quit the channel #scenic", "public");
-			},
-			selectPrivateUser : function(){
-
-				$("#userPrivate").remove();
-				$("#value-input-msg").removeAttr("style");
-				var userPrivate = $(event.target).data("username");
-				console.log(this.username, userPrivate);
-				if(userPrivate != this.username && userPrivate != "info" && userPrivate != "")
+				else
 				{
-					this.userPrivate = userPrivate;
-					$("#value-input-msg").after('<div id="userPrivate"><div id="remove-userPrivate">x</div>'+this.userPrivate+'</div>')
-					var sizeSticky = $("#userPrivate").outerWidth()+5;
-					$("#value-input-msg").css({paddingLeft : sizeSticky, width : $("#value-input-msg").width()-sizeSticky+5 });
+					collections.irc.totalMsg += 1;
+					$("#btn-irc .countMsgIrc").html(collections.irc.totalMsg).show();
+					$("#"+this.model.get("channel")+" .countMsgIrc").html(this.model.get("msgNotView")).show();
 				}
-			},
-			removePrivateUser : function(event)
-			{
-				this.userPrivate = null;
-				$(event.target).parent().remove();
-				$("#value-input-msg").removeAttr("style");
 			}
-
 		});
 
 		return ircView;

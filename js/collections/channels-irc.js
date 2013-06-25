@@ -2,9 +2,8 @@ define([
 	'underscore',
 	'backbone',
 	'models/channel-irc',
-	'views/irc2',
 	'text!/templates/msg_irc.html'
-	],function(_, Backbone, ChannelModel, ViewIrc, TemplateMsg){
+	],function(_, Backbone, ChannelModel, TemplateMsg){
 
 		var ChannelsCollection = Backbone.Collection.extend({
 			model : ChannelModel,
@@ -12,20 +11,24 @@ define([
 			totalMsg  : 0,
 			active : false,
 		    initialize : function(){
-		    	console.log("init collection channels-irc");
 		    	var that = this; 
 		    	//create standard channel IRC (#scenic / #scenic_idNodeServer)
 		    	socket.on("join-irc", function(channel)
 		    	{
-			    	that.add({channel : channel, username : that.username});
+			    	that.each(function(channel)
+			    	{
+			    		channel.set({active: false});
+			    	});
+			    	that.add({ active : true, channel : channel, username : that.username});
 			    	that.active = true;
+
+			    	$("#chat #login").hide();
 		    	});
 
 		    	socket.on("receiveMsg-irc", function(from, to, msg)
-		    		{ 
-		    			that.addMessage(to, from, msg);
-		    		});
-
+	    		{ 
+	    			that.addMessage(to, from, msg);
+	    		});
 
 		    	socket.on("list-users-irc", function(channel, names)
 				{
@@ -34,16 +37,12 @@ define([
 
 				socket.on("add-user-irc", function(channel, name)
 				{
-					console.log("user in : ", channel, name);
 					that.addlistUser(channel, name);
-
 				});
 
 				socket.on("remove-user-irc", function(channel, name)
 				{
-					console.log("user in : ", channel, name);
 					that.removelistUser(channel, name);
-
 				});
 
 
@@ -55,10 +54,6 @@ define([
 
 				$("#chat").draggable({ cursor: "move", handle: ".title"});
 
-		    	// views.irc = new ViewIrc({collection : this});
-		    	//this.connectClient();
-		    	 // $("#channels").show();
-		    	 // $("#login").hide();
 		    },
 		    connectClient : function()
 			{
@@ -72,10 +67,10 @@ define([
 					console.log(that.username, "is connected now");
 					$("#your-user").html(user);
 					$("#channels").show();
-					$("#chat #login").hide();
+					
 				});
 
-				$("#login").html("Please, wait...");
+				$("#login").html("<div id='loading'>Please, wait...</div>");
 			},
 			sendMessage : function(channel, msg)
 			{
@@ -86,7 +81,7 @@ define([
 
 				//increment number message not view for the channel
 				var channel = this.get(chann.replace("#",""));
-				if(!channel.get("active")) channel.set({msgNotView : channel.get("msgNotView")+1});
+				if(channel && !channel.get("active")) channel.set({msgNotView : channel.get("msgNotView")+1});
 
 				var message = _.template(TemplateMsg, {user : user, msg : msg});
 				$("#"+chann.replace("#","")+" .content-channel").append(message);

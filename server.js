@@ -27,6 +27,7 @@ network.checkPort(config.port.panel, function(port)
 { 
 	config.port.panel = port;
 	server.listen(config.port.panel);
+	log("info", "the server panel start to the port "+ config.port.panel);
 });
 
 
@@ -48,18 +49,19 @@ app.configure(function() {
 });
 
 
-// ------------------------------------ SCENIC CONFIGURATION ---------------------------------------------//
-
+//-------------- SCENIC CONFIGURATION -----------------------//
 
 function startScenic(port)
 {
+
 	var server = http.createServer(app).listen(port);
 	var	ioScenic = require('socket.io').listen(server, { log: false });
+	log("info", "the server start : http://"+config.host+":"+config.port.scenic);
 
-	require("./scenic/irc.js")(ioScenic, $);
 	var scenic = require("./scenic/scenic.js")(config, $, _, ioScenic, log);
-	var scenicExpress = require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
-	var scenicIo = require("./scenic/scenic-io.js")(config, ioScenic,switcher, scenic, $, _, log);
+	require("./scenic/irc.js")(ioScenic, $, log);
+	require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
+	require("./scenic/scenic-io.js")(config, ioScenic,switcher, scenic, $, _, log);
 
 	this.close = function()
 	{ 

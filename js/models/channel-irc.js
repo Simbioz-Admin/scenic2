@@ -1,7 +1,7 @@
 define([
 	'underscore',
 	'backbone',
-	'views/irc2'
+	'views/irc'
 	],function(_, Backbone, ViewIrc){
 
 		var Channel = Backbone.Model.extend({
@@ -14,11 +14,9 @@ define([
 				"msgNotView" : 0,
 				"active" : false,
 			},
-			initialize : function(){
-				
-				console.log("new channel ", this.get("channel"));
+			initialize : function()
+			{
 				var view = new ViewIrc({model : this});
-
 			},
 			
 		});

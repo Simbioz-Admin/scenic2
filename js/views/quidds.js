@@ -63,6 +63,7 @@ define([
 					$("#panelRight .content ul").after(template);
 				});
 
+
 			},
 			create : function()
 			{

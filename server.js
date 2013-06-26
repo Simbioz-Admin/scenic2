@@ -9,6 +9,7 @@ var express = require("express")
 , requirejs = require('requirejs')
 , network = require("./scenic/settings-network.js")(config, log)
 , server = http.createServer(app)
+, serverScenic = http.createServer(app)
 , io = require('socket.io').listen(server, { log: config.logSocketIo })
 , readline = require('readline')
 , appjs = require("appjs")
@@ -38,27 +39,27 @@ network.checkPort(config.port.panel, function(port)
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
-app.use(express.bodyParser());
-app.configure(function() {
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-});
+// app.use(express.bodyParser());
+// app.configure(function() {
+//   app.use(express.cookieParser());
+//   app.use(express.bodyParser());
+//   app.use(express.methodOverride());
+//   app.use(passport.initialize());
+//   app.use(passport.session());
+//   app.use(app.router);
+// });
 
-
+console.log("port", server.address());
 //-------------- SCENIC CONFIGURATION -----------------------//
 
 function startScenic(port)
 {
 
-	var server = http.createServer(app).listen(port);
-	var	ioScenic = require('socket.io').listen(server, { log: false });
+	serverScenic.listen(port);
+	var	ioScenic = require('socket.io').listen(serverScenic, { log: false });
 	log("info", "the server start : http://"+config.host+":"+config.port.scenic);
 
-	var scenic = require("./scenic/scenic.js")(config, $, _, ioScenic, log);
+	var scenic = require("./scenic/scenic.js")(config, switcher, $, _, ioScenic, log);
 	require("./scenic/irc.js")(ioScenic, $, log);
 	require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
 	require("./scenic/scenic-io.js")(config, ioScenic,switcher, scenic, $, _, log);
@@ -93,21 +94,31 @@ function startScenic(port)
 
 // --------------- APPJS  -------------------------//
 
-require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log);
+require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer);
 
 
 
 //----------- PROCESS --------------------------//
 
 process.on('exit', function () {
-	switcher.close();
-	//io.sockets.emit("shutdown", "bang");
 	console.log('About to exit.');
 });
 process.on('SIGINT', function () {
-	switcher.close();
 	console.log('Got SIGINT.  About to exit.');
 	process.exit(0);
 });
 
 
+function closeServer()
+{
+	log("info", "close server");
+	io.server.close();
+	//if(serverScenic) serverScenic.close();
+	switcher.close();
+}
+
+ io.server.on('close', function() {
+ 	console.log("socketio close");
+
+
+  });

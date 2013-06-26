@@ -1,7 +1,6 @@
 
-module.exports = function (config, $, _, io, log)
+module.exports = function (config, switcher, $, _, io, log)
 {
-	var switcher = require('node-switcher');
 
 	switcher.create("rtpsession", "defaultrtp");
 	switcher.create("SOAPcontrolServer", "soap");

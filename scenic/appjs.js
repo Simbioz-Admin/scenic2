@@ -1,4 +1,4 @@
-module.exports = function (app, config, startScenic, scenicStart, io, log)
+module.exports = function (app, config, startScenic, scenicStart, io, log, closeServer)
 {
 
 	var appjs = require("appjs")
@@ -52,7 +52,7 @@ module.exports = function (app, config, startScenic, scenicStart, io, log)
 
 	window.on('close', function(){
 	  log("info","Window Closed");
-	  process.exit(0);
+	  closeServer();
 	});
 
 
@@ -104,6 +104,7 @@ module.exports = function (app, config, startScenic, scenicStart, io, log)
 			
 		});
 	});
-
+	
+	return window;
 
 }

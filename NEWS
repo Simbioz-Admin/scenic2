@@ -1,0 +1,15 @@
+Scenic2 release notes
+===================
+
+Scenic2 0.2.0 (2013-07-05)
+-------------------------
+This release is a developer snapshot in the stable 0.2 series.
+
+New features:
+
+* Use The functionnality of switcher 2.0 with an interface web 
+
+Known bugs: 
+
+* scenic2 sometimes leaves completely at server start
+

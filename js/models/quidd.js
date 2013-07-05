@@ -5,31 +5,37 @@ define([
 	],function(_, Backbone, ViewQuidd){
 
 		var QuiddModel = Backbone.Model.extend({
+			url : "/quidd/",
 			idAttribute: "name",
 			defaults : {
 				"name" : null,
 				"class" : null,
 				"properties" : [],
-				"shmdatas" : {}
+				"shmdatas" : null
 			},
 			initialize : function()
 			{
 				var that = this;
-				this.getShmdatas(function(ok){
-					var view = new ViewQuidd({ model : that });
-				});
+				if(this.collection)
+				{
+					//var view = new ViewQuidd({ model : that });
+					this.setShmdatas(function(ok){
+						var view = new ViewQuidd({ model : that });
+					});
+				}
 			},
-			getShmdatas : function(callback){
+			setShmdatas : function(callback){
 				var that = this;
 				//ask for value of shmdatas and stock in model
-				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(propertyValue){
-					that.set({ shmdatas  : propertyValue.shmdata_writers});
-					console.log("add shmdatas");
-					callback("ok");
+				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
+				{
+					that.set({ shmdatas  : shmdatas.shmdata_writers});
+					callback(shmdatas.shmdata_writers);
 				});
 			},
-			getProperties : function(){
-				
+			remove : function()
+			{
+				this.destroy();
 			}
 		});
 

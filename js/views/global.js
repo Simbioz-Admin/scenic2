@@ -8,61 +8,109 @@ define([
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
-
+			statePanelIrc : false,
+			statePanelLog : false,
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click .box" : "createConnection",
-				"click #close" : "closePanel",
-				"change .checkbox" : 'stateCheckbox'
+				"click .box" : "connection",
+				"keypress #port_destination" : "setConnection",
+				"blur #port_destination" : "removeInputDestination",
+				"click .close" : "closePanel",
+				"click #close-panelInfo" : "closePanelInfo",
+				"change .checkbox" : 'stateCheckbox',
+				"click #btn-irc" : 'panelIrc',
+				"click #btn-log" : 'panelLog',
+				"click #btnSave" : 'save',
+				"click #btnLoadScratch" : 'load_from_scratch',
 			},
 
 			//generation of the main Menu 
-			initialize : function(){
+			initialize : function()
+			{
 				console.log("init global View");
+				var that = this;
 				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
 				$("#menuTable").html(template);
 
-				socket.on("messageLog", function(msg){
+				socket.on("messageLog", function(msg)
+				{
 					$("#log .content").append(msg+"<br><br>");
 					$("#log .content").scrollTop(100000000000000000);
-				})
+				});
+
+				socket.on("shutdown", function(){
+					$("body").html("<div id='shutdown'>the server has been shutdown...</div>");
+				});
+
+				//$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
+				$("#panelRight .content, .panelInfo").draggable({ cursor: "move", handle: "#title"});
+
+				$(document).keyup(function(e){
+					that.keyboardAction(e);
+				});
 
 			},
-
 			//action for open the sub-menu
-			openDropdown : function(){
+			openDropdown : function()
+			{
 				var menu = $(event.target);
 				menu.next(".dropdown-menu").show();
 				$(".dropdown-menu").mouseleave(function(){
 					$(this).hide();
 				})
 			},
-			createConnection : function(){
+			connection : function()
+			{
 				var box = $(event.target)
 				,	destName = box.data("hostname")
-				,	path = box.parent().data("path")
-				,	port = "8050";
+				,	path = box.parent().data("path");
 
-				console.log(destName, path, port);
-
-				if(!box.hasClass("active")){
-					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){
-
-					});
-					//connect shmdata to destination
-					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
-
-					});
-					//display connection is active between shmdata and destination
-					//box.addClass("active");
-				}else{
+				if(box.hasClass("active"))
+				{
 					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
-					//box.removeClass("active");
+				}
+				else
+				{
+					box.html("<input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'>");
 				}
 			},
+			setConnection : function(event)
+			{
+	
+				if(event.which == 13) //touch enter
+				{
+					var box = $(event.target).parent()
+					,	destName = box.data("hostname")
+					,	path = box.parent().data("path")
+					,	port = $(event.target).val();
 
+					//add to the session the shmdata 
+					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
+					//connect shmdata to destination
+					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
+						console.log("uridecodebin remote", destName);
+						
+						setTimeout(function()
+							{
+								views.methods.setMethod("soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+									function(ok){
+										console.log("ok?", ok);
+									})
+							},2000)
+
+						
+					});
+					
+					
+
+					this.removeInputDestination(event);
+				}
+			},
+			removeInputDestination : function(event)
+			{
+				$(event.target).parent().html("");
+			},
 			//alert for different message
 			alertMsg : function(type, msg){
 				$("#msgHighLight").remove();
@@ -74,32 +122,98 @@ define([
 			},
 			openPanel : function()
 			{
-				$("#panelLeft").animate({width : "70%"});
-				$("#panelRight").delay(100).animate({width : "30%"});
+
+				$("#panelRight").show();
+				// $("#panelLeft").animate({width : "70%"});
+				// $("#panelRight").delay(100).animate({width : "30%"});
 			},
-			closePanel : function()
+			closePanel : function(e)
 			{
-				$("#panelLeft").delay(100).animate({width : "100%"});
-				$("#panelRight").animate({width : "0px"});
+
+				$("#panelRight").hide();
+				// $("#panelLeft").delay(100).animate({width : "100%"});
+				// $("#panelRight").animate({width : "0px"});
+			},
+			closePanelInfo : function()
+			{
+				$(".panelInfo").remove();
+			},
+			keyboardAction : function(event)
+			{
+				var that = this;
+			    if(event.which == 27) 	$("#panelRight").hide();
 			},
 			stateCheckbox : function(){
 					
 					var check = $(event.target);
 
-					if (check.is(':checked')) {
-						console.log("check");
-						check.val('true').attr('checked', true);
-					}else{
-						console.log("uncheck");
-						check.val('false').attr('checked', false);
+					if (check.is(':checked')) check.val('true').attr('checked', true);
+					else check.val('false').attr('checked', false);
+			},
+			panelIrc : function(){
+				if(!this.statePanelIrc)
+				{
+					$("#chat").show();
+					this.statePanelIrc = true;
+					if(collections.irc.active)
+					{
+						var modelIrc = collections.irc.get($(".channel.active").attr("id"));
+						modelIrc.set({active : true});
+						collections.irc.totalMsg = collections.irc.totalMsg - modelIrc.get("msgNotView");
+						modelIrc.set({msgNotView : 0});
 					}
-				     // if($(this).attr('checked')){
-				     //      $(this).val('TRUE');
-				     // }else{
+				}
+				else
+				{
+					$("#chat").hide();	
+					this.statePanelIrc = false;
+					collections.irc.each(function(channel){ channel.set({active : false}) });
+				}
+			},
+			save : function()
+			{
+				console.log("ask for saving");
+				socket.emit("save", "save", function(ok)
+				{
+					console.log("save return :", ok);
+				})
 
-				     //      $(this).val('FALSE');
-				     // }
-	
+			},
+			load_from_scratch : function()
+			{
+				console.log("ask for load history from scratch");
+				socket.emit("load_from_scratch", "save", function(ok)
+				{
+					console.log("load from scratch return :", ok);
+				})
+			},
+			load_from_current_state : function()
+			{
+				console.log("ask for load history from current state");
+				socket.emit("load_from_current_state", "save", function(ok)
+				{
+					console.log("load from current state return :", ok);
+				})
+			},
+			panelLog : function()
+			{
+				var that = this;
+				if(!this.statePanelLog)
+				{
+					$("#log").animate({"right" : 0}, function()
+					{
+						//console.log("open");
+						that.statePanelLog = true;
+					});
+				}
+				else
+				{
+					$("#log").animate({"right" : -$("#log").width()-61}, function()
+					{
+						that.statePanelLog = false;
+					});
+				}
+				
 			}
 		});
 

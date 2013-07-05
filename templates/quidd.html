@@ -1,15 +1,17 @@
-<div id="close">X</div>
+<div class="close" id="close-panelRight">X</div>
 <div id="title"><%=title%></div>
 
-<form id="form-lightbox" data-classname="<%=quiddName%>">
+<form id="form-quidd"  data-classname="<%=quiddName%>" onsubmit="return(false)">
 	
-	<ul id="form-quidd">
+	<ul >
+
 		<% if(action == "create"){ %>
 			<h3>Name of your source</h3> 
-			<input type="text" id="quiddName" value="" placeholder="if empty, a default name will be defined">
+			<input type="text" id="quiddName" value="" autofocus="autofocus" placeholder="if empty, a default name will be defined">
 		<% }else{ %>
-			<input type="hidden" id="quiddName" value="<%=quiddName%>" placeholder="if empty, a default name will be defined">
+			<input type="hidden" id="quiddName" value="<%=quiddName%>">
 		<% } %>
+
 		<% _.each(properties, function(property){  %>
 			<% if(property.name != "shmdata-readers" && property.name != "shmdata-writers"){ %>
 			<li>
@@ -28,11 +30,11 @@
 				<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>
 				<input 
 					class="property" 
-					data-default="<%=valueField%>" 
+					data-current="<%=valueField%>" 
 					data-min="<%=info.minimum%>" 
 					data-maximum="<%=info.maximum%>" 
 					type="text" 
-					value="<%=valueField%>" 
+					value="<%=valueField%>"
 					name="<%=property.name%>" 
 					placeholder="value type <%=info.type%>" />
 				<% } %>
@@ -46,14 +48,9 @@
 				<!-- Dropdown for enum -->
 				<% if(info.type == "enum"){ %>
 				<select class="property" name="<%=property.name%>"
-					data-default="<%=info["default value"].value%>">
+					data-current="<%=valueField%>"
 					<% _.each(info.values, function(value){ %>>
-	  					<option value="<%=value.value%>" 
-	  						<% 
-	  						if(valueField == value.name){ %> 
-	  							selected="selected"
-	  						<% } %> ><%= value.name%>
-	  					</option>
+	  					<option value="<%=value.value%>"  <%  if(valueField == value.name){ %>  selected="selected" <% } %>  ><%= value.name%></option>
 					<% }); %>
 				</select>
 				<% } %>
@@ -61,7 +58,21 @@
 			</li>
 			<% }  %>
 		<% }); %>
-	</ul>
+		</ul>
+
+		<% if(action == "create"){ %>
+			<h3 class="info" title="select encoder">Select an encoder</h3>
+			<select class="property" name="encoder" >
+			<% _.each(encoders, function(encoder){ %>
+			<option value="<%=encoder["class name"]%>" >
+				<%= encoder["short description"] %>
+			</option>
+			<% }); %>
+			<option value="none">none</option>
+		<% }; %>
+
+	
+
 	<input type="submit" class="btn btn-large submit-quidd <%=action%>"  value="<%=action%>"/>
 	<div class="btn btn-delete delete-quidd">Delete Source</div>
 </form>

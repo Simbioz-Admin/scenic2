@@ -8,40 +8,54 @@ define([
 		var QuiddsCollection = Backbone.Collection.extend({
 			model : QuiddModel,
 			url : '/quidds/',
+			listEncoder : [],
 			parse : function(results, xhr)
 			{
-				//exclude specific node not use in interface
-				var quidds = [];
-				_.each(results, function(quidd)
-				{
-					if(quidd.class != "rtpsession" && quidd.class != "logger" && quidd.class != "runtime" && quidd.class != "logger" && quidd.class != "SOAPcontrolServer" )
-					{
-						quidds.push(quidd);
-					}
-				})
-		        return quidds;
-
+		        return results;
 		    },
 		    initialize : function()
 		    {
 		    	console.log("init collection quidds");
-		    	that = this;
+		    	var that = this;
 
 		    	//receive notification for add quidd to the collection Quidds
-		    	socket.on("create", function(quidd, properties)
+		    	socket.on("create", function(quidd)
 		    	{
-		    		that.add(quidd);
+		    		var model = new QuiddModel(quidd);
+		    		that.add(model);
 		    	});
 
-		    	socket.on("remove", function(quiddName){
+		    	socket.on("updateShmdatas", function(qname, shmdatas)
+		    	{
+		    		that.get(qname).set("shmdatas", shmdatas);
+		    		//control if encoder is ask for this quidd
+		    		_.each(that.listEncoder, function(encoder, index)
+		    		{
+		    			if(encoder.quiddName == qname)
+		    			{
+		    				that.create(encoder.encoder,qname+"_enc", function(quidd)
+			    			{
+			    				views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
+			    				that.listEncoder.splice(index, 1);
+			    			});
+		    			}
+		    		})
+		    	});
+
+		    	socket.on("remove", function(quiddName)
+		    	{
 		    		that.remove(quiddName);
 		    	});
+
+		    	socket.on("signals_properties", function(name, prop, value)
+		    	{
+		    		if(prop == "byte-rate") views.quidds.stateShmdata(name, value);
+		    	})
 
 		    	//receive notification for set property of quidd
 		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
 		    	{
 		    		var quidd = that.get(nameQuidd);
-		    		//quidd.get("properties")
 
 		    		_.each(quidd.get("properties"), function(prop, index)
 		    		{
@@ -49,34 +63,16 @@ define([
 		    		});
 		    	});
 		    },
-		    create : function(className, name, callback){
-
+		    create : function(className, name, callback)
+		    {
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
 		    	{
-		    		console.log("ask for create temporary enc for videotestsrc");
-		    		//if it's video we create automaticlly compress vid shmdata
-		    		// if(quidd.class == "videotestsrc")
-		    		// {
-			    	// 	_.each(quidd.properties, function(property)
-			    	// 	{
-			    	// 		if(property.name == "shmdata-writers")
-			    	// 		{
-				    // 			var path = property.value.shmdata_writers[1].path;
-
-				    // 			collections.quidds.create("x264enc",quidd.name+"_enc", function(name)
-				    // 			{
-				    // 				views.methods.setMethod(name, "connect", [path]);
-				    // 				console.log("SET !!!!");
-				    // 			});
-			    	// 		}
-			    	// 	});
-		    		// }
-		    		//return name for next step : set properties and methods
-		    		callback(quidd.name);
+		    		callback(quidd);
 		    	});
 		    },
-		    delete : function(quiddName){
+		    delete : function(quiddName)
+		    {
 		    	socket.emit("remove", quiddName);
 		    },
 		    getProperties : function(nameQuidd, callback)
@@ -86,7 +82,8 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    getPropertyValue : function(nameQuidd, property, callback){
+		    getPropertyValue : function(nameQuidd, property, callback)
+		    {
 		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
 		    		callback(propertyValue);
 		    	});
@@ -98,16 +95,13 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
-		    setPropertyValue : function(nameQuidd, property, value)
+		    setPropertyValue : function(nameQuidd, property, value, callback)
 		    {
 		    	that = this;
-		    	console.log("ask for set "+property+" of "+nameQuidd+" to "+value);
-
 		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
-		    	{
-		    		console.log(ok);
-		    	});
-
+		    		{
+		    			if(callback) callback(ok);
+		    		});
 		    }
 		});
 

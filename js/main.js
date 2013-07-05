@@ -29,13 +29,15 @@ require([
   // Load our app module and pass it to our definition function
   'app',
   'util',
+  'panel',
   collections = [],
   views = [],
-  config = {
-      propertiesExclude : ["shmdata-readers", "shmdata-writers"]
-    },
-  socket = io.connect()
-], function(App){
-  App.initialize();
+  socket = io.connect(),
+  config = {}
+], function(App, util, panel, socket)
+{
+
+  if(page == "app") App.initialize();
+  if(page == "panel") panel.initialize();
 });
 

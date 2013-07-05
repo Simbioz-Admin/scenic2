@@ -13,11 +13,16 @@ define([
 				console.log("init MethodsView");
 				socket.on("invoke", function(ok, quiddName, method, parameters)
 				{
+
 					if(ok)
 					{
 						if(method == "add_destination")
 						{
 							collections.destinations.add({name : parameters[0], host_name : parameters[1]});
+						}
+						if(method == "remove_destination")
+						{
+							collections.destinations.remove(parameters[0]);
 						}
 						if(method == "add_udp_stream_to_dest")
 						{
@@ -64,31 +69,15 @@ define([
 					{
 						//update the properties of quidd because setMethod can change properties or create
 						var quidd = collections.quidds.get(quiddName);
-						collections.quidds.getProperties(quiddName, function(propertiesOfQuidd)
+						if(quidd)
 						{
-							quidd.set({"properties" : propertiesOfQuidd});
-
-							/**** TEMPORARY CREATE ENC AFTER SET METHOD FOR GSTVIDEOSRC *****************************///
-							if(quidd.get("class") == "gstvideosrc")
+							collections.quidds.getProperties(quiddName, function(propertiesOfQuidd)
 							{
-					    		_.each(quidd.get("properties"), function(property)
-					    		{
-					    			if(property.name == "shmdata-writers")
-					    			{
-						    			var path = property.value.shmdata_writers[0].path;
-
-						    			collections.quidds.create("x264enc",quidd.get("name")+"_enc", function(name)
-						    			{
-						    				views.methods.setMethod(name, "connect", [path]);
-						    			});
-					    			}
-					    		});
-				    		}
-
-						});
-
-						callback(ok);
+								quidd.set({"properties" : propertiesOfQuidd});
+							});
+						}
 					}
+					if(callback) callback(ok);
 				});
 			}
 		});	

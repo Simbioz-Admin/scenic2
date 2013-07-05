@@ -1,3 +1,3 @@
 #!/bin/sh
-
-./bin/node --harmony ./server.js 
+DIR=`dirname $0`
+$DIR/bin/node --harmony $DIR/server.js 

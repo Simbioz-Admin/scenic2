@@ -16,7 +16,8 @@ var express = require("express")
 , passport = require('passport')
 , DigestStrategy = require('passport-http').DigestStrategy
 , scenicStart = false
-, passSet = false;
+, passSet = false
+, standalone = false;
 
 
 //----------------- INIT CONFIGURATION -----------------//
@@ -32,6 +33,21 @@ network.checkPort(config.port.panel, function(port)
 });
 
 
+//*** ARGUMENTS LISTEN LAUCNCH APP.JS ***//
+
+	function puts(error, stdout, stderr) { sys.puts(stdout) }
+	var rl = readline.createInterface({
+	  input: process.stdin,
+	  output: process.stdout
+	});
+
+	process.argv.forEach(function (val, index, array)
+	{
+	  if(val == "-s") standalone = true;
+	});
+
+
+
 
 //-------------- CONFIGURATION EXPRESS ---------------------//
 //param necessart for access file and use authentification
@@ -39,17 +55,16 @@ network.checkPort(config.port.panel, function(port)
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
-// app.use(express.bodyParser());
-// app.configure(function() {
-//   app.use(express.cookieParser());
-//   app.use(express.bodyParser());
-//   app.use(express.methodOverride());
-//   app.use(passport.initialize());
-//   app.use(passport.session());
-//   app.use(app.router);
-// });
+app.use(express.bodyParser());
+app.configure(function() {
+  app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+});
 
-console.log("port", server.address());
 //-------------- SCENIC CONFIGURATION -----------------------//
 
 function startScenic(port)
@@ -92,10 +107,10 @@ function startScenic(port)
 }
 
 
-// --------------- APPJS  -------------------------//
+// ---------- APPJS  -------------------------//
 
-require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer);
-
+if(!standalone) require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer, DigestStrategy, passport);
+else startScenic(config.port.scenic);
 
 
 //----------- PROCESS --------------------------//

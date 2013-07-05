@@ -1,4 +1,4 @@
-module.exports = function (app, config, startScenic, scenicStart, io, log, closeServer)
+module.exports = function (app, config, startScenic, scenicStart, io, log, closeServer, DigestStrategy, passport)
 {
 
 	var appjs = require("appjs")
@@ -69,7 +69,7 @@ module.exports = function (app, config, startScenic, scenicStart, io, log, close
 		{
 			if(conf.pass && conf.confirmPass)
 			{
-				require("./auth.js")(app, express, passport, DigestStrategy, conf.username, conf.pass);
+				require("./auth.js")(app, passport, DigestStrategy, conf.username, conf.pass);
 				passSet = true;
 				log("info", "password set!");
 			}

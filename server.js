@@ -12,7 +12,6 @@ var express = require("express")
 , serverScenic = http.createServer(app)
 , io = require('socket.io').listen(server, { log: config.logSocketIo })
 , readline = require('readline')
-, appjs = require("appjs")
 , passport = require('passport')
 , DigestStrategy = require('passport-http').DigestStrategy
 , scenicStart = false
@@ -109,8 +108,8 @@ function startScenic(port)
 
 // ---------- APPJS  -------------------------//
 
-if(!standalone) require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer, DigestStrategy, passport);
-else startScenic(config.port.scenic);
+//if(!standalone) require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer, DigestStrategy, passport);
+startScenic(config.port.scenic);
 
 
 //----------- PROCESS --------------------------//

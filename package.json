@@ -14,8 +14,7 @@
     "passport-http": "~0.2.2",
     "passport": "~0.1.17",
     "socket.io": "~0.9.16",
-    "jsdom": "~0.7.0",
-    "node-swicher" : "~0.1.2",
+    "jsdom": "~0.7.0"
   },
   "devDependencies": {},
   "scripts": {

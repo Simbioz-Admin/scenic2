@@ -93,7 +93,7 @@ define([
 						
 						setTimeout(function()
 							{
-								views.methods.setMethod("soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.ipLocal+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+								views.methods.setMethod("soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.host+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
 									function(ok){
 										console.log("ok?", ok);
 									})

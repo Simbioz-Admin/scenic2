@@ -3,5 +3,5 @@
 	url = git@code.sat.qc.ca:metalab/metalab-styles.git
 
 [submodule "node-switcher"]
-	path = node_modules/node-switcher
+	path = node-switcher
 	url = https://pachesnel@code.sat.qc.ca/redmine/node-addons/node-switcher.git

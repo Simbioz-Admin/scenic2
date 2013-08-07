@@ -1,7 +1,7 @@
 var express = require("express")
 , config = require('./scenic/config.js')
 , switcher = require('node-switcher')
-, $ = require('jQuery')
+, $ = require('jquery')
 , _ = require('underscore')
 , log = require('./scenic/logger.js')(config, _)
 , app = express()

@@ -1,6 +1,5 @@
 // Filename: app.js
 define([
-  
   'underscore',
   'backbone',
   'jquery',
@@ -32,7 +31,6 @@ define([
 
     //recovery config information from the server
     socket.emit("getConfig", function(configServer) { config = configServer; });
-    
 
     //*** init the different collection of the project ***//
 

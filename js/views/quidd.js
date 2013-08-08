@@ -4,7 +4,7 @@ define([
 	'models/quidd',
 	'text!/templates/source.html',
 	'text!/templates/quidd.html',
-	'text!/templates/panelInfo.html'
+	'text!/templates/panelInfoSource.html'
 	],function(_, Backbone, ModelQuidd, SourceTemplate, quiddTemplate, infoTemplate){
 
 		var QuiddView = Backbone.View.extend({

@@ -349,7 +349,10 @@ header
 	width : 100%
 	height : 100%
 	
-#panelRight, .panelInfo
+.hidden
+	display : none
+
+#panelRight, .panelInfoSource
 	display : none
 	//+box-shadow(rgba(black, 0.3) 1px 1px 2px inset)
 
@@ -431,6 +434,36 @@ header
 			border-bottom : 1px #be2620 dashed
 
 
+#panelInfo
+	width : 200px
+	padding : 15px 20px 10px
+	background : #333
+	position : absolute
+	right : 2px
+	top : 48px
+	color : white
+	font-size : 1.3em
+	+border-radius(3px)
+	&:before
+		content: ""
+		width : 0
+		height : 0
+		border-left : 8px solid transparent
+		border-right : 8px solid transparent
+		border-bottom : 7px solid #333333
+		position : absolute
+		top : -7px
+		right : 10px
+
+	div
+		width : 90px
+		float : left
+		margin : 0 0 10px 0
+	.infoTitle
+		font-weight: bold
+	.info
+		width : 100px
+
 #panelRight
 	.content
 		position : absolute
@@ -450,7 +483,7 @@ header
 		+border-radius(3px)
 		//+borderStyle		
 
-.panelInfo
+.panelInfoSource
 	.content
 		margin : 40px 0 0 10px
 		font-size : 1.3em
@@ -711,7 +744,7 @@ td
 			color : white
 			cursor : pointer
 
-.panelInfo
+.panelInfoSource
 	min-width : 300px
 	min-height : 100px
 	padding : 0 15px 15px 0

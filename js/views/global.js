@@ -3,13 +3,15 @@ define([
 	'backbone',
 	'text!/templates/menu.html',
 	'text!/templates/quidd.html',
-	'text!/templates/setMethod2.html'
-	],function(_, Backbone, menuTemplate, quiddTemplate, setMethodTemplate){
+	'text!/templates/setMethod2.html',
+	'text!/templates/panelInfo.html'
+	],function(_, Backbone, menuTemplate, quiddTemplate, setMethodTemplate, panelInfoTemplate){
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
 			statePanelIrc : false,
 			statePanelLog : false,
+			statePanelInfo : false,
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
@@ -17,10 +19,11 @@ define([
 				"keypress #port_destination" : "setConnection",
 				"blur #port_destination" : "removeInputDestination",
 				"click #close-panelRight" : "closePanel",
-				"click #close-panelInfo" : "closePanelInfo",
+				"click #close-panelInfoSource" : "closePanelInfoSource",
 				"change .checkbox" : 'stateCheckbox',
 				"click #btn-irc, .close-irc" : 'panelIrc',
 				"click #btn-log" : 'panelLog',
+				"click #btn-info" : 'panelInfo',
 				"click #btnSave" : 'save',
 				"click #btnLoadScratch" : 'load_from_scratch',
 			},
@@ -134,9 +137,9 @@ define([
 				// $("#panelLeft").delay(100).animate({width : "100%"});
 				// $("#panelRight").animate({width : "0px"});
 			},
-			closePanelInfo : function()
+			closePanelInfoSource : function()
 			{
-				$(".panelInfo").remove();
+				$(".panelInfoSource").remove();
 			},
 			keyboardAction : function(event)
 			{
@@ -214,6 +217,20 @@ define([
 					});
 				}
 				
+			},
+			panelInfo : function()
+			{
+				if(!this.statePanelInfo)
+				{
+					var template = _.template(panelInfoTemplate, {username : config.nameComputer, host : config.host, soap : config.port.soap });
+					$("#btn-info").after(template);
+					this.statePanelInfo = true;
+				}
+				else
+				{
+					$("#panelInfo").remove();
+					this.statePanelInfo = false;
+				}	
 			}
 		});
 

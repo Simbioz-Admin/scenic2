@@ -70,6 +70,7 @@ h3
 	top : 0
 	left : 0
 	right : 0
+	+border-radius(3px 3px 0 0)
 
 input[type=text]
 	border : 1px solid #ccc
@@ -324,6 +325,25 @@ header
 		height : auto	
 
 
+.close
+	background : #be2620
+	padding : 0 8px
+	height : 30px
+	line-height : 30px
+	float : right
+	color : white
+	position : absolute
+	right : 0
+	top : 0
+	font-weight : bold
+	z-index : 100
+	font-size : 1.4em
+	cursor : pointer
+	+border-radius(0 3px 0 0)
+	&:hover
+		background : #D9140C
+
+
 #panelLeft
 	float : left
 	width : 100%
@@ -366,30 +386,14 @@ header
 		position : absolute
 		color : white
 		font-size : 1.4em
-		padding : 0 5px 0 35px
+		padding : 0 5px 0 20px
 		height : 30px
 		line-height : 30px
 		font-size : 1.4em
 		top : 0
 		left : 0
 		right : 0
-	.close
-		background : #be2620
-		padding : 0 8px
-		height : 30px
-		line-height : 30px
-		float : left
-		color : white
-		position : absolute
-		left : 0
-		top : 0
-		font-weight : bold
-		z-index : 100
-		font-size : 1.4em
-		cursor : pointer
-		+border-radius(3px 0 0 0)
-		&:hover
-			background : #D9140C
+
 
 
 	.mapInput
@@ -1053,10 +1057,10 @@ $sizeBulle : 12px
 	font-size : 0.8em
 	position : absolute
 	color : white
-	top : -3px
-	left : 33px
+	top : -4px
+	right : 5px
 	//width : $sizeBulle
-	padding : 1px 4px 0 3px
+	padding : 1px 3px 0 3px
 	height : $sizeBulle 
 	line-height : $sizeBulle
 	+border-radius($sizeBulle)
@@ -1198,7 +1202,7 @@ $sizeBulle : 12px
 					color : #888
 					float : left
 					position : relative
-					width : 70px
+					//width : 70px
 					margin : 0 0 0px 0
 					&:hover
 						color : #be2620

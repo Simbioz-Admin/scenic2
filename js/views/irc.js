@@ -9,7 +9,7 @@ define([
 			tagName : "div",
 			className : "channel",
 			events : {
-				"keypress .value-input-msg" : "send_msg"
+				"keypress .value-input-msg" : "send_msg",
 			},
 			initialize : function()
 			{

@@ -97,11 +97,17 @@ define([
 				//views.global.closePanel();
 				return false;
 			},
-			delete : function()
+			delete : function(event)
 			{
-				var quiddName = $("#quiddName").val();
-				this.collection.delete(quiddName);
-				views.global.closePanel();
+				// var quiddName = $("#quiddName").val();
+				var quiddName = $(event.currentTarget).closest("tr").data("quiddname");
+				var result = confirm("Are you sure?");
+				if (result==true)
+				{
+					this.collection.delete(quiddName);
+					views.global.closePanel();
+					
+				}
 			},
 			updateProperties: function(quiddName)
 			{

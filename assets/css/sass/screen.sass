@@ -590,6 +590,44 @@ td
 	#titleOut
 		display : block
 
+.actions
+	width : 117%
+	height : 100%
+	position : absolute
+	top : 0
+	left : 0
+	right : 0
+	display : none
+	opacity : 0
+	.action
+		background : #eee
+		width : 55px
+		display: table-cell
+		vertical-align: middle
+		&:first-child
+			border-right : 1px solid #ccc
+		.remove
+			background : #ddd
+			color : white
+			width : 20px
+			line-height: 20px
+			+border-radius(20px)
+			margin : 0 auto
+			padding : 0 1px 1px 1px
+			&:hover
+				background : #be2620
+				cursor : pointer
+
+		.edit
+			height : 27px
+			background : url(../../images/settings.png) center center no-repeat
+			opacity : 0.1
+			color : #bbb
+			z-index : 100
+			&:hover
+				opacity : 0.6
+				border : none
+				cursor : pointer
 
 
 #testTable
@@ -731,18 +769,7 @@ td
 	.nameInOut
 		background : rgba(white, 0.4)
 		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
-	.remove
-		position : absolute
-		top : -11px
-		right : -9px
-		width : 15px
-		height : 15px
-		border : 1px solid #ccc
-		border-width : 0 0 1px 1px
-		&:hover
-			background : #be2620
-			color : white
-			cursor : pointer
+
 
 .panelInfoSource
 	min-width : 300px
@@ -793,20 +820,6 @@ td
 		border-bottom : 1px #be2620 dashed
 
 
-.scenic2 .edit
-	position : absolute
-	width : 15px
-	height : 15px
-	top : -2px
-	left : 0px
-	background : url(../../images/btnEdit.png) center center no-repeat
-	opacity : 0.2
-	color : #bbb
-	z-index : 100
-	&:hover
-		cursor : pointer
-		opacity : 0.7
-		border-bottom : none
 
 .btn-delete
 	margin-left : 0

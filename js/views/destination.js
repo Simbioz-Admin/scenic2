@@ -1,14 +1,12 @@
 define([
 	'underscore',
 	'backbone',
-	'text!/templates/destination.html',
-	'text!/templates/setMethod.html'
-	],function(_, Backbone, templateDestination, templateMethod){
+	'text!/templates/destination.html'
+	],function(_, Backbone, templateDestination){
 
 		var DestinationsView = Backbone.View.extend({
 			tagName : 'td',
 			className : 'nameInOut',
-			template : templateDestination,
 			events : {
 				"click .remove" : "askForRemove",
 
@@ -21,7 +19,8 @@ define([
 			render : function()
 			{
 				that = this;
-				$(this.el).append("<div class='short'>"+this.model.get("name")+"<div class='remove'>x</div></div>");
+				var template = _.template(templateDestination, {name : this.model.get("name")});
+				$(this.el).append(template);
 				$("#destinations").append($(this.el));
 				$(".shmdata").each(function(index, source){
 					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");

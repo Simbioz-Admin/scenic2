@@ -26,6 +26,8 @@ define([
 				"click #btn-info" : 'panelInfo',
 				"click #btnSave" : 'save',
 				"click #btnLoadScratch" : 'load_from_scratch',
+				"mouseenter td.nameInOut, .groupSource" : "showActions",
+				"mouseleave td.nameInOut, .groupSource" : "hideActions"
 			},
 
 			//generation of the main Menu 
@@ -231,6 +233,14 @@ define([
 					$("#panelInfo").remove();
 					this.statePanelInfo = false;
 				}	
+			},
+			showActions : function(event)
+			{
+				$(".actions",event.target).css("display", "table").animate({opacity : 1}, 200);
+			},
+			hideActions : function(event)
+			{
+				$(".actions", event.currentTarget).animate({opacity : 0},200).css("display" , "none");
 			}
 		});
 

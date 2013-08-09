@@ -373,7 +373,7 @@ header {
 }
 /* line 260, ../sass/screen.sass */
 .headerMenu ul li {
-  min-width: 100px;
+  min-width: 160px;
   height: 25px;
   line-height: 25px;
   padding: 0 10px;

@@ -78,7 +78,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 				
 			}
 			catch(e){
-				//log('info', e);
+				log('debug', e);
 				var quidds = switcher.get_property_value(quiddName, property);
 			}
 			callback(quidds);

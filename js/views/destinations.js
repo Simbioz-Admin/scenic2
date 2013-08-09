@@ -21,7 +21,6 @@ define([
 			{
 				views.methods.getDescription("defaultrtp", "add_destination", function(methodDescription)
 				{
-					console.log(methodDescription);
 					var template = _.template(templateMethod, { title : "set Method "+methodDescription.name, className : "defaultrtp",  method : "add_destination", description : methodDescription});
 					$("#panelRight .content").html(template);
 					views.global.openPanel();
@@ -55,9 +54,6 @@ define([
 
 					var soapClient = "soapClient-"+dataForm.name
 					,	addressClient = dataForm.host_name+":"+dataForm.port_soap;
-
-
-					console.log("soapClient", soapClient);
 					
 					collections.quidds.create("SOAPcontrolClient", soapClient, function(ok)
 					{

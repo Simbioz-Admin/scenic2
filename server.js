@@ -1,5 +1,6 @@
 var express = require("express")
 , config = require('./scenic/config.js')
+,  os = require("os")
 , switcher = require('node-switcher')
 , $ = require('jquery')
 , _ = require('underscore')
@@ -9,7 +10,6 @@ var express = require("express")
 , requirejs = require('requirejs')
 , network = require("./scenic/settings-network.js")(config, log)
 , server = http.createServer(app)
-//, serverScenic = http.createServer(app)
 , io = require('socket.io').listen(server, { log: config.logSocketIo })
 , readline = require('readline')
 , auth = require("http-auth")
@@ -24,6 +24,8 @@ var express = require("express")
 //*Find a better method for check port
 server.listen(config.port.scenic);
 
+//set hostName with name of computer
+config.nameComputer = os.hostname();
 
 
 //*** ARGUMENTS LISTEN LAUCNCH APP.JS ***//
@@ -55,14 +57,7 @@ require("./scenic/irc.js")(io, $, log);
 require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
 require("./scenic/scenic-io.js")(config, scenicStart, io, switcher, scenic, $, _, log, network);
 		
-/**
- * Requesting new authentication instance.
- */
 
-
-/**
- * Handler for path with authentication.
- */
 app.get('/', function(req, res) {
 
 	if(!passSet)
@@ -105,7 +100,7 @@ io.sockets.on('connection', function (socket)
 		{
 			config.nameComputer = params.username;
 			config.port.soap = params.portSoap;
-			if(params.pass == params.confirmPass)
+			if(params.pass != "" && params.pass == params.confirmPass)
 			{
 				ident = auth({
 				    authRealm : "Private area.",
@@ -128,54 +123,6 @@ io.sockets.on('connection', function (socket)
 });
 
 
-
-
-//-------------- SCENIC CONFIGURATION -----------------------//
-
-// function startScenic(port)
-// {
-
-// 	serverScenic.listen(port);
-// 	var	ioScenic = require('socket.io').listen(serverScenic, { log: false });
-// 	log("info", "the server start : http://"+config.host+":"+config.port.scenic);
-
-// 	var scenic = require("./scenic/scenic.js")(config, switcher, $, _, ioScenic, log);
-// 	require("./scenic/irc.js")(ioScenic, $, log);
-// 	require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
-// 	require("./scenic/scenic-io.js")(config, ioScenic, switcher, scenic, $, _, log);
-
-// 	this.close = function()
-// 	{ 
-// 		//io.sockets.emit("shutdown", "bang");
-// 		scenicStart = false;
-// 		log("info","server closed.");
-// 	}
-// 	if(passSet)
-// 	{
-
-// 		app.all('/', passport.authenticate('digest', { session: false }),
-// 		  function(req, res){
-// 		  	if(scenicStart) res.sendfile(__dirname + '/index.html');
-// 			else res.send("Sorry server is shutdown");
-// 	  	});
-
-// 	}
-// 	else
-// 	{
-// 		app.get('/', function (req, res){
-// 			if(scenicStart) res.sendfile(__dirname +'/index.html');
-// 			else res.send("Sorry server is shutdown");
-// 		});
-// 	}
-
-// 	scenicStart = true;
-// }
-
-
-// ---------- APPJS  -------------------------//
-
-//if(!standalone) require("./scenic/appjs.js")(app, config, startScenic, scenicStart, io, log, closeServer, DigestStrategy, passport);
-//startScenic(config.port.scenic);
 
 
 //----------- PROCESS --------------------------//

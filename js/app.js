@@ -76,9 +76,14 @@ define([
 
     views.methods = new MethodsView();
   }
+  var test = function()
+  {
+    console.log("TEST");
+  }
 
   return {
     initialize: initialize,
+    test : test
   };
 
 });

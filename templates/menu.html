@@ -5,8 +5,11 @@
 	<li><div class="btnCreate">+ SOURCE</div>
 		<ul class="createSource">
 			<% _.each(menu, function(category){ %>
-				<li data-name="<%=category["class name"] %>"><%=category["class name"] %></li>
+				<li data-name="<%=category["class name"] %>"><%=category["long name"] %></li>
 			<% }); %>
 		</ul>
 	</li>
 	<li><div id="btn-irc" >DISCUSSION <span  class="countMsgIrc">2</span></div></li>
+
+
+		

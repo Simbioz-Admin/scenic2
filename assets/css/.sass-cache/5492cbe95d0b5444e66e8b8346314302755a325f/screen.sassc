@@ -1,5 +1,5 @@
 3.2.3 (Media Mark)
-80e6302bbf3ee0aab649dd21339c454fc7ee4588
+b73a0a59dfffd1ac21a10db5a6d55fd5ebaa6f85
 o:Sass::Tree::RootNode	:@template"c~@import compass/reset
 @import compass/css3
 
@@ -260,7 +260,7 @@ header
 		padding-top : 10px
 		//+box-shadow(rgba(black, 0.3) 0px 7px 11px)
 		li
-			min-width : 100px
+			min-width : 160px
 			height : 25px
 			line-height : 25px
 			padding : 0 10px
@@ -2218,7 +2218,7 @@ color;@;;;o; 	;!{	;"iÿ;#iÿ;$i;%iÿ;@;0;iü;@
 ;i;=0;@
 ;i;@;T;@
 ;i;i ;	[o;;["min-width;@;;;o;&;'["px;("
-100px;@;ii;i;)[ ;@
+160px;@;i ;i;)[ ;@
 ;i;i ;	[ o;;["height;@;;;o;&;'["px;("	25px;@;i;i;)[ ;@
 ;i;i ;	[ o;;["line-height;@;;;o;&;'["px;("	25px;@;i;i;)[ ;@
 ;i;i ;	[ o;;["padding;@;;;o;	;@;[o;&;'[ ;("0;@;i ;i;)@Uo;&;'["px;("	10px;@;i;i;)[ ;-;.;i;@

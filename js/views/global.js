@@ -5,7 +5,7 @@ define([
 	'text!/templates/quidd.html',
 	'text!/templates/setMethod2.html',
 	'text!/templates/panelInfo.html'
-	],function(_, Backbone, menuTemplate, quiddTemplate, setMethodTemplate, panelInfoTemplate){
+	],function( _, Backbone, menuTemplate, quiddTemplate, setMethodTemplate, panelInfoTemplate){
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
@@ -33,9 +33,16 @@ define([
 			//generation of the main Menu 
 			initialize : function()
 			{
+
 				console.log("init global View");
 				var that = this;
 				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
+				var test = _.groupBy(this.collection.toJSON(), function(source)
+				{
+					return source.category;
+				})
+				console.log(test);
+
 				$("#menuTable").html(template);
 
 				socket.on("messageLog", function(msg)
@@ -178,7 +185,7 @@ define([
 			save : function()
 			{
 				console.log("ask for saving");
-				socket.emit("save", "save", function(ok)
+				socket.emit("save", "save.scenic", function(ok)
 				{
 					console.log("save return :", ok);
 				})
@@ -187,8 +194,24 @@ define([
 			load_from_scratch : function()
 			{
 				console.log("ask for load history from scratch");
-				socket.emit("load_from_scratch", "save", function(ok)
+				socket.emit("load_from_scratch", "save.scenic", function(ok)
 				{
+					if(ok)
+					{
+						collections.destinations.fetch
+						({
+							success : function(response)
+							{
+								//generate destinations
+								$("#destinations").html("");
+								collections.destinations.render();
+								views.destinations.displayTitle();
+								$("#sources").html("");
+								collections.quidds.fetch();
+							}
+						});
+					}
+
 					console.log("load from scratch return :", ok);
 				})
 			},

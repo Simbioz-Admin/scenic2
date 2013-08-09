@@ -25,6 +25,7 @@ define([
 		    },
 		    render : function()
 		    {
+		    	
 		    	collections.destinations.each(function(model)
 				{
 					var view = new ViewDestination({model : model});

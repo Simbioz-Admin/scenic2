@@ -27,19 +27,25 @@ define([
 
 		    	socket.on("updateShmdatas", function(qname, shmdatas)
 		    	{
-		    		that.get(qname).set("shmdatas", shmdatas);
-		    		//control if encoder is ask for this quidd
-		    		_.each(that.listEncoder, function(encoder, index)
+		    		var quidds = that.get(qname);
+		    		//sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
+		    		if(quidds)
 		    		{
-		    			if(encoder.quiddName == qname)
-		    			{
-		    				that.create(encoder.encoder,qname+"_enc", function(quidd)
+			    		quidds.set("shmdatas", shmdatas);
+			    		//control if encoder is ask for this quidd
+			    		_.each(that.listEncoder, function(encoder, index)
+			    		{
+			    			if(encoder.quiddName == qname)
 			    			{
-			    				views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
-			    				that.listEncoder.splice(index, 1);
-			    			});
-		    			}
-		    		})
+			    				that.create(encoder.encoder,qname+"_enc", function(quidd)
+				    			{
+				    				views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
+				    				that.listEncoder.splice(index, 1);
+				    			});
+			    			}
+			    		});
+		    		}
+
 		    	});
 
 		    	socket.on("remove", function(quiddName)

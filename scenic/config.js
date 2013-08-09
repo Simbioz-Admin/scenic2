@@ -3,7 +3,6 @@ module.exports = {
 	host : "localhost",
 	port : {
 		soap : 8084,
-		panel : 8086,
 		scenic : 8090
 	},
 	debugLevel : "info",

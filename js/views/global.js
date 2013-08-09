@@ -49,7 +49,7 @@ define([
 				});
 
 				//$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
-				$("#panelRight .content, .panelInfo").draggable({ cursor: "move", handle: "#title"});
+				$("#panelRight .content, .panelInfoSource").draggable({ cursor: "move", handle: "#title"});
 
 				$(document).keyup(function(e){
 					that.keyboardAction(e);

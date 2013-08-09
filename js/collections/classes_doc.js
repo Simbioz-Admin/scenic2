@@ -14,12 +14,12 @@ define([
 		    	console.log("init collection classesDoc");
 		    },
 		    getProperties : function(className, callback){
-
 		    	socket.emit("getPropertiesOfClass", className, function(propertiesOfClass){
 		    		callback(propertiesOfClass);
 		    	});
 		    },
 		    getPropertiesWithout: function(className, excludes, callback){
+
 		    	var propertiesFiltered = {};
 		    	this.getProperties(className, function(propertiesOfClass)
 		    	{

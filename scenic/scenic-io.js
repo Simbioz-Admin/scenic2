@@ -1,4 +1,4 @@
-module.exports = function (config, io, switcher, scenic, $, _, log)
+module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log, network)
 {
 	io.sockets.on('connection', function (socket)
 	{
@@ -6,6 +6,7 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 		socket.on("create", function(className, name, callback)
 		{        
 			var quiddName = switcher.create(className, name);
+			console.log("QUIDDNAME : "+quiddName);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
@@ -26,10 +27,6 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 			
 		});
 
-		socket.on("getConfig", function(callback)
-		{
-			callback(config);
-		});
 
 		socket.on("remove", function(quiddName)
 		{

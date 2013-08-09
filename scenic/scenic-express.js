@@ -76,10 +76,8 @@ module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 
 	app.get('/destinations', function(request, response) {
 		response.contentType('application/json');
-		console.log("get Destinations!");
 		//TODO : Fix segmentation fault with get_property_value("defautltrtp");
 		var destinations =  switcher.get_property_value("defaultrtp", "destinations-json");
-		console.log(destinations);
 		response.send(destinations);
 
 	});	

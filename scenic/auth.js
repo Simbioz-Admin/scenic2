@@ -1,4 +1,4 @@
-module.exports = function (app, passport, DigestStrategy, username, pass, scenicStart) {
+module.exports = function (app, passport, DigestStrategy, username, pass) {
 
 	// configure Express
 

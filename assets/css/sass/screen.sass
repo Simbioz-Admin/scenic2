@@ -971,7 +971,7 @@ td.active
 
 //------------------------- = LIGTBOX = ---------------------------------//
 
-#bgLightbox
+#bgLightBox
 	width : 100%
 	height : 100%
 	position : absolute
@@ -984,14 +984,14 @@ td.active
 	display : none
 
 #lightBox
-	width : 450px
-	height : 500px
+	width : 400px
 	background : #FCFCFC
 	position : absolute
 	z-index : 100
 	left : 50%
 	top : 30%
 	margin : -100px 0 0 -190px
+	padding : 20px
 	+border-radius(2px)
 	+box-shadow(rgba(0,0,0,0.5) 0px 20px 30px)
 	display : none
@@ -1477,68 +1477,65 @@ html[xmlns] .clearfix
 
 //*** FOR SCENIC ONLY ***//
 
-.windowPanel
-	overflow : hidden
 
-	#config
-		padding : 55px 0 0 0
-		width : 295px
-		font-size : 1.9em
-		color : #888
-		margin : 0 auto
+#launch
+	width : 295px
+	font-size : 1.9em
+	color : #888
+	margin : 0 auto
 
+	label
+		font-size : 0.8em
+		margin : 5px 0
+		display : block
+	.info
+		font-size : 0.7em
+	.identification
+		position : relative
+		float : left
+		width : 300px
+		margin : 0 0 20px
+		//display : none
+	input[type=password], input[type=text]
+		float : left
+		width : 120px
+		font-size : 0.8em
+		border : 1px #ddd solid
+		padding : 0 10px
+		margin : 0 8px 10px 0
+		height : 30px
+		line-height: 30px
+		+border-radius(3px)
+		opacity : 0.9
+		+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px)
+	input[type=submit]
+		float : right
+		width : inherit
+		height : 30px
+		line-height : 30px
+		padding : 0 20px
+		+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px)
+		+transition(0.3s)
+		&:hover
+			background : #be2620
+			cursor : pointer
+
+	input[type=text]
+		width : 270px
+
+	.ports
+		float : left
+		border-top : 1px dotted #ddd
+		padding-top : 10px
+		.port
+			float : left
+			width : 142px
+			&:first-child
+				margin-right : 10px
 		label
-			font-size : 0.8em
-			margin : 5px 0
-			display : block
-		.info
-			font-size : 0.7em
-		.identification
-			position : relative
-			float : left
-			width : 300px
-			margin : 0 0 20px
-			//display : none
-		input[type=password], input[type=text]
-			float : left
 			width : 120px
-			font-size : 0.8em
-			border : 1px #ddd solid
-			padding : 0 10px
-			margin : 0 8px 10px 0
-			height : 30px
-			line-height: 30px
-			+border-radius(3px)
-			opacity : 0.9
-			+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px)
-		input[type=submit]
-			float : right
-			width : inherit
-			height : 30px
-			line-height : 30px
-			padding : 0 20px
-			+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px)
-			+transition(0.3s)
-			&:hover
-				background : #be2620
-				cursor : pointer
-
-		input[type=text]
-			width : 270px
-
-		.ports
-			float : left
-			border-top : 1px dotted #ddd
-			padding-top : 10px
-			.port
-				float : left
-				width : 142px
-				&:first-child
-					margin-right : 10px
-			label
-				width : 120px
-			input
-				width : 120px
+		input
+			width : 120px
 
 	#btnServer
 		//display : none

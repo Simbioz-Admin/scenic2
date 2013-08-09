@@ -2,47 +2,51 @@
 module.exports = function (config, switcher, $, _, io, log)
 {
 
-	switcher.create("rtpsession", "defaultrtp");
-	switcher.create("SOAPcontrolServer", "soap");
-	switcher.invoke("soap", "set_port", [config.port.soap]);
-
-	switcher.register_log_callback(function (msg)
+	function initialize()
 	{
-		io.sockets.emit("messageLog", msg);
-		log('debug','log : ', msg);
-	});
+		switcher.create("rtpsession", "defaultrtp");
+		switcher.create("SOAPcontrolServer", "soap");
+		switcher.invoke("soap", "set_port", [config.port.soap]);
 
-	switcher.register_prop_callback(function (qname, qprop, pvalue)
-	{
-		log('debug','...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
-		if(qprop == "shmdata-writers")
+		switcher.register_log_callback(function (msg)
 		{
-			createVuMeter($.parseJSON(pvalue));
-			sendShmdatas(qname);
-		}
-		io.sockets.emit("signals_properties", qname, qprop, pvalue);
-	});
-	
-	switcher.register_signal_callback(function (qname, qprop, pvalue){
-	   log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
-	    
-    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
-    	
-	    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
-	    {
-	    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
-			sendShmdatas(pvalue[0]);
-		    //subscrire to shmdata-writers proprety for create byte-rate
-		    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+			io.sockets.emit("messageLog", msg);
+			log('debug','log : ', msg);
+		});
 
-			    
-		    setTimeout(function(){
-				var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-		    }, 1000)
+		switcher.register_prop_callback(function (qname, qprop, pvalue)
+		{
+			log('debug','...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+			if(qprop == "shmdata-writers")
+			{
+				createVuMeter($.parseJSON(pvalue));
+				sendShmdatas(qname);
+			}
+			io.sockets.emit("signals_properties", qname, qprop, pvalue);
+		});
+		
+		switcher.register_signal_callback(function (qname, qprop, pvalue){
+		   log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 		    
-	    }
-	});
+	    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
+	    	
+		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
+		    {
+		    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
+				sendShmdatas(pvalue[0]);
+			    //subscrire to shmdata-writers proprety for create byte-rate
+			    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
 
+				    
+			    setTimeout(function(){
+					var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
+			    }, 1000)
+			    
+		    }
+		});
+
+		log("info", "scenic is now initialize");
+	}
 
 	//create the vumeter for shmdata
 	function createVuMeter(shmdatas)
@@ -81,6 +85,7 @@ module.exports = function (config, switcher, $, _, io, log)
 
 	function getQuiddPropertiesWithValues(quiddName)
 	{
+		console.log("QuiddName : ", quiddName);
 		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 		//recover the value set for the properties
 		$.each(propertiesQuidd, function(index, property)
@@ -137,6 +142,7 @@ module.exports = function (config, switcher, $, _, io, log)
 	}
 
 	return {
+		initialize : initialize,
 		createVuMeter : createVuMeter,
 		remove : remove,
 		getQuiddPropertiesWithValues : getQuiddPropertiesWithValues,

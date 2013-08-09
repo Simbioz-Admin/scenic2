@@ -25,8 +25,8 @@ define([
 				this.collection.bind("add", function(model)
 				{
 					var view = new ViewQuidd({model : model});
-					
 				});
+				
 				this.collection.bind("remove", function(model)
 				{
 					that.displayTitle();
@@ -36,7 +36,6 @@ define([
 			//open the lightbox and show the properties to define for create the quidd Source
 			openPanelCreate : function(event)
 			{
-
 				var className = $(event.target).data("name")
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
 				,	that = this

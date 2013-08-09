@@ -84,14 +84,14 @@ define([
 				{
 
 					info = info.split(",");
-					console.log(info);
+
 					if(info[0].indexOf("video") >= 0) type = "videosink";
 					if(info[0].indexOf("audio") >= 0) type = "pulsesink";
 
 					if(type != null)
 					{
 						collections.quidds.create(type, "sink-"+quidd, function(quidd){
-							views.methods.setMethod(quidd.name, "connect", [path]);
+							views.methods.setMethod(quidd, "connect", [path]);
 						});
 					}
 				});

@@ -24,7 +24,7 @@
 				%>
 
 				<% var moreInfo =  info.minimum ? "Min : "+info.minimum+" &nbsp; Max : "+info.maximum : "";  %>
-				<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description.nickname%></h3>
+				<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description['long name']%></h3>
 
 				<!-- Type input for float / int and bool -->
 				<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>

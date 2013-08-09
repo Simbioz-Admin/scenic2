@@ -29,8 +29,7 @@ define([
   var initialize = function(){
     "use strict";
 
-    //recovery config information from the server
-    socket.emit("getConfig", function(configServer) { config = configServer; });
+
 
     //*** init the different collection of the project ***//
 
@@ -79,7 +78,7 @@ define([
   }
 
   return {
-    initialize: initialize
+    initialize: initialize,
   };
 
 });

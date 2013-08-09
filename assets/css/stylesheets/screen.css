@@ -1351,7 +1351,7 @@ td.active .rows_inactive .active {
 }
 
 /* line 974, ../sass/screen.sass */
-#bgLightbox {
+#bgLightBox {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -1366,14 +1366,14 @@ td.active .rows_inactive .active {
 
 /* line 986, ../sass/screen.sass */
 #lightBox {
-  width: 450px;
-  height: 500px;
+  width: 400px;
   background: #fcfcfc;
   position: absolute;
   z-index: 100;
   left: 50%;
   top: 30%;
   margin: -100px 0 0 -190px;
+  padding: 20px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   -ms-border-radius: 2px;
@@ -2042,37 +2042,32 @@ html[xmlns] .clearfix {
     box-shadow: rgba(0, 0, 0, 0) 0 0 30px inset;
   }
 }
-/* line 1480, ../sass/screen.sass */
-.windowPanel {
-  overflow: hidden;
-}
-/* line 1483, ../sass/screen.sass */
-.windowPanel #config {
-  padding: 55px 0 0 0;
+/* line 1481, ../sass/screen.sass */
+#launch {
   width: 295px;
   font-size: 1.9em;
   color: #888888;
   margin: 0 auto;
 }
-/* line 1490, ../sass/screen.sass */
-.windowPanel #config label {
+/* line 1487, ../sass/screen.sass */
+#launch label {
   font-size: 0.8em;
   margin: 5px 0;
   display: block;
 }
-/* line 1494, ../sass/screen.sass */
-.windowPanel #config .info {
+/* line 1491, ../sass/screen.sass */
+#launch .info {
   font-size: 0.7em;
 }
-/* line 1496, ../sass/screen.sass */
-.windowPanel #config .identification {
+/* line 1493, ../sass/screen.sass */
+#launch .identification {
   position: relative;
   float: left;
   width: 300px;
   margin: 0 0 20px;
 }
-/* line 1502, ../sass/screen.sass */
-.windowPanel #config input[type=password], .windowPanel #config input[type=text] {
+/* line 1499, ../sass/screen.sass */
+#launch input[type=password], #launch input[type=text] {
   float: left;
   width: 120px;
   font-size: 0.8em;
@@ -2091,8 +2086,8 @@ html[xmlns] .clearfix {
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px -3px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px -3px;
 }
-/* line 1514, ../sass/screen.sass */
-.windowPanel #config input[type=submit] {
+/* line 1511, ../sass/screen.sass */
+#launch input[type=submit] {
   float: right;
   width: inherit;
   height: 30px;
@@ -2107,48 +2102,48 @@ html[xmlns] .clearfix {
   -o-transition: 0.3s;
   transition: 0.3s;
 }
-/* line 1522, ../sass/screen.sass */
-.windowPanel #config input[type=submit]:hover {
+/* line 1519, ../sass/screen.sass */
+#launch input[type=submit]:hover {
   background: #be2620;
   cursor: pointer;
 }
-/* line 1526, ../sass/screen.sass */
-.windowPanel #config input[type=text] {
+/* line 1523, ../sass/screen.sass */
+#launch input[type=text] {
   width: 270px;
 }
-/* line 1529, ../sass/screen.sass */
-.windowPanel #config .ports {
+/* line 1526, ../sass/screen.sass */
+#launch .ports {
   float: left;
   border-top: 1px dotted #dddddd;
   padding-top: 10px;
 }
-/* line 1533, ../sass/screen.sass */
-.windowPanel #config .ports .port {
+/* line 1530, ../sass/screen.sass */
+#launch .ports .port {
   float: left;
   width: 142px;
 }
-/* line 1536, ../sass/screen.sass */
-.windowPanel #config .ports .port:first-child {
+/* line 1533, ../sass/screen.sass */
+#launch .ports .port:first-child {
   margin-right: 10px;
 }
-/* line 1538, ../sass/screen.sass */
-.windowPanel #config .ports label {
+/* line 1535, ../sass/screen.sass */
+#launch .ports label {
+  width: 120px;
+}
+/* line 1537, ../sass/screen.sass */
+#launch .ports input {
   width: 120px;
 }
 /* line 1540, ../sass/screen.sass */
-.windowPanel #config .ports input {
-  width: 120px;
-}
-/* line 1543, ../sass/screen.sass */
-.windowPanel #btnServer {
+#launch #btnServer {
   display: inline-block;
   width: 270px;
   position: relative;
   left: -300px;
   display: none;
 }
-/* line 1551, ../sass/screen.sass */
-.windowPanel #msg {
+/* line 1548, ../sass/screen.sass */
+#launch #msg {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(255, 255, 255, 0.7)), color-stop(100%, rgba(255, 255, 255, 0.3)));
   background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
   background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
@@ -2168,8 +2163,8 @@ html[xmlns] .clearfix {
   overflow: hidden;
   font-size: 1.9em;
 }
-/* line 1567, ../sass/screen.sass */
-.windowPanel #msg:after {
+/* line 1564, ../sass/screen.sass */
+#launch #msg:after {
   content: "";
   width: 0;
   height: 0;
@@ -2180,8 +2175,8 @@ html[xmlns] .clearfix {
   right: 127px;
   top: 16px;
 }
-/* line 1582, ../sass/screen.sass */
-.windowPanel #url {
+/* line 1579, ../sass/screen.sass */
+#launch #url {
   position: absolute;
   display: inline-block;
   z-index: 1;
@@ -2216,8 +2211,8 @@ html[xmlns] .clearfix {
   text-align: right;
   padding: 0 15px 0 0;
 }
-/* line 1603, ../sass/screen.sass */
-.windowPanel #url:hover {
+/* line 1600, ../sass/screen.sass */
+#launch #url:hover {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0.8)));
   background-image: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0.8));
   background-image: -moz-linear-gradient(#ffffff, rgba(255, 255, 255, 0.8));
@@ -2225,8 +2220,8 @@ html[xmlns] .clearfix {
   background-image: linear-gradient(#ffffff, rgba(255, 255, 255, 0.8));
   cursor: pointer;
 }
-/* line 1606, ../sass/screen.sass */
-.windowPanel #url:before {
+/* line 1603, ../sass/screen.sass */
+#launch #url:before {
   content: "";
   position: absolute;
   display: inline-block;
@@ -2241,23 +2236,23 @@ html[xmlns] .clearfix {
   -o-border-radius: 3px;
   border-radius: 3px;
 }
-/* line 1617, ../sass/screen.sass */
-.windowPanel #url .address {
+/* line 1614, ../sass/screen.sass */
+#launch #url .address {
   position: absolute;
   bottom: 2px;
   right: 16px;
   font-size: 0.8em;
 }
-/* line 1623, ../sass/screen.sass */
-.windowPanel .switch {
+/* line 1620, ../sass/screen.sass */
+#launch .switch {
   width: 80px;
   height: 80px;
   position: relative;
   top: 20px;
   z-index: 2;
 }
-/* line 1630, ../sass/screen.sass */
-.windowPanel .switch input {
+/* line 1627, ../sass/screen.sass */
+#launch .switch input {
   /* First, we make it as wide as the container */
   position: absolute;
   width: 100%;
@@ -2270,8 +2265,8 @@ html[xmlns] .clearfix {
   cursor: pointer;
   left: 0;
 }
-/* line 1644, ../sass/screen.sass */
-.windowPanel .switch label {
+/* line 1641, ../sass/screen.sass */
+#launch .switch label {
   display: block;
   width: 100%;
   height: 100%;
@@ -2297,8 +2292,8 @@ html[xmlns] .clearfix {
   -moz-box-shadow: 0 2px 3px rgba(255, 255, 255, 0.13) inset, 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
   box-shadow: 0 2px 3px rgba(255, 255, 255, 0.13) inset, 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
 }
-/* line 1660, ../sass/screen.sass */
-.windowPanel .switch label:before {
+/* line 1657, ../sass/screen.sass */
+#launch .switch label:before {
   content: "";
   position: absolute;
   left: -10px;
@@ -2313,8 +2308,8 @@ html[xmlns] .clearfix {
   -webkit-filter: blur(1px);
   filter: blur(1px);
 }
-/* line 1674, ../sass/screen.sass */
-.windowPanel .switch label:after {
+/* line 1671, ../sass/screen.sass */
+#launch .switch label:after {
   content: "";
   position: absolute;
   left: -20px;
@@ -2328,8 +2323,8 @@ html[xmlns] .clearfix {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.15);
   opacity: 0.2;
 }
-/* line 1686, ../sass/screen.sass */
-.windowPanel .switch .icon-off:before {
+/* line 1683, ../sass/screen.sass */
+#launch .switch .icon-off:before {
   content: "\f011";
   font-family: FontAwesome;
   font-size: 0.6em;
@@ -2338,8 +2333,8 @@ html[xmlns] .clearfix {
   top: 50%;
   margin: -20px 0 0 -18px;
 }
-/* line 1695, ../sass/screen.sass */
-.windowPanel .switch .icon-off:after {
+/* line 1692, ../sass/screen.sass */
+#launch .switch .icon-off:after {
   content: "";
   display: block;
   position: absolute;
@@ -2362,8 +2357,8 @@ html[xmlns] .clearfix {
   -webkit-filter: blur(1px);
   filter: blur(1px);
 }
-/* line 1712, ../sass/screen.sass */
-.windowPanel .switch input:checked ~ label {
+/* line 1709, ../sass/screen.sass */
+#launch .switch input:checked ~ label {
   color: #8ec06a;
   -webkit-box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.35), 0 3px 10px 4px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.35), 0 3px 10px 4px rgba(0, 0, 0, 0.2);
@@ -2371,27 +2366,27 @@ html[xmlns] .clearfix {
 }
 
 @-moz-document url-prefix() {
-  /* line 1718, ../sass/screen.sass */
+  /* line 1715, ../sass/screen.sass */
   .preview {
     right: 2px !important;
   }
 
-  /* line 1721, ../sass/screen.sass */
+  /* line 1718, ../sass/screen.sass */
   .shmdata.inactive:after, .shmdata.active:after {
     left: 295px !important;
   }
 
-  /* line 1724, ../sass/screen.sass */
+  /* line 1721, ../sass/screen.sass */
   table {
     border-collapse: inherit !important;
     border-spacing: 2px !important;
   }
 
-  /* line 1729, ../sass/screen.sass */
+  /* line 1726, ../sass/screen.sass */
   #globalTable #titleIn {
     margin: 146px 0 19px 2px;
   }
-  /* line 1731, ../sass/screen.sass */
+  /* line 1728, ../sass/screen.sass */
   #globalTable #titleOut {
     margin: 55px 17px 0 308px;
   }

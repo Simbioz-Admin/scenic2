@@ -15,7 +15,8 @@
     "socket.io": "~0.9.16",
     "jsdom": "~0.7.0",
     "portchecker": "~0.1.2",
-    "jquery": "~1.8.3"
+    "jquery": "~1.8.3",
+    "http-auth": "~1.2.7"
   },
   "devDependencies": {},
   "scripts": {

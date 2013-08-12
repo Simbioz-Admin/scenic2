@@ -5,12 +5,16 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("create", function(className, name, callback)
 		{        
-			var quiddName = switcher.create(className, name);
+
+			console.log("className & name ", className, name);
+			if(name) var quiddName = switcher.create(className, name);
+			else var quiddName = switcher.create(className);	
+			
 			console.log("QUIDDNAME : "+quiddName);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
-			if(!_.contains(config.quiddExclude, className))
+			if(!_.contains(config.quiddExclude, className) && quiddName)
 			{
 				var properties = scenic.getQuiddPropertiesWithValues(quiddName);
 				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
@@ -78,7 +82,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 				
 			}
 			catch(e){
-				log('debug', e);
+				//log('debug', e);
 				var quidds = switcher.get_property_value(quiddName, property);
 			}
 			callback(quidds);

@@ -27,7 +27,8 @@ define([
 				"click #btnSave" : 'save',
 				"click #btnLoadScratch" : 'load_from_scratch',
 				"mouseenter td.nameInOut, .groupSource" : "showActions",
-				"mouseleave td.nameInOut, .groupSource" : "hideActions"
+				"mouseleave td.nameInOut, .groupSource" : "hideActions",
+				"mouseenter [data-name='v4l2src']" : "autoDetectionV4l2",
 			},
 
 			//generation of the main Menu 
@@ -36,12 +37,13 @@ define([
 
 				console.log("init global View");
 				var that = this;
-				var template = _.template(menuTemplate, {menu : this.collection.toJSON()});
 				var test = _.groupBy(this.collection.toJSON(), function(source)
 				{
 					return source.category;
 				})
 				console.log(test);
+				var template = _.template(menuTemplate, {menu : test});
+				
 
 				$("#menuTable").html(template);
 
@@ -264,6 +266,33 @@ define([
 			hideActions : function(event)
 			{
 				$(".actions", event.currentTarget).animate({opacity : 0},200).css("display" , "none");
+			},
+			autoDetectionV4l2 : function()
+			{
+				console.log("get the camera available on this computer");
+				//create temporary v4l2 quiddity for listing device available
+				collections.quidds.create("v4l2src", "temp_v4l2", function(quidd)
+				{
+					//get the value properties devices-json
+					collections.quidds.getPropertyValue(quidd.name, "devices-json", function(value)
+					{
+
+						$("#videoDetected").remove();
+						$("[data-name='v4l2src']").append("<ul id='videoDetected'></ul>");
+
+						_.each(value["capture devices"], function(device)
+						{
+
+							$("#videoDetected").append("<li >"+device["long name"]+"</li>");
+
+							console.log(device);
+
+						});
+						//remove the temporary quidd
+						collections.quidds.delete("temp_v4l2");
+
+					})
+				});
 			}
 		});
 

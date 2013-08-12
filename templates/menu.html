@@ -4,8 +4,14 @@
 	<li><div class="btnCreate" id="createDestination">+ DESTINATION</div></li>
 	<li><div class="btnCreate">+ SOURCE</div>
 		<ul class="createSource">
-			<% _.each(menu, function(category){ %>
-				<li data-name="<%=category["class name"] %>"><%=category["long name"] %></li>
+			<% _.each(menu, function(sources, name){ %>
+				<li ><%=name%>
+					<ul>
+					<% _.each(sources, function(source, name){ %>
+						<li data-name="<%=source["class name"]%>"><%=source["long name"]%></li>
+					<% }) %>
+					</ul>
+				</li>
 			<% }); %>
 		</ul>
 	</li>

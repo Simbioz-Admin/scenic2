@@ -56,7 +56,7 @@ define([
 
 
 				//get methods for set in panelRight
-				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata"], function(methods)
+				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata", "capture", ""], function(methods)
 				{
 					var template = _.template(setMethodTemplate, {methods : methods});
 					$("#panelRight .content ul").after(template);
@@ -141,13 +141,15 @@ define([
 
 				//recover on format json the value of field for methods
 				var dataFormMeth = {};
-				$("#form-methods input").each(function(index, value)
-				{
-					if($(this).attr("name"))
-					{
-						dataFormMeth[$(this).attr("name")] = $(this).val();
-					}
-				});
+				var dataFormProp =  $('#form-methods').serializeObject();
+
+				// $(" input").each(function(index, value)
+				// {
+				// 	if($(this).attr("name"))
+				// 	{
+				// 		dataFormMeth[$(this).attr("name")] = $(this).val();
+				// 	}
+				// });
 
 				_.each(dataFormMeth, function(value, index)
 				{

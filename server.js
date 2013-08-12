@@ -12,6 +12,8 @@ var express = require("express")
 , server = http.createServer(app)
 , io = require('socket.io').listen(server, { log: config.logSocketIo })
 , readline = require('readline')
+, sys = require('sys')
+, exec = require('child_process').exec
 , auth = require("http-auth")
 , ident = false
 , scenicStart = false
@@ -57,6 +59,10 @@ require("./scenic/irc.js")(io, $, log);
 require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, scenicStart);
 require("./scenic/scenic-io.js")(config, scenicStart, io, switcher, scenic, $, _, log, network);
 		
+//*** Open scenic2 with default navigator ***//
+exec("xdg-open http://"+config.host+":"+config.port.scenic, puts);
+log("info", "scenic2 automaticlly open in your browser define by default : http://"+config.host+":"+config.port.scenic);
+
 
 app.get('/', function(req, res) {
 

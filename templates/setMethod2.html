@@ -5,7 +5,7 @@
 		<% _.each(methods, function(method){ %>
 			<li>
 
-				<h3 class="info" title="<%=method.description%>" ><%=method.name%></h3>
+				<h3 class="info" title="<%=method.description%>" ><%=method["long name"]%></h3>
 				<!-- Type input for float / int and bool -->
 				<input type="text" name="<%=method.name%>" value="" />
 				<input style="display:none;" type="submit" class="submit-quidd" />

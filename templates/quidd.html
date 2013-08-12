@@ -64,11 +64,12 @@
 			<h3 class="info" title="select encoder">Select an encoder</h3>
 			<select class="property" name="encoder" >
 			<% _.each(encoders, function(encoder){ %>
+			<option value="none">none</option>
 			<option value="<%=encoder["class name"]%>" >
 				<%= encoder["short description"] %>
 			</option>
 			<% }); %>
-			<option value="none">none</option>
+			
 		<% }; %>
 
 	

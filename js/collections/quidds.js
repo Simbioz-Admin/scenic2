@@ -103,11 +103,10 @@ define([
 		    },
 		    setPropertyValue : function(nameQuidd, property, value, callback)
 		    {
-		    	that = this;
 		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
-		    		{
-		    			if(callback) callback(ok);
-		    		});
+	    		{
+	    			if(callback) callback(ok);
+	    		});
 		    }
 		});
 

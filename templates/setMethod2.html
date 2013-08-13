@@ -1,14 +1,50 @@
 
 <!-- <h3>Set Method <%=methods.description%></h3> -->
 
-	<ul id="form-methods">
-		<% _.each(methods, function(method){ %>
-			<li>
+	<form id="form-methods">
+		<%  console.log(jsonDevices); %>
 
-				<h3 class="info" title="<%=method.description%>" ><%=method["long name"]%></h3>
-				<!-- Type input for float / int and bool -->
-				<input type="text" name="<%=method.name%>" value="" />
-				<input style="display:none;" type="submit" class="submit-quidd" />
-			</li>
-		<% }); %>
-	</ul>
+		<% _.each(methods, function(method, nameMethod){  
+
+			if(method["name"] == "capture_full" && className == "v4l2src"){ %>
+
+				<!-- this part is define when you selected video source v4l2src -->
+				<input type="hidden" name="file_path" value="<%=jsonDevices['file path']%>" >
+				
+				<% if(jsonDevices['resolutions list'] != ""){ %>
+					<h3 class="info" title="" >Resolution</h3>
+					<select class="property" name="resolution">
+						<% _.each(jsonDevices['resolutions list'], function(reso){ %>
+								<option value="<%=reso['width']%>_<%=reso['height']%>" ><%=reso['width']%> x <%=reso['height']%></option>
+						<% }); %>
+					</select>
+				<% } %>
+
+				<% if(jsonDevices['frame interval list (sec.)'] != ""){ %>
+					<h3 class="info" title="" >Frame interval</h3>
+					<select class="property" name="interval">
+						<% _.each(jsonDevices['frame interval list (sec.)'], function(frame){ %>
+								<option value="<%=frame['numerator']%>_<%=frame['denominator']%>" ><%=frame['numerator']%>/<%=frame['denominator']%></option>
+						<% }); %>
+					</select>
+				<% } %>
+
+				<% if(jsonDevices['tv standards list'] != ""){ %>
+					<h3 class="info" title="" >Tv standards</h3>
+					<select class="property" name="tv_standard">
+						<% _.each(jsonDevices['tv standards list'], function(standard){ %>
+								<option value="<%=standard%>" ><%=standard%></option>
+						<% }); %>
+					</select>
+				<% } %>
+				
+			<% }else{ %>
+
+				<h3 class="info" title="<%=method["description"]%>" ><%=method["long name"]%></h3>
+				<input type="text" name="<%=method["name"]%>" value="" >
+
+			<% } %>
+
+		 <% }); %>
+		<input style="display:none;" type="submit" class="submit-quidd" />
+	</form>

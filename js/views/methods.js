@@ -47,19 +47,37 @@ define([
 					callback(methodDescription);
 				});
 			},
-			getMethodsByClassWithFilter : function(className, filter, callback)
+			getMethodsByClass : function(className, callback)
 			{
 
 				methods = {};
 				socket.emit("getMethodsDescriptionByClass", className, function(methodByClass)
 				{
-					_.filter(methodByClass, function(method, index)
-					{
-		    			var existing = $.inArray(method.name, filter);
-		    			if(existing >= 0 ) methods[index] = method;
-		    		});
-		    		callback(methods);
+					// _.filter(methodByClass, function(method, index)
+					// {
+		    		// 	var existing = $.inArray(method.name, filter);
+		    		// 	if(existing >= 0 ) methods[index] = method;
+		    		// });
+		    		callback(methodByClass);
 				});
+			},
+			getMethodsByClassForConfiguration : function(className, callback)
+			{
+				this.getMethodsByClass(className, function(methods)
+				{
+					var methodsForConfiguration = _.filter(methods, function(method, index)
+					{
+						return method["is configuration"] == "true";
+					});
+					callback(methodsForConfiguration);
+				});
+			},
+			getMethodsByQuidd : function(quiddName, callback)
+			{
+				socket.emit("getMethodsByQuidd", quiddName, function(methods)
+				{
+					callback(methods);
+				})
 			},
 			setMethod : function(quiddName, method, parameters, callback)
 			{

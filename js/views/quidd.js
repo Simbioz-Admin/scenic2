@@ -49,15 +49,18 @@ define([
 					$(that.el).append($(template));
 					$("#sources").prepend($(that.el));
 
-					//add btn preview only for video and audio
-					collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+					setTimeout(function()
 					{
-						info = info.split(",");
-						if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
-							$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
-					});
+						//add btn preview only for video and audio
+						collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+						{
+							info = info.split(",");
+							if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
+								$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
+						});
+					},500);
 
-				})
+				});
 			},
 			remove : function(){
 				$(this.el).remove();

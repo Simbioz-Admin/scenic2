@@ -135,23 +135,10 @@ io.sockets.on('connection', function (socket)
 
 process.on('exit', function () {
 	console.log('About to exit.');
+	io.sockets.emit("shutdown", true);
 });
 process.on('SIGINT', function () {
 	console.log('Got SIGINT.  About to exit.');
 	process.exit(0);
 });
 
-
-function closeServer()
-{
-	log("info", "close server");
-	io.server.close();
-	//if(serverScenic) serverScenic.close();
-	switcher.close();
-}
-
- io.server.on('close', function() {
- 	console.log("socketio close");
-
-
-  });

@@ -10,10 +10,11 @@ define([
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .createSource li" : "openPanelCreate",
+				"click .source[data-name]" : "openPanelCreate",
 				'click .submit-quidd.create' : 'create',
 				'click .submit-quidd.save' : 'edit',
-				'click .delete-quidd' : 'delete'
+				'click .delete-quidd' : 'delete',
+				"mouseenter [data-name='v4l2src']" : "autoDetectionV4l2",
 				//'click .edit' : 'openPanelEdit'
 			},
 			initialize : function()
@@ -36,6 +37,7 @@ define([
 			//open the lightbox and show the properties to define for create the quidd Source
 			openPanelCreate : function(event)
 			{
+					console.log("test");
 				var className = $(event.target).data("name")
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
 				,	that = this
@@ -46,7 +48,9 @@ define([
 				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
 				var encoders = collections.classesDoc.getByCategory(category).toJSON();
 
+
 				//get properties for set in panelRight
+
 				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
 				{
 					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create", encoders : encoders});
@@ -54,11 +58,13 @@ define([
 					views.global.openPanel();
 				});
 
-
 				//get methods for set in panelRight
-				views.methods.getMethodsByClassWithFilter(className, ["add_shmdata_path", "to_shmdata", "capture", ""], function(methods)
+
+				views.methods.getMethodsByClassForConfiguration(className, function(methods)
 				{
-					var template = _.template(setMethodTemplate, {methods : methods});
+					//data-info is added with autodetection v4l2src
+					var infoJsonDevices = $(event.target).data("info");
+					var template = _.template(setMethodTemplate, {className : className, methods : methods, jsonDevices : infoJsonDevices});
 					$("#panelRight .content ul").after(template);
 				});
 
@@ -72,11 +78,12 @@ define([
 				,	encoder = $("#form-quidd [name='encoder']").val();
 
 
+
 				//creation of Quidd and set properties
 				collections.quidds.create(className, quiddName, function(quidd)
 				{
 					that.updateProperties(quidd.name);
-					that.setMethods(quidd.name);
+					that.setMethods(className, quidd.name);
 
 					if(encoder != "none")
 					{
@@ -85,7 +92,7 @@ define([
 					}
 				});
 
-				views.global.closePanel();
+				//views.global.closePanel();
 				return false;
 			},
 			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS
@@ -136,12 +143,44 @@ define([
 					}
 				});
 			},
-			setMethods : function(quiddName)
+			setMethods : function(className, quiddName)
 			{
 
 				//recover on format json the value of field for methods
-				var dataFormMeth = {};
-				var dataFormProp =  $('#form-methods').serializeObject();
+				var dataFormMeth =  $('#form-methods').serializeObject();
+				//result voulu  var test = switcher.invoke(v4l2src, "capture_full", ["/dev/video0", 640, 480, 30, 1, "default"]);
+				views.methods.getMethodsByClassForConfiguration(className, function(methods)
+				{
+
+					_.each(methods, function(method)
+					{
+						var params = '';
+						//this part is just us for video v4l2src
+						if(method["name"] == "capture_full" && className == "v4l2src")
+						{
+							var resolution = dataFormMeth["resolution"].split("_");
+							var interval = dataFormMeth["interval"].split("_");
+
+							params = [ 	dataFormMeth["file_path"] , 
+											parseInt(resolution["0"]), 
+											parseInt(resolution["1"]), 
+											parseInt(interval["1"]), 
+											parseInt(interval["0"]), 
+											dataFormMeth["tv_standard"]];
+
+							console.log(method["name"], params);
+						}
+						else
+						{
+							//check if a value is define for the method
+							if(dataFormMeth[method["name"]] != "")
+								params = [dataFormMeth[method["name"]]];
+							
+						}
+
+						if(params) views.methods.setMethod(quiddName, method["name"], params);
+					});
+				});
 
 				// $(" input").each(function(index, value)
 				// {
@@ -151,13 +190,13 @@ define([
 				// 	}
 				// });
 
-				_.each(dataFormMeth, function(value, index)
-				{
-					if(value != "")
-					{
-						views.methods.setMethod(quiddName, index, [value]);
-					}
-				});
+				// _.each(dataFormMeth, function(value, index)
+				// {
+				// 	if(value != "")
+				// 	{
+				// 		views.methods.setMethod(quiddName, index, [va lue]);
+				// 	}
+				// });
 			},
 			stateShmdata : function(name, value)
 			{	
@@ -179,6 +218,31 @@ define([
 
 				if(shmdata) $("#titleIn").show();
 				else $("#titleIn").hide();
+			},
+			autoDetectionV4l2 : function()
+			{
+				console.log("get the camera available on this computer");
+				//create temporary v4l2 quiddity for listing device available
+				collections.quidds.create("v4l2src", "temp_v4l2", function(quidd)
+				{
+					//get the value properties devices-json
+					collections.quidds.getPropertyValue(quidd.name, "devices-json", function(devices)
+					{
+						$("#videoDetected").remove();
+						$("[data-name='v4l2src']").append("<ul id='videoDetected'></ul>");
+
+						_.each(devices["capture devices"], function(device)
+						{
+							var li = $("<li></li>",{ 
+								text : device["long name"],
+								data : { info : device , name : "v4l2src"},
+							});
+							$("#videoDetected").append(li);
+						});
+						//remove the temporary quidd
+						collections.quidds.delete("temp_v4l2");
+					})
+				});
 			}
 			
 		});

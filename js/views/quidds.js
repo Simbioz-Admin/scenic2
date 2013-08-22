@@ -223,26 +223,33 @@ define([
 			{
 				console.log("get the camera available on this computer");
 				//create temporary v4l2 quiddity for listing device available
-				collections.quidds.create("v4l2src", "temp_v4l2", function(quidd)
-				{
-					//get the value properties devices-json
-					collections.quidds.getPropertyValue(quidd.name, "devices-json", function(devices)
-					{
-						$("#videoDetected").remove();
-						$("[data-name='v4l2src']").append("<ul id='videoDetected'></ul>");
 
-						_.each(devices["capture devices"], function(device)
-						{
-							var li = $("<li></li>",{ 
-								text : device["long name"],
-								data : { info : device , name : "v4l2src"},
-							});
-							$("#videoDetected").append(li);
-						});
-						//remove the temporary quidd
-						collections.quidds.delete("temp_v4l2");
-					})
+				collections.classesDoc.getPropertyByClass("v4l2src", "device", function(property)
+				{
+					console.log(property);
 				});
+
+
+				// collections.quidds.create("v4l2src", "temp_v4l2", function(quidd)
+				// {
+				// 	//get the value properties devices-json
+				// 	collections.quidds.getPropertyValue(quidd.name, "devices-json", function(devices)
+				// 	{
+				// 		$("#videoDetected").remove();
+				// 		$("[data-name='v4l2src']").append("<ul id='videoDetected'></ul>");
+
+				// 		_.each(devices["capture devices"], function(device)
+				// 		{
+				// 			var li = $("<li></li>",{ 
+				// 				text : device["long name"],
+				// 				data : { info : device , name : "v4l2src"},
+				// 			});
+				// 			$("#videoDetected").append(li);
+				// 		});
+				// 		//remove the temporary quidd
+				// 		collections.quidds.delete("temp_v4l2");
+				// 	})
+				// });
 			}
 			
 		});

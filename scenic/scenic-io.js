@@ -64,7 +64,6 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
-			console.log(quiddName, method, parameters);
 			var invoke = switcher.invoke(quiddName, method, parameters);
 			callback(invoke);
 			io.sockets.emit("invoke", invoke, quiddName, method, parameters);
@@ -73,8 +72,12 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("getPropertiesOfClass", function(className, callback){
 			var propertiesofClass =  $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
-			console.log(className);
 			callback(propertiesofClass);
+		});
+
+		socket.on("getPropertyByClass", function(className, propertyName, callback){
+			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName))
+			callback(propertyByClass);						
 		});
 
 

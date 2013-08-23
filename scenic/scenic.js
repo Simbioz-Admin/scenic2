@@ -16,13 +16,14 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		switcher.register_prop_callback(function (qname, qprop, pvalue)
 		{
-			log('debug','...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+			log('info','...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+			io.sockets.emit("signals_properties", qname, qprop, pvalue);
+
 			if(qprop == "shmdata-writers")
 			{
 				createVuMeter($.parseJSON(pvalue));
 				sendShmdatas(qname);
 			}
-			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 		});
 		
 		switcher.register_signal_callback(function (qname, qprop, pvalue){
@@ -30,12 +31,13 @@ module.exports = function (config, switcher, $, _, io, log)
 		    
 	    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
 	    	
+
 		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
 		    {
-		    	io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
+		    	//io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
 				sendShmdatas(pvalue[0]);
 			    //subscrire to shmdata-writers proprety for create byte-rate
-			    switcher.subscribe_to_property (pvalue[0], "shmdata-writers");
+			    switcher.subscribe_to_property(pvalue[0], "shmdata-writers");
 
 				    
 			    setTimeout(function(){
@@ -85,7 +87,6 @@ module.exports = function (config, switcher, $, _, io, log)
 
 	function getQuiddPropertiesWithValues(quiddName)
 	{
-		console.log("QuiddName : ", quiddName);
 		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 		//recover the value set for the properties
 		$.each(propertiesQuidd, function(index, property)

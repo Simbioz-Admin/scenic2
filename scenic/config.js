@@ -9,5 +9,6 @@ module.exports = {
 	logSocketIo : false,
 	nameComputer : "scenic",
 	quiddExclude : ['create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
-	propertiesExclude : ["shmdata-readers", "shmdata-writers"]
+	propertiesExclude : ["shmdata-readers", "shmdata-writers"],
+	deviceAutoDetect : ["v4l2src"]
 }

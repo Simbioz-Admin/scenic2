@@ -26,9 +26,12 @@ switcher.create("rtpsession", "defaultrtp");
 switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", [8074]);
 
-var v4l2src = switcher.get_property_description_by_class("v4l2src", "device");
-console.log(v4l2src);
+switcher.get_property_description_by_class("v4l2src", "device");
+//console.log(v4l2src);
 
+var test = switcher.create("v4l2src", "test");
+var test2 = switcher.get_property_description("test", "device");
+console.log(test2);
 
 // console.log("1", v4l2src);
 

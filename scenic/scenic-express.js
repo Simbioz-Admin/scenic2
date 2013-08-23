@@ -57,7 +57,15 @@ module.exports = function (config, $, _, app, scenic, switcher, scenicStart)
 	  		var quiddsFiltered = [];
 	  		_.each(quidds, function(quidd, index)
 	  		{
-	  			if(!_.contains(config.quiddExclude, quidd.class)) quiddsFiltered.push(quidds[index]);
+	  			if(!_.contains(config.quiddExclude, quidd.class))
+	  			{
+	  				var properties = scenic.getQuiddPropertiesWithValues(quidd.name);
+					var methods = $.parseJSON(switcher.get_methods_description(quidd.name)).methods;	  				
+	  				quidds[index]["properties"] = properties;
+	  				quidds[index]["methods"] = methods;
+		  			quiddsFiltered.push(quidds[index]);
+	  			} 
+
 	  		});
 
 			res.send(quiddsFiltered);

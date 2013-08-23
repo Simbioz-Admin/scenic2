@@ -3,14 +3,11 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 	io.sockets.on('connection', function (socket)
 	{
 
-		socket.on("create", function(className, name, callback)
+		socket.on("createAndGetProperties", function(className, name, callback)
 		{        
-
-			console.log("className & name ", className, name);
 			if(name) var quiddName = switcher.create(className, name);
 			else var quiddName = switcher.create(className);	
 			
-			console.log("QUIDDNAME : "+quiddName);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
@@ -31,6 +28,19 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			
 		});
 
+		socket.on("create", function(className, callback)
+		{
+			var quiddName = switcher.create(className);
+			//subscribe to the all properties
+			var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+			_.each(properties, function(property)
+			{
+				switcher.subscribe_to_property(quiddName, property.name);
+			});
+			callback(quiddName);
+		});
+
+
 
 		socket.on("remove", function(quiddName)
 		{
@@ -40,8 +50,15 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
 			var ok = switcher.set_property_value(quiddName, property, value);
-			callback(ok);
-			io.sockets.emit("setPropertyValue", quiddName, property, value);
+			if(ok)
+			{
+				callback(property, value);
+				socket.broadcast.emit("setPropertyValue", quiddName, property, value);
+			}
+			else
+			{
+				socket.emit("msg", "error", "the property "+property+" of "+quiddName+"is not set");
+			}
 		});
 
 
@@ -51,9 +68,17 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		});
 
 
+
+
 		socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
 			var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 			callback(methodsDescriptionByClass);
+		});
+
+
+		socket.on("getMethodsDescription", function(quiddName, callback){
+			var methods  = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			callback(methods);
 		});
 
 

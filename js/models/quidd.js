@@ -11,6 +11,8 @@ define([
 				"name" : null,
 				"class" : null,
 				"properties" : [],
+				"methods" : [],
+				"encoder_category" : null,
 				"shmdatas" : null
 			},
 			initialize : function()
@@ -18,6 +20,7 @@ define([
 				var that = this;
 				if(this.collection)
 				{
+					console.log("TESt");
 					//var view = new ViewQuidd({ model : that });
 					this.setShmdatas(function(ok){
 						var view = new ViewQuidd({ model : that });
@@ -36,6 +39,39 @@ define([
 			remove : function()
 			{
 				this.destroy();
+			},
+			setPropertyValue : function(property, value, callback)
+			{
+				var that = this;
+				socket.emit("setPropertyValue", this.get("name"), property, value, function(property, value)
+	    		{	
+	    			//that.get("properties")[property] = value;
+	    			callback("ok");
+	    		});
+			},
+			setLocalpropertyValue : function(prop, value)
+			{
+				_.each(this.get("properties"), function(property){
+					if(property.name == prop) property.value = value;
+				});
+			},
+			getProperties : function(callback)
+			{
+				var that = this;
+				socket.emit("getPropertiesOfQuidd", this.get("name"), function(propertiesOfQuidd)
+		    	{
+		    		that.set("properties", propertiesOfQuidd);
+		    		callback(propertiesOfQuidd);
+		    	});
+			},
+			getMethodsDescription : function(callback)
+			{
+				var that = this;
+				socket.emit("getMethodsDescription", this.get("name"), function(methodsDescription)
+				{
+					that.set("methods", methodsDescription);
+					callback(methodsDescription);
+				});
 			}
 		});
 

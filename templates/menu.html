@@ -8,7 +8,8 @@
 				<li ><%=name%>
 					<ul>
 					<% _.each(sources, function(source, name){ %>
-						<li class="source" data-name="<%=source["class name"]%>"><%=source["long name"]%></li>
+					<%  var autoDetect = _.contains(config.deviceAutoDetect, source["class name"]);	%>
+						<li class="source <% if(autoDetect){ %>autoDetect<% } %>" data-name="<%=source["class name"]%>"><%=source["long name"]%></li>
 					<% }) %>
 					</ul>
 				</li>

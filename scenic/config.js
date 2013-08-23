@@ -2,8 +2,8 @@
 module.exports = {
 	host : "localhost",
 	port : {
-		soap : 8084,
-		scenic : 8090
+		soap : 8085,
+		scenic : 8095
 	},
 	debugLevel : "info",
 	logSocketIo : false,

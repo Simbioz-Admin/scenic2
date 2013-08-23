@@ -12,7 +12,7 @@ define([
 			events : {
 				"click .source[data-name], .deviceDetected li" : "create",
 				'click #methodStart' : 'start',
-				'click .submit-quidd.save' : 'save',
+				//'click .submit-quidd.save' : 'save',
 				'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
 				"change input.property, select.property" : "setProperty",
@@ -79,27 +79,28 @@ define([
 					if(deviceDetected)
 					{
 						model.setPropertyValue("device", deviceDetected, function(ok){
-							getPropertiesAndMethods();
+							that.getPropertiesAndMethods(model);
 						});
 					}
-					else getPropertiesAndMethods();
+					else that.getPropertiesAndMethods(model);
 					
 
-					function getPropertiesAndMethods()
-					{
-						console.log("getProperties")
-						model.getProperties(function(properties)
-						{
-							console.log("properties", properties)
-							model.getMethodsDescription(function(methods)
-							{
-								console.log("methods", methods);
-								//retrive list encoder 
-								var encoders = collections.classesDoc.getByCategory(category).toJSON();
-								that.openPanel(quiddName, properties, methods, encoders);
-							});
-						});
-					}
+
+					// function getPropertiesAndMethods(model)
+					// {
+					// 	console.log("getProperties")
+					// 	model.getProperties(function(properties)
+					// 	{
+					// 		console.log("properties", properties)
+					// 		model.getMethodsDescription(function(methods)
+					// 		{
+					// 			console.log("methods", methods);
+					// 			//retrive list encoder 
+					// 			var encoders = collections.classesDoc.getByCategory(category).toJSON();
+					// 			that.openPanel(quiddName, properties, methods, encoders);
+					// 		});
+					// 	});
+					// }
 				});
 
 				// //get methods for set in panelRight
@@ -113,6 +114,22 @@ define([
 
 
 			},
+			getPropertiesAndMethods : function(model)
+			{
+				var that = this;
+				console.log("getProperties")
+				model.getProperties(function(properties)
+				{
+					console.log("properties", properties)
+					model.getMethodsDescription(function(methods)
+					{
+						console.log("methods", methods);
+						//retrive list encoder 
+						var encoders = collections.classesDoc.getByCategory(model.get("encoder_category")).toJSON();
+						that.openPanel(model.get("name"), properties, methods, encoders);
+					});
+				});
+			},
 			openPanel : function(quiddName, properties, methods, encoders)
 			{
 				var template = _.template(quiddTemplate, {title : "Set "+quiddName, quiddName : quiddName,  properties : properties, methods: methods, encoders : encoders});
@@ -121,10 +138,11 @@ define([
 			},
 			start : function()
 			{
-				var model = collections.quidds.get($("#quiddName"));
-				model.setMethod("start", [true], function()
-				{
-					
+				var that = this; 
+				var model = collections.quidds.get($("#quiddName").val());
+				model.setMethod("start", [true], function(){
+					//the method has set correctly now we refresh properties in panel
+					that.getPropertiesAndMethods(model);
 				});
 			},
 			save : function()

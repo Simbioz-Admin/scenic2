@@ -58,21 +58,20 @@
 		
 		<h3 class="info" title="select encoder">Select an encoder</h3>
 		<select class="property" name="encoder" >
-		<% _.each(encoders, function(encoder){ %>
-		<option value="none">none</option>
-		<option value="<%=encoder["class name"]%>" >
-			<%= encoder["short description"] %>
-		</option>
-		<% }); %>
+			<option value="none">none</option>
+			<% _.each(encoders, function(encoder){ %>
+			<option value="<%=encoder["class name"]%>" >
+				<%= encoder["short description"] %>
+			</option>
+			<% }); %>
+		</select>
 
 		<% _.each(methods, function(method){  %>
-			<% if(method.name == "start"){ %>
-				<a href="#" class="btn" id="methodStart">START</a>
+			<% if(method.name == "start"){ console.log(method.name); %>
+				<a href="#" id="methodStart">START</a>
 			<% } %>
 		<% }); %>
-	
 
-	<input type="submit" class="btn btn-large submit-quidd save"  value="start"/>
 
 
 </form>

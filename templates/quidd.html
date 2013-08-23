@@ -54,6 +54,7 @@
 		<% }); %>
 		</ul>
 
+
 		
 		<h3 class="info" title="select encoder">Select an encoder</h3>
 		<select class="property" name="encoder" >
@@ -64,6 +65,11 @@
 		</option>
 		<% }); %>
 
+		<% _.each(methods, function(method){  %>
+			<% if(method.name == "start"){ %>
+				<a href="#" class="btn" id="methodStart">START</a>
+			<% } %>
+		<% }); %>
 	
 
 	<input type="submit" class="btn btn-large submit-quidd save"  value="start"/>

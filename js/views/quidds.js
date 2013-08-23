@@ -11,7 +11,7 @@ define([
 			el : 'body',
 			events : {
 				"click .source[data-name], .deviceDetected li" : "create",
-				'click .submit-quidd.create' : 'create',
+				'click #methodStart' : 'start',
 				'click .submit-quidd.save' : 'save',
 				'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
@@ -115,9 +115,17 @@ define([
 			},
 			openPanel : function(quiddName, properties, methods, encoders)
 			{
-				var template = _.template(quiddTemplate, {title : "Set "+quiddName, quiddName : quiddName,  properties : properties, encoders : encoders});
+				var template = _.template(quiddTemplate, {title : "Set "+quiddName, quiddName : quiddName,  properties : properties, methods: methods, encoders : encoders});
 				$("#panelRight .content").html(template);
 				views.global.openPanel();
+			},
+			start : function()
+			{
+				var model = collections.quidds.get($("#quiddName"));
+				model.setMethod("start", [true], function()
+				{
+					
+				});
 			},
 			save : function()
 			{

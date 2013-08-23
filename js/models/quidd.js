@@ -72,6 +72,14 @@ define([
 					that.set("methods", methodsDescription);
 					callback(methodsDescription);
 				});
+			},
+			setMethod : function(method, parameters, callback)
+			{
+				// socket.emit("invoke", this.get("name"), method, parameters, function(ok)
+				// {
+				// 	console.log("setMethod ok?", ok);
+				// 	callback(ok);
+				// }
 			}
 		});
 

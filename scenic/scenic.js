@@ -16,7 +16,7 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		switcher.register_prop_callback(function (qname, qprop, pvalue)
 		{
-			log('info','...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+			log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
 			if(qprop == "shmdata-writers")

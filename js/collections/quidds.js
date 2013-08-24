@@ -75,10 +75,10 @@ define([
 		    		});
 		    	});
 		    },
-		    create : function(className, callback)
+		    create : function(className, quiddName, callback)
 		    {
 		    	//ask for create a Quidd
-		    	socket.emit("create", className, function(quidd)
+		    	socket.emit("create", className, quiddName, function(quidd)
 		    	{
 		    		callback(quidd);
 		    	});

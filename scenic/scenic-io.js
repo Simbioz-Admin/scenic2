@@ -28,9 +28,9 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			
 		});
 
-		socket.on("create", function(className, callback)
+		socket.on("create", function(className, quiddName,  callback)
 		{
-			var quiddName = switcher.create(className);
+			var quiddName = switcher.create(className, quiddName);
 			//subscribe to the all properties
 			var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 			_.each(properties, function(property)

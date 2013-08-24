@@ -3,16 +3,17 @@ define([
 	'backbone',
 	'views/quidd',
 	'models	/quidd',
+	'text!/templates/createQuidd.html',
 	'text!/templates/quidd.html',
 	'text!/templates/setMethod2.html'
-	],function(_, Backbone, ViewQuidd, QuiddModel, quiddTemplate, setMethodTemplate){
+	],function(_, Backbone, ViewQuidd, QuiddModel, quiddCreateTemplate, quiddTemplate, setMethodTemplate){
 
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .source[data-name], .deviceDetected li" : "create",
+				"click .source[data-name], .deviceDetected li" : "defineName",
+				"click #defineName" : "create",
 				'click #methodStart' : 'start',
-				//'click .submit-quidd.save' : 'save',
 				'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
 				"change input.property, select.property" : "setProperty",
@@ -47,9 +48,18 @@ define([
 
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
+			
+			defineName : function(event)
+			{
+				var className = $(event.target).data("name");
+				var template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className });
+				$("#panelRight .content").html(template);
+				views.global.openPanel();
+			},
 			create : function(event)
 			{
-				var className = $(event.target).data("name")
+				var className = $("#className").val()
+				,	name = $("#quiddName").val()
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
 				,	that = this
 				,	category = "encoder"
@@ -59,7 +69,6 @@ define([
 				if(categoryQuidd.indexOf("video") >= 0) category = "video encoder";
 				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
 				
-
 				/**
 				*
 				* 1 - create the quiddity without name
@@ -67,11 +76,10 @@ define([
 				* 3 - define the properties device 
 				* 4 - get properties / methods of the device
 				* 5 - show the panelEdit with form
-
 				*/
 
 				//create first quiddity for get the good properties
-				collections.quidds.create(className, function(quiddName)
+				collections.quidds.create(className, name, function(quiddName)
 				{
 					var model = new QuiddModel({name : quiddName, class : className, encoder_category : category});
 					collections.quidds.add(model);
@@ -84,23 +92,6 @@ define([
 					}
 					else that.getPropertiesAndMethods(model);
 					
-
-
-					// function getPropertiesAndMethods(model)
-					// {
-					// 	console.log("getProperties")
-					// 	model.getProperties(function(properties)
-					// 	{
-					// 		console.log("properties", properties)
-					// 		model.getMethodsDescription(function(methods)
-					// 		{
-					// 			console.log("methods", methods);
-					// 			//retrive list encoder 
-					// 			var encoders = collections.classesDoc.getByCategory(category).toJSON();
-					// 			that.openPanel(quiddName, properties, methods, encoders);
-					// 		});
-					// 	});
-					// }
 				});
 
 				// //get methods for set in panelRight
@@ -183,14 +174,6 @@ define([
 				//views.global.closePanel();
 				return false;
 			},
-			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS
-			edit : function()
-			{
-				var	quiddName = $("#quiddName").val();
-				this.updateProperties(quiddName);
-				//views.global.closePanel();
-				return false;
-			},
 			delete : function(event)
 			{
 				// var quiddName = $("#quiddName").val();
@@ -202,34 +185,6 @@ define([
 					views.global.closePanel();
 					
 				}
-			},
-			updateProperties: function(quiddName)
-			{
-				var dataFormProp =  $('#form-quidd ').serializeObject();
-
-				//parse properties for set value of this
-				_.each(dataFormProp, function(value, index)
-				{
-
-					var currentValue = 	$('[name="'+index+'"]').data("current")
-					,	minValue = $('[name="'+index+'"]').data("min")
-					,	maxValue = $('[name="'+index+'"]').data("max")
-					,	valueSend = value
-					,	select = $('[name="'+index+'"]').is('select');
-
-					if(select)
-						value = $('[name="'+index+'"] option:selected').text();
-
-
-					if(value != currentValue)
-					{
-						collections.quidds.setPropertyValue(quiddName, index, valueSend, function(ok)
-							{
-								if(ok)
-									$('[name="'+index+'"]').data("current", value);
-							});
-					}
-				});
 			},
 			setMethods : function(className, quiddName)
 			{
@@ -323,7 +278,7 @@ define([
 						var li = $("<li></li>",{ 
 							text : device["name"]+" "+device["nick"],
 							class : 'source',
-							data : { name : "v4l2src", deviceDetected : device["value"]},
+							data : { name : className, deviceDetected : device["value"]},
 						});
 						$("#deviceDetected").append(li);
 					});

@@ -5,10 +5,6 @@
 	
 	<ul >
 
-			<h3>Name of your source</h3> 
-			<input type="hidden" id="quiddName" value="<%=quiddName%>" autofocus="autofocus" placeholder="if empty, a default name will be defined">
-
-
 		<% _.each(properties, function(property){   %>
 			<% if(property["description"].writable == "true"  && property["name"] != "device"){ 
 				var info = property.description["type description"];

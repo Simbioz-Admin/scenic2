@@ -51,8 +51,9 @@ define([
 			
 			defineName : function(event)
 			{
-				var className = $(event.target).data("name");
-				var template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className });
+				var className = $(event.target).data("name")
+				,	deviceDetected = $(event.target).data("deviceDetected")
+				,	template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className, deviceDetected : deviceDetected });
 				$("#panelRight .content").html(template);
 				views.global.openPanel();
 			},
@@ -62,8 +63,8 @@ define([
 				,	name = $("#quiddName").val()
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
 				,	that = this
-				,	category = "encoder"
-				,	deviceDetected = $(event.target).data("deviceDetected");
+				,	deviceDetected = $("#deviceDetected").val()
+				,	category = "encoder";
 
 				//check category of the quidd and get specific encoder
 				if(categoryQuidd.indexOf("video") >= 0) category = "video encoder";

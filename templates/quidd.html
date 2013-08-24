@@ -2,7 +2,7 @@
 <div id="title"><%=title%></div>
 
 <form id="form-quidd"  data-classname="<%=quiddName%>" onsubmit="return(false)">
-	
+	<input type="hidden" id="quiddName" value="<%=quiddName%>"/>
 	<ul >
 
 		<% _.each(properties, function(property){   %>

@@ -18,6 +18,7 @@ define([
 			},
 			initialize : function()
 			{
+				console.log("init view quidd");
 				this.render();
 				this.model.on('remove', this.remove, this);
 				this.model.on('change', this.render, this);
@@ -49,16 +50,17 @@ define([
 					$(that.el).append($(template));
 					$("#sources").prepend($(that.el));
 
-					// setTimeout(function()
-					// {
-					// 	//add btn preview only for video and audio
-					// 	collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
-					// 	{
-					// 		info = info.split(",");
-					// 		if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
-					// 			$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
-					// 	});
-					// },500);
+					setTimeout(function()
+					{
+						//add btn preview only for video and audio
+						collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+						{
+							console.log(info);
+							info = info.split(",");
+							if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
+								$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
+						});
+					},500);
 
 				});
 			},
@@ -83,13 +85,13 @@ define([
 					info = info.split(",");
 
 					if(info[0].indexOf("video") >= 0) type = "gtkvideosink";
-					if(info[0].indexOf("audio") >= 0) type = "pulsesink";
+					if(info[0].indexOf("audio") >= 0) type = "jacksink";
 
 					if(type != null)
 					{
 						collections.quidds.create(type, "sink-"+quidd, function(quidd){
-							console.log(quidd.name, "connect", [path]);
-							views.methods.setMethod(quidd.name, "connect", [path]);
+							console.log(quidd, "connect", [path]);
+							views.methods.setMethod(quidd, "connect", [path]);
 						});
 					}
 				});

@@ -16,12 +16,14 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		switcher.register_prop_callback(function (qname, qprop, pvalue)
 		{
-			log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+			if(qprop != "byte-rate")
+				log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+			
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
 			if(qprop == "shmdata-writers")
 			{
-				createVuMeter($.parseJSON(pvalue));
+				createVuMeter(qname);
 				sendShmdatas(qname);
 			}
 		});
@@ -30,19 +32,16 @@ module.exports = function (config, switcher, $, _, io, log)
 		   log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 		    
 	    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
-	    	
 
 		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
 		    {
-		    	//io.sockets.emit("create", { name : pvalue[0], class : quiddClass});
-				sendShmdatas(pvalue[0]);
-			    //subscrire to shmdata-writers proprety for create byte-rate
-			    switcher.subscribe_to_property(pvalue[0], "shmdata-writers");
+		    	//when the quidd is create we create to a vumeter
+		    	createVuMeter(pvalue[0]);
+				sendShmdatas(pvalue[0]);	
 
-				    
-			    setTimeout(function(){
-					var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-			    }, 1000)
+			 //    setTimeout(function(){
+				// 	var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
+			 //    }, 1000)
 			    
 		    }
 		});
@@ -51,9 +50,11 @@ module.exports = function (config, switcher, $, _, io, log)
 	}
 
 	//create the vumeter for shmdata
-	function createVuMeter(shmdatas)
+	function createVuMeter(quiddName)
 	{
-		$.each(shmdatas["shmdata_writers"], function(index, shmdata)
+
+		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
+		$.each(shmdatas, function(index, shmdata)
 		{
 			var vumeter = switcher.create("fakesink", "vumeter_"+shmdata.path);
 			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);

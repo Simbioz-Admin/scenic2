@@ -41,9 +41,11 @@ define([
 				var model = collections.quidds.get($("#quiddName").val())
 				,	property = event.target.name
 				,	value = event.target.value;
+				
 				model.setPropertyValue(property, value, function()
 				{
 					//make confirmation message set attributes ok
+					//console.log("the property  :", property, "with value : ", value, "has set!");
 				});
 
 			},
@@ -63,7 +65,7 @@ define([
 				,	name = $("#quiddName").val()
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
 				,	that = this
-				,	deviceDetected = $("#deviceDetected").val()
+				,	deviceDetected = $("#device").val()
 				,	category = "encoder";
 
 				//check category of the quidd and get specific encoder
@@ -85,6 +87,8 @@ define([
 					var model = new QuiddModel({name : quiddName, class : className, encoder_category : category});
 					collections.quidds.add(model);
 					//check if autoDetect it's true if yes we set the value device with device selected
+					
+						console.log("device detected : ", deviceDetected);
 					if(deviceDetected)
 					{
 						model.setPropertyValue("device", deviceDetected, function(ok){
@@ -109,13 +113,10 @@ define([
 			getPropertiesAndMethods : function(model)
 			{
 				var that = this;
-				console.log("getProperties")
 				model.getProperties(function(properties)
 				{
-					console.log("properties", properties)
 					model.getMethodsDescription(function(methods)
 					{
-						console.log("methods", methods);
 						//retrive list encoder 
 						var encoders = collections.classesDoc.getByCategory(model.get("encoder_category")).toJSON();
 						that.openPanel(model.get("name"), properties, methods, encoders);
@@ -265,7 +266,6 @@ define([
 			},
 			autoDetect : function(event)
 			{
-				console.log("get the device available on this computer");
 				//create temporary v4l2 quiddity for listing device available
 				var className = $(event.target).data("name");
 				collections.classesDoc.getPropertyByClass(className, "device", function(property)

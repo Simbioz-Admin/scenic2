@@ -18,10 +18,14 @@ define([
 			initialize : function()
 			{
 				var that = this;
+				//get properties and methods when quidd is created
+				that.getProperties(function(){
+					that.getMethodsDescription(function(){
+						//console.log("properties and methods are recovered");
+					});
+				});
 				if(this.collection)
 				{
-					console.log("TESt");
-					//var view = new ViewQuidd({ model : that });
 					this.setShmdatas(function(ok){
 						var view = new ViewQuidd({ model : that });
 					});

@@ -31,8 +31,13 @@ define([
 		    		if(prop == "byte-rate") views.quidds.stateShmdata(quiddName, value);
 		    		else
 		    		{
+		    			console.log("set locally :", quiddName, prop, value);
 		    			var model = collections.quidds.get(quiddName);
-		    			model.setLocalpropertyValue(prop, value);
+		    			if(model)
+		    			{
+			    			console.log(model);
+			    			model.setLocalpropertyValue(prop, value);
+		    			}
 		    		}
 		    	});
 

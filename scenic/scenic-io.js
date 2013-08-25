@@ -31,13 +31,24 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		socket.on("create", function(className, quiddName,  callback)
 		{
 			var quiddName = switcher.create(className, quiddName);
-			//subscribe to the all properties
-			var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-			_.each(properties, function(property)
+
+			console.log(quiddName);
+			if(quiddName)
 			{
-				switcher.subscribe_to_property(quiddName, property.name);
-			});
-			callback(quiddName);
+				//subscribe to the all properties
+				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				_.each(properties, function(property)
+				{
+					switcher.subscribe_to_property(quiddName, property.name);
+					console.log(quiddName, property.name);
+				});
+				callback(quiddName);
+				socket.broadcast.emit("create", { name : quiddName, class : className});
+			}
+			else
+			{
+				log("info", "failed to create a quiddity class ",className);
+			}
 		});
 
 
@@ -49,6 +60,9 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		});
 
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
+
+			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
+			switcher.subscribe_to_property(quiddName, property);
 			var ok = switcher.set_property_value(quiddName, property, value);
 			if(ok)
 			{

@@ -30,9 +30,12 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("create", function(className, quiddName,  callback)
 		{
-			var quiddName = switcher.create(className, quiddName);
+			if(quiddName)
+				var quiddName = switcher.create(className, quiddName);
+			else
+				var quiddName = switcher.create(className);
 
-			console.log(quiddName);
+
 			if(quiddName)
 			{
 				//subscribe to the all properties
@@ -40,7 +43,6 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 				_.each(properties, function(property)
 				{
 					switcher.subscribe_to_property(quiddName, property.name);
-					console.log(quiddName, property.name);
 				});
 				callback(quiddName);
 				socket.broadcast.emit("create", { name : quiddName, class : className});

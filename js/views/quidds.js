@@ -12,7 +12,7 @@ define([
 			el : 'body',
 			events : {
 				"click .source[data-name], .deviceDetected li" : "defineName",
-				"click #defineName" : "create",
+				"click #create" : "create",
 				'click #methodStart' : 'start',
 				'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
@@ -64,7 +64,7 @@ define([
 				var className = $("#className").val()
 				,	name = $("#quiddName").val()
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
-				,	that = this
+				,	that = this	
 				,	deviceDetected = $("#device").val()
 				,	category = "encoder";
 

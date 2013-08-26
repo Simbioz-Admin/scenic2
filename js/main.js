@@ -41,22 +41,18 @@ require([
   //recovery config information from the server
   socket.emit("getConfig", function(configServer) { config = configServer; });
 
-  socket.on("shutdown", function(){
+
+
+  socket.on("shutdown", function()
+  {
     $("body").html("<div id='shutdown'>the server has been shutdown...</div>");
   });
 
   //check state of scenic for show page authentification or scenic2
   socket.emit("scenicStart", function(stateScenic)
   { 
-    if(!stateScenic)
-    {
-      launch.initialize();
-    }
-    else
-    {
-      App.initialize();
-    }
-
+    if(!stateScenic) launch.initialize();
+    else App.initialize();
   });
 
 

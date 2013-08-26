@@ -26,16 +26,22 @@ switcher.create("rtpsession", "defaultrtp");
 switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", [8074]);
 
-var v4l2src = switcher.create("v4l2src", "temp_v4l2src");
-console.log("1", v4l2src);
+switcher.get_property_description_by_class("v4l2src", "device");
+//console.log(v4l2src);
+
+var test = switcher.create("v4l2src", "test");
+var test2 = switcher.get_property_description("test", "device");
+console.log(test2);
+
+// console.log("1", v4l2src);
 
 
-var properties = $.parseJSON(switcher.get_property_value(v4l2src, "devices-json"));
-console.log(switcher.get_methods_description(v4l2src))
-//console.log(properties["capture devices"]);
+// var properties = $.parseJSON(switcher.get_property_value(v4l2src, "devices-json"));
+// console.log(switcher.get_methods_description(v4l2src))
+// //console.log(properties["capture devices"]);
 
-var test = switcher.invoke(v4l2src, "capture_full", ["/dev/video0", 640, 480, 30, 1, "default"]);
-console.log(test);
+// var test = switcher.invoke(v4l2src, "capture_full", ["/dev/video0", 640, 480, 30, 1, "default"]);
+// console.log(test);
 
 
 

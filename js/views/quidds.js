@@ -3,18 +3,20 @@ define([
 	'backbone',
 	'views/quidd',
 	'models	/quidd',
+	'text!/templates/createQuidd.html',
 	'text!/templates/quidd.html',
 	'text!/templates/setMethod2.html'
-	],function(_, Backbone, ViewQuidd, QuiddModel, quiddTemplate, setMethodTemplate){
+	],function(_, Backbone, ViewQuidd, QuiddModel, quiddCreateTemplate, quiddTemplate, setMethodTemplate){
 
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .source[data-name]" : "openPanelCreate",
-				'click .submit-quidd.create' : 'create',
-				'click .submit-quidd.save' : 'edit',
+				"click .source[data-name], .deviceDetected li" : "defineName",
+				"click #create" : "create",
+				'click #methodStart' : 'start',
 				'click .delete-quidd' : 'delete',
-				"mouseenter [data-name='v4l2src']" : "autoDetectionV4l2",
+				"mouseenter .autoDetect" : "autoDetect",
+				"change input.property, select.property" : "setProperty",
 				//'click .edit' : 'openPanelEdit'
 			},
 			initialize : function()
@@ -34,72 +36,143 @@ define([
 				})
 
 			},
-			//open the lightbox and show the properties to define for create the quidd Source
-			openPanelCreate : function(event)
+			setProperty : function(event)
 			{
-					console.log("test");
+				var model = collections.quidds.get($("#quiddName").val())
+				,	property = event.target.name
+				,	value = event.target.value;
+				
+				model.setPropertyValue(property, value, function()
+				{
+					//make confirmation message set attributes ok
+					//console.log("the property  :", property, "with value : ", value, "has set!");
+				});
+
+			},
+			//open the lightbox and show the properties to define for create the quidd Source
+			
+			defineName : function(event)
+			{
 				var className = $(event.target).data("name")
+				,	deviceDetected = $(event.target).data("deviceDetected")
+				,	template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className, deviceDetected : deviceDetected });
+				$("#panelRight .content").html(template);
+				views.global.openPanel();
+			},
+			create : function(event)
+			{
+				var className = $("#className").val()
+				,	name = $("#quiddName").val()
 				,	categoryQuidd = collections.classesDoc.get(className).get("category")
-				,	that = this
+				,	that = this	
+				,	deviceDetected = $("#device").val()
 				,	category = "encoder";
 
 				//check category of the quidd and get specific encoder
 				if(categoryQuidd.indexOf("video") >= 0) category = "video encoder";
 				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
-				var encoders = collections.classesDoc.getByCategory(category).toJSON();
+				
+				/**
+				*
+				* 1 - create the quiddity without name
+				* 2 - check if the user select autoDetect (contains value) (if false go point 4)
+				* 3 - define the properties device 
+				* 4 - get properties / methods of the device
+				* 5 - show the panelEdit with form
+				*/
 
-
-				//get properties for set in panelRight
-
-				collections.classesDoc.getPropertiesWithout(className, ["shmdata-readers", "shmdata-writers"], function(properties)
+				//create first quiddity for get the good properties
+				collections.quidds.create(className, name, function(quiddName)
 				{
-					var template = _.template(quiddTemplate, {title : "Create "+className, quiddName : className,  properties : properties, action : "create", encoders : encoders});
-					$("#panelRight .content").html(template);
-					views.global.openPanel();
+					var model = new QuiddModel({name : quiddName, class : className, encoder_category : category});
+					collections.quidds.add(model);
+					//check if autoDetect it's true if yes we set the value device with device selected
+					
+						console.log("device detected : ", deviceDetected);
+					if(deviceDetected)
+					{
+						model.setPropertyValue("device", deviceDetected, function(ok){
+							that.getPropertiesAndMethods(model);
+						});
+					}
+					else that.getPropertiesAndMethods(model);
+					
 				});
 
-				//get methods for set in panelRight
-
-				views.methods.getMethodsByClassForConfiguration(className, function(methods)
-				{
-					//data-info is added with autodetection v4l2src
-					var infoJsonDevices = $(event.target).data("info");
-					var template = _.template(setMethodTemplate, {className : className, methods : methods, jsonDevices : infoJsonDevices});
-					$("#panelRight .content ul").after(template);
-				});
+				// //get methods for set in panelRight
+				// views.methods.getMethodsByClassForConfiguration(className, function(methods)
+				// {
+				// 	//data-info is added with autodetection v4l2src
+				// 	var infoJsonDevices = $(event.target).data("info");
+				// 	var template = _.template(setMethodTemplate, {className : className, methods : methods, jsonDevices : infoJsonDevices});
+				// 	$("#panelRight .content ul").after(template);
+				// });
 
 
 			},
-			create : function()
+			getPropertiesAndMethods : function(model)
+			{
+				var that = this;
+				model.getProperties(function(properties)
+				{
+					model.getMethodsDescription(function(methods)
+					{
+						//retrive list encoder 
+						var encoders = collections.classesDoc.getByCategory(model.get("encoder_category")).toJSON();
+						that.openPanel(model.get("name"), properties, methods, encoders);
+					});
+				});
+			},
+			openPanel : function(quiddName, properties, methods, encoders)
+			{
+				var template = _.template(quiddTemplate, {title : "Set "+quiddName, quiddName : quiddName,  properties : properties, methods: methods, encoders : encoders});
+				$("#panelRight .content").html(template);
+				views.global.openPanel();
+			},
+			start : function()
+			{
+				var that = this; 
+				var model = collections.quidds.get($("#quiddName").val());
+				model.setMethod("start", [true], function(){
+					//the method has set correctly now we refresh properties in panel
+					that.getPropertiesAndMethods(model);
+				});
+			},
+			save : function()
+			{
+
+				var quiddName = $("#quiddName").val();
+				var model = collections.quidds.get(quiddName);
+				model.setProperty();
+				/*
+				* 1 - recovery value of properties and methods
+				* 2 - Set properties and methods
+				* 3 - check if methods start exist (si false go point 5)
+				* 5 - set 
+				*/
+
+			},
+			create2 : function()
 			{
 				var that = this
 				,	quiddName = $("#quiddName").val()
 				,	className = $("#form-quidd").data("classname")
 				,	encoder = $("#form-quidd [name='encoder']").val();
 
-
-
 				//creation of Quidd and set properties
+				console.log(className, quiddName);
 				collections.quidds.create(className, quiddName, function(quidd)
 				{
-					that.updateProperties(quidd.name);
-					that.setMethods(className, quidd.name);
-
-					if(encoder != "none")
-					{
-						//add to the list the encoder ask to create with shmdata
-						collections.quidds.listEncoder.push({quiddName : quidd.name, encoder : encoder});
-					}
+					// that.updateProperties(quidd.name);
+					// that.setMethods(className, quidd.name);
+					console.log(quidd);
+					// if(encoder != "none")
+					// {
+					// 	//add to the list the encoder ask to create with shmdata
+					// 	collections.quidds.listEncoder.push({quiddName : quidd.name, encoder : encoder});
+					// }
 				});
 
-				//views.global.closePanel();
-				return false;
-			},
-			//TODO : FIND WAY TO PUT EDIT IN QUIDD.JS
-			edit : function()
-			{
-				var	quiddName = $("#quiddName").val();
-				this.updateProperties(quiddName);
 				//views.global.closePanel();
 				return false;
 			},
@@ -114,34 +187,6 @@ define([
 					views.global.closePanel();
 					
 				}
-			},
-			updateProperties: function(quiddName)
-			{
-				var dataFormProp =  $('#form-quidd ').serializeObject();
-
-				//parse properties for set value of this
-				_.each(dataFormProp, function(value, index)
-				{
-
-					var currentValue = 	$('[name="'+index+'"]').data("current")
-					,	minValue = $('[name="'+index+'"]').data("min")
-					,	maxValue = $('[name="'+index+'"]').data("max")
-					,	valueSend = value
-					,	select = $('[name="'+index+'"]').is('select');
-
-					if(select)
-						value = $('[name="'+index+'"] option:selected').text();
-
-
-					if(value != currentValue)
-					{
-						collections.quidds.setPropertyValue(quiddName, index, valueSend, function(ok)
-							{
-								if(ok)
-									$('[name="'+index+'"]').data("current", value);
-							});
-					}
-				});
 			},
 			setMethods : function(className, quiddName)
 			{
@@ -219,29 +264,25 @@ define([
 				if(shmdata) $("#titleIn").show();
 				else $("#titleIn").hide();
 			},
-			autoDetectionV4l2 : function()
+			autoDetect : function(event)
 			{
-				console.log("get the camera available on this computer");
 				//create temporary v4l2 quiddity for listing device available
-				collections.quidds.create("v4l2src", "temp_v4l2", function(quidd)
+				var className = $(event.target).data("name");
+				collections.classesDoc.getPropertyByClass(className, "device", function(property)
 				{
-					//get the value properties devices-json
-					collections.quidds.getPropertyValue(quidd.name, "devices-json", function(devices)
-					{
-						$("#videoDetected").remove();
-						$("[data-name='v4l2src']").append("<ul id='videoDetected'></ul>");
+					var deviceDetected = property["type description"]["values"];
+					$("#deviceDetected").remove();
+					$("[data-name='"+className+"']").append("<ul id='deviceDetected'></ul>");
 
-						_.each(devices["capture devices"], function(device)
-						{
-							var li = $("<li></li>",{ 
-								text : device["long name"],
-								data : { info : device , name : "v4l2src"},
-							});
-							$("#videoDetected").append(li);
+					_.each(deviceDetected, function(device)
+					{
+						var li = $("<li></li>",{ 
+							text : device["name"]+" "+device["nick"],
+							class : 'source',
+							data : { name : className, deviceDetected : device["value"]},
 						});
-						//remove the temporary quidd
-						collections.quidds.delete("temp_v4l2");
-					})
+						$("#deviceDetected").append(li);
+					});
 				});
 			}
 			

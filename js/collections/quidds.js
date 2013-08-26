@@ -22,7 +22,23 @@ define([
 		    	socket.on("create", function(quidd)
 		    	{
 		    		var model = new QuiddModel(quidd);
+		    		console.log(quidd);
 		    		that.add(model);
+		    	});
+
+		    	socket.on("signals_properties", function(quiddName, prop, value)
+		    	{
+		    		if(prop == "byte-rate") views.quidds.stateShmdata(quiddName, value);
+		    		else
+		    		{
+		    			console.log("set locally :", quiddName, prop, value);
+		    			var model = collections.quidds.get(quiddName);
+		    			if(model)
+		    			{
+			    			console.log(model);
+			    			model.setLocalpropertyValue(prop, value);
+		    			}
+		    		}
 		    	});
 
 		    	socket.on("updateShmdatas", function(qname, shmdatas)
@@ -53,23 +69,26 @@ define([
 		    		that.remove(quiddName);
 		    	});
 
-		    	socket.on("signals_properties", function(name, prop, value)
-		    	{
-		    		if(prop == "byte-rate") views.quidds.stateShmdata(name, value);
-		    	})
 
 		    	//receive notification for set property of quidd
 		    	socket.on("setPropertyValue", function(nameQuidd, property, value)
 		    	{
 		    		var quidd = that.get(nameQuidd);
-
 		    		_.each(quidd.get("properties"), function(prop, index)
 		    		{
 		    			if(prop.name == property) quidd.get("properties")[index]["value"] = value;		
 		    		});
 		    	});
 		    },
-		    create : function(className, name, callback)
+		    create : function(className, quiddName, callback)
+		    {
+		    	//ask for create a Quidd
+		    	socket.emit("create", className, quiddName, function(quidd)
+		    	{
+		    		callback(quidd);
+		    	});
+		    },
+		    createAndGetProperties : function(className, name, callback)
 		    {
 		    	//ask for create a Quidd
 		    	socket.emit("create", className, name, function(quidd)
@@ -88,6 +107,13 @@ define([
 		    		callback(propertiesOfQuidd);
 		    	});
 		    },
+		    getMethodsDescription : function(nameQuidd, callback)
+		    {	
+		    	socket.emit("getMethodsDescription", nameQuidd, function(methodsDescription)
+		    	{
+		    		callback(methodsDescription);
+		    	});
+		    },
 		    getPropertyValue : function(nameQuidd, property, callback)
 		    {
 		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
@@ -96,6 +122,7 @@ define([
 		    },
 		    getPropertiesWithValues : function(nameQuidd, callback)
 		    {
+		    	console.log("ask for get properties and value :", nameQuidd);
 		    	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd)
 		    	{
 		    		callback(propertiesOfQuidd);

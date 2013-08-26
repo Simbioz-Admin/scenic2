@@ -3,14 +3,11 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 	io.sockets.on('connection', function (socket)
 	{
 
-		socket.on("create", function(className, name, callback)
+		socket.on("createAndGetProperties", function(className, name, callback)
 		{        
-
-			console.log("className & name ", className, name);
 			if(name) var quiddName = switcher.create(className, name);
 			else var quiddName = switcher.create(className);	
 			
-			console.log("QUIDDNAME : "+quiddName);
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
@@ -31,6 +28,32 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			
 		});
 
+		socket.on("create", function(className, quiddName,  callback)
+		{
+			if(quiddName)
+				var quiddName = switcher.create(className, quiddName);
+			else
+				var quiddName = switcher.create(className);
+
+
+			if(quiddName)
+			{
+				//subscribe to the all properties
+				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				_.each(properties, function(property)
+				{
+					switcher.subscribe_to_property(quiddName, property.name);
+				});
+				callback(quiddName);
+				socket.broadcast.emit("create", { name : quiddName, class : className});
+			}
+			else
+			{
+				log("info", "failed to create a quiddity class ",className);
+			}
+		});
+
+
 
 		socket.on("remove", function(quiddName)
 		{
@@ -39,9 +62,19 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		});
 
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
+
+			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
+			switcher.subscribe_to_property(quiddName, property);
 			var ok = switcher.set_property_value(quiddName, property, value);
-			callback(ok);
-			io.sockets.emit("setPropertyValue", quiddName, property, value);
+			if(ok)
+			{
+				callback(property, value);
+				socket.broadcast.emit("setPropertyValue", quiddName, property, value);
+			}
+			else
+			{
+				socket.emit("msg", "error", "the property "+property+" of "+quiddName+"is not set");
+			}
 		});
 
 
@@ -51,9 +84,17 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		});
 
 
+
+
 		socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
 			var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 			callback(methodsDescriptionByClass);
+		});
+
+
+		socket.on("getMethodsDescription", function(quiddName, callback){
+			var methods  = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			callback(methods);
 		});
 
 
@@ -64,7 +105,6 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
-			console.log(quiddName, method, parameters);
 			var invoke = switcher.invoke(quiddName, method, parameters);
 			callback(invoke);
 			io.sockets.emit("invoke", invoke, quiddName, method, parameters);
@@ -73,8 +113,12 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("getPropertiesOfClass", function(className, callback){
 			var propertiesofClass =  $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
-			console.log(className);
 			callback(propertiesofClass);
+		});
+
+		socket.on("getPropertyByClass", function(className, propertyName, callback){
+			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName))
+			callback(propertyByClass);						
 		});
 
 

@@ -33,6 +33,15 @@ define([
 		    	});
 		    },
 
+		    getPropertyByClass: function(className, propertyName, callback)
+		    {
+		    	socket.emit("getPropertyByClass", className, propertyName, function(propertyByClass)
+		    	{
+		    	console.log("Send", className, propertyName);
+		    		callback(propertyByClass);
+		    	});
+		    },
+
 		    getByCategory : function(category){
 		    	
 		    	filtered = this.filter(function(classDoc)

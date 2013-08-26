@@ -1,8 +1,7 @@
 define([
 	'underscore',
 	'backbone',
-	'views/quidd',
-	],function(_, Backbone, ViewQuidd){
+	],function(_, Backbone){
 
 		var QuiddModel = Backbone.Model.extend({
 			url : "/quidd/",
@@ -24,17 +23,18 @@ define([
 						//console.log("properties and methods are recovered");
 					});
 				});
-				if(this.collection)
-				{
-					this.setShmdatas(function(ok){
-						var view = new ViewQuidd({ model : that });
-					});
-				}
+				// if(this.collection)
+				// {
+				// 	this.setShmdatas(function(ok){
+				// 		var view = new ViewQuidd({ model : that, table : "transfert"});
+				// 		var view2 = new ViewQuidd({model : that, table : "control"});
+				// 	});
+				// }
 			},
 			setShmdatas : function(callback){
 				var that = this;
 				//ask for value of shmdatas and stock in model
-				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
+				this.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
 				{
 					that.set({ shmdatas  : shmdatas.shmdata_writers});
 					callback(shmdatas.shmdata_writers);
@@ -66,6 +66,13 @@ define([
 		    	{
 		    		that.set("properties", propertiesOfQuidd);
 		    		callback(propertiesOfQuidd);
+		    	});
+			},
+			getPropertyValue : function(property, callback)
+			{
+				var that = this;
+				socket.emit("get_property_value", this.get("name"), property, function(propertyValue){
+		    		callback(propertyValue);
 		    	});
 			},
 			getMethodsDescription : function(callback)

@@ -2,8 +2,7 @@ define([
 	'underscore',
 	'backbone',
 	'models/quidd',
-	'views/quidd',
-	],function(_, Backbone, QuiddModel, QuiddsView){
+	],function(_, Backbone, QuiddModel){
 
 		var QuiddsCollection = Backbone.Collection.extend({
 			model : QuiddModel,
@@ -48,6 +47,7 @@ define([
 		    		if(quidds)
 		    		{
 			    		quidds.set("shmdatas", shmdatas);
+			    		
 			    		//control if encoder is ask for this quidd
 			    		_.each(that.listEncoder, function(encoder, index)
 			    		{
@@ -88,53 +88,45 @@ define([
 		    		callback(quidd);
 		    	});
 		    },
-		    createAndGetProperties : function(className, name, callback)
-		    {
-		    	//ask for create a Quidd
-		    	socket.emit("create", className, name, function(quidd)
-		    	{
-		    		callback(quidd);
-		    	});
-		    },
-		    delete : function(quiddName)
-		    {
-		    	socket.emit("remove", quiddName);
-		    },
-		    getProperties : function(nameQuidd, callback)
-		    {
-		    	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
-		    	{
-		    		callback(propertiesOfQuidd);
-		    	});
-		    },
-		    getMethodsDescription : function(nameQuidd, callback)
-		    {	
-		    	socket.emit("getMethodsDescription", nameQuidd, function(methodsDescription)
-		    	{
-		    		callback(methodsDescription);
-		    	});
-		    },
-		    getPropertyValue : function(nameQuidd, property, callback)
-		    {
-		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
-		    		callback(propertyValue);
-		    	});
-		    },
-		    getPropertiesWithValues : function(nameQuidd, callback)
-		    {
-		    	console.log("ask for get properties and value :", nameQuidd);
-		    	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd)
-		    	{
-		    		callback(propertiesOfQuidd);
-		    	});
-		    },
-		    setPropertyValue : function(nameQuidd, property, value, callback)
-		    {
-		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
-	    		{
-	    			if(callback) callback(ok);
-	    		});
-		    }
+		    // delete : function(quiddName)
+		    // {
+		    // 	socket.emit("remove", quiddName);
+		    // },
+		    // getProperties : function(nameQuidd, callback)
+		    // {
+		    // 	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
+		    // 	{
+		    // 		callback(propertiesOfQuidd);
+		    // 	});
+		    // },
+		    // getMethodsDescription : function(nameQuidd, callback)
+		    // {	
+		    // 	socket.emit("getMethodsDescription", nameQuidd, function(methodsDescription)
+		    // 	{
+		    // 		callback(methodsDescription);
+		    // 	});
+		    // },
+		    // getPropertyValue : function(nameQuidd, property, callback)
+		    // {
+		    // 	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
+		    // 		callback(propertyValue);
+		    // 	});
+		    // },
+		    // getPropertiesWithValues : function(nameQuidd, callback)
+		    // {
+		    // 	console.log("ask for get properties and value :", nameQuidd);
+		    // 	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd)
+		    // 	{
+		    // 		callback(propertiesOfQuidd);
+		    // 	});
+		    // },
+		    // setPropertyValue : function(nameQuidd, property, value, callback)
+		    // {
+		    // 	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
+	    	// 	{
+	    	// 		if(callback) callback(ok);
+	    	// 	});
+		    // }
 		});
 
 		return QuiddsCollection;

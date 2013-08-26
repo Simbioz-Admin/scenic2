@@ -3,87 +3,36 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'collections/classes_doc',
-  'collections/quidds',
-  'collections/shmdatas',
-  'collections/destinations',
-  'views/global',
-  'views/quidds',
-  'views/methods',
-  'collections/channels-irc',
-  'views/destinations'
+  'collections/classes_doc','collections/clients', 'collections/quidds',
+  'views/clients', 'views/global', 'views/quidds'
 
 ], function(_, 
           Backbone, 
-          $, 
-          ClassesDocCollection, 
-          QuiddsCollection, 
-          ShmdatasCollection, 
-          DestinationsCollection, 
-          GlobalView, 
-          QuiddsView, 
-          MethodsView, 
-          ChannelsCollection, 
-          DestinationsView
+          $,
+          ClassesDocCollection, ClientsCollection, QuiddsCollections, 
+          ViewClients, ViewGlobal, ViewQuidds
   ){
   var initialize = function(){
     "use strict";
 
-
-
-    //*** init the different collection of the project ***//
-
-    //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties
+    //loading the different collections
     collections.classesDoc = new ClassesDocCollection();
-    collections.classesDoc.fetch({
-      success : function(response)
-      {
-        //Need to fetch collection before create view
-        views.global = new GlobalView({collection : collections.classesDoc.getByCategory("source")});
-      }
-    });
+    collections.classesDoc.fetch();
+    collections.clients = new ClientsCollection();
+    collections.clients.fetch();
+    collections.quidds = new QuiddsCollections();
+    collections.quidds.fetch();
 
+    //loading views
+    views.clients = new ViewClients({collection : collections.clients});
+    views.global = new ViewGlobal();
+    views.quidds = new ViewQuidds({collection : collections.quidds});
 
-
-    collections.destinations = new DestinationsCollection();
-    collections.destinations.fetch
-    ({
-      success : function(response)
-      {
-        collections.destinations.render();
-        views.destinations = new DestinationsView({ collection : collections.destinations });
-
-        //init the Collections of quidd where is stocked all informations about the quidds existing.
-        collections.quidds = new QuiddsCollection();
-        collections.quidds.fetch
-        ({
-          success : function(response)
-          {
-            //collections.quidds.render();
-            views.quidds = new QuiddsView({collection : collections.quidds});
-          }
-        });
-      },
-      error : function(res)
-      {
-        console.log(res);
-        console.log("error fetch destinations");
-      }
-    });
-
-
-    collections.irc = new ChannelsCollection();
-
-    views.methods = new MethodsView();
   }
-  var test = function()
-  {
-    console.log("TEST");
-  }
+
 
   return {
-    initialize: initialize,
-    test : test
+    initialize: initialize
   };
 
 });

@@ -3,9 +3,8 @@ define([
 	'backbone',
 	'text!/templates/menu.html',
 	'text!/templates/quidd.html',
-	'text!/templates/setMethod2.html',
 	'text!/templates/panelInfo.html'
-	],function( _, Backbone, menuTemplate, quiddTemplate, setMethodTemplate, panelInfoTemplate){
+	],function( _, Backbone, menuTemplate, quiddTemplate, panelInfoTemplate){
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
@@ -28,6 +27,7 @@ define([
 				"click #btnLoadScratch" : 'load_from_scratch',
 				"mouseenter td.nameInOut, .groupSource" : "showActions",
 				"mouseleave td.nameInOut, .groupSource" : "hideActions",
+				"click .tabTable" : 'showTable'
 
 			},
 
@@ -37,15 +37,6 @@ define([
 
 				console.log("init global View");
 				var that = this;
-				var sources = _.groupBy(this.collection.toJSON(), function(source)
-				{
-					return source.category;
-				})
-
-				var template = _.template(menuTemplate, {menu : sources});
-				
-
-				$("#menuTable").html(template);
 
 				socket.on("messageLog", function(msg)
 				{
@@ -263,6 +254,14 @@ define([
 			hideActions : function(event)
 			{
 				$(".actions", event.currentTarget).animate({opacity : 0},200).css("display" , "none");
+			},
+			showTable : function(event)
+			{
+				var table = $(event.target).data("type");
+				$(".tabTable").removeClass("active");
+				$(event.target).addClass("active");
+				$(".table").hide();
+				$("#"+table).show();
 			}
 		});
 

@@ -116,7 +116,7 @@ define([
 			notification : function(type, msg){
 				$("#msgHighLight").remove();
 				$("body").append("<div id='msgHighLight' class='"+type+"'>"+msg+"</div>");
-				var speed = 1000;
+				var speed = 500;
 				$("#msgHighLight").animate({top : "50"}, speed, function()
 				{
 					$(this).delay(4000).animate({top : "-50"}, speed);

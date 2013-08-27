@@ -25,7 +25,12 @@ define([
 		    		description : "it's the default table for transfert.",
 		    		menus : { sources : {type : "quidds" , value : quidds } , destinations : {type : "client", value : null} }
 		    	});
-   				//this.add({name : "controler", type : "control", description : "it's the default table for controler."});
+   				this.add({
+   					name : "controler", 
+   					type : "control", 
+   					description : "it's the default table for controler.",
+   					menus : { sources : {type : "midi", value : null}, destinations : {type : "quidds", value : quidds}}
+   				});
 		    }
 		});
 

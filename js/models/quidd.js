@@ -1,8 +1,8 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source'
-	],function(_, Backbone, ViewSource){
+	'views/source', 'views/destination'
+	],function(_, Backbone, ViewSource, ViewDestination){
 
 		var QuiddModel = Backbone.Model.extend({
 			url : "/quidd/",
@@ -29,11 +29,11 @@ define([
 				    		{
 				    			if(table.type == "transfer")
 				    			{
-				    				var view = new ViewSource({model : that, table : "transfer"});
+				    				var viewSource = new ViewSource({model : that, table : "transfer"});
 				    			}
 				    			if(table.type == "control")
 				    			{
-				    				//var view = new ViewDestination({model : model});
+				    				var viewDestination = new ViewDestination({ model : that, table : "control" });
 				    			}
 				    		});
 						});

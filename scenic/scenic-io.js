@@ -108,9 +108,10 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			var invoke = switcher.invoke(quiddName, method, parameters);
 			if(callback) callback(invoke);
 			if(method == "add_destination")
-			{
 				io.sockets.emit("add_destination", invoke, quiddName, parameters);
-			}
+			if(method == "remove_destination")
+				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
+			
 			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});
 

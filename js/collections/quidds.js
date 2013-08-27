@@ -16,10 +16,7 @@ define([
 		    {
 		    	console.log("init collection quidds");
 		    	var that = this;
-
-
-
-
+		    	
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd)
 		    	{
@@ -31,7 +28,6 @@ define([
 		    		var model =  that.get(quidd);
 		    		model.trigger('destroy', model, that);
 	    			views.global.notification("info", quidd+"  has deleted");
-
 		    	});
 
 		    	socket.on("signals_properties", function(quiddName, prop, value)
@@ -40,11 +36,15 @@ define([
 		    		else
 		    		{
 		    			console.log("set locally :", quiddName, prop, value);
+
 		    			var model = collections.quidds.get(quiddName);
 		    			if(model)
 		    			{
-			    			console.log(model);
 			    			model.setLocalpropertyValue(prop, value);
+
+		    				//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
+			    			var input = $("[name$='"+prop+"']");
+			    			if(input) input.val(value);
 		    			}
 		    		}
 		    	});

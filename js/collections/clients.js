@@ -21,6 +21,13 @@ define([
 		    		views.global.notification("info", "the client "+ parameters[0]+" is added");
 		    	});
 
+		    	socket.on("remove_destination", function(invoke, quiddName, parameters)
+		    	{
+		    		var model = that.get(parameters[0]);
+		    		model.trigger('destroy', model, that);
+	    			views.global.notification("info","client "+ parameters[0]+" has deleted");
+		    	});
+
 		    	// this.bind("add", function(model)
 		    	// {
 		    	// 	var view = new ViewDestination({model : model});
@@ -39,7 +46,6 @@ define([
 		    	socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok)
 		    	{
 		    		///*** set connection with another scenic computer ***//
-		    		console.log(portSoap);
 					if(portSoap)
 					{
 						if(portSoap.indexOf("http://") < 0) portSoap = "http://"+portSoap;
@@ -57,21 +63,6 @@ define([
 					}
 
 		    	});
-		    },
-		    update : function()
-		    {
-		    	
-		    },
-		    remove : function(name)
-		    {
-				var result = confirm("Are you sure?");
-				if (result==true)
-				{
-					socket.emit("invoke", "defaultrtp", "remove_destination", [name], function(ok)
-					{
-						console.log("the client "+name+" has been removed")
-					});
-				}
 		    }
 		});
 

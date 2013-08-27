@@ -92,8 +92,7 @@ define([
 				var model = collections.quidds.get($("#quiddName").val())
 				,	property = element.target.name
 				,	value = element.target.value;
-				
-				console.log(property, value);
+	
 				if(property == "encoder")
 				{
 					//add to the list the encoder ask to create with shmdata

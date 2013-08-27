@@ -106,8 +106,12 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 		socket.on("invoke", function(quiddName, method, parameters, callback){
 			var invoke = switcher.invoke(quiddName, method, parameters);
-			callback(invoke);
-			io.sockets.emit("invoke", invoke, quiddName, method, parameters);
+			if(callback) callback(invoke);
+			if(method == "add_destination")
+			{
+				io.sockets.emit("add_destination", invoke, quiddName, parameters);
+			}
+			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});
 
 
@@ -117,7 +121,12 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		});
 
 		socket.on("getPropertyByClass", function(className, propertyName, callback){
-			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName))
+			try{
+				var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
+			}
+			catch(e){
+				var propertyByClass = "no property found";
+			}
 			callback(propertyByClass);						
 		});
 

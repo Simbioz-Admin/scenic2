@@ -7,8 +7,8 @@ define([
 		var DestinationsView = Backbone.View.extend({
 			el : 'body',
 			events : { 
-				"click #openPanelClient" : "openPanel",
-				"click #createClient" : "create", 
+				"click #create-client" : "openPanel",
+				"click #add-client" : "create", 
 			},
 			initialize : function()
 			{
@@ -34,7 +34,6 @@ define([
 			displayTitle : function()
 			{
 				//check number of quidd for titleIn
-
 				if(this.collection.size() != 0) $("#titleOut").show();
 				else $("#titleOut").hide();
 			}

@@ -6,7 +6,6 @@ require.config({
 	paths: {
     	underscore: 'libs/underscore-min', 
     	backbone: 'libs/backbone-min',
-    	tempi: 'libs/fn.tempi-snake',
     	util: 'libs/util',
       jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min'
   	},
@@ -34,14 +33,12 @@ require([
   views = [],
   socket = io.connect(),
   config = {}
-], function(App, launch, util, socket)
+], function(app, launch, util, socket)
 {
 
   var socket = io.connect();
   //recovery config information from the server
   socket.emit("getConfig", function(configServer) { config = configServer; });
-
-
 
   socket.on("shutdown", function()
   {
@@ -52,7 +49,7 @@ require([
   socket.emit("scenicStart", function(stateScenic)
   { 
     if(!stateScenic) launch.initialize();
-    else App.initialize();
+    else app.initialize();
   });
 
 

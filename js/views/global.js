@@ -1,10 +1,9 @@
 define([
 	'underscore',
 	'backbone',
-	'text!/templates/menu.html',
 	'text!/templates/quidd.html',
 	'text!/templates/panelInfo.html'
-	],function( _, Backbone, menuTemplate, quiddTemplate, panelInfoTemplate){
+	],function( _, Backbone, quiddTemplate, panelInfoTemplate){
 
 		var MenuView = Backbone.View.extend({
 			el : 'body',
@@ -114,10 +113,15 @@ define([
 				$(event.target).parent().html("");
 			},
 			//alert for different message
-			alertMsg : function(type, msg){
+			notification : function(type, msg){
 				$("#msgHighLight").remove();
 				$("body").append("<div id='msgHighLight' class='"+type+"'>"+msg+"</div>");
-				$("#msgHighLight").fadeIn(200).delay(5000).fadeOut(200, function(){$(this).remove();});
+				var speed = 1000;
+				$("#msgHighLight").animate({top : "50"}, speed, function()
+				{
+					$(this).delay(4000).animate({top : "-50"}, speed);
+				});
+				//$("#msgHighLight").fadeIn(200).delay(5000).fadeOut(200, function(){$(this).remove();});
 				$("#msgHighLight").click(function(){
 					$(this).remove();
 				})

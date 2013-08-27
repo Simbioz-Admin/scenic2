@@ -201,21 +201,24 @@ header
 
 
 #msgHighLight
-	min-width : 250px
+	width : 250px
 	position : absolute
-	z-index : 1000
-	+border-radius(3px)
+	left : 50%
+	right : 50%
+	top : -50px
+	margin-left : -125px
+	z-index : 1
+	+border-radius(0 0 3px 3px)
 	color : white
 	font-size : 1.6em
 	text-align : center
 	padding : 7px 20px
-	top : 4px
-	right : 4px
-	margin-left : -150px
-	display : none
+	+box-shadow(rgba(black, 0.3) 0px 3px 12px)
+	cursor : pointer
+	//display : none
 	&.error
 		background : #be2620
-	&.valid
+	&.valid, &.info
 		background : green
 
 
@@ -606,6 +609,7 @@ td
 			+border-radius(3px)
 			border: none
 			color : #333
+			text-transform: uppercase
 			&:hover
 				+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
 
@@ -1207,7 +1211,8 @@ $sizeBulle : 12px
 			&:hover
 				background : #fcfcfc!important
 				color : #333!important
-
+		.btnCreate
+			text-transform: uppercase
 
 	#list-names
 		left : inherit

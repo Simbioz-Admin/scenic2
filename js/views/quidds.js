@@ -9,12 +9,12 @@ define([
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .source[data-name], .deviceDetected li" : "defineName",
+				"click .createDevice[data-name], .deviceDetected li" : "defineName",
 				"click #create" : "create",
+				"change input.property, select.property" : "setProperty",
 				//'click #methodStart' : 'start',
 				//'click .delete-quidd' : 'delete',
-				//"mouseenter .autoDetect" : "autoDetect",
-				"change input.property, select.property" : "setProperty",
+				"mouseenter .autoDetect" : "autoDetect",
 				//'click .edit' : 'openPanelEdit'
 			},
 			initialize : function()
@@ -37,16 +37,15 @@ define([
 
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
-			defineName : function(event)
+			defineName : function(element)
 			{
-				// var className = $(event.target).data("name")
-				// ,	deviceDetected = $(event.target).data("deviceDetected")
-				var className = "videotestsrc", deviceDetected = ""
+				var className = $(element.target).data("name")
+				,	deviceDetected = $(element.target).data("deviceDetected")
 				,	template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className, deviceDetected : deviceDetected });
 				$("#panelRight .content").html(template);
 				views.global.openPanel();
 			},
-			create : function(event)
+			create : function(element)
 			{
 				var className = $("#className").val()
 				,	name = $("#quiddName").val()
@@ -72,11 +71,12 @@ define([
 				//create first quiddity for get the good properties
 				collections.quidds.create(className, name, function(quiddName)
 				{
+					views.global.notification("info", quiddName+" ("+className+") is created"); //notification
 					var model = new QuiddModel({name : quiddName, class : className, encoder_category : category});
 					collections.quidds.add(model);
 					//check if autoDetect it's true if yes we set the value device with device selected
 					
-						console.log("device detected : ", deviceDetected);
+					console.log("device detected : ", deviceDetected);
 					if(deviceDetected)
 					{
 						model.setPropertyValue("device", deviceDetected, function(ok){
@@ -105,11 +105,11 @@ define([
 				$("#panelRight .content").html(template);
 				views.global.openPanel();
 			},
-			setProperty : function(event)
+			setProperty : function(element)
 			{
 				var model = collections.quidds.get($("#quiddName").val())
-				,	property = event.target.name
-				,	value = event.target.value;
+				,	property = element.target.name
+				,	value = element.target.value;
 				
 				console.log(property, value);
 				if(property == "encoder")
@@ -117,12 +117,33 @@ define([
 					//add to the list the encoder ask to create with shmdata
 					collections.quidds.listEncoder.push({quiddName : quidd.name, encoder : encoder});
 				}
-				// model.setPropertyValue(property, value, function()
-				// {
+				model.setPropertyValue(property, value, function()
+				{
 				// 	//make confirmation message set attributes ok
 				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-				// });
+				});
 
+			},
+			autoDetect : function(element)
+			{
+				//create temporary v4l2 quiddity for listing device available
+				var className = $(element.target).data("name");
+				collections.classesDoc.getPropertyByClass(className, "device", function(property)
+				{
+					var deviceDetected = property["type description"]["values"];
+					$("#deviceDetected").remove();
+					$("[data-name='"+className+"']").append("<ul id='deviceDetected'></ul>");
+
+					_.each(deviceDetected, function(device)
+					{
+						var li = $("<li></li>",{ 
+							text : device["name"]+" "+device["nick"],
+							class : 'source',
+							data : { name : className, deviceDetected : device["value"]},
+						});
+						$("#deviceDetected").append(li);
+					});
+				});
 			}
 			
 		});

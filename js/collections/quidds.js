@@ -21,13 +21,13 @@ define([
 		    	socket.on("create", function(quidd)
 		    	{
 		    		var model = new QuiddModel(quidd);
-		    		console.log(quidd);
 		    		that.add(model);
+		    		views.global.notification("info", quidd.name+" ("+quidd.class+") is created");
 		    	});
 
 		    	socket.on("signals_properties", function(quiddName, prop, value)
 		    	{
-		    		if(prop == "byte-rate") views.quidds.stateShmdata(quiddName, value);
+		    		if(prop == "byte-rate") var test = ""; //views.quidds.stateShmdata(quiddName, value);
 		    		else
 		    		{
 		    			console.log("set locally :", quiddName, prop, value);

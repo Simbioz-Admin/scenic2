@@ -13,6 +13,13 @@ define([
 		    initialize : function()
 		    {
 		    	console.log("init collection Clients");
+		    	var that = this;
+
+		    	socket.on("add_destination", function(invoke, quiddName, parameters)
+		    	{
+					that.add({name : parameters[0], host_name : parameters[1]});
+		    		views.global.notification("info", "the client "+ parameters[0]+" is added");
+		    	});
 
 		    	// this.bind("add", function(model)
 		    	// {
@@ -31,9 +38,8 @@ define([
 		    {
 		    	socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok)
 		    	{
-		    		console.log("the client "+clientName+" is added");
-
 		    		///*** set connection with another scenic computer ***//
+		    		console.log(portSoap);
 					if(portSoap)
 					{
 						if(portSoap.indexOf("http://") < 0) portSoap = "http://"+portSoap;
@@ -42,9 +48,11 @@ define([
 						
 						collections.quidds.create("SOAPcontrolClient", soapClient, function(ok)
 						{
-							socket.emit("invoke", soapClient, "set_remote_url", [addressClient]);
-							socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
-							if(!ok)console.log("not existing");
+							if(ok)
+							{
+								socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok){ console.log("set_remote_url", ok); });
+								socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){ console.log("httpsdpdec", ok); });
+							}
 						});
 					}
 

@@ -23,6 +23,8 @@ define([
 						//console.log("properties and methods are recovered");
 					});
 				});
+
+				
 				// if(this.collection)
 				// {
 				// 	this.setShmdatas(function(ok){

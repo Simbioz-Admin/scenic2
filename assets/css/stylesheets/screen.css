@@ -887,7 +887,6 @@ td {
   -ms-border-radius: 2px;
   -o-border-radius: 2px;
   border-radius: 2px;
-  display: none;
 }
 /* line 630, ../sass/screen.sass */
 .table #titleHeader {
@@ -909,7 +908,6 @@ td {
   -ms-border-radius: 2px;
   -o-border-radius: 2px;
   border-radius: 2px;
-  display: none;
 }
 /* line 644, ../sass/screen.sass */
 .table.active {

@@ -1,7 +1,8 @@
 define([
 	'underscore',
 	'backbone',
-	],function(_, Backbone){
+	'views/source'
+	],function(_, Backbone, ViewSource){
 
 		var QuiddModel = Backbone.Model.extend({
 			url : "/quidd/",
@@ -17,12 +18,28 @@ define([
 			initialize : function()
 			{
 				var that = this;
+				
 				//get properties and methods when quidd is created
-				that.getProperties(function(){
-					that.getMethodsDescription(function(){
-						//console.log("properties and methods are recovered");
+				that.getShmdatas(function(shmdatas){
+					that.getProperties(function(){
+						that.getMethodsDescription(function(){
+							
+							//when the model quidd is created and we are recovered all value necessary, we created automaticlly one or multiple views 
+				    		_.each(collections.tables.toJSON(), function(table)
+				    		{
+				    			if(table.type == "transfer")
+				    			{
+				    				var view = new ViewSource({model : that, table : "transfer"});
+				    			}
+				    			if(table.type == "control")
+				    			{
+				    				//var view = new ViewDestination({model : model});
+				    			}
+				    		});
+						});
 					});
 				});
+				
 
 				
 				// if(this.collection)
@@ -33,15 +50,7 @@ define([
 				// 	});
 				// }
 			},
-			setShmdatas : function(callback){
-				var that = this;
-				//ask for value of shmdatas and stock in model
-				this.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
-				{
-					that.set({ shmdatas  : shmdatas.shmdata_writers});
-					callback(shmdatas.shmdata_writers);
-				});
-			},
+
 			remove : function()
 			{
 				this.destroy();
@@ -84,6 +93,15 @@ define([
 				{
 					that.set("methods", methodsDescription);
 					callback(methodsDescription);
+				});
+			},
+			getShmdatas : function(callback){
+				var that = this;
+				//ask for value of shmdatas and stock in model
+				this.getPropertyValue("shmdata-writers", function(shmdatas)
+				{
+					that.set({ shmdatas : shmdatas.shmdata_writers});
+					if(callback) callback(shmdatas.shmdata_writers);
 				});
 			},
 			setMethod : function(method, parameters, callback)

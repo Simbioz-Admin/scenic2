@@ -1,6 +1,6 @@
 3.2.3 (Media Mark)
-ed51736f044b994166ea10573ffd6783038ab936
-o:Sass::Tree::RootNode	:@template"ÉÉ@import compass/reset
+4f12e4058c810de81212ca7e700d69ff0b68c39f
+o:Sass::Tree::RootNode	:@template"âÉ@import compass/reset
 @import compass/css3
 
 // Transition shortcut
@@ -627,7 +627,7 @@ td
 		background : #333 url(../../images/titleInOut.png) center -3px no-repeat
 		opacity : 0.9
 		+border-radius(2px)
-		display : none
+		// display : none
 
 	#titleHeader
 		padding : 0
@@ -642,7 +642,7 @@ td
 		background : #333 url(../../images/titleInOut.png) -5px center no-repeat
 		opacity : 0.9
 		+border-radius(2px)
-		display : none
+		// display : none
 	&.active
 		display : block
 
@@ -3054,8 +3054,8 @@ right;@;;;o;&;'[ ;("0;@;i ;in;)@U;@
 o; 	;!{	;"i8;#i8;$i;%i8;@;0;iqo;+	;@;"%url(../../images/titleInOut.png);;,;iqo;+	;@;"center;;,;iqo;&;'["px;("	-3px;@;i¯;iq;)[ o;+	;@;"no-repeat;;,;iq;-;.;iq;@
 ;iq;i ;	[ o;;["opacity;@;;;o;&;'[ ;("0.9;@;f0.90000000000000002 ÃÕ;ir;)@U;@
 ;ir;i ;	[ o;;"border-radius;0;@;@
-;[o;&;'["px;("2px;@;i;is;)[ ;is;*{ ;	[ o;;["display;@;;;o;+	;@;"	none;;,;it;@
-;it;i ;	[ o;/;0["#titleHeader;1o;2;3[o;4;3[o;5
+;[o;&;'["px;("2px;@;i;is;)[ ;is;*{ ;	[ o;;@;["// display : none;;;@
+;it;	[ o;/;0["#titleHeader;1o;2;3[o;4;3[o;5
 ;6o;7;8{ ;3[o;E;["titleHeader;@
 ;iv;@
 ;iv;=0;@
@@ -3080,8 +3080,8 @@ color;@;;;o; 	;!{	;"iˇ;#iˇ;$i;%iˇ;@;0;i;@
 o; 	;!{	;"i8;#i8;$i;%i8;@;0;iÄo;+	;@;"%url(../../images/titleInOut.png);;,;iÄo;&;'["px;("	-5px;@;iˆ;iÄ;)[ o;+	;@;"center;;,;iÄo;+	;@;"no-repeat;;,;iÄ;-;.;iÄ;@
 ;iÄ;i ;	[ o;;["opacity;@;;;o;&;'[ ;("0.9;@;f0.90000000000000002 ÃÕ;iÅ;)@U;@
 ;iÅ;i ;	[ o;;"border-radius;0;@;@
-;[o;&;'["px;("2px;@;i;iÇ;)[ ;iÇ;*{ ;	[ o;;["display;@;;;o;+	;@;"	none;;,;iÉ;@
-;iÉ;i ;	[ o;/;0["&.active;1o;2;3[o;4;3[o;5
+;[o;&;'["px;("2px;@;i;iÇ;)[ ;iÇ;*{ ;	[ o;;@;["// display : none;;;@
+;iÉ;	[ o;/;0["&.active;1o;2;3[o;4;3[o;5
 ;6o;7;8{ ;3[o;9;@
 ;iÑo;F;["active;@
 ;iÑ;@

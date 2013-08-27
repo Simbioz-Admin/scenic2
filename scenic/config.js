@@ -11,5 +11,5 @@ module.exports = {
 	quiddExclude : ['create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude : ["shmdata-readers", "shmdata-writers"],
 	deviceAutoDetect : ["v4l2src"],
-	defaultPanelTable : "transfert"
+	defaultPanelTable : "transfer"
 }

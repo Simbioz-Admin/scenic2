@@ -21,7 +21,7 @@ define([
 
 		    	this.add({
 		    		name : "transfer", 
-		    		type : "transfert", 
+		    		type : "transfer", 
 		    		description : "it's the default table for transfert.",
 		    		menus : { sources : {type : "quidds" , value : quidds } , destinations : {type : "client", value : null} }
 		    	});

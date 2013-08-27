@@ -57,8 +57,7 @@ define([
 				//check category of the quidd and get specific encoder
 				if(categoryQuidd.indexOf("video") >= 0) category = "video encoder";
 				if(categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
-				
-				console.log(className, name);
+
 				/**
 				*
 				* 1 - create the quiddity without name
@@ -71,14 +70,12 @@ define([
 				//create first quiddity for get the good properties
 				collections.quidds.create(className, name, function(quiddName)
 				{
-					views.global.notification("info", quiddName+" ("+className+") is created"); //notification
-					var model = new QuiddModel({name : quiddName, class : className, encoder_category : category});
-					collections.quidds.add(model);
+					var model = collections.quidds.createClientSide(quiddName, className);
+
 					//check if autoDetect it's true if yes we set the value device with device selected
-					
-					console.log("device detected : ", deviceDetected);
 					if(deviceDetected)
 					{
+						console.log("device detected : ", deviceDetected);
 						model.setPropertyValue("device", deviceDetected, function(ok){
 							that.getPropertiesAndMethods(model);
 						});

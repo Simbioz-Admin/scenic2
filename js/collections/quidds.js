@@ -17,12 +17,13 @@ define([
 		    	console.log("init collection quidds");
 		    	var that = this;
 
+
+
+
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd)
 		    	{
-		    		var model = new QuiddModel(quidd);
-		    		that.add(model);
-		    		views.global.notification("info", quidd.name+" ("+quidd.class+") is created");
+		    		that.createClientSide(quidd.name, quidd.class);
 		    	});
 
 		    	socket.on("signals_properties", function(quiddName, prop, value)
@@ -88,6 +89,14 @@ define([
 		    		callback(quidd);
 		    	});
 		    },
+		    createClientSide : function(quiddName, className)
+		    {
+		    	//create a model and add to the collection
+	    		var model = new QuiddModel({ name : quiddName, class : className });
+	    		this.add(model);
+	    		views.global.notification("info", quiddName+" ("+className+") is created");
+	    		return model;
+		    }
 		    // delete : function(quiddName)
 		    // {
 		    // 	socket.emit("remove", quiddName);

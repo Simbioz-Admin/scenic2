@@ -63,11 +63,11 @@
 		</select>
 
 		<% _.each(methods, function(method){  %>
-			<% if(method.name == "start"){ console.log(method.name); %>
+			<% if(method.name == "start"){ %>
 				<a href="#" id="methodStart">START</a>
 			<% }else{ %>
 				<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
-				<% _.each(method["arguments"], function(argument){ console.log(argument);%>
+				<% _.each(method["arguments"], function(argument){ %>
 				<input type="text" >
 				<% }); %>
 			<% } %>

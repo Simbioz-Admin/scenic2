@@ -18,8 +18,8 @@ define([
 			initialize : function()
 			{
 				var that = this;
-				
-				//get properties and methods when quidd is created
+
+				//get properties, methods and shmdatas when quidd is created
 				that.getShmdatas(function(shmdatas){
 					that.getProperties(function(){
 						that.getMethodsDescription(function(){
@@ -40,20 +40,14 @@ define([
 					});
 				});
 				
-
-				
-				// if(this.collection)
-				// {
-				// 	this.setShmdatas(function(ok){
-				// 		var view = new ViewQuidd({ model : that, table : "transfert"});
-				// 		var view2 = new ViewQuidd({model : that, table : "control"});
-				// 	});
-				// }
 			},
-
-			remove : function()
+			edit : function()
 			{
-				this.destroy();
+				views.quidds.openPanel(this.get("name"), this.get("properties"), this.get("methods"), this.get("encoder_category"));
+			},
+			delete : function()
+			{
+				socket.emit("remove", this.get("name"));
 			},
 			setPropertyValue : function(property, value, callback)
 			{

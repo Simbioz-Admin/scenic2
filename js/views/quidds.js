@@ -20,21 +20,6 @@ define([
 			initialize : function()
 			{
 				console.log("init QuiddsView");
-				//this.displayTitle();
-
-				var that = this;
-				// this.collection.bind("add", function(model)
-				// {
-				// 	var view = new ViewQuidd({model : model, table : "transfert"});
-				// 	var view2 = new ViewQuidd({model : model, table : "control"});
-					
-				// });
-				
-				// this.collection.bind("remove", function(model)
-				// {
-				// 	that.displayTitle();
-				// });
-
 			},
 			//open the lightbox and show the properties to define for create the quidd Source
 			defineName : function(element)

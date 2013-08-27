@@ -26,6 +26,14 @@ define([
 		    		that.createClientSide(quidd.name, quidd.class);
 		    	});
 
+		    	socket.on("remove", function(quidd)
+		    	{
+		    		var model =  that.get(quidd);
+		    		model.trigger('destroy', model, that);
+	    			views.global.notification("info", quidd+"  has deleted");
+
+		    	});
+
 		    	socket.on("signals_properties", function(quiddName, prop, value)
 		    	{
 		    		if(prop == "byte-rate") var test = ""; //views.quidds.stateShmdata(quiddName, value);

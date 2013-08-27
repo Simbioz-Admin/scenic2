@@ -8,9 +8,13 @@ define([
 			tagName : 'table',
 			className : 'source',
 			table : null,
-			events : {},
+			events : {
+				"click .edit" : "edit",
+				"click .remove" : "removeClick"
+			},
 			initialize : function()
 			{
+				this.model.on('remove', this.removeView, this);
 				this.table = this.options.table;
 				var that = this
 				, 	shmdatas = this.model.get("shmdatas")
@@ -30,6 +34,18 @@ define([
 				});
 
 				$("#"+that.table+" .sources").prepend($(that.el));
+			},
+			edit : function()
+			{
+				this.model.edit();
+			},
+			removeClick : function()
+			{
+				this.model.delete();
+			},
+			removeView : function()
+			{
+				this.remove();
 			}
 		});
 

@@ -8,9 +8,13 @@ define([
 			tagName : 'td',
 			className : 'nameInOut',
 			table : null,
-			events : {},
+			events : {
+				"click .edit" : "edit",
+				"click .remove" : "removeClick"
+			},
 			initialize : function()
 			{
+				this.model.on('remove', this.removeView, this);
 				this.table = this.options.table;
 
 				var that = this
@@ -22,6 +26,18 @@ define([
 					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");
 				});
 
+			},
+			edit : function()
+			{
+				this.model.edit();
+			},
+			removeClick : function()
+			{
+				this.model.delete();
+			},
+			removeView : function()
+			{
+				this.remove();
 			}
 		});
 

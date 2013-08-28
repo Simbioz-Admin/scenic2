@@ -125,6 +125,12 @@ define([
 						$("#deviceDetected").append(li);
 					});
 				});
+			},
+			updateVuMeter : function(quiddName, value)
+			{
+				var shmdata = quiddName.replace("vumeter_", "");
+				if(value > 0) $("[data-path='"+shmdata+"']").removeClass("inactive").addClass("active");
+				else $("[data-path='"+shmdata+"']").removeClass("active").addClass("inactive");
 			}
 			
 		});

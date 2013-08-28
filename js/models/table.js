@@ -19,7 +19,7 @@ define([
 				"name" : null,
 				"type" : null,
 				"description" : null,
-				"menus" : { sources : {type : "", value : null }, destinations :  {type : "", value : null }}
+				"menus" : { sources : {type : "", name : null, value : null }, destinations :  {type : "", name : null, value : null }}
 			},
 			initialize : function(){
 				console.log("the table", this.get("name"), "are created");

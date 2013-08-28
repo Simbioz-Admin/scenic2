@@ -4,9 +4,9 @@
 
 <div id="headerTable">
 	<ul class="menuTable headerMenu">
-		<% _.each(menus, function(menu, name){ %>
+		<% _.each(menus, function(menu){ %>
 			<li>
-				<div class="btnCreate" id="create-<%=menu.type%>">+ <%=name%></div>
+				<div class="btnCreate" id="create-<%=menu.type%>">+ <%=menu.name%></div>
 				<% if(menu.value){ %>
 				<ul>
 					<% _.each(menu.value, function(link, name){ %>

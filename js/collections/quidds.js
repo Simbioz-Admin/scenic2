@@ -32,11 +32,13 @@ define([
 
 		    	socket.on("signals_properties", function(quiddName, prop, value)
 		    	{
-		    		if(prop == "byte-rate") var test = ""; //views.quidds.stateShmdata(quiddName, value);
+		    		if(prop == "byte-rate")
+		    		{
+		    			views.quidds.updateVuMeter(quiddName, value)
+		    		} 
 		    		else
 		    		{
 		    			console.log("set locally :", quiddName, prop, value);
-
 		    			var model = collections.quidds.get(quiddName);
 		    			if(model)
 		    			{

@@ -45,8 +45,8 @@ define([
 			    			model.setLocalpropertyValue(prop, value);
 
 		    				//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
-			    			var input = $("[name$='"+prop+"']");
-			    			if(input) input.val(value);
+			    			//var input = $("[name$='"+prop+"']");
+			    			//if(input) input.val(value);
 		    			}
 		    		}
 		    	});
@@ -99,6 +99,10 @@ define([
 		    		callback(quidd);
 		    	});
 		    },
+		    delete : function(quiddName)
+			{
+				socket.emit("remove",quiddName);
+			},
 		    createClientSide : function(quiddName, className)
 		    {
 		    	//create a model and add to the collection

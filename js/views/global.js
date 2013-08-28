@@ -136,8 +136,12 @@ define([
 			},
 			closePanel : function(e)
 			{
-
+				//use fore delete quidd add method start with no method start launch
+				if($("#removeQuidd").val())
+					collections.quidds.delete($("#removeQuidd").val());
+				
 				$("#panelRight").hide();
+
 				// $("#panelLeft").delay(100).animate({width : "100%"});
 				// $("#panelRight").animate({width : "0px"});
 			},
@@ -148,7 +152,7 @@ define([
 			keyboardAction : function(event)
 			{
 				var that = this;
-			    if(event.which == 27) 	$("#panelRight").hide();
+			    if(event.which == 27) this.closePanel();
 			},
 			stateCheckbox : function(){
 					

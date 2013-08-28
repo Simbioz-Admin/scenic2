@@ -16,7 +16,14 @@ define([
 			initialize : function()
 			{
 				this.model.on('remove', this.removeView, this);
+				this.model.on('change', this.render, this);
 				this.table = this.options.table;
+				this.render();
+
+			},
+			render : function()
+			{
+				$(this.el).html("");
 				var that = this
 				, 	shmdatas = this.model.get("shmdatas")
 				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);

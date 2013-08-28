@@ -12,7 +12,9 @@ define([
 				"click .createDevice[data-name], .deviceDetected li" : "defineName",
 				"click #create" : "create",
 				"change input.property, select.property" : "setProperty",
-				//'click #methodStart' : 'start',
+				'click #methodStart' : 'methodStart',
+				'click #methodStop' : 'methodStop',
+
 				//'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
 				//'click .edit' : 'openPanelEdit'
@@ -68,7 +70,7 @@ define([
 					else that.getPropertiesAndMethods(model);
 				});
 			},
-			getPropertiesAndMethods : function(model)
+			getPropertiesAndMethods : function(model, callback)
 			{
 				var that = this;
 				model.getProperties(function(properties)
@@ -78,6 +80,7 @@ define([
 						//retrive list encoder 
 						var encoders = collections.classesDoc.getByCategory(model.get("encoder_category")).toJSON();
 						that.openPanel(model.get("name"), properties, methods, encoders);
+						if(callback) callback("ok");
 					});
 				});
 			},
@@ -131,6 +134,26 @@ define([
 				var shmdata = quiddName.replace("vumeter_", "");
 				if(value > 0) $("[data-path='"+shmdata+"']").removeClass("inactive").addClass("active");
 				else $("[data-path='"+shmdata+"']").removeClass("active").addClass("inactive");
+			}, 
+			methodStart : function()
+			{
+				var that = this
+				, model = collections.quidds.get($("#quiddName").val());
+
+				model.setMethod("start", [true], function(){
+					$("#removeQuidd").remove();
+					//the method has set correctly now we refresh properties in panel
+					that.getPropertiesAndMethods(model);
+				});
+			},
+			methodStop : function()
+			{
+				var that = this
+				,	model = collections.quidds.get($("#quiddName").val());
+
+				model.setMethod("stop", [true], function(){
+					that.getPropertiesAndMethods(model);
+				});
 			}
 			
 		});

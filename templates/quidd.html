@@ -63,14 +63,23 @@
 		</select>
 
 		<% _.each(methods, function(method){  %>
-			<% if(method.name == "start"){ %>
-				<a href="#" id="methodStart">START</a>
-			<% }else{ %>
-				<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
-				<% _.each(method["arguments"], function(argument){ %>
-				<input type="text" >
-				<% }); %>
-			<% } %>
+			<% 
+			if(method.name != "set_runtime"){
+				if(method.name == "start"){ %>
+
+					<input type="hidden" id="removeQuidd" value="<%=quiddName%>" />
+					<a href="#" id="methodStart" class="btnMethod btn">START</a>
+				<% }else if(method.name == "stop"){ %>
+					<a href="#" id="methodStop" class="btnMethod btn">STOP</a>
+
+				<% }else{ %>
+					<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
+					<% _.each(method["arguments"], function(argument){ %>
+					<input type="text" >
+					<% }); %> 	
+				<% } %> 	
+
+		<%	} %>
 		<% }); %>
 
 

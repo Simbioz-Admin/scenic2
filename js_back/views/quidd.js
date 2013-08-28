@@ -87,10 +87,10 @@ define([
 					,	encoders = collections.classesDoc.getByCategory(this.model.get("encoder_category")).toJSON();
 					views.quidds.openPanel(this.model.get("name"), this.model.get("properties"), this.model.get("methods"), encoders);
 			},
-			preview : function(event){
+			preview : function(element){
 
 				var quidd = this.model.get("name")
-				,	path = $(event.target).closest('tr').data("path")
+				,	path = $(element.target).closest('tr').data("path")
 				,	type = null;
 				
 				collections.quidds.getPropertyValue("vumeter_"+path, "caps", function(info)

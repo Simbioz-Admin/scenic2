@@ -10,7 +10,8 @@ define([
 			table : null,
 			events : {
 				"click .edit" : "edit",
-				"click .remove" : "removeClick"
+				"click .remove" : "removeClick",
+				"click .preview" : "preview"
 			},
 			initialize : function()
 			{
@@ -30,7 +31,20 @@ define([
 										sourceName : that.model.get("name"),
 										destinations : destinations
 									});
-					$(that.el).append($(template));	
+					$(that.el).append($(template));
+
+
+					//get info about vumeter for know if we can create a preview
+					setTimeout(function(){
+						collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+						{
+							info = info.split(",");
+							if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
+								$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
+						});
+					}, 500);
+
+
 				});
 
 				$("#"+that.table+" .sources").prepend($(that.el));
@@ -46,6 +60,10 @@ define([
 			removeView : function()
 			{
 				this.remove();
+			},
+			preview : function(element)
+			{
+				this.model.preview(element);
 			}
 		});
 

@@ -49,6 +49,29 @@ define([
 			{
 				socket.emit("remove", this.get("name"));
 			},
+			preview : function(element)
+			{
+				var path = $(element.target).closest('tr').data("path")
+				,	type = null
+				,	that = this;
+				
+				console.log(path);				
+				collections.quidds.getPropertyValue("vumeter_"+path, "caps", function(info)
+				{
+					info = info.split(",");
+
+					if(info[0].indexOf("video") >= 0) type = "gtkvideosink";
+					if(info[0].indexOf("audio") >= 0) type = "pulsesink";
+
+					if(type != null)
+					{
+						collections.quidds.create(type, "sink-"+that.get("name"), function(quidd){
+							console.log(quidd, "connect", [path]);
+							socket.emit("invoke", quidd, "connect", [path]);
+						});
+					}
+				});
+			},
 			setPropertyValue : function(property, value, callback)
 			{
 				var that = this;

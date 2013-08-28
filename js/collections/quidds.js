@@ -106,7 +106,13 @@ define([
 	    		this.add(model);
 	    		views.global.notification("info", quiddName+" ("+className+") is created");
 	    		return model;
-		    }
+		    },
+		    getPropertyValue : function(nameQuidd, property, callback)
+		    {
+		    	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
+		    		callback(propertyValue);
+		    	});
+		    },
 		    // delete : function(quiddName)
 		    // {
 		    // 	socket.emit("remove", quiddName);
@@ -123,12 +129,6 @@ define([
 		    // 	socket.emit("getMethodsDescription", nameQuidd, function(methodsDescription)
 		    // 	{
 		    // 		callback(methodsDescription);
-		    // 	});
-		    // },
-		    // getPropertyValue : function(nameQuidd, property, callback)
-		    // {
-		    // 	socket.emit("get_property_value", nameQuidd, property, function(propertyValue){
-		    // 		callback(propertyValue);
 		    // 	});
 		    // },
 		    // getPropertiesWithValues : function(nameQuidd, callback)

@@ -33,12 +33,16 @@ define([
 			},
 			listQuiddsAndProperties : function(element)
 			{
-				console.log(this.model.get("type"));
-
 				var quidds = collections.quidds.toJSON();
 				$("#listQuiddsProperties").remove();
-				var template = _.template(TemplateMenu, {type : "control", menus : quidds});
-				$(element.target).after(template);
+				if(quidds.length > 0){
+					var template = _.template(TemplateMenu, {type : "control", menus : quidds});
+					$(element.target).after(template);
+				}
+				else
+				{
+					views.global.notification("error", "you need to create source before to add a property");
+				}
 			},
 			listByCategoryQuidds : function(element)
 			{

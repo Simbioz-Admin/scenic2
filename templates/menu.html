@@ -1,0 +1,36 @@
+<% if(type == "control") { %>
+	<% if(menus.length > 0){ %>
+		<ul id="listQuiddsProperties">
+			<% _.each(menus, function(menu){ %>
+				<li>
+					<%=menu["name"]%>
+					<ul>
+						<% _.each(menu["properties"], function(property){ %>
+							<% if(property["description"]["writable"] == "true"){ %>
+								<li class="createControlProperty" data-name="<%=property["name"]%>" ><%=property["name"]%></li>
+								<% } %>
+						<% }); %>
+					</ul>
+				</li>
+			<% }); %>
+		</ul>
+	<% } %>
+<% } %>
+
+<% if(type == "transfer") { %>
+	<% if(menus){ %>
+		<ul id="listQuiddsByCategory">
+			<% _.each(menus, function(link, name){ %>
+				<li>
+					<%=name%>
+					<ul>
+						<% _.each(link, function(name){ %>
+						<%  var autoDetect = _.contains(config.deviceAutoDetect, name["class name"]);	%>
+							<li class="createDevice<% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=name["class name"]%>" ><%=name["long name"]%></li>
+						<% }); %>
+					</ul>
+				</li>
+			<% }); %>
+		</ul>	
+	<% } %>
+<% } %>

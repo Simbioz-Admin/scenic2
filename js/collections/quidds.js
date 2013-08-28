@@ -20,6 +20,7 @@ define([
 		    	//receive notification for add quidd to the collection Quidds
 		    	socket.on("create", function(quidd)
 		    	{
+		    		console.log("NOOOOOOOOOOOOOOOOO");
 		    		that.createClientSide(quidd.name, quidd.class);
 		    	});
 

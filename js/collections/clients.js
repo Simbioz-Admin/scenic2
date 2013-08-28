@@ -56,7 +56,7 @@ define([
 		    		///*** set connection with another scenic computer ***//
 					if(portSoap)
 					{
-						if(portSoap.indexOf("http://") < 0) portSoap = "http://"+portSoap;
+						if(clientHost.indexOf("http://") < 0) clientHost = "http://"+clientHost;
 						var soapClient = "soapClient-"+clientName
 						,	addressClient = clientHost+":"+portSoap;
 						
@@ -64,8 +64,12 @@ define([
 						{
 							if(ok)
 							{
+								console.log("set_remote_url", addressClient)
 								socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok){ console.log("set_remote_url", ok); });
+								console.log("create",  ["httpsdpdec", config.nameComputer])
 								socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){ console.log("httpsdpdec", ok); });
+								socket.emit("invoke", soapClient, "create", ["videotestsrc", "newVideo"], function(ok){ console.log("httpsdpdec", ok); });
+
 							}
 						});
 					}

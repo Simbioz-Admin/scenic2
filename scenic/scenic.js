@@ -29,21 +29,40 @@ module.exports = function (config, switcher, $, _, io, log)
 		});
 		
 		switcher.register_signal_callback(function (qname, qprop, pvalue){
-		   log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
-		    
-	    	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
+		   log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 
-		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
-		    {
-		    	//when the quidd is create we create to a vumeter
-		    	createVuMeter(pvalue[0]);
+		   	var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
+		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created"){
+
+
+		    	//the socketId of the user created quidd is memories in config, we filtered for not send again "create"
+		    	var socketIdCreatedThisQuidd = false;
+			   _.each(config.listQuiddsAndSocketId, function(quiddAndSocketId, index)
+			   {
+			   		if(quiddAndSocketId.quiddName == pvalue[0])
+			   			socketIdCreatedThisQuidd = quiddAndSocketId.socketId;
+			   			config.listQuiddsAndSocketId.splice(index, 1);
+			   });
+			   	if(socketIdCreatedThisQuidd)
+					io.sockets.except(socketIdCreatedThisQuidd).emit("create", { name : pvalue[0], class : quiddClass });
+				else
+					io.sockets.emit("create", { name : pvalue[0], class : quiddClass });
+
+				createVuMeter(pvalue[0]);
 				sendShmdatas(pvalue[0]);	
 
-			 //    setTimeout(function(){
-				// 	var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-			 //    }, 1000)
+				setTimeout(function(){
+					var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
+				}, 1000);
+
+			}
+
+		  //   if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
+		  //   {
+		  //   	//when the quidd is create we create to a vumeter
+	
 			    
-		    }
+		  //   }
 		});
 
 		log("info", "scenic is now initialize");

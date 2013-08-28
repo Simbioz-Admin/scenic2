@@ -33,10 +33,24 @@ define([
 			},
 			listQuiddsAndProperties : function(element)
 			{
-				var quidds = collections.quidds.toJSON();
+				var quiddsMenu = {};
+				//check for remove properties already create for control
+				collections.quidds.each( function(quidd)
+					{
+						var listProperties = [];
+						_.each(quidd.get("properties"), function(property)
+						{
+							if(!collections.controlProperties.get(quidd.get("name")+"_"+property.name) && property.description.writable == "true")
+							{
+								listProperties.push(property.name);
+								quiddsMenu[quidd.get("name")] = listProperties;
+							}
+						});
+					});
+
 				$("#listQuiddsProperties").remove();
-				if(quidds.length > 0){
-					var template = _.template(TemplateMenu, {type : "control", menus : quidds});
+				if(!$.isEmptyObject(quiddsMenu)){
+					var template = _.template(TemplateMenu, {type : "control", menus : quiddsMenu});
 					$(element.target).after(template);
 				}
 				else

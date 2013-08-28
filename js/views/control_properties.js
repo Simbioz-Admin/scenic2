@@ -6,7 +6,7 @@ define([
 		var ViewsControlProperties = Backbone.View.extend({
 			el : 'body',
 			events : {
-				//"click #create-quiddsProperties" : "listQuiddsAndProperties"
+				"click .create-ControlProperty" : "createControlProperty"
 			},
 			initialize : function()
 			{
@@ -16,6 +16,14 @@ define([
 			{
 				var quidds = collections.quidds.toJSON();
 				console.log(quidds);
+			},
+			createControlProperty : function(element)
+			{
+				var property = $(element.target).data("property")
+				,	quiddName = $(element.target).closest("ul").data("quiddname");
+				
+				this.collection.add({name : quiddName+"_"+property, property : property, quiddName : quiddName});
+				$(element.target).remove();
 			}
 		});
 

@@ -1,20 +1,16 @@
 <% if(type == "control") { %>
-	<% if(menus.length > 0){ %>
-		<ul id="listQuiddsProperties">
-			<% _.each(menus, function(menu){ %>
-				<li>
-					<%=menu["name"]%>
-					<ul>
-						<% _.each(menu["properties"], function(property){ %>
-							<% if(property["description"]["writable"] == "true"){ %>
-								<li class="createControlProperty" data-name="<%=property["name"]%>" ><%=property["name"]%></li>
-								<% } %>
-						<% }); %>
-					</ul>
-				</li>
-			<% }); %>
-		</ul>
-	<% } %>
+	<ul id="listQuiddsProperties">
+		<% _.each(menus, function(menu, name){ %>
+			<li>
+				<%=name%>
+				<ul data-quiddname="<%=name%>">
+					<% _.each(menu, function(property){ %>
+							<li class="create-ControlProperty" data-property="<%=property%>" ><%=property%></li>
+					<% }); %>
+				</ul>
+			</li>
+		<% }); %>
+	</ul>
 <% } %>
 
 <% if(type == "transfer") { %>

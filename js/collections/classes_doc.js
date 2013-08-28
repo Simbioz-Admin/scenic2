@@ -11,7 +11,7 @@ define([
 		        return results.classes;
 		    },
 		    initialize : function(){
-		    	console.log("init collection classesDoc");
+		    	//console.log("init collection classesDoc");
 		    },
 		    getProperties : function(className, callback){
 		    	socket.emit("getPropertiesOfClass", className, function(propertiesOfClass){

@@ -7,23 +7,7 @@
 		<% _.each(menus, function(menu){ %>
 			<li>
 				<div class="btnCreate" id="create-<%=menu.type%>">+ <%=menu.name%></div>
-				<% if(menu.value){ %>
-				<ul>
-					<% _.each(menu.value, function(link, name){ %>
-						<li>
-							<%=name%>
-							<ul>
-								<% _.each(link, function(name){ %>
-								<%  var autoDetect = _.contains(config.deviceAutoDetect, name["class name"]);	%>
-									<li class="createDevice<% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=name["class name"]%>" ><%=name["long name"]%></li>
-								<% }); %>
-							</ul>
-						</li>
-					<% }); %>
-				</ul>
-				<% } %>
 			</li>
-			
 		<% }); %>
 	</ul>
 </div><!-- headerTable -->

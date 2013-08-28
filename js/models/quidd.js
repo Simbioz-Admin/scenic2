@@ -31,10 +31,6 @@ define([
 				    			{
 				    				var viewSource = new ViewSource({model : that, table : "transfer"});
 				    			}
-				    			if(table.type == "control")
-				    			{
-				    				var viewDestination = new ViewDestination({ model : that, table : "control" });
-				    			}
 				    		});
 						});
 					});

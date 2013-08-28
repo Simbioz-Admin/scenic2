@@ -12,12 +12,6 @@ define([
 		    initialize : function()
 		    {
 		    	console.log("init CollectionControlProperties");
-
-		    	//create control for test
-				this.add({ name : "video_saturation", property : "saturation", quiddName : "video" });
-				this.add({ name : "video_brightness", property : "brightness", quiddName : "video" });
-
-		    	
 		    }
 		});
 

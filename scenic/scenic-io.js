@@ -107,10 +107,21 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		socket.on("invoke", function(quiddName, method, parameters, callback){
 			var invoke = switcher.invoke(quiddName, method, parameters);
 			if(callback) callback(invoke);
+
 			if(method == "add_destination")
 				io.sockets.emit("add_destination", invoke, quiddName, parameters);
+
 			if(method == "remove_destination")
 				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
+
+			if(method == "add_udp_stream_to_dest")
+				io.sockets.emit("add_connection", invoke, quiddName, parameters)
+				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");
+				
+			if(method == "remove_udp_stream_to_dest")
+				io.sockets.emit("remove_connection", invoke, quiddName, parameters);
+				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
+						
 			
 			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});

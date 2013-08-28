@@ -28,6 +28,14 @@ define([
 	    			views.global.notification("info","client "+ parameters[0]+" has deleted");
 		    	});
 
+		    	socket.on("add_connection", function(invoke, quiddName, parameters){
+					$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");
+		    	})
+
+		    	socket.on("remove_connection", function(invoke, quiddName, parameters){
+		    		$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
+		    	})
+
 		    	// this.bind("add", function(model)
 		    	// {
 		    	// 	var view = new ViewDestination({model : model});

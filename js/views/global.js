@@ -69,7 +69,7 @@ define([
 
 				if(box.hasClass("active"))
 				{
-					views.methods.setMethod("defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
+					socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
 				}
 				else
 				{
@@ -87,14 +87,15 @@ define([
 					,	port = $(event.target).val();
 
 					//add to the session the shmdata 
-					views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
+					//views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
+					socket.emit("invoke","defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
 					//connect shmdata to destination
-					views.methods.setMethod("defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
+					socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
 						console.log("uridecodebin remote", destName);
 						
 						setTimeout(function()
 							{
-								views.methods.setMethod("soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.host+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
+								socket.emit("invoke", "soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.host+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
 									function(ok){
 										console.log("ok?", ok);
 									})

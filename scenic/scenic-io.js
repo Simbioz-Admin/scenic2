@@ -39,7 +39,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			if(quiddName)
 			{
 				//subscribe to the all properties
-				config.listQuiddsAndSocketId.push({quiddName : quiddName, socketId : socket.id});
+				config.listQuiddsAndSocketId[quiddName] = socket.id;
 				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 				_.each(properties, function(property)
 				{

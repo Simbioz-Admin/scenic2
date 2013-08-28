@@ -21,6 +21,7 @@ define([
 		    	socket.on("create", function(quidd)
 		    	{
 		    		console.log("NOOOOOOOOOOOOOOOOO");
+		    		console.log(quidd);
 		    		that.createClientSide(quidd.name, quidd.class);
 		    	});
 

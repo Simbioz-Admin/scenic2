@@ -37,12 +37,15 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		    	//the socketId of the user created quidd is memories in config, we filtered for not send again "create"
 		    	var socketIdCreatedThisQuidd = false;
-			   _.each(config.listQuiddsAndSocketId, function(quiddAndSocketId, index)
+		    	console.log(config.listQuiddsAndSocketId);
+			   _.each(config.listQuiddsAndSocketId, function(socketId, quiddName)
 			   {
-			   		if(quiddAndSocketId.quiddName == pvalue[0])
-			   			socketIdCreatedThisQuidd = quiddAndSocketId.socketId;
-			   			config.listQuiddsAndSocketId.splice(index, 1);
+			   		console.log("compare : ",quiddName ,pvalue[0]  );
+			   		if(quiddName == pvalue[0])
+			   			socketIdCreatedThisQuidd = socketId;
+			   			delete config.listQuiddsAndSocketId[quiddName];
 			   });
+			   console.log(socketIdCreatedThisQuidd);
 			   	if(socketIdCreatedThisQuidd)
 					io.sockets.except(socketIdCreatedThisQuidd).emit("create", { name : pvalue[0], class : quiddClass });
 				else

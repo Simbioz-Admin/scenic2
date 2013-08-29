@@ -137,9 +137,6 @@ define([
 			closePanel : function(e)
 			{
 				//use fore delete quidd add method start with no method start launch
-				if($("#removeQuidd").val())
-					collections.quidds.delete($("#removeQuidd").val());
-				
 				$("#panelRight").hide();
 
 				// $("#panelLeft").delay(100).animate({width : "100%"});

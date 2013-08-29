@@ -138,9 +138,7 @@ define([
 			{
 				var that = this
 				, model = collections.quidds.get($("#quiddName").val());
-
 				model.setMethod("start", [true], function(){
-					$("#removeQuidd").remove();
 					//the method has set correctly now we refresh properties in panel
 					that.getPropertiesAndMethods(model);
 				});

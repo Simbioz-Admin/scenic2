@@ -29,32 +29,43 @@ define([
 				, 	shmdatas = this.model.get("shmdatas")
 				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
 
-				_.each(shmdatas, function(shmdata, index)
+
+				if(shmdatas.length != 0){
+					_.each(shmdatas, function(shmdata, index)
+					{
+						var template = _.template(TemplateSource, 
+										{
+											shmdata : shmdata, 
+											index : index, 
+											nbShmdata :  shmdatas.length, 
+											sourceName : that.model.get("name"),
+											destinations : destinations
+										});
+						$(that.el).append($(template));
+
+
+						//get info about vumeter for know if we can create a preview
+						setTimeout(function(){
+							collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
+							{
+								info = info.split(",");
+								console.log(info);
+								if(info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") 
+									$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
+							});
+						}, 500);
+					});
+				}
+				else
 				{
 					var template = _.template(TemplateSource, 
-									{
-										shmdata : shmdata, 
-										index : index, 
-										nbShmdata :  shmdatas.length, 
-										sourceName : that.model.get("name"),
-										destinations : destinations
-									});
-					$(that.el).append($(template));
-
-
-					//get info about vumeter for know if we can create a preview
-					setTimeout(function(){
-						collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
 						{
-							info = info.split(",");
-							if(info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") 
-								$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
+							sourceName : that.model.get("name"),
+							shmdata : null
 						});
-					}, 500);
+						$(that.el).append($(template));
 
-
-				});
-
+				}
 
 				//here we define were go the source  vhttpsdpdec
 				if(this.model.get("class") == "httpsdpdec")

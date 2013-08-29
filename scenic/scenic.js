@@ -40,7 +40,6 @@ module.exports = function (config, switcher, $, _, io, log)
 		    	console.log(config.listQuiddsAndSocketId);
 			   _.each(config.listQuiddsAndSocketId, function(socketId, quiddName)
 			   {
-			   		console.log("compare : ",quiddName ,pvalue[0]  );
 			   		if(quiddName == pvalue[0])
 			   			socketIdCreatedThisQuidd = socketId;
 			   			delete config.listQuiddsAndSocketId[quiddName];
@@ -60,12 +59,6 @@ module.exports = function (config, switcher, $, _, io, log)
 
 			}
 
-		  //   if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created")
-		  //   {
-		  //   	//when the quidd is create we create to a vumeter
-	
-			    
-		  //   }
 		});
 
 		log("info", "scenic is now initialize");

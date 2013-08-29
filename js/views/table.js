@@ -18,7 +18,7 @@ define([
 				var active = (config.defaultPanelTable == this.model.get("type") ? "active" : "");
 				var btnTable = $("<div></div>",{ 
 					text : "",
-					class : "tabTable "+active,
+					class : "tabTable "+this.model.get("type")+" "+active,
 					data : { type : this.model.get("type") }
 				});
 				$("#panelTables").append(btnTable);		

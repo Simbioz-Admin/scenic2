@@ -183,7 +183,7 @@ define([
 				console.log("ask for saving");
 				socket.emit("save", "save.scenic", function(ok)
 				{
-					console.log("save return :", ok);
+					views.global.notification("info","save return :", ok);
 				})
 
 			},

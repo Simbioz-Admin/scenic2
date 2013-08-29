@@ -11,8 +11,8 @@ module.exports = function (config, switcher, $, _, io, log)
 		var dico = switcher.create("dico", "dico");
 		//create the properties controlProperties for stock properties of quidds for control
 		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-		var json = [{ name : "videotest_freq", quiddName : "videotest", property : "freq" },{ name : "videotest_saturation", quiddName : "videotest", property : "saturation" } ];
-		switcher.set_property_value(dico, "controlProperties", JSON.stringify(json));
+		//var json = [{ name : "videotest_freq", quiddName : "videotest", property : "freq" },{ name : "videotest_saturation", quiddName : "videotest", property : "saturation" } ];
+		//switcher.set_property_value(dico, "controlProperties", JSON.stringify(json));
 
 		switcher.register_log_callback(function (msg)
 		{
@@ -118,6 +118,7 @@ module.exports = function (config, switcher, $, _, io, log)
 
 	function getQuiddPropertiesWithValues(quiddName)
 	{
+		console.log("QUIDDNAME", quiddName);
 		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 		//recover the value set for the properties
 		$.each(propertiesQuidd, function(index, property)

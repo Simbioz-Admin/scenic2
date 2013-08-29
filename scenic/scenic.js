@@ -35,20 +35,29 @@ module.exports = function (config, switcher, $, _, io, log)
 		    if(!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created"){
 
 
+		    	//we subscribe all properties of quidd created
+		    	var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
+				_.each(properties, function(property)
+				{
+					switcher.subscribe_to_property(pvalue[0], property.name);
+				});
+
 		    	//the socketId of the user created quidd is memories in config, we filtered for not send again "create"
 		    	var socketIdCreatedThisQuidd = false;
-		    	console.log(config.listQuiddsAndSocketId);
 			   _.each(config.listQuiddsAndSocketId, function(socketId, quiddName)
 			   {
 			   		if(quiddName == pvalue[0])
 			   			socketIdCreatedThisQuidd = socketId;
 			   			delete config.listQuiddsAndSocketId[quiddName];
 			   });
-			   console.log(socketIdCreatedThisQuidd);
 			   	if(socketIdCreatedThisQuidd)
+			   	{
 					io.sockets.except(socketIdCreatedThisQuidd).emit("create", { name : pvalue[0], class : quiddClass });
+			   	}
 				else
+				{
 					io.sockets.emit("create", { name : pvalue[0], class : quiddClass });
+				}
 
 				createVuMeter(pvalue[0]);
 				sendShmdatas(pvalue[0]);	

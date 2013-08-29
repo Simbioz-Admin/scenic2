@@ -40,11 +40,11 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			{
 				//subscribe to the all properties
 				config.listQuiddsAndSocketId[quiddName] = socket.id;
-				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-				_.each(properties, function(property)
-				{
-					switcher.subscribe_to_property(quiddName, property.name);
-				});
+				// var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				// _.each(properties, function(property)
+				// {
+				// 	switcher.subscribe_to_property(quiddName, property.name);
+				// });
 				callback(quiddName);
 				//socket.broadcast.emit("create", { name : quiddName, class : className});
 

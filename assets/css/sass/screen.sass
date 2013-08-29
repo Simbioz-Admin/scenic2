@@ -654,7 +654,7 @@ td
 #tempi-snake
 	#titleHeader
 		border : none
-	#testTable
+	.tableScenic
 		margin-left : 30px
 	#titleIn
 		margin : 165px 0 10px 1px
@@ -702,7 +702,32 @@ td
 				cursor : pointer
 
 
-#testTable
+.sources
+	position : relative
+	.source:first-child
+		margin-top : 30px
+		&:before
+			content : "Remote sources"
+			//font-family: "Irma Light"
+			background : #333
+			padding : 2px 5px
+			color : white
+			position : absolute
+			top : 14px
+			left : 5px
+			+border-radius(3px 3px 0 0 )
+
+#remote-sources .source:first-child:before
+	content : "Remote sources"
+
+#local-sources .source:first-child
+	margin-top : 15px
+	&:before
+		top : 0px
+		content : "Local sources"
+
+
+.tableScenic
 	float : left
 	display : block
 	padding-top : 31px
@@ -716,7 +741,7 @@ td
 	min-width : 420px
 
 	table.source
-		margin: 0 0 5px 30px
+		margin: 0 0 5px 0px
 		// &:nth-child(odd) 
 		// 	background : #eee
 		// &:nth-child(even)
@@ -726,7 +751,7 @@ td
 			&:after
 				content : ""
 				position : absolute
-				left : 280px
+				left : 250px
 				margin-top : 9px
 				// top : 5px
 				z-index : 20
@@ -761,12 +786,13 @@ td
 
 		.status
 			top : 0px
+			right : 0
 			border-bottom : 1px solid #ccc
 		.info
 			cursor : help
 
 	.infoTable
-		width : 288px
+		width : 258px
 		padding : 0
 		border : none
 
@@ -1794,9 +1820,3 @@ html[xmlns] .clearfix
 	table
 		border-collapse : inherit!important
 		border-spacing : 2px!important
-
-	#globalTable 
-		#titleIn
-			margin : 146px 0 19px 2px
-		#titleOut
-			margin : 55px 17px 0 308px

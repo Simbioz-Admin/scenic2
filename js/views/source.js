@@ -55,7 +55,18 @@ define([
 
 				});
 
-				$("#"+that.table+" .sources").prepend($(that.el));
+
+				//here we define were go the source  vhttpsdpdec
+				if(this.model.get("class") == "httpsdpdec")
+				{
+					$("#"+that.table+" #remote-sources").prepend($(that.el));
+				}
+				else
+				{
+					$("#"+that.table+" #local-sources").prepend($(that.el));
+				}
+
+
 			},
 			edit : function()
 			{

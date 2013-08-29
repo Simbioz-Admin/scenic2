@@ -7,6 +7,12 @@ module.exports = function (config, switcher, $, _, io, log)
 		switcher.create("rtpsession", "defaultrtp");
 		switcher.create("SOAPcontrolServer", "soap");
 		switcher.invoke("soap", "set_port", [config.port.soap]);
+		//create default dico for stock information
+		var dico = switcher.create("dico", "dico");
+		//create the properties controlProperties for stock properties of quidds for control
+		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
+		var json = [{ name : "videotest_freq", quiddName : "videotest", property : "freq" },{ name : "videotest_saturation", quiddName : "videotest", property : "saturation" } ];
+		switcher.set_property_value(dico, "controlProperties", JSON.stringify(json));
 
 		switcher.register_log_callback(function (msg)
 		{
@@ -18,7 +24,7 @@ module.exports = function (config, switcher, $, _, io, log)
 		{
 			if(qprop != "byte-rate")
 				log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
-			
+		
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
 			if(qprop == "shmdata-writers")

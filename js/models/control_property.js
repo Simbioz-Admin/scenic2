@@ -23,6 +23,11 @@ define([
 					}
 	    		});
 
+			},
+			delete : function()
+			{
+				console.log("DELETE PROP");
+				socket.emit("removeValuePropertyOfDico", "controlProperties", this.get("name"));
 			}
 		});
 

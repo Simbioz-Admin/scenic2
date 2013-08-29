@@ -22,7 +22,7 @@ define([
 				var property = $(element.target).data("property")
 				,	quiddName = $(element.target).closest("ul").data("quiddname");
 				
-				this.collection.add({name : quiddName+"_"+property, property : property, quiddName : quiddName});
+				this.collection.setDico(quiddName, property);
 				$(element.target).remove();
 			}
 		});

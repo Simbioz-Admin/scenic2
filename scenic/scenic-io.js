@@ -63,6 +63,33 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			io.sockets.emit("remove", quiddName);
 		});
 
+		socket.on("setPropertyValueOfDico", function(property, value)
+		{
+			var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+			if(currentValueDicoProperty)
+				currentValueDicoProperty[currentValueDicoProperty.length] = value;
+			else
+				var currentValueDicoProperty = [value];
+
+			switcher.set_property_value("dico", property, JSON.stringify(currentValueDicoProperty));
+			io.sockets.emit("setDicoValue", property, value);
+
+		});
+
+		socket.on("removeValuePropertyOfDico", function(property, name)
+		{
+			var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+			var newValuesDico = [];
+			_.each(currentValuesDicoProperty, function(value)
+			{
+				if(value.name != name)
+					newValuesDico.push(value);
+			});
+			switcher.set_property_value("dico", property, JSON.stringify(newValuesDico));
+			io.sockets.emit("removeValueOfPropertyDico", property, name);
+		});
+
+
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
 
 			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY

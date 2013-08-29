@@ -38,6 +38,10 @@ define([
 		    		{
 		    			views.quidds.updateVuMeter(quiddName, value)
 		    		} 
+		    		// else if(quiddName == "dico" && prop == "controlProperties")
+		    		// {
+		    		// 	collections.controlProperties.fetch();
+		    		// }
 		    		else
 		    		{
 		    			var model = collections.quidds.get(quiddName);
@@ -118,6 +122,13 @@ define([
 		    		callback(propertyValue);
 		    	});
 		    },
+		    setPropertyValue : function(nameQuidd, property, value, callback)
+		    {
+		    	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
+	    		{
+	    			if(callback) callback(ok);
+	    		});
+		    }
 		    // delete : function(quiddName)
 		    // {
 		    // 	socket.emit("remove", quiddName);
@@ -144,13 +155,6 @@ define([
 		    // 		callback(propertiesOfQuidd);
 		    // 	});
 		    // },
-		    // setPropertyValue : function(nameQuidd, property, value, callback)
-		    // {
-		    // 	socket.emit("setPropertyValue", nameQuidd, property, value, function(ok)
-	    	// 	{
-	    	// 		if(callback) callback(ok);
-	    	// 	});
-		    // }
 		});
 
 		return QuiddsCollection;

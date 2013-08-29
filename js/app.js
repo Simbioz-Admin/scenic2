@@ -28,7 +28,7 @@ define([
         collections.quidds.fetch();
 
         collections.controlProperties = new CollectionsControlProperties();
-
+        collections.controlProperties.fetch();
         //loading views
         views.clients = new ViewClients({collection : collections.clients});
         views.global = new ViewGlobal();

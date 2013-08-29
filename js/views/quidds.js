@@ -14,7 +14,6 @@ define([
 				"change input.property, select.property" : "setProperty",
 				'click #methodStart' : 'methodStart',
 				'click #methodStop' : 'methodStop',
-
 				//'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
 				//'click .edit' : 'openPanelEdit'

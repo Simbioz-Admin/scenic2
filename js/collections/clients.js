@@ -65,10 +65,12 @@ define([
 							if(ok)
 							{
 								console.log("set_remote_url", addressClient)
-								socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok){ console.log("set_remote_url", ok); });
+								socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok)
+								{ 
+									if(ok) views.global.notification("info", "scenic server detected")
+								});
 								console.log("create",  ["httpsdpdec", config.nameComputer])
 								socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){ console.log("httpsdpdec", ok); });
-								socket.emit("invoke", soapClient, "create", ["videotestsrc", "newVideo"], function(ok){ console.log("httpsdpdec", ok); });
 
 							}
 						});

@@ -1,8 +1,9 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source', 'views/destination'
-	],function(_, Backbone, ViewSource, ViewDestination){
+	'views/source', 'views/destination',
+	'text!/templates/panelInfoSource.html'
+	],function(_, Backbone, ViewSource, ViewDestination,infoTemplate){
 
 		var QuiddModel = Backbone.Model.extend({
 			url : "/quidd/",
@@ -66,6 +67,20 @@ define([
 							socket.emit("invoke", quidd, "connect", [path]);
 						});
 					}
+				});
+			},
+			info : function(element)
+			{
+				var shmdata = $(element.target).closest('tr').data("path");
+				var that = this;
+				collections.quidds.getPropertyValue("vumeter_"+shmdata, "caps", function(val)
+				{
+					val = val.replace(/,/g,"<br>");
+					var template = _.template(infoTemplate, { info : val, shmdata : shmdata });
+					$("#info").remove();
+					$("body").prepend(template);
+					$("#info").css({top : element.pageY, left : element.pageX}).show();
+					$(".panelInfo").draggable({ cursor: "move", handle: "#title"});
 				});
 			},
 			setPropertyValue : function(property, value, callback)

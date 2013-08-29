@@ -11,7 +11,8 @@ define([
 			events : {
 				"click .edit" : "edit",
 				"click .remove" : "removeClick",
-				"click .preview" : "preview"
+				"click .preview" : "preview",
+				'click .info' : 'info'
 			},
 			initialize : function()
 			{
@@ -71,6 +72,10 @@ define([
 			preview : function(element)
 			{
 				this.model.preview(element);
+			},
+			info : function(element)
+			{
+				this.model.info(element);
 			}
 		});
 

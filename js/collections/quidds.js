@@ -40,7 +40,6 @@ define([
 		    		} 
 		    		else
 		    		{
-		    			console.log("set locally :", quiddName, prop, value);
 		    			var model = collections.quidds.get(quiddName);
 		    			if(model)
 		    			{

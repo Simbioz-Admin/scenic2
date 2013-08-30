@@ -65,13 +65,6 @@ module.exports = function (config, switcher, $, _, io, log)
 					io.sockets.emit("create", { name : pvalue[0], class : quiddClass });
 				}
 
-				createVuMeter(pvalue[0]);
-				sendShmdatas(pvalue[0]);	
-
-				setTimeout(function(){
-					var shmdatas = $.parseJSON(switcher.get_property_value(pvalue[0], "shmdata-writers")).shmdata_writers;
-				}, 1000);
-
 			}
 
 		});
@@ -82,7 +75,7 @@ module.exports = function (config, switcher, $, _, io, log)
 	//create the vumeter for shmdata
 	function createVuMeter(quiddName)
 	{
-
+		console.log("TEST", switcher.get_property_value(quiddName, "shmdata-writers"));
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		$.each(shmdatas, function(index, shmdata)
 		{
@@ -103,15 +96,17 @@ module.exports = function (config, switcher, $, _, io, log)
 	function remove(quidd)
 	{
 		//remove the vumeter
-		var shmdatas = $.parseJSON(switcher.get_property_value(quidd, "shmdata-writers")).shmdata_writers;
-		$.each(shmdatas, function(index, shmdata)
-		{
-			console.log("remove vumeter", 'vumeter_'+shmdata.path);
-			//for the moment create a segmentation fault
-			switcher.remove('vumeter_'+shmdata.path);
+		var shmdatas = switcher.get_property_value(quidd, "shmdata-writers");
+		if(shmdatas != "property not found"){
+			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
+			$.each(shmdatas, function(index, shmdata)
+			{
+				console.log("remove vumeter", 'vumeter_'+shmdata.path);
+				//for the moment create a segmentation fault
+				switcher.remove('vumeter_'+shmdata.path);
 
-		});
-
+			});
+		}
 		return switcher.remove(quidd);
 	}
 

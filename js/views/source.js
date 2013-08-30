@@ -30,7 +30,7 @@ define([
 				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
 
 
-				if(shmdatas.length != 0){
+				if(typeof shmdatas == "object" && shmdatas.length != 0){
 					_.each(shmdatas, function(shmdata, index)
 					{
 						var template = _.template(TemplateSource, 

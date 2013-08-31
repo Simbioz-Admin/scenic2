@@ -45,6 +45,7 @@ module.exports = function (config, switcher, $, _, io, log)
 		    	var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property)
 				{
+					console.log("subscribe to the property", property.name);
 					switcher.subscribe_to_property(pvalue[0], property.name);
 				});
 
@@ -75,7 +76,6 @@ module.exports = function (config, switcher, $, _, io, log)
 	//create the vumeter for shmdata
 	function createVuMeter(quiddName)
 	{
-		console.log("TEST", switcher.get_property_value(quiddName, "shmdata-writers"));
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		$.each(shmdatas, function(index, shmdata)
 		{
@@ -101,7 +101,6 @@ module.exports = function (config, switcher, $, _, io, log)
 			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
 			$.each(shmdatas, function(index, shmdata)
 			{
-				console.log("remove vumeter", 'vumeter_'+shmdata.path);
 				//for the moment create a segmentation fault
 				switcher.remove('vumeter_'+shmdata.path);
 
@@ -113,7 +112,6 @@ module.exports = function (config, switcher, $, _, io, log)
 
 	function getQuiddPropertiesWithValues(quiddName)
 	{
-		console.log("QUIDDNAME", quiddName);
 		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 		//recover the value set for the properties
 		$.each(propertiesQuidd, function(index, property)

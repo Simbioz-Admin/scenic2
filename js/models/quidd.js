@@ -25,14 +25,14 @@ define([
 					that.getProperties(function(){
 						that.getMethodsDescription(function(){
 							
-							//when the model quidd is created and we are recovered all value necessary, we created automaticlly one or multiple views 
-				    		_.each(collections.tables.toJSON(), function(table)
-				    		{
-				    			if(table.type == "transfer")
-				    			{
-				    				var viewSource = new ViewSource({model : that, table : "transfer"});
-				    			}
-				    		});
+			    			if(that.get("class") == "videotestsrc")
+			    			{
+			    				var viewSource = new ViewSource({model : that, table : "control"});
+			    			}
+			    			else
+			    			{
+			    				var viewSource = new ViewSource({model : that, table : "transfer"});
+			    			}
 						});
 					});
 				});

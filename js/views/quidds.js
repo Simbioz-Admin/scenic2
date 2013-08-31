@@ -9,14 +9,13 @@ define([
 		var QuiddView = Backbone.View.extend({
 			el : 'body',
 			events : {
-				"click .createDevice[data-name], .deviceDetected li" : "defineName",
+				"click .createDevice[data-name], .deviceDetected li": "defineName",
 				"click #create" : "create",
 				"change input.property, select.property" : "setProperty",
 				'click #methodStart' : 'methodStart',
 				'click #methodStop' : 'methodStop',
-				//'click .delete-quidd' : 'delete',
 				"mouseenter .autoDetect" : "autoDetect",
-				//'click .edit' : 'openPanelEdit'
+				// "click #create-midi" : "createMidi"
 			},
 			initialize : function()
 			{
@@ -26,7 +25,7 @@ define([
 			defineName : function(element)
 			{
 				var className = $(element.target).data("name")
-				,	deviceDetected = $(element.target).data("deviceDetected")
+				,	deviceDetected = $(element.target).data("devicedetected")
 				,	template = _.template(quiddCreateTemplate, {title : "Define name for "+className, className : className, deviceDetected : deviceDetected });
 				$("#panelRight .content").html(template);
 				views.global.openPanel();
@@ -61,7 +60,6 @@ define([
 					//check if autoDetect it's true if yes we set the value device with device selected
 					if(deviceDetected)
 					{
-						console.log("device detected : ", deviceDetected);
 						model.setPropertyValue("device", deviceDetected, function(ok){
 							that.getPropertiesAndMethods(model);
 						});
@@ -113,6 +111,7 @@ define([
 				var className = $(element.target).data("name");
 				collections.classesDoc.getPropertyByClass(className, "device", function(property)
 				{
+
 					var deviceDetected = property["type description"]["values"];
 					$("#deviceDetected").remove();
 					$("[data-name='"+className+"']").append("<ul id='deviceDetected'></ul>");
@@ -122,7 +121,7 @@ define([
 						var li = $("<li></li>",{ 
 							text : device["name"]+" "+device["nick"],
 							class : 'source',
-							data : { name : className, deviceDetected : device["value"]},
+							data : { name : className, devicedetected : device["value"]},
 						});
 						$("#deviceDetected").append(li);
 					});

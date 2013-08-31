@@ -11,6 +11,6 @@ module.exports = {
 	quiddExclude : ['dico','create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude : ["shmdata-readers", "shmdata-writers"],
 	deviceAutoDetect : ["v4l2src"],
-	defaultPanelTable : "transfer",
+	defaultPanelTable : "control",
 	listQuiddsAndSocketId : {}
 }

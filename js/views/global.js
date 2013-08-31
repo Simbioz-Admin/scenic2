@@ -264,6 +264,7 @@ define([
 			showTable : function(event)
 			{
 				var table = $(event.target).data("type");
+				collections.tables.currentTable = table;
 				$(".tabTable").removeClass("active");
 				$(event.target).addClass("active");
 				$(".table").hide();

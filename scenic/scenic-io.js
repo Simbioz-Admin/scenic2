@@ -93,7 +93,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
 
 			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
-			switcher.subscribe_to_property(quiddName, property);
+			//switcher.subscribe_to_property(quiddName, property);
 			var ok = switcher.set_property_value(quiddName, property, value);
 			if(ok)
 			{
@@ -150,7 +150,16 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			if(method == "remove_udp_stream_to_dest")
 				io.sockets.emit("remove_connection", invoke, quiddName, parameters);
 				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
-						
+			if(method == "start")
+			{
+				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				_.each(properties, function(property)
+				{
+					console.log("subscribe to the property", property.name);
+					switcher.subscribe_to_property(quiddName, property.name);
+				});
+
+			}
 			
 			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});

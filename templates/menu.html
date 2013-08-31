@@ -1,4 +1,4 @@
-<% if(type == "control") { %>
+<% if(type == "QuiddsAndProperties") { %>
 	<ul id="listQuiddsProperties">
 		<% _.each(menus, function(menu, name){ %>
 			<li>
@@ -13,7 +13,7 @@
 	</ul>
 <% } %>
 
-<% if(type == "transfer") { %>
+<% if(type == "quiddsClass") { %>
 	<% if(menus){ %>
 		<ul id="listQuiddsByCategory">
 			<% _.each(menus, function(link, name){ %>
@@ -29,4 +29,14 @@
 			<% }); %>
 		</ul>	
 	<% } %>
+<% } %>
+
+<% if(type == "devicesMidi") { %>
+	<ul id="listDevicesMidi">
+		<% _.each(menus, function(menu, name){ %>
+			<li class="createDevice" data-name="midisrc" data-deviceDetected="<%=menu.value%>">
+				<%=menu.name%>
+			</li>
+		<% }); %>
+	</ul>
 <% } %>

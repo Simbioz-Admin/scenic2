@@ -37,7 +37,6 @@ define([
 		    {
 		    	socket.emit("getPropertyByClass", className, propertyName, function(propertyByClass)
 		    	{
-		    	console.log("Send", className, propertyName);
 		    		callback(propertyByClass);
 		    	});
 		    },

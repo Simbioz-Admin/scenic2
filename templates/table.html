@@ -6,7 +6,7 @@
 	<ul class="menuTable headerMenu">
 		<% _.each(menus, function(menu){ %>
 			<li>
-				<div class="btnCreate" id="create-<%=menu.type%>">+ <%=menu.name%></div>
+				<div class="btnCreate" <% if(menu.dataName){ %>data-name="<%=menu.dataName%>" <% } %> id="create-<%=menu.type%>">+ <%=menu.name%></div>
 			</li>
 		<% }); %>
 	</ul>

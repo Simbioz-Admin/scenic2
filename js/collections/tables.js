@@ -6,6 +6,7 @@ define([
 
 		var CollectionTables = Backbone.Collection.extend({
 			model : ModelTable,
+			currentTable : config.defaultPanelTable,
 			parse : function(results, xhr){
 		        return results;
 		    },
@@ -25,7 +26,7 @@ define([
    					name : "controler", 
    					type : "control", 
    					description : "it's the default table for controler.",
-   					menus : { sources : {type : "midi", name : "control"}, destinations : {type : "quiddsProperties", name : "property"}}
+   					menus : { sources : {type : "midi", name : "control midi", dataName : "midisrc"}, destinations : {type : "quiddsProperties", name : "property"}}
    				});
 		    }
 		});

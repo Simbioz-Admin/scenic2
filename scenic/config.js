@@ -2,13 +2,15 @@
 module.exports = {
 	host : "localhost",
 	port : {
-		soap : 8084,
-		panel : 8086,
-		scenic : 8090
+		soap : 8085,
+		scenic : 8095
 	},
 	debugLevel : "info",
 	logSocketIo : false,
 	nameComputer : "scenic",
-	quiddExclude : ['create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
-	propertiesExclude : ["shmdata-readers", "shmdata-writers"]
+	quiddExclude : ['dico','create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
+	propertiesExclude : ["shmdata-readers", "shmdata-writers"],
+	deviceAutoDetect : ["v4l2src"],
+	defaultPanelTable : "control",
+	listQuiddsAndSocketId : {}
 }

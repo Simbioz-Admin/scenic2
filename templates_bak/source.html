@@ -1,0 +1,31 @@
+<tr class="shmdata inactive" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
+	<% if(index == 0){ %>
+		<td rowspan="<%=nbShmdata%>" class="group groupSource" >
+			<div style="position:relative">
+				<div class="edit"></div>
+				<div class="vertical short"><%=sourceName%></div>
+			</div>
+			<div class="actions">
+				<div class="action"><div class="edit"></div></div>
+				<div class="action"><div class="remove delete-quidd">x</div></div>
+			</div>
+			
+		</td>
+	<% } %>
+	<th scope="row" class="nameInOut" >
+		<div class="short">
+			<a href="#" class='info'><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></a>
+		</div>
+
+	</th>
+	<% _.each(destinations, function(destination){
+		var active = false;
+		_.each(destination.data_streams, function(path){
+			if(path.path == shmdata.path){
+				active = true;
+			}
+			})
+	 %>
+		<td class="box<% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>"></td>
+	<% }); %>
+</tr>

@@ -2,51 +2,44 @@ define([
 	'underscore',
 	'backbone',
 	'text!/templates/destination.html',
-	'text!/templates/setMethod.html'
-	],function(_, Backbone, templateDestination, templateMethod){
+	],function(_, Backbone, TemplateDestination){
 
-		var DestinationsView = Backbone.View.extend({
+		var ViewDestination = Backbone.View.extend({
 			tagName : 'td',
 			className : 'nameInOut',
-			template : templateDestination,
+			table : null,
 			events : {
-				"click .remove" : "askForRemove",
-
+				"click .edit" : "edit",
+				"click .remove" : "removeClick"
 			},
 			initialize : function()
 			{
-				this.render();
-				this.model.on('remove', this.remove, this);
-			},
-			render : function()
-			{
-				that = this;
-				$(this.el).append("<div class='short'>"+this.model.get("name")+"<div class='remove'>x</div></div>");
-				$("#destinations").append($(this.el));
-				$(".shmdata").each(function(index, source){
+				this.model.on('remove', this.removeView, this);
+				this.table = this.options.table;
+
+				var that = this
+				,	template = _.template(TemplateDestination, {name : this.model.get("name")});
+
+				$(this.el).append(template);
+				$("#"+this.table+" .destinations").append($(this.el));
+				$("#"+this.table+" .shmdata").each(function(index, source){
 					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");
 				});
-				//views.destinations.displayTitle();
-			},
-			askForRemove : function()
-			{
-				var name = this.model.get("name");
-				var result = confirm("Are you sure?");
-				if (result==true)
-				{
-					views.methods.setMethod("defaultrtp", "remove_destination", [name], function(ok){});
-				}
-			},
-			remove : function()
-			{
-				var name = this.model.get("name");
-				$(this.el).remove();
-				$("[data-hostname='"+name+"']").remove();
-				views.destinations.displayTitle();
 
+			},
+			edit : function()
+			{
+				this.model.edit();
+			},
+			removeClick : function()
+			{
+				this.model.delete();
+			},
+			removeView : function()
+			{
+				this.remove();
 			}
-			
 		});
 
-		return DestinationsView;
+		return ViewDestination;
 	})

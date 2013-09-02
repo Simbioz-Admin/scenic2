@@ -13,15 +13,16 @@ module.exports = function (config, log)
 		{ 
 			if(isOpen)
 			{
-				portchecker.getFirstAvailable(8084, 8090, config.host, function(newPort, host)
-				{
-					log("info", "Port "+port+" is already in use. the new port is "+newPort);
-					callback(newPort); 
-				});
+				callback(false);
+				// portchecker.getFirstAvailable(8084, 8090, config.host, function(newPort, host)
+				// {
+				// 	log("info", "Port "+port+" is already in use. the new port is "+newPort);
+				// 	callback(newPort); 
+				// });
 			}
 			else
 			{
-				callback(port);
+				callback(true);
 			}
 		});
 	}

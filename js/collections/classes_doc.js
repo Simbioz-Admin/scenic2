@@ -11,15 +11,15 @@ define([
 		        return results.classes;
 		    },
 		    initialize : function(){
-		    	console.log("init collection classesDoc");
+		    	//console.log("init collection classesDoc");
 		    },
 		    getProperties : function(className, callback){
-
 		    	socket.emit("getPropertiesOfClass", className, function(propertiesOfClass){
 		    		callback(propertiesOfClass);
 		    	});
 		    },
 		    getPropertiesWithout: function(className, excludes, callback){
+
 		    	var propertiesFiltered = {};
 		    	this.getProperties(className, function(propertiesOfClass)
 		    	{
@@ -30,6 +30,14 @@ define([
 	    			});
 
 	    			callback(propertiesFiltered);
+		    	});
+		    },
+
+		    getPropertyByClass: function(className, propertyName, callback)
+		    {
+		    	socket.emit("getPropertyByClass", className, propertyName, function(propertyByClass)
+		    	{
+		    		callback(propertyByClass);
 		    	});
 		    },
 

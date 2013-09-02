@@ -1,15 +1,17 @@
-module.exports = function (config, io, switcher, scenic, $, _, log)
+module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log, network)
 {
 	io.sockets.on('connection', function (socket)
 	{
 
-		socket.on("create", function(className, name, callback)
+		socket.on("createAndGetProperties", function(className, name, callback)
 		{        
-			var quiddName = switcher.create(className, name);
+			if(name) var quiddName = switcher.create(className, name);
+			else var quiddName = switcher.create(className);	
+			
 			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
 			//recover the default properties with values
 
-			if(!_.contains(config.quiddExclude, className))
+			if(!_.contains(config.quiddExclude, className) && quiddName)
 			{
 				var properties = scenic.getQuiddPropertiesWithValues(quiddName);
 				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
@@ -26,10 +28,34 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 			
 		});
 
-		socket.on("getConfig", function(callback)
+		socket.on("create", function(className, quiddName,  callback)
 		{
-			callback(config);
+			if(quiddName)
+				var quiddName = switcher.create(className, quiddName);
+			else
+				var quiddName = switcher.create(className);
+
+
+			if(quiddName)
+			{
+				//subscribe to the all properties
+				config.listQuiddsAndSocketId[quiddName] = socket.id;
+				// var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				// _.each(properties, function(property)
+				// {
+				// 	switcher.subscribe_to_property(quiddName, property.name);
+				// });
+				callback(quiddName);
+				//socket.broadcast.emit("create", { name : quiddName, class : className});
+
+			}
+			else
+			{
+				log("info", "failed to create a quiddity class ",className);
+			}
 		});
+
+
 
 		socket.on("remove", function(quiddName)
 		{
@@ -37,10 +63,47 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 			io.sockets.emit("remove", quiddName);
 		});
 
+		socket.on("setPropertyValueOfDico", function(property, value)
+		{
+			var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+			if(currentValueDicoProperty)
+				currentValueDicoProperty[currentValueDicoProperty.length] = value;
+			else
+				var currentValueDicoProperty = [value];
+
+			switcher.set_property_value("dico", property, JSON.stringify(currentValueDicoProperty));
+			io.sockets.emit("setDicoValue", property, value);
+
+		});
+
+		socket.on("removeValuePropertyOfDico", function(property, name)
+		{
+			var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+			var newValuesDico = [];
+			_.each(currentValuesDicoProperty, function(value)
+			{
+				if(value.name != name)
+					newValuesDico.push(value);
+			});
+			switcher.set_property_value("dico", property, JSON.stringify(newValuesDico));
+			io.sockets.emit("removeValueOfPropertyDico", property, name);
+		});
+
+
 		socket.on("setPropertyValue", function(quiddName, property, value, callback){
+
+			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
+			//switcher.subscribe_to_property(quiddName, property);
 			var ok = switcher.set_property_value(quiddName, property, value);
-			callback(ok);
-			io.sockets.emit("setPropertyValue", quiddName, property, value);
+			if(ok)
+			{
+				callback(property, value);
+				socket.broadcast.emit("setPropertyValue", quiddName, property, value);
+			}
+			else
+			{
+				socket.emit("msg", "error", "the property "+property+" of "+quiddName+"is not set");
+			}
 		});
 
 
@@ -50,22 +113,71 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 		});
 
 
+
+
 		socket.on("getMethodsDescriptionByClass", function(quiddName, callback){
 			var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
 			callback(methodsDescriptionByClass);
 		});
 
 
+		socket.on("getMethodsDescription", function(quiddName, callback){
+			var methods  = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			callback(methods);
+		});
+
+
+		socket.on("getMethodsByQuidd", function(quiddName, callback){
+			var methods  = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			callback(methods);
+		});
+
+
 		socket.on("invoke", function(quiddName, method, parameters, callback){
 			var invoke = switcher.invoke(quiddName, method, parameters);
-			callback(invoke);
-			io.sockets.emit("invoke", invoke, quiddName, method, parameters);
+			if(callback) callback(invoke);
+
+			if(method == "add_destination")
+				io.sockets.emit("add_destination", invoke, quiddName, parameters);
+
+			if(method == "remove_destination")
+				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
+
+			if(method == "add_udp_stream_to_dest")
+				io.sockets.emit("add_connection", invoke, quiddName, parameters)
+				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");
+				
+			if(method == "remove_udp_stream_to_dest")
+				io.sockets.emit("remove_connection", invoke, quiddName, parameters);
+				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
+			if(method == "start")
+			{
+				var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+				_.each(properties, function(property)
+				{
+					console.log("subscribe to the property", property.name);
+					switcher.subscribe_to_property(quiddName, property.name);
+				});
+
+			}
+			
+			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});
 
 
 		socket.on("getPropertiesOfClass", function(className, callback){
 			var propertiesofClass =  $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
 			callback(propertiesofClass);
+		});
+
+		socket.on("getPropertyByClass", function(className, propertyName, callback){
+			try{
+				var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
+			}
+			catch(e){
+				var propertyByClass = "no property found";
+			}
+			callback(propertyByClass);						
 		});
 
 
@@ -81,7 +193,7 @@ module.exports = function (config, io, switcher, scenic, $, _, log)
 				
 			}
 			catch(e){
-				//log('info', e);
+				//log('debug', e);
 				var quidds = switcher.get_property_value(quiddName, property);
 			}
 			callback(quidds);

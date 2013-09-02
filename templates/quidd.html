@@ -2,29 +2,19 @@
 <div id="title"><%=title%></div>
 
 <form id="form-quidd"  data-classname="<%=quiddName%>" onsubmit="return(false)">
-	
+	<input type="hidden" id="quiddName" value="<%=quiddName%>"/>
 	<ul >
 
-		<% if(action == "create"){ %>
-			<h3>Name of your source</h3> 
-			<input type="text" id="quiddName" value="" autofocus="autofocus" placeholder="if empty, a default name will be defined">
-		<% }else{ %>
-			<input type="hidden" id="quiddName" value="<%=quiddName%>">
-		<% } %>
-
-		<% _.each(properties, function(property){  %>
-			<% if(property.name != "shmdata-readers" && property.name != "shmdata-writers"){ %>
+		<% _.each(properties, function(property){   %>
+			<% if(property["description"].writable == "true"  && property["name"] != "device"){ 
+				var info = property.description["type description"];
+			%>
 			<li>
 
-				<% var info = property.description["type description"] 
-					var valueField = info["default value"];
-					if(action != "create"){
-						valueField = property.value;
-					}
-				%>
+				<% var valueField = property.value; %>
 
 				<% var moreInfo =  info.minimum ? "Min : "+info.minimum+" &nbsp; Max : "+info.maximum : "";  %>
-				<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description.nickname%></h3>
+				<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description['long name']%></h3>
 
 				<!-- Type input for float / int and bool -->
 				<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>
@@ -60,19 +50,38 @@
 		<% }); %>
 		</ul>
 
-		<% if(action == "create"){ %>
-			<h3 class="info" title="select encoder">Select an encoder</h3>
-			<select class="property" name="encoder" >
+
+		
+		<h3 class="info" title="select encoder">Select an encoder</h3>
+		<select class="property" name="encoder" >
+			<option value="none">none</option>
 			<% _.each(encoders, function(encoder){ %>
 			<option value="<%=encoder["class name"]%>" >
 				<%= encoder["short description"] %>
 			</option>
 			<% }); %>
-			<option value="none">none</option>
-		<% }; %>
+		</select>
 
-	
+		<% _.each(methods, function(method){  %>
+			<% 
+			if(method.name != "set_runtime"){
+				if(method.name == "start"){ %>
 
-	<input type="submit" class="btn btn-large submit-quidd <%=action%>"  value="<%=action%>"/>
-	<div class="btn btn-delete delete-quidd">Delete Source</div>
+					<input type="hidden" id="removeQuidd" value="<%=quiddName%>" />
+					<a href="#" id="methodStart" class="btnMethod btn">START</a>
+				<% }else if(method.name == "stop"){ %>
+					<a href="#" id="methodStop" class="btnMethod btn">STOP</a>
+
+				<% }else{ %>
+					<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
+					<% _.each(method["arguments"], function(argument){ %>
+					<input type="text" >
+					<% }); %> 	
+				<% } %> 	
+
+		<%	} %>
+		<% }); %>
+
+
+
 </form>

@@ -1,11 +1,42 @@
-<!-- 	<li><div class="btnCreate">SAVE</div></li> -->
-	<li><div id="btnSave">SAVE</div>
-	<li><div id="btnLoadScratch">LOAD</div>
-	<li><div class="btnCreate" id="createDestination">+ DESTINATION</div></li>
-	<li><div class="btnCreate">+ SOURCE</div>
-		<ul class="createSource">
-			<% _.each(menu, function(category){ %>
-				<li data-name="<%=category["class name"] %>"><%=category["class name"] %></li>
+<% if(type == "QuiddsAndProperties") { %>
+	<ul id="listQuiddsProperties">
+		<% _.each(menus, function(menu, name){ %>
+			<li>
+				<%=name%>
+				<ul data-quiddname="<%=name%>">
+					<% _.each(menu, function(property){ %>
+							<li class="create-ControlProperty" data-property="<%=property%>" ><%=property%></li>
+					<% }); %>
+				</ul>
+			</li>
+		<% }); %>
+	</ul>
+<% } %>
+
+<% if(type == "quiddsClass") { %>
+	<% if(menus){ %>
+		<ul id="listQuiddsByCategory">
+			<% _.each(menus, function(link, name){ %>
+				<li>
+					<%=name%>
+					<ul>
+						<% _.each(link, function(name){ %>
+						<%  var autoDetect = _.contains(config.deviceAutoDetect, name["class name"]);	%>
+							<li class="createDevice<% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=name["class name"]%>" ><%=name["long name"]%></li>
+						<% }); %>
+					</ul>
+				</li>
 			<% }); %>
-		</ul>
-	</li>
+		</ul>	
+	<% } %>
+<% } %>
+
+<% if(type == "devicesMidi") { %>
+	<ul id="listDevicesMidi">
+		<% _.each(menus, function(menu, name){ %>
+			<li class="createDevice" data-name="midisrc" data-deviceDetected="<%=menu.value%>">
+				<%=menu.name%>
+			</li>
+		<% }); %>
+	</ul>
+<% } %>

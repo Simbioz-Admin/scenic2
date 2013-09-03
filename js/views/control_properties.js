@@ -20,10 +20,16 @@ define([
 			createControlProperty : function(element)
 			{
 				var property = $(element.target).data("property")
+				,	that = this
 				,	quiddName = $(element.target).closest("ul").data("quiddname");
 				
-				this.collection.setDico(quiddName, property);
-				$(element.target).remove();
+				this.collection.setDico(quiddName, property, function(quiddName) {
+					
+					$("#control .property").each(function(index, source){
+						$(this).append("<td class='box' data-hostname='"+quiddName+"'></td>");
+					});
+					$(element.target).remove();
+				});
 			}
 		});
 

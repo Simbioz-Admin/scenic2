@@ -63,7 +63,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			io.sockets.emit("remove", quiddName);
 		});
 
-		socket.on("setPropertyValueOfDico", function(property, value)
+		socket.on("setPropertyValueOfDico", function(property, value, callback)
 		{
 			var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
 			if(currentValueDicoProperty)
@@ -73,6 +73,7 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 
 			switcher.set_property_value("dico", property, JSON.stringify(currentValueDicoProperty));
 			io.sockets.emit("setDicoValue", property, value);
+			callback("ok");
 
 		});
 

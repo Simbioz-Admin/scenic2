@@ -29,10 +29,12 @@ define([
 					views.global.notification("info","The property control "+name+" is deleted.");
 		    	});
 		    },
-		    setDico : function(quiddName, property)
+		    setDico : function(quiddName, property, callback)
 		    {
 		    	var	newControlProperty = {name : quiddName+"_"+property, quiddName : quiddName, property : property}
-		    	socket.emit("setPropertyValueOfDico", "controlProperties" ,newControlProperty, function(ok){});
+		    	socket.emit("setPropertyValueOfDico", "controlProperties" ,newControlProperty, function(ok){
+		    		callback(quiddName+"_"+property);
+		    	});
 		    }
 		});
 

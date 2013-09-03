@@ -1,9 +1,9 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source', 'views/destination',
+	'views/source', 'views/sourceProperty' , 'views/destination',
 	'text!/templates/panelInfoSource.html'
-	],function(_, Backbone, ViewSource, ViewDestination,infoTemplate){
+	],function(_, Backbone, ViewSource, ViewSourceProperty,  ViewDestination,infoTemplate){
 
 		var QuiddModel = Backbone.Model.extend({
 			url : "/quidd/",
@@ -25,9 +25,9 @@ define([
 					that.getProperties(function(){
 						that.getMethodsDescription(function(){
 							
-			    			if(that.get("class") == "videotestsrc")
+			    			if(that.get("class") == "v4l2src")
 			    			{
-			    				var viewSource = new ViewSource({model : that, table : "control"});
+			    				var viewSource = new ViewSourceProperty({model : that, table : "control"});
 			    			}
 			    			else
 			    			{

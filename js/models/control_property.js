@@ -27,6 +27,7 @@ define([
 			delete : function()
 			{
 				socket.emit("removeValuePropertyOfDico", "controlProperties", this.get("name"));
+				$("[data-hostname='"+this.get('name')+"']").remove();
 			}
 		});
 

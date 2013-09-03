@@ -1,8 +1,8 @@
 define([
 	'underscore',
 	'backbone',
-	'text!/templates/source.html',
-	],function(_, Backbone, TemplateSource){
+	'text!/templates/sourceProperty.html',
+	],function(_, Backbone, TemplateSourceProperty){
 
 		var ViewSource = Backbone.View.extend({
 			tagName : 'table',
@@ -26,45 +26,21 @@ define([
 			{
 				$(this.el).html("");
 				var that = this
-				, 	shmdatas = this.model.get("shmdatas")
-				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
+				, 	properties = this.model.get("properties")
+				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON());
 
+				_.each(properties, function(property, index) {
 
-				if(typeof shmdatas == "object" && shmdatas.length != 0){
-					_.each(shmdatas, function(shmdata, index)
-					{
-						var template = _.template(TemplateSource, 
-										{
-											shmdata : shmdata, 
-											index : index, 
-											nbShmdata :  shmdatas.length, 
-											sourceName : that.model.get("name"),
-											destinations : destinations
-										});
-						$(that.el).append($(template));
-
-
-						//get info about vumeter for know if we can create a preview
-						setTimeout(function(){
-							collections.quidds.getPropertyValue("vumeter_"+shmdata.path, "caps", function(info)
-							{
-								info = info.split(",");
-								if(info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") 
-									$("[data-path='"+shmdata.path+"'] .nameInOut .short").append("<div class='preview'></div>");
-							});
-						}, 500);
-					});
-				}
-				else
-				{
-					var template = _.template(TemplateSource, 
-						{
+					var template = _.template(TemplateSourceProperty, { 
+							property : property,
+							index : index,
+							nbProperties : properties.length,
 							sourceName : that.model.get("name"),
-							shmdata : null
+							destinations : destinations
 						});
-						$(that.el).append($(template));
-
-				}
+					
+					$(that.el).append($(template));
+				});
 
 				//here we define were go the source  vhttpsdpdec
 				if(this.model.get("class") == "httpsdpdec")

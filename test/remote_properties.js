@@ -31,17 +31,17 @@ switcher.get_property_description_by_class("v4l2src", "device");
 
 var dico = switcher.create("dico", "dico");
 
-var methods = switcher.invoke(dico, "new-entry", ["remoteProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-console.log("created remoteProperties", methods);
-console.log("Get properties of dico :", switcher.get_property_description(dico, "remoteProperties"));
+// var methods = switcher.invoke(dico, "new-entry", ["remoteProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
+// console.log("created remoteProperties", methods);
+// console.log("Get properties of dico :", switcher.get_property_description(dico, "remoteProperties"));
 
-var json = { name : "videotest_freq", quiddName : "videotest", property : "freq" };
+// var json = { name : "videotest_freq", quiddName : "videotest", property : "freq" };
 
-console.log("set property of remoteProperties :", switcher.set_property_value(dico, "remoteProperties", JSON.stringify(json)));
+// console.log("set property of remoteProperties :", switcher.set_property_value(dico, "remoteProperties", JSON.stringify(json)));
 
-console.log("show value of remoteProperties :");
-var jsonBack = switcher.get_property_value(dico, "remoteProperties");
-console.log($.parseJSON(jsonBack));
+// console.log("show value of remoteProperties :");
+// var jsonBack = switcher.get_property_value(dico, "remoteProperties");
+// console.log($.parseJSON(jsonBack));
 
 //please quit switcher properly
 process.on('exit', function () {

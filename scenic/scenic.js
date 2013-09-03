@@ -9,11 +9,11 @@ module.exports = function (config, switcher, $, _, io, log)
 		switcher.invoke("soap", "set_port", [config.port.soap]);
 		//create default dico for stock information
 		var dico = switcher.create("dico", "dico");
+		console.log(dico);
 		//create the properties controlProperties for stock properties of quidds for control
 		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
 		//var json = [{ name : "videotest_freq", quiddName : "videotest", property : "freq" },{ name : "videotest_saturation", quiddName : "videotest", property : "saturation" } ];
 		//switcher.set_property_value(dico, "controlProperties", JSON.stringify(json));
-
 		switcher.register_log_callback(function (msg)
 		{
 			io.sockets.emit("messageLog", msg);

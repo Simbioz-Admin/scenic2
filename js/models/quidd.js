@@ -97,7 +97,7 @@ define([
 				_.each(this.get("properties"), function(property){
 					if(property.name == prop) property.value = value;
 				});
-
+				console.log(prop, value);
 				if(prop == "last-midi-value" && $("#last_midi_event_to_property").length > 0)
 				{
 		    		//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )

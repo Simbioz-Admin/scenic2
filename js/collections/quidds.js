@@ -36,6 +36,7 @@ define([
 		    		{
 		    			views.quidds.updateVuMeter(quiddName, value)
 		    		} 
+
 		    		// else if(quiddName == "dico" && prop == "controlProperties")
 		    		// {
 		    		// 	collections.controlProperties.fetch();

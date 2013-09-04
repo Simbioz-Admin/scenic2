@@ -90,19 +90,27 @@ define([
 			},
 			setProperty : function(element)
 			{
+
 				var model = collections.quidds.get($("#quiddName").val())
 				,	property = element.target.name
-				,	value = element.target.value;
+				,	value = element.target.value
+				,	that = this;
 	
 				if(property == "encoder")
 				{
 					//add to the list the encoder ask to create with shmdata
 					collections.quidds.listEncoder.push({quiddName : quidd.name, encoder : encoder});
 				}
+				console.log(property, value);
 				model.setPropertyValue(property, value, function()
 				{
 				// 	//make confirmation message set attributes ok
 				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
+					if(property == "started")
+					{
+						console.log("started!");
+						that.getPropertiesAndMethods(model);
+					}
 				});
 
 			},

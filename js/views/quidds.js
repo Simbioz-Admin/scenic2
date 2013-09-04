@@ -147,6 +147,7 @@ define([
 					model.setMethod(method, [valueMethod], function(ok)
 					{
 						console.log("ok!", ok);
+						that.getPropertiesAndMethods(model);
 					});
 				}
 			},
@@ -158,7 +159,7 @@ define([
 				model.setMethod("start", [], function(){
 					console.log("set Start");
 					//the method has set correctly now we refresh properties in panel
-					//that.getPropertiesAndMethods(model);
+					that.getPropertiesAndMethods(model);
 				});
 			},
 			methodStop : function()

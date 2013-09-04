@@ -93,10 +93,17 @@ define([
 	    		});
 			},
 			setLocalpropertyValue : function(prop, value)
-			{
+			{	
 				_.each(this.get("properties"), function(property){
 					if(property.name == prop) property.value = value;
 				});
+
+				if(prop == "last-midi-value" && $("#last_midi_event_to_property").length > 0)
+				{
+		    		//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
+		    		$(".preview-value").html("<div class='content-value'>"+value+"</div>");
+					console.log(prop, value);
+				}
 			},
 			getProperties : function(callback)
 			{

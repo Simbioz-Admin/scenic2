@@ -18,29 +18,30 @@ define([
 			{
 				this.model.on('remove', this.removeView, this);
 				this.model.on('change', this.render, this);
+				this.model.on('change:properties', function(model, name){ console.log(model, name); });
 				this.table = this.options.table;
 				this.render();
 
 			},
 			render : function()
 			{
+				console.log("test");
 				$(this.el).html("");
 				var that = this
 				, 	properties = this.model.get("properties")
-				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON());
-
+				,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON())
+				,	countProperty = 0;
 				_.each(properties, function(property, index) {
-
 					if(property.name != "device" && property.name != "devices-json") {
 						var template = _.template(TemplateSourceProperty, { 
 								property : property,
-								index : index,
+								index : countProperty,
 								nbProperties : properties.length,
 								sourceName : that.model.get("name"),
 								destinations : destinations
 							});
-						
 						$(that.el).append($(template));
+						countProperty++;
 					}
 				});
 
@@ -66,6 +67,7 @@ define([
 			},
 			edit : function()
 			{
+				console.log(this.model);
 				this.model.edit();
 			},
 			removeClick : function()

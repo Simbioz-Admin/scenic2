@@ -154,9 +154,11 @@ define([
 			{
 				var that = this
 				, model = collections.quidds.get($("#quiddName").val());
-				model.setMethod("start", [true], function(){
+
+				model.setMethod("start", [], function(){
+					console.log("set Start");
 					//the method has set correctly now we refresh properties in panel
-					that.getPropertiesAndMethods(model);
+					//that.getPropertiesAndMethods(model);
 				});
 			},
 			methodStop : function()
@@ -164,7 +166,7 @@ define([
 				var that = this
 				,	model = collections.quidds.get($("#quiddName").val());
 
-				model.setMethod("stop", [true], function(){
+				model.setMethod("stop", [], function(){
 					that.getPropertiesAndMethods(model);
 				});
 			}

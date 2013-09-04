@@ -22,16 +22,18 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		switcher.register_prop_callback(function (qname, qprop, pvalue)
 		{
-			if(qprop == "byte-rate")
+			if(qprop != "byte-rate")
 				log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 		
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
-			if(qprop == "shmdata-writers")
-			{
-				createVuMeter(qname);
-				sendShmdatas(qname);
-			}
+			 if(qprop == "shmdata-writers")
+			 {
+			 	if($.parseJSON(pvalue).shmdata_writers.length > 0){
+				 	createVuMeter(qname);
+				 	sendShmdatas(qname);
+			 	}
+			 }
 		});
 		
 		switcher.register_signal_callback(function (qname, qprop, pvalue){
@@ -76,12 +78,13 @@ module.exports = function (config, switcher, $, _, io, log)
 	//create the vumeter for shmdata
 	function createVuMeter(quiddName)
 	{
+
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		$.each(shmdatas, function(index, shmdata)
 		{
 			var vumeter = switcher.create("fakesink", "vumeter_"+shmdata.path);
 			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
-			switcher.subscribe_to_property(vumeter, "byte-rate");
+			var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
 		});
 	}
 

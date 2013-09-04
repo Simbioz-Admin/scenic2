@@ -22,7 +22,7 @@ module.exports = function (config, switcher, $, _, io, log)
 
 		switcher.register_prop_callback(function (qname, qprop, pvalue)
 		{
-			if(qprop != "byte-rate")
+			if(qprop == "byte-rate")
 				log('info','...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 		
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);

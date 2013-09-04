@@ -31,17 +31,27 @@ define([
 
 				_.each(properties, function(property, index) {
 
-					var template = _.template(TemplateSourceProperty, { 
-							property : property,
-							index : index,
-							nbProperties : properties.length,
-							sourceName : that.model.get("name"),
-							destinations : destinations
-						});
-					
-					$(that.el).append($(template));
+					if(property.name != "device" && property.name != "devices-json") {
+						var template = _.template(TemplateSourceProperty, { 
+								property : property,
+								index : index,
+								nbProperties : properties.length,
+								sourceName : that.model.get("name"),
+								destinations : destinations
+							});
+						
+						$(that.el).append($(template));
+					}
 				});
 
+				if($(that.el).html() == "") {
+						var template = _.template(TemplateSourceProperty, { 
+								sourceName : that.model.get("name"),
+								property : null
+						});
+						
+						$(that.el).append($(template));
+				}
 				//here we define were go the source  vhttpsdpdec
 				if(this.model.get("class") == "httpsdpdec")
 				{

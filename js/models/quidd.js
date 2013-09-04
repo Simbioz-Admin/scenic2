@@ -25,7 +25,7 @@ define([
 					that.getProperties(function(){
 						that.getMethodsDescription(function(){
 							
-			    			if(that.get("class") == "v4l2src")
+			    			if(that.get("class") == "midisrc")
 			    			{
 			    				var viewSource = new ViewSourceProperty({model : that, table : "control"});
 			    			}

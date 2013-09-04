@@ -12,6 +12,7 @@ define([
 				"click .createDevice[data-name], .deviceDetected li": "defineName",
 				"click #create" : "create",
 				"change input.property, select.property" : "setProperty",
+				"click .setMethod" : "setMethod",
 				'click #methodStart' : 'methodStart',
 				'click #methodStop' : 'methodStop',
 				"mouseenter .autoDetect" : "autoDetect",
@@ -132,7 +133,23 @@ define([
 				var shmdata = quiddName.replace("vumeter_", "");
 				if(value > 0) $("[data-path='"+shmdata+"']").removeClass("inactive").addClass("active");
 				else $("[data-path='"+shmdata+"']").removeClass("active").addClass("inactive");
-			}, 
+			},
+			setMethod : function(element)
+			{
+				var that = this
+				,	model = collections.quidds.get($("#quiddName").val())
+				,	method = $(element.target).attr("id")
+				,	valueMethod = $("[data-name='"+method+"']").val();
+
+				if(method && valueMethod)
+				{
+					console.log("setMethod", method, "to", valueMethod);
+					model.setMethod(method, [valueMethod], function(ok)
+					{
+						console.log("ok!", ok);
+					});
+				}
+			},
 			methodStart : function()
 			{
 				var that = this

@@ -9,7 +9,8 @@ define([
 			defaults : {
 				"name" : null,
 				"host_name" : null,
-				"data_streams" : []
+				"data_streams" : [],
+				"soapClient" : false
 			},
 			initialize : function(){
 				

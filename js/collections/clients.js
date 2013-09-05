@@ -54,6 +54,7 @@ define([
 		    	socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok)
 		    	{
 		    		///*** set connection with another scenic computer ***//
+
 					if(portSoap)
 					{
 						if(clientHost.indexOf("http://") < 0) clientHost = "http://"+clientHost;
@@ -62,15 +63,28 @@ define([
 						
 						collections.quidds.create("SOAPcontrolClient", soapClient, function(ok)
 						{
+
 							if(ok)
 							{
+
 								console.log("set_remote_url", addressClient)
 								socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok)
 								{ 
-									if(ok) views.global.notification("info", "scenic server detected")
+									if(ok == "true")
+									{
+										views.global.notification("info", "scenic server detected");
+										console.log("create",  ["httpsdpdec", config.nameComputer])
+										socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){ console.log("httpsdpdec", ok); });
+										collections.clients.get(clientName).set("soapClient", true);
+										console.log(collections.clients.get(clientName));
+									}
+									else
+									{
+										views.global.notification("error", "no scenic server detected");
+										socket.emit("remove", soapClient);
+									}
 								});
-								console.log("create",  ["httpsdpdec", config.nameComputer])
-								socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok){ console.log("httpsdpdec", ok); });
+
 
 							}
 						});

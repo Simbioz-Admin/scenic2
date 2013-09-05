@@ -190,6 +190,11 @@ module.exports = function (config, scenicStart, io, switcher, scenic, $, _, log,
 			callback(propertiesOfQuidd);
 		});
 
+		socket.on("get_quiddity_description", function(quiddName, callback)
+		{
+			var quiddDescription = $.parseJSON(switcher.get_quiddity_description(quiddName));
+			callback(quiddDescription);
+		});
 
 		socket.on("get_property_value", function(quiddName, property, callback){
 			try{

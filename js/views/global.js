@@ -13,9 +13,6 @@ define([
 			//assocition between action on elements html and functions
 			events : {
 				"click .dropdown-toggle" : "openDropdown",
-				"click .box" : "connection",
-				"keypress #port_destination" : "setConnection",
-				"blur #port_destination" : "removeInputDestination",
 				"click #close-panelRight" : "closePanel",
 				"click #close-panelInfoSource" : "closePanelInfoSource",
 				"change .checkbox" : 'stateCheckbox',
@@ -61,58 +58,8 @@ define([
 					$(this).hide();
 				})
 			},
-			connection : function()
-			{
-				var box = $(event.target)
-				,	destName = box.data("hostname")
-				,	path = box.parent().data("path");
 
-				if(box.hasClass("active"))
-				{
-					socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok){});
-				}
-				else
-				{
-					box.html("<input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'>");
-				}
-			},
-			setConnection : function(event)
-			{
-	
-				if(event.which == 13) //touch enter
-				{
-					var box = $(event.target).parent()
-					,	destName = box.data("hostname")
-					,	path = box.parent().data("path")
-					,	port = $(event.target).val();
 
-					//add to the session the shmdata 
-					//views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
-					socket.emit("invoke","defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});
-					//connect shmdata to destination
-					socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok){
-						console.log("uridecodebin remote", destName);
-						
-						setTimeout(function()
-							{
-								socket.emit("invoke", "soapClient-"+destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://'+config.host+':'+config.port.soap+'/sdp?rtpsession=defaultrtp&destination='+destName],
-									function(ok){
-										console.log("ok?", ok);
-									})
-							},2000)
-
-						
-					});
-					
-					
-
-					this.removeInputDestination(event);
-				}
-			},
-			removeInputDestination : function(event)
-			{
-				$(event.target).parent().html("");
-			},
 			//alert for different message
 			notification : function(type, msg){
 				$("#msgHighLight").remove();

@@ -2,44 +2,42 @@ define([
 	'underscore',
 	'backbone',
 	'text!/templates/destination.html',
-	],function(_, Backbone, TemplateDestination){
+], function(_, Backbone, TemplateDestination) {
 
-		var ViewDestination = Backbone.View.extend({
-			tagName : 'td',
-			className : 'nameInOut',
-			table : null,
-			events : {
-				"click .edit" : "edit",
-				"click .remove" : "removeClick"
-			},
-			initialize : function()
-			{
-				this.model.on('remove', this.removeView, this);
-				this.table = this.options.table;
+	var ViewDestination = Backbone.View.extend({
+		tagName: 'td',
+		className: 'nameInOut',
+		table: null,
+		events: {
+			"click .edit": "edit",
+			"click .remove": "removeClick"
+		},
+		initialize: function() {
+			this.model.on('remove', this.removeView, this);
+			this.table = this.options.table;
 
-				var that = this
-				,	template = _.template(TemplateDestination, {name : this.model.get("name")});
-
-				$(this.el).append(template);
-				$("#"+this.table+" .destinations").append($(this.el));
-				$("#"+this.table+" .shmdata").each(function(index, source){
-					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");
+			var that = this,
+				template = _.template(TemplateDestination, {
+					name: this.model.get("name")
 				});
 
-			},
-			edit : function()
-			{
-				this.model.edit();
-			},
-			removeClick : function()
-			{
-				this.model.delete();
-			},
-			removeView : function()
-			{
-				this.remove();
-			}
-		});
+			$(this.el).append(template);
+			$("#" + this.table + " .destinations").append($(this.el));
+			$("#" + this.table + " .shmdata").each(function(index, source) {
+				$(this).append("<td class='box' data-hostname='" + that.model.get('name') + "'></td>");
+			});
 
-		return ViewDestination;
-	})
+		},
+		edit: function() {
+			this.model.edit();
+		},
+		removeClick: function() {
+			this.model.delete();
+		},
+		removeView: function() {
+			this.remove();
+		}
+	});
+
+	return ViewDestination;
+})

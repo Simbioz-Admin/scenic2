@@ -38,16 +38,15 @@ define([
 		},
 		getMenuProperties: function(element) {
 			var quiddsMenu = {};
-			collections.quidds.each(function(quidd) //check for remove properties already create for control
-				{
-					var listProperties = [];
-					_.each(quidd.get("properties"), function(property) {
-						if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.description.writable == "true") {
-							listProperties.push(property.name);
-							quiddsMenu[quidd.get("name")] = listProperties;
-						}
-					});
+			collections.quidds.each(function(quidd) {
+				var listProperties = [];
+				_.each(quidd.get("properties"), function(property) {
+					if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.description.writable == "true") {
+						listProperties.push(property.name);
+						quiddsMenu[quidd.get("name")] = listProperties;
+					}
 				});
+			});
 
 			$("#listQuiddsProperties").remove();
 			if (!$.isEmptyObject(quiddsMenu)) {
@@ -76,11 +75,20 @@ define([
 		getMenuMidiDevice: function(element) {
 			$("#listDevicesMidi").remove();
 			collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
-				var devicesMidi = property["type description"]["values"],
-					template = _.template(TemplateMenu, {
-						type: "devicesMidi",
-						menus: devicesMidi
+
+				var devicesMidi = property["type description"]["values"];
+				_.each(devicesMidi, function(device, index) {
+					collections.quidds.each(function(quidd) {
+						_.each(quidd.get("properties"), function(property) {
+							if (property.name == "device" && property.value == device.name) delete devicesMidi[index];
+						});
 					});
+				});
+
+				var template = _.template(TemplateMenu, {
+					type: "devicesMidi",
+					menus: devicesMidi
+				});
 				$(element.target).after(template);
 			});
 		}

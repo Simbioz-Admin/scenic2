@@ -126,7 +126,6 @@ define([
 		},
 		getPropertyValue: function(property, callback) {
 			var that = this;
-			console.log(this.get("name"), property);
 			socket.emit("get_property_value", this.get("name"), property, function(propertyValue) {
 				callback(propertyValue);
 			});

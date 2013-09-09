@@ -26,8 +26,13 @@ define([
 
 		},
 		delete: function() {
+			var that = this;
 			socket.emit("removeValuePropertyOfDico", "controlProperties", this.get("name"));
-			$("[data-hostname='" + this.get('name') + "']").remove();
+			collections.quidds.each(function(quidd) {
+				if(quidd.get("name").indexOf(that.get("name")) != -1)
+					quidd.delete();
+			});
+			$("[data-nameandproperty='" + this.get('name') + "']").remove();
 		}
 	});
 

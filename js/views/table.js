@@ -39,13 +39,16 @@ define([
 		getMenuProperties: function(element) {
 			var quiddsMenu = {};
 			collections.quidds.each(function(quidd) {
-				var listProperties = [];
-				_.each(quidd.get("properties"), function(property) {
-					if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.description.writable == "true") {
-						listProperties.push(property.name);
-						quiddsMenu[quidd.get("name")] = listProperties;
-					}
-				});
+				var quiddCategory = quidd.get("category");
+				if(quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
+					var listProperties = [];
+					_.each(quidd.get("properties"), function(property) {
+						if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.description.writable == "true" && property.name != "started") {
+							listProperties.push(property.name);
+							quiddsMenu[quidd.get("name")] = listProperties;
+						}
+					});
+				}
 			});
 
 			$("#listQuiddsProperties").remove();
@@ -79,9 +82,11 @@ define([
 				var devicesMidi = property["type description"]["values"];
 				_.each(devicesMidi, function(device, index) {
 					collections.quidds.each(function(quidd) {
-						_.each(quidd.get("properties"), function(property) {
-							if (property.name == "device" && property.value == device.name) delete devicesMidi[index];
-						});
+						if(quidd.get("class") == "midisrc") {
+							_.each(quidd.get("properties"), function(property) {
+								if (property.name == "device" && property.value == device.name) delete devicesMidi[index];
+							});
+						}
 					});
 				});
 

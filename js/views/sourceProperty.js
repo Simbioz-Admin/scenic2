@@ -31,7 +31,7 @@ define([
 				destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON()),
 				countProperty = 0;
 			_.each(properties, function(property, index) {
-				if (property.name != "device" && property.name != "devices-json") {
+				if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
 					var template = _.template(TemplateSourceProperty, {
 						property: property,
 						index: countProperty,

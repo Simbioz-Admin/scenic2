@@ -24,6 +24,7 @@ define([
 				var model = that.get(quidd);
 				model.trigger('destroy', model, that);
 				views.global.notification("info", quidd + "  has deleted");
+
 			});
 
 			socket.on("signals_properties", function(quiddName, prop, value) {

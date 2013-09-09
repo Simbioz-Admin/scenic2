@@ -57,7 +57,12 @@ define([
 			views.quidds.openPanel(this.get("name"), this.get("properties"), this.get("methods"), this.get("encoder_category"));
 		},
 		delete: function() {
+			var that = this;
 			socket.emit("remove", this.get("name"));
+			//check if propertiesControl is created with the quidd deleted
+			collections.controlProperties.each(function(controlProperty) {
+				if(controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+			});
 		},
 		preview: function(element) {
 			var path = $(element.target).closest('tr').data("path"),

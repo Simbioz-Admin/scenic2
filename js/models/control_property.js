@@ -28,6 +28,7 @@ define([
 		delete: function() {
 			var that = this;
 			socket.emit("removeValuePropertyOfDico", "controlProperties", this.get("name"));
+			//check if mapper exist for this property and if yes : delete
 			collections.quidds.each(function(quidd) {
 				if(quidd.get("name").indexOf(that.get("name")) != -1)
 					quidd.delete();

@@ -18,7 +18,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			if (qprop != "byte-rate")
-				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
@@ -31,7 +31,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
-			log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+			log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
 			if (!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created") {
@@ -89,9 +89,19 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 
-	function remove(quidd) {
+	function remove(quiddName) {
+
+		//check if another quiddities is associate to
+		var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+		_.each(quidds, function(quidd) {
+			if(quidd.name.indexOf(quiddName+"-sink") != -1) {
+				log("info", "delete ",quidd.name, " associate to ", quiddName);
+				switcher.remove(quidd.name);
+			}
+		});
+
 		//remove the vumeter
-		var shmdatas = switcher.get_property_value(quidd, "shmdata-writers");
+		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
 		if (shmdatas != "property not found") {
 			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
 			$.each(shmdatas, function(index, shmdata) {
@@ -100,7 +110,8 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			});
 		}
-		return switcher.remove(quidd);
+
+		return switcher.remove(quiddName);
 	}
 
 

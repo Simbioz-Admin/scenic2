@@ -18,7 +18,7 @@ define([
 			this.add({
 				name: "transfer",
 				type: "transfer",
-				description: "it's the default table for transfert.",
+				description: "it's the default table for transfer.",
 				menus: {
 					sources: {
 						type: "quidds",

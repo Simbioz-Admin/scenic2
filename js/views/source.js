@@ -42,7 +42,8 @@ define([
 
 					//get info about vumeter for know if we can create a preview
 					setTimeout(function() {
-						collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
+						console.log("vumeter_" + shmdata.path);
+						collections.quidds.getPropertyValue({ name : "vumeter_" + shmdata.path }, "caps", function(info) {
 							info = info.split(",");
 							if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv")
 								$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview'></div>");

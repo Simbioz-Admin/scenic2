@@ -33,7 +33,7 @@ define([
 				property: property
 			}
 			socket.emit("setPropertyValueOfDico", "controlProperties", newControlProperty, function(ok) {
-				callback(quiddName + "_" + property);
+				callback(newControlProperty.name);
 			});
 		}
 	});

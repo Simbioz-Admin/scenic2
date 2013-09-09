@@ -18,14 +18,13 @@ define([
 			this.model.on('remove', this.removeView, this);
 			this.model.on('change', this.render, this);
 			this.model.on('change:properties', function(model, name) {
-				console.log(model, name);
+				//console.log(model, name);
 			});
 			this.table = this.options.table;
 			this.render();
 
 		},
 		render: function() {
-			console.log("test");
 			$(this.el).html("");
 			var that = this,
 				properties = this.model.get("properties"),

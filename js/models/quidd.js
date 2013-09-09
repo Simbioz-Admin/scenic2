@@ -1,9 +1,10 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source', 'views/sourceProperty', 'views/destination',
+	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 
 	'text!/templates/panelInfoSource.html'
-], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, infoTemplate) {
+], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper,
+	infoTemplate) {
 
 	var QuiddModel = Backbone.Model.extend({
 		url: "/quidd/",
@@ -11,6 +12,9 @@ define([
 		defaults: {
 			"name": null,
 			"class": null,
+			"category" : null,
+			"long name" : null,
+			"description" : null,
 			"properties": [],
 			"methods": [],
 			"encoder_category": null,
@@ -24,17 +28,26 @@ define([
 				that.getProperties(function() {
 					that.getMethodsDescription(function() {
 
-						if (that.get("class") == "midisrc") {
-							var viewSource = new ViewSourceProperty({
-								model: that,
-								table: "control"
-							});
-						} else {
+						if(that.get("category").indexOf("source") != -1) {
 							var viewSource = new ViewSource({
 								model: that,
 								table: "transfer"
 							});
 						}
+						if (that.get("class") == "midisrc") {
+							var viewSource = new ViewSourceProperty({
+								model: that,
+								table: "control"
+							});
+						} 
+
+						if(that.get("category") == "mapper") {
+							var viewMapper = new ViewMapper({
+								model : that,
+								table: "control"
+							});
+						};
+
 					});
 				});
 			});
@@ -51,17 +64,16 @@ define([
 				type = null,
 				that = this;
 
-			console.log(path);
-			collections.quidds.getPropertyValue("vumeter_" + path, "caps", function(info) {
+			collections.quidds.getPropertyValue({ name : "vumeter_" + path }, "caps", function(info) {
 				info = info.split(",");
 
 				if (info[0].indexOf("video") >= 0) type = "gtkvideosink";
 				if (info[0].indexOf("audio") >= 0) type = "pulsesink";
 
 				if (type != null) {
-					collections.quidds.create(type, that.get("name")+"-sink" , function(quidd) {
-						console.log(quidd, "connect", [path]);
-						socket.emit("invoke", quidd, "connect", [path]);
+					collections.quidds.create(type, that.get("name")+"-sink" , function(quiddInfo) {
+						console.log(quiddInfo.name, "connect", [path]);
+						socket.emit("invoke", quiddInfo.name, "connect", [path]);
 					});
 				}
 			});
@@ -69,7 +81,7 @@ define([
 		info: function(element) {
 			var shmdata = $(element.target).closest('tr').data("path");
 			var that = this;
-			collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
+			collections.quidds.getPropertyValue( { name : "vumeter_" + shmdata} , "caps", function(val) {
 				val = val.replace(/,/g, "<br>");
 				var template = _.template(infoTemplate, {
 					info: val,
@@ -114,6 +126,7 @@ define([
 		},
 		getPropertyValue: function(property, callback) {
 			var that = this;
+			console.log(this.get("name"), property);
 			socket.emit("get_property_value", this.get("name"), property, function(propertyValue) {
 				callback(propertyValue);
 			});

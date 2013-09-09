@@ -55,9 +55,8 @@ define([
 			 */
 
 			//create first quiddity for get the good properties
-			collections.quidds.create(className, name, function(quiddName) {
-				var model = collections.quidds.createClientSide(quiddName, className);
-
+			collections.quidds.create(className, name, function(quiddInfo) {
+				var model = collections.quidds.createClientSide(quiddInfo);
 				//check if autoDetect it's true if yes we set the value device with device selected
 				if (deviceDetected) {
 					model.setPropertyValue("device", deviceDetected, function(ok) {

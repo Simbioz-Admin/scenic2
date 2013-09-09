@@ -18,7 +18,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			if (qprop != "byte-rate")
-				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
@@ -31,11 +31,10 @@ module.exports = function(config, switcher, $, _, io, log) {
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
-			log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+			log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 
-			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0])).class;
-			if (!_.contains(config.quiddExclude, quiddClass) && qprop == "on-quiddity-created") {
-
+			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
+			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
@@ -52,15 +51,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 					delete config.listQuiddsAndSocketId[quiddName];
 				});
 				if (socketIdCreatedThisQuidd) {
-					io.sockets.except(socketIdCreatedThisQuidd).emit("create", {
-						name: pvalue[0],
-						class: quiddClass
-					});
+					io.sockets.except(socketIdCreatedThisQuidd).emit("create", quiddClass);
 				} else {
-					io.sockets.emit("create", {
-						name: pvalue[0],
-						class: quiddClass
-					});
+					io.sockets.emit("create", quiddClass);
 				}
 
 			}
@@ -73,7 +66,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 	//create the vumeter for shmdata
 
 	function createVuMeter(quiddName) {
-
+		log("info", "create vumeter for ", quiddName);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		$.each(shmdatas, function(index, shmdata) {
 			var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
@@ -83,6 +76,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 	function sendShmdatas(quiddName) {
+		log("info", "send Shmdatas for ", quiddName);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		if (shmdatas.length > 0)
 			io.sockets.emit("updateShmdatas", quiddName, shmdatas);
@@ -116,14 +110,18 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 
 	function getQuiddPropertiesWithValues(quiddName) {
-		var propertiesQuidd = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-		//recover the value set for the properties
-		$.each(propertiesQuidd, function(index, property) {
-			var valueOfproperty = switcher.get_property_value(quiddName, property.name);
-			if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
-			propertiesQuidd[index].value = valueOfproperty;
-		})
-		return propertiesQuidd;
+
+		var propertiesQuidd = switcher.get_properties_description(quiddName);
+		if(propertiesQuidd != "" ) {
+			propertiesQuidd = $.parseJSON(propertiesQuidd).properties;
+			//recover the value set for the properties
+			$.each(propertiesQuidd, function(index, property) {
+				var valueOfproperty = switcher.get_property_value(quiddName, property.name);
+				if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
+				propertiesQuidd[index].value = valueOfproperty;
+			})
+			return propertiesQuidd;
+		}
 	}
 
 	function get_classes_docs_type(type) {

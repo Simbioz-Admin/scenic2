@@ -1,4 +1,4 @@
-<% if(property){ %><tr class="property" data-quiddName="<%=sourceName%>">
+<% if(property){ %><tr class="property" data-quiddName="<%=sourceName%>" data-propertyName="<%=property.name%>">
 	<% if(index == 0){ %>
 		<td rowspan="<%=nbProperties%>" class="group groupSource" >
 			<div style="position:relative">
@@ -12,7 +12,7 @@
 			
 		</td>
 	<% } %>
-	<th scope="row" class="nameInOut" >
+	<th scope="row" class="nameInOut"  >
 		<div class="short">
 			<a href="#" class=''><%=property.description["long name"]%></a>
 		</div>
@@ -21,7 +21,7 @@
 	<% _.each(destinations, function(destination){
 		var active = false;
 	 %>
-		<td class="box<% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>"></td>
+		<td class="box connect-properties<% if(active){ %> active <% } %>" data-nameAndProperty="<%=destination.name%>"></td>
 	<% }); %>
 </tr>
 <% }else{ %><tr class="property" data-quiddName="<%=sourceName%>">
@@ -31,7 +31,7 @@
 				<div class="vertical short"><%=sourceName%></div>
 			</div>
 			<div class="actions">
-				<div class="action"><div class="edit"></div></div>
+				<!-- <div class="action"><div class="edit"></div></div> -->
 				<div class="action"><div class="remove">x</div></div>
 			</div>
 		</td>

@@ -38,15 +38,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 			if (quiddName) {
-				//subscribe to the all properties
 				config.listQuiddsAndSocketId[quiddName] = socket.id;
-				// var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-				// _.each(properties, function(property)
-				// {
-				// 	switcher.subscribe_to_property(quiddName, property.name);
-				// });
-				callback(quiddName);
-				//socket.broadcast.emit("create", { name : quiddName, class : className});
+				var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
+				callback(quiddInfo);
 
 			} else {
 				log("info", "failed to create a quiddity class ", className);
@@ -183,13 +177,18 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("get_property_value", function(quiddName, property, callback) {
-			try {
-				var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
 
-			} catch (e) {
-				//log('debug', e);
-				var quidds = switcher.get_property_value(quiddName, property);
+			console.log(quiddName, property);
+			if(quiddName && property) {
+				try {
+					var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
+
+				} catch (e) {
+					//log('debug', e);
+					var quidds = switcher.get_property_value(quiddName, property);
+				}
 			}
+			
 			callback(quidds);
 		});
 

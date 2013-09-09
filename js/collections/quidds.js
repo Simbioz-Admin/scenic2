@@ -48,20 +48,21 @@ define([
 			});
 
 			socket.on("updateShmdatas", function(qname, shmdatas) {
-				var quidds = that.get(qname);
+				var quidd = that.get(qname);
+				console.log(quidd);
 				//sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
-				if (quidds) {
-					quidds.set("shmdatas", shmdatas);
+				if (quidd) {
+					quidd.set("shmdatas", shmdatas);
 
 					//control if encoder is ask for this quidd
-					_.each(that.listEncoder, function(encoder, index) {
-						if (encoder.quiddName == qname) {
-							that.create(encoder.encoder, qname + "_enc", function(quidd) {
-								views.methods.setMethod(quidd.name, "connect", [shmdatas[0].path]);
-								that.listEncoder.splice(index, 1);
-							});
-						}
-					});
+					// _.each(that.listEncoder, function(encoder, index) {
+						// if (encoder.quiddName == qname) {
+				// 			that.create(encoder.encoder, qname + "_enc", function(quidd) {
+				// 				views.methods.setMethod(quidd.name, "connect", [shmdatas[0].path]);
+				// 				that.listEncoder.splice(index, 1);
+				// 			});
+						// }
+					// });
 				}
 
 			});
@@ -88,23 +89,20 @@ define([
 		delete: function(quiddName) {
 			socket.emit("remove", quiddName);
 		},
-		createClientSide: function(quiddName, className) {
+		createClientSide: function(quiddInfo) {
 			//create a model and add to the collection
-			var model = new QuiddModel({
-				name: quiddName,
-				class: className
-			});
+			var model = new QuiddModel(quiddInfo);
 			this.add(model);
-			views.global.notification("info", quiddName + " (" + className + ") is created");
+			views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
 			return model;
 		},
-		getPropertyValue: function(nameQuidd, property, callback) {
-			socket.emit("get_property_value", nameQuidd, property, function(propertyValue) {
+		getPropertyValue: function(infoQuidd, property, callback) {
+			socket.emit("get_property_value", infoQuidd.name, property, function(propertyValue) {
 				callback(propertyValue);
 			});
 		},
-		setPropertyValue: function(nameQuidd, property, value, callback) {
-			socket.emit("setPropertyValue", nameQuidd, property, value, function(ok) {
+		setPropertyValue: function(infoQuidd, property, value, callback) {
+			socket.emit("setPropertyValue", infoQuidd.name, property, value, function(ok) {
 				if (callback) callback(ok);
 			});
 		}

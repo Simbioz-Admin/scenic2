@@ -24,7 +24,7 @@ define([
 			$(this.el).append(template);
 			$("#" + this.table + " .destinations").append($(this.el));
 			$("#" + this.table + " .shmdata").each(function(index, source) {
-				$(this).append("<td class='box' data-hostname='" + that.model.get('name') + "'></td>");
+				$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "'></td>");
 			});
 
 		},

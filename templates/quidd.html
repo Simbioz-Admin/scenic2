@@ -66,28 +66,21 @@
 			<% }); %>
 		</select> -->
 
-		<% _.each(methods, function(method){  %>
-			<% 
-			if(method.name != "set_runtime" && method.name != "remove_midi_property" && method.name != "next_midi_event_to_property"){
-				if(method.name == "start"){ %>
+		<% _.each(methods, function(method){ console.log(method.name); %>
+			<%  if(method.name != "set_runtime" && method.name != "remove_midi_property" && method.name != "next_midi_event_to_property" && method.name != "set-sink-property" && method.name != "set-source-property"){  %>
 
-					<input type="hidden" id="removeQuidd" value="<%=quiddName%>" />
-					<a href="#" id="methodStart" class="btnMethod btn">START</a>
-				<% }else if(method.name == "stop"){ %>
-					<a href="#" id="methodStop" class="btnMethod btn">STOP</a>
-
-				<% }else{  %>
 					<div style="position:relative;">
 						<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
 						<% _.each(method["arguments"], function(argument){ %>
-						<div class="preview-value"></div>
-						<input class="method-value" data-name="<%=method['name']%>" type="text" value="">
-						<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
-					</div>
-					<% }); %> 	
-				<% } %> 	
+							<div class="preview-value"></div>
+							<input class="method-value" data-name="<%=method['name']%>" type="text" value="">
+							<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
+						<% }); %> 	
 
-		<%	} %>
+					</div>
+					
+			<%	} %>
+
 		<% }); %>
 
 

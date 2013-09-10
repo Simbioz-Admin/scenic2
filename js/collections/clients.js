@@ -25,6 +25,10 @@ define([
 			socket.on("remove_destination", function(invoke, quiddName, parameters) {
 				var model = that.get(parameters[0]);
 				model.trigger('destroy', model, that);
+				//remove box here
+				console.log("REMOVE DEST", parameters[0]);
+				$("[data-hostname='" + parameters[0] + "']").remove();
+
 				views.global.notification("info", "client " + parameters[0] + " has deleted");
 			});
 

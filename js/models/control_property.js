@@ -1,8 +1,8 @@
 define([
 	'underscore',
 	'backbone',
-	'views/destination'
-], function(_, Backbone, ViewDestination) {
+	'views/controlProperty'
+], function(_, Backbone, ViewControlProperty) {
 
 	var ModelControlProperty = Backbone.Model.extend({
 		idAttribute: "name",
@@ -17,7 +17,7 @@ define([
 			//when the model quidd is created and we are recovered all value necessary, we created automaticlly one or multiple views 
 			_.each(collections.tables.toJSON(), function(table) {
 				if (table.type == "control") {
-					var viewDestination = new ViewDestination({
+					var viewControlProperty = new ViewControlProperty({
 						model: that,
 						table: "control"
 					});
@@ -33,7 +33,6 @@ define([
 				if(quidd.get("name").indexOf(that.get("name")) != -1)
 					quidd.delete();
 			});
-			$("[data-nameandproperty='" + this.get('name') + "']").remove();
 		}
 	});
 

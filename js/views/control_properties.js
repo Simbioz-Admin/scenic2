@@ -22,10 +22,6 @@ define([
 				quiddName = $(element.target).closest("ul").data("quiddname");
 
 			this.collection.setDico(quiddName, property, function(quiddName) {
-
-				$("#control .property").each(function(index, source) {
-					$(this).append("<td class='box connect-properties' data-nameandproperty='" + quiddName + "'></td>");
-				});
 				$(element.target).remove();
 			});
 		},

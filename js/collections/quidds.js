@@ -16,8 +16,8 @@ define([
 			var that = this;
 
 			//receive notification for add quidd to the collection Quidds
-			socket.on("create", function(quidd) {
-				that.createClientSide(quidd.name, quidd.class);
+			socket.on("create", function(quiddInfo) {
+				that.createClientSide(quiddInfo);
 			});
 
 			socket.on("remove", function(quidd) {
@@ -39,8 +39,14 @@ define([
 				else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
-						model.setLocalpropertyValue(prop, value);
 
+						model.setLocalpropertyValue(prop, value);
+						if (prop == "started") {
+								model.getProperties(function(properties) {
+									model.getMethodsDescription(function(methods) {
+									});
+								});
+						}
 						//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
 						//var input = $("[name$='"+prop+"']");
 						//if(input) input.val(value);

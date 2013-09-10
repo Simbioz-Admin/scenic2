@@ -106,7 +106,6 @@ define([
 				// 	//make confirmation message set attributes ok
 				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
 				if (property == "started") {
-					console.log("started!");
 					that.getPropertiesAndMethods(model);
 				}
 			});

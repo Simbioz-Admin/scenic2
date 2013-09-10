@@ -24,6 +24,10 @@ define([
 			socket.on("removeValueOfPropertyDico", function(property, name) {
 				that.remove(name);
 				views.global.notification("info", "The property control " + name + " is deleted.");
+				//remove here box of property
+			$	("[data-nameandproperty='" + name + "']").remove();
+
+
 			});
 		},
 		setDico: function(quiddName, property, callback) {

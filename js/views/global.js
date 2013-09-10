@@ -21,8 +21,8 @@ define([
 			"click #btn-info": 'panelInfo',
 			"click #btnSave": 'save',
 			"click #btnLoadScratch": 'load_from_scratch',
-			"mouseenter td.nameInOut, .groupSource": "showActions",
-			"mouseleave td.nameInOut, .groupSource": "hideActions",
+			"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
+			"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
 			"click .tabTable": 'showTable'
 
 		},

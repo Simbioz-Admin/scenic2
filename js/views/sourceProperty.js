@@ -9,8 +9,8 @@ define([
 		className: 'source',
 		table: null,
 		events: {
-			"click .edit": "edit",
-			"click .remove": "removeClick",
+			"click .edit-source": "edit",
+			"click .remove-source": "removeClick",
 			"click .preview": "preview",
 			'click .info': 'info'
 		},

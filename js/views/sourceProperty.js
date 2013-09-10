@@ -16,10 +16,8 @@ define([
 		},
 		initialize: function() {
 			this.model.on('remove', this.removeView, this);
-			this.model.on('change', this.render, this);
-			this.model.on('change:properties', function(model, name) {
-				//console.log(model, name);
-			});
+			this.model.on('change:properties', this.render, this);
+
 			this.table = this.options.table;
 			this.render();
 
@@ -30,8 +28,10 @@ define([
 				properties = this.model.get("properties"),
 				destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON()),
 				countProperty = 0;
+
 			_.each(properties, function(property, index) {
 				if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
+
 					var template = _.template(TemplateSourceProperty, {
 						property: property,
 						index: countProperty,
@@ -39,6 +39,7 @@ define([
 						sourceName: that.model.get("name"),
 						destinations: destinations
 					});
+
 					$(that.el).append($(template));
 					countProperty++;
 				}
@@ -52,12 +53,20 @@ define([
 
 				$(that.el).append($(template));
 			}
+
 			//here we define were go the source  vhttpsdpdec
 			if (this.model.get("class") == "httpsdpdec") {
 				$("#" + that.table + " #remote-sources").prepend($(that.el));
 			} else {
 				$("#" + that.table + " #local-sources").prepend($(that.el));
 			}
+
+			//check if mapper exist for the 
+			collections.quidds.each(function(quidd) {
+				if(quidd.get("category") == "mapper" && quidd.get("view") != null) {
+					quidd.get("view").render();
+				}
+			});
 
 
 		},

@@ -25,7 +25,7 @@ define([
 				that.remove(name);
 				views.global.notification("info", "The property control " + name + " is deleted.");
 				//remove here box of property
-			$	("[data-nameandproperty='" + name + "']").remove();
+				$("[data-nameandproperty='" + name + "']").remove();
 
 
 			});

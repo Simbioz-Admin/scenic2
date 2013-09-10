@@ -15,6 +15,9 @@ define([
 		initialize: function() {
 			this.model.on('remove', this.removeView, this);
 			this.table = this.options.table;
+			this.render();
+		},
+		render : function() {
 			var info = this.model.get("name").split("_");
 			var template = _.template(TemplateMapper);
 			$(this.el).html(template);

@@ -18,7 +18,8 @@ define([
 			"properties": [],
 			"methods": [],
 			"encoder_category": null,
-			"shmdatas": null
+			"shmdatas": null,
+			"view" : null
 		},
 		initialize: function() {
 			var that = this;
@@ -29,25 +30,25 @@ define([
 					that.getMethodsDescription(function() {
 
 						if(that.get("category").indexOf("source") != -1) {
-							var viewSource = new ViewSource({
+							that.set("view", new ViewSource({
 								model: that,
 								table: "transfer"
-							});
+							}));
+							
 						}
 						if (that.get("class") == "midisrc") {
-							var viewSource = new ViewSourceProperty({
+							that.set("view", new ViewSourceProperty({
 								model: that,
 								table: "control"
-							});
+							}));
 						} 
 
 						if(that.get("category") == "mapper") {
-							var viewMapper = new ViewMapper({
+							that.set("view", new ViewMapper({
 								model : that,
 								table: "control"
-							});
-						};
-
+							}));
+						}
 					});
 				});
 			});

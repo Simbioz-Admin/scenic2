@@ -525,6 +525,14 @@ header .btn {
   box-shadow: none;
   opacity: 1;
 }
+/* line 368, ../sass/screen.sass */
+#panelTables .tabTable.transfer {
+  background: #eeeeee url(../../images/iconeTransmission.png) no-repeat center center;
+}
+/* line 370, ../sass/screen.sass */
+#panelTables .tabTable.control {
+  background: #eeeeee url(../../images/iconeControle.png) no-repeat center center;
+}
 
 /* line 374, ../sass/screen.sass */
 #headerDest {

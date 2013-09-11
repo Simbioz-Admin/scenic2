@@ -31,7 +31,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("create", function(className, quiddName, callback) {
-			log("debug", "ask for create quiddity ", className, quiddName);
+			log("info", "ask for create quiddity "+className+" "+quiddName);
 			if (quiddName)
 				var quiddName = switcher.create(className, quiddName);
 			else
@@ -84,7 +84,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
 			//switcher.subscribe_to_property(quiddName, property);
-			console.log(property, value);
 			var ok = switcher.set_property_value(quiddName, property, value);
 			if (ok) {
 				callback(property, value);
@@ -93,7 +92,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				if (property == "started") {
 					var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
 					_.each(properties, function(property) {
-						console.log("subscribe to the property", property.name);
+
 						switcher.subscribe_to_property(quiddName, property.name);
 					});
 
@@ -179,7 +178,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("get_property_value", function(quiddName, property, callback) {
 
-			console.log(quiddName, property);
 			if(quiddName && property) {
 				try {
 					var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));

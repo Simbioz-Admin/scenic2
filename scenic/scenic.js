@@ -18,7 +18,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			if (qprop != "byte-rate")
-				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
@@ -31,7 +31,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
-			log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+			log("debug", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
@@ -39,7 +39,6 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
-					console.log("subscribe to the property", property.name);
 					switcher.subscribe_to_property(pvalue[0], property.name);
 				});
 

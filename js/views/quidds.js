@@ -119,7 +119,7 @@ define([
 			//create temporary v4l2 quiddity for listing device available
 			var className = $(element.target).data("name");
 			collections.classesDoc.getPropertyByClass(className, "device", function(property) {
-
+				
 				var deviceDetected = property["type description"]["values"];
 				$("#deviceDetected").remove();
 				$("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");

@@ -10,7 +10,7 @@ module.exports = {
 	nameComputer: "scenic",
 	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude: ["shmdata-readers", "shmdata-writers"],
-	deviceAutoDetect: ["v4l2src"],
+	deviceAutoDetect: ["v4l2src", "pulsesrc"],
 	defaultPanelTable: "transfer",
 	listQuiddsAndSocketId: {}
 }

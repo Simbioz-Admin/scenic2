@@ -31,7 +31,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("create", function(className, quiddName, callback) {
-			log("info", "ask for create quiddity ",className, quiddName);
+			log("debug", "ask for create quiddity ", className, quiddName);
 			if (quiddName)
 				var quiddName = switcher.create(className, quiddName);
 			else

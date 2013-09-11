@@ -79,7 +79,7 @@ define([
 				if (info[0].indexOf("audio") >= 0) type = "pulsesink";
 
 				if (type != null) {
-					collections.quidds.create(type, that.get("name")+"-sink" , function(quiddInfo) {
+					collections.quidds.create(type, that.get("name")+type , function(quiddInfo) {
 						console.log(quiddInfo.name, "connect", [path]);
 						socket.emit("invoke", quiddInfo.name, "connect", [path]);
 					});

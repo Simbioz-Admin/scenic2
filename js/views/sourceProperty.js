@@ -71,7 +71,6 @@ define([
 
 		},
 		edit: function() {
-			console.log(this.model);
 			this.model.edit();
 		},
 		removeClick: function() {

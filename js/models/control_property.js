@@ -12,7 +12,6 @@ define([
 			"quiddName": null
 		},
 		initialize: function() {
-			console.log("the control property", this.get("name"), "is created");
 			var that = this;
 			//when the model quidd is created and we are recovered all value necessary, we created automaticlly one or multiple views 
 			_.each(collections.tables.toJSON(), function(table) {

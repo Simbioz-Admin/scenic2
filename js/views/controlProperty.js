@@ -21,12 +21,10 @@ define([
 					name: this.model.get("name")
 				});
 
-			console.log(this.model);
 			$(this.el).append(template);
 			$("#" + this.table + " .destinations").append($(this.el));
 
 			$("#control .property").each(function(index, source) {
-				console.log(index);
 				$(this).append("<td class='box connect-properties' data-nameandproperty='" + that.model.get("name") + "'></td>");
 			});
 

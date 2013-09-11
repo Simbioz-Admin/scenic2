@@ -40,9 +40,10 @@ define([
 			collections.quidds.create("property-mapper", nameQuidd, function(infoQuidd) {
 
 				var model = collections.quidds.createClientSide(infoQuidd);
-
-				socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource]);
-				socket.emit("invoke", infoQuidd.name, "set-sink-property", [sinkSource, sinkProperty]);
+				console.log("set-source-property", quiddSource, propertySource);
+				socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok){ console.log("set-source-property", ok)});
+				console.log("set-sink-property", sinkSource, sinkProperty);
+				socket.emit("invoke", infoQuidd.name, "set-sink-property", [sinkSource, sinkProperty], function(ok){ console.log("set-sink-property", ok)});
 			});
 		}
 	});

@@ -36,14 +36,10 @@ define([
 		create: function(element) {
 			var className = $("#className").val(),
 				name = $("#quiddName").val(),
-				categoryQuidd = collections.classesDoc.get(className).get("category"),
 				that = this,
-				deviceDetected = $("#device").val(),
-				category = "encoder";
+				deviceDetected = $("#device").val();
 
-			//check category of the quidd and get specific encoder
-			if (categoryQuidd.indexOf("video") >= 0) category = "video encoder";
-			if (categoryQuidd.indexOf("audio") >= 0) category = "audio encoder";
+
 
 			/**
 			 *
@@ -70,7 +66,9 @@ define([
 			model.getProperties(function(properties) {
 				model.getMethodsDescription(function(methods) {
 					//retrive list encoder 
-					var encoders = collections.classesDoc.getByCategory(model.get("encoder_category")).toJSON();
+					if (model.get("category").indexOf("video") >= 0) category_encoder = "video encoder";
+					if (model.get("category").indexOf("audio") >= 0) category_encoder = "audio encoder";
+					var encoders = collections.classesDoc.getByCategory(category_encoder).toJSON();
 					that.openPanel(model.get("name"), properties, methods, encoders);
 					if (callback) callback("ok");
 				});
@@ -95,20 +93,26 @@ define([
 				that = this;
 
 			if (property == "encoder") {
+				console.log(property, value);
+				collections.quidds.create(value, model.get("name")+"_enc", function(quiddInfo) {
+					console.log(quiddInfo);
+	    			//views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
+	    		});
 				//add to the list the encoder ask to create with shmdata
-				collections.quidds.listEncoder.push({
-					quiddName: quidd.name,
-					encoder: encoder
+				// collections.quidds.listEncoder.push({
+				// 	quiddName: quidd.name,
+				// 	encoder: encoder
+				// });
+			}
+			else {
+				model.setPropertyValue(property, value, function() {
+					// 	//make confirmation message set attributes ok
+					// 	//console.log("the property  :", property, "with value : ", value, "has set!");
+					if (property == "started") {
+						that.getPropertiesAndMethods(model);
+					}
 				});
 			}
-			console.log(property, value);
-			model.setPropertyValue(property, value, function() {
-				// 	//make confirmation message set attributes ok
-				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-				if (property == "started") {
-					that.getPropertiesAndMethods(model);
-				}
-			});
 
 		},
 		autoDetect: function(element) {

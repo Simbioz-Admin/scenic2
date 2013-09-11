@@ -29,7 +29,7 @@ define([
 				that.getProperties(function() {
 					that.getMethodsDescription(function() {
 
-						if(that.get("category").indexOf("source") != -1) {
+						if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
 							that.set("view", new ViewSource({
 								model: that,
 								table: "transfer"
@@ -52,6 +52,8 @@ define([
 					});
 				});
 			});
+
+
 
 		},
 		edit: function() {

@@ -12,7 +12,6 @@ define([
 			return results;
 		},
 		initialize: function() {
-			console.log("init CollectionControlProperties");
 			var that = this;
 			//this.bind("add", this.setDico, this);
 

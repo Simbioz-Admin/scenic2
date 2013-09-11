@@ -51,10 +51,16 @@ setTimeout(function()
 
 	//set mapper quidd
 	var mapper = switcher.create("property-mapper");
-	console.log("set quiddity mapper source", switcher.invoke(mapper, "set-source-property", [midi, "159_60"]));
+	console.log("set quiddity mapper source", switcher.invoke(mapper, "set-source-property", [midi, "191-102"]));
 	console.log("set quiddity mapper sink", switcher.invoke(mapper, "set-sink-property", [audio, "freq"]));
 	
 
+	//test we remove mapper and reacreate
+	switcher.remove(mapper);
+	var mapper2 = switcher.create("property-mapper");
+	console.log("set quiddity mapper source", switcher.invoke(mapper2, "set-source-property", [midi, "191-102"]));
+	console.log("set quiddity mapper sink", switcher.invoke(mapper2, "set-sink-property", [audio, "freq"]));
+	
 	//listen audio and play with touch1
 	var shmdata_audio = $.parseJSON(switcher.get_property_value(audio, "shmdata-writers")).shmdata_writers[0].path;
 	switcher.invoke(listen, "connect", [shmdata_audio]);

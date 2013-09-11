@@ -23,6 +23,7 @@ define([
 					type: this.model.get("type")
 				}
 			});
+			btnTable.append("<div class='content'></div>");
 			$("#panelTables").append(btnTable);
 
 			// generate the table

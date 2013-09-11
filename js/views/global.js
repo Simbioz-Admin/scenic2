@@ -203,10 +203,10 @@ define([
 			}, 200).css("display", "none");
 		},
 		showTable: function(event) {
-			var table = $(event.target).data("type");
+			var table = $(event.target).parent().data("type");
 			collections.tables.currentTable = table;
 			$(".tabTable").removeClass("active");
-			$(event.target).addClass("active");
+			$(event.target).parent().addClass("active");
 			$(".table").hide();
 			$("#" + table).show();
 		}

@@ -69,9 +69,12 @@ module.exports = function(config, switcher, $, _, io, log) {
 		log("info", "create vumeter for ", quiddName);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		$.each(shmdatas, function(index, shmdata) {
+
 			var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
-			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
-			var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
+			if(vumeter) {
+				var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
+				var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
+			}
 		});
 	}
 

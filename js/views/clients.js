@@ -67,16 +67,19 @@ define([
 					console.log("data added to stream");
 				});
 				//connect shmdata to destination
+				console.log("add_udp_stream_to_dest", path, destName, port);
 				socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok) {
 					console.log("uridecodebin remote", destName);
 
 					//check if its soapClient
 					socket.emit("get_quiddity_description", "soapClient-" + destName, function(description) {
 						if (description.name) {
-							socket.emit("invoke", "soapClient-" + destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + destName],
-								function(ok) {
-									console.log("ok?", ok);
-								});
+							setTimeout(function(){
+								socket.emit("invoke", "soapClient-" + destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + destName],
+									function(ok) {
+										console.log("ok?", ok);
+									});
+							}, 1000);
 						}
 					});
 

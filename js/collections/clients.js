@@ -11,7 +11,6 @@ define([
 			return results.destinations;
 		},
 		initialize: function() {
-			console.log("init collection Clients");
 			var that = this;
 
 			socket.on("add_destination", function(invoke, quiddName, parameters) {

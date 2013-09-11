@@ -81,7 +81,9 @@ define([
 				if (type != null) {
 					collections.quidds.create(type, that.get("name")+type , function(quiddInfo) {
 						console.log(quiddInfo.name, "connect", [path]);
-						socket.emit("invoke", quiddInfo.name, "connect", [path]);
+						setTimeout(function() {
+							socket.emit("invoke", quiddInfo.name, "connect", [path]);
+						}, 1000);
 					});
 				}
 			});

@@ -16,17 +16,18 @@ module.exports = function(config, switcher, $, _, io, log) {
 			log('debug', 'log : ', msg);
 		});
 
+		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
-			if (qprop != "byte-rate")
+			//if (qprop != "byte-rate")
 				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
+			//broadcast all the modification on properties
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
 
+
 			if (qprop == "shmdata-writers") {
-				if ($.parseJSON(pvalue).shmdata_writers.length > 0) {
-					createVuMeter(qname);
-					sendShmdatas(qname);
-				}
+				if($.parseJSON(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
+				sendShmdatas(qname);
 			}
 		});
 
@@ -65,23 +66,37 @@ module.exports = function(config, switcher, $, _, io, log) {
 	//create the vumeter for shmdata
 
 	function createVuMeter(quiddName) {
-		log("info", "create vumeter for ", quiddName);
+		console.log("-------------------------- CREATE VUMETER ------------------------------");
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
-		$.each(shmdatas, function(index, shmdata) {
 
+		$.each(shmdatas, function(index, shmdata) {
+			//remove the old vumeter just in case
+			switcher.remove("vumeter_" + shmdata.path);
 			var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
-			if(vumeter) {
-				var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
-				var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
+
+			if(!vumeter) { 
+				log("info", "failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
+				return false;
+			} else {
+				log("info", "fakesink quiddity created : ", "vumeter_" + shmdata.path);
 			}
+
+			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
+
+			var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
+			console.log("subscribe to property ", subscribe)
+
+
 		});
 	}
 
 	function sendShmdatas(quiddName) {
 		log("info", "send Shmdatas for ", quiddName);
+
+		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
+		console.log("TEst", shmdatas);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
-		if (shmdatas.length > 0)
-			io.sockets.emit("updateShmdatas", quiddName, shmdatas);
+		io.sockets.emit("updateShmdatas", quiddName, shmdatas);
 	}
 
 

@@ -30,13 +30,7 @@ define([
 			socket.on("signals_properties", function(quiddName, prop, value) {
 				if (prop == "byte-rate") {
 					views.quidds.updateVuMeter(quiddName, value)
-				}
-
-				// else if(quiddName == "dico" && prop == "controlProperties")
-				// {
-				// 	collections.controlProperties.fetch();
-				// }
-				else {
+				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
 
@@ -56,7 +50,7 @@ define([
 
 			socket.on("updateShmdatas", function(qname, shmdatas) {
 				var quidd = that.get(qname);
-				console.log(quidd);
+				console.log(quidd, shmdatas);
 				//sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
 				if (quidd) {
 					quidd.set("shmdatas", shmdatas);

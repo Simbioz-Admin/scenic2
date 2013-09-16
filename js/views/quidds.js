@@ -3,8 +3,9 @@ define([
 	'backbone',
 	'models	/quidd',
 	'text!/templates/createQuidd.html',
-	'text!/templates/quidd.html'
-], function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate) {
+	'text!/templates/quidd.html',
+	'noUiSlider'
+], function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate, noUiSlider) {
 
 	var QuiddView = Backbone.View.extend({
 		el: 'body',
@@ -67,27 +68,21 @@ define([
 			var that = this;
 			model.getProperties(function(properties) {
 				model.getMethodsDescription(function(methods) {
-					//retrive list encoder 
-					if (model.get("category").indexOf("video") >= 0) category_encoder = "video encoder";
-					if (model.get("category").indexOf("audio") >= 0) category_encoder = "audio encoder";
-					var encoders = collections.classesDoc.getByCategory(category_encoder).toJSON();
-					that.openPanel(model.get("name"), properties, methods, encoders);
+					that.openPanel(model.get("name"), properties, methods);
 					if (callback) callback("ok");
 				});
 			});
 		},
-		openPanel: function(quiddName, properties, methods, encoders) {
+		openPanel: function(quiddName, properties, methods) {
+			var that = this;
 			var template = _.template(quiddTemplate, {
 				title: "Set " + quiddName,
 				quiddName: quiddName,
 				properties: properties,
-				methods: methods,
-				encoders: encoders
+				methods: methods
 			});
 			$("#panelRight .content").html(template);
 			views.global.openPanel();
-<<<<<<< Updated upstream
-=======
 
 			//generate slider for properties
 			_.each(properties, function(property) {
@@ -104,47 +99,31 @@ define([
 					    max: parseInt(info.maximum),
 					    slide: function(event, ui) {
 					        $("[name='"+property.name+"']").val(ui.value);
+
 					        that.setProperty({name : property.name, value : ui.value});
 					  	}
 					});
 				}
 			});
 
->>>>>>> Stashed changes
 		},
 		setProperty: function(element) {
-
+			
 			var model = collections.quidds.get($("#quiddName").val()),
-				property = element.target.name,
-				value = element.target.value,
 				that = this;
-<<<<<<< Updated upstream
-=======
+
 				property = (element.target ? element.target.name : element.name);
 				value = (element.target ? element.target.value : element.value),
->>>>>>> Stashed changes
+			}
 
-			if (property == "encoder") {
-				console.log(property, value);
-				collections.quidds.create(value, model.get("name")+"_enc", function(quiddInfo) {
-					console.log(quiddInfo);
-	    			//views.methods.setMethod( quidd.name, "connect", [shmdatas[0].path]);
-	    		});
-				//add to the list the encoder ask to create with shmdata
-				// collections.quidds.listEncoder.push({
-				// 	quiddName: quidd.name,
-				// 	encoder: encoder
-				// });
-			}
-			else {
-				model.setPropertyValue(property, value, function() {
-					// 	//make confirmation message set attributes ok
-					// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-					if (property == "started") {
-						that.getPropertiesAndMethods(model);
-					}
-				});
-			}
+			model.setPropertyValue(property, value, function() {
+				// 	//make confirmation message set attributes ok
+				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
+				if (property == "started") {
+					that.getPropertiesAndMethods(model);
+				}
+			});
+		
 
 		},
 		autoDetect: function(element) {

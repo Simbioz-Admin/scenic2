@@ -28,7 +28,29 @@ switcher.invoke("soap", "set_port", [8074]);
 
 
 var vid = switcher.create("videotestsrc", "vid");
-console.log("start : ", switcher.invoke(vid, "start", []));
+//console.log("start : ", switcher.invoke(vid, "start", ["true"]));
+console.log(switcher.get_property_value(vid, "codec"));
+console.log(switcher.get_property_value(vid, "more_codecs"));
+
+
+var propertiesQuidd = switcher.get_properties_description(vid);
+console.log(propertiesQuidd);
+
+console.log(switcher.set_property_value(vid, "codec","2"));
+console.log(switcher.get_property_value(vid, "codec"));
+
+
+
+// //recover the value set for the properties
+// $.each(propertiesQuidd, function(index, property) {
+// 	console.log("get value of property : ", property.name);
+// 	//if(property.name == "codec") {
+// 		var valueOfproperty = switcher.get_property_value(vid, property.name);
+// 		console.log("get property_value", valueOfproperty);
+// 	//}
+// 	// if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
+// 	// propertiesQuidd[index].value = valueOfproperty;
+// });
 
 
 

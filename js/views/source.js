@@ -55,7 +55,10 @@ define([
 					shmdata: null
 				});
 				$(that.el).append($(template));
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 			}
 
 			//here we define were go the source  vhttpsdpdec

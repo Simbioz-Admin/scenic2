@@ -52,7 +52,9 @@ define([
 
 			//create first quiddity for get the good properties
 			collections.quidds.create(className, name, function(quiddInfo) {
+
 				var model = collections.quidds.createClientSide(quiddInfo);
+				
 				//check if autoDetect it's true if yes we set the value device with device selected
 				if (deviceDetected) {
 					model.setPropertyValue("device", deviceDetected, function(ok) {
@@ -84,6 +86,31 @@ define([
 			});
 			$("#panelRight .content").html(template);
 			views.global.openPanel();
+<<<<<<< Updated upstream
+=======
+
+			//generate slider for properties
+			_.each(properties, function(property) {
+				var info = property.description["type description"];
+				if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "uint") {
+
+					var step = (parseInt(info.maximum) - parseInt(info.minimum))/200;
+					
+					$("."+property.name).slider({
+						range: "min",
+					    value: property.value,
+					    step: step,
+					    min: parseInt(info.minimum),
+					    max: parseInt(info.maximum),
+					    slide: function(event, ui) {
+					        $("[name='"+property.name+"']").val(ui.value);
+					        that.setProperty({name : property.name, value : ui.value});
+					  	}
+					});
+				}
+			});
+
+>>>>>>> Stashed changes
 		},
 		setProperty: function(element) {
 
@@ -91,6 +118,11 @@ define([
 				property = element.target.name,
 				value = element.target.value,
 				that = this;
+<<<<<<< Updated upstream
+=======
+				property = (element.target ? element.target.name : element.name);
+				value = (element.target ? element.target.value : element.value),
+>>>>>>> Stashed changes
 
 			if (property == "encoder") {
 				console.log(property, value);
@@ -119,22 +151,26 @@ define([
 			//create temporary v4l2 quiddity for listing device available
 			var className = $(element.target).data("name");
 			collections.classesDoc.getPropertyByClass(className, "device", function(property) {
-				
-				var deviceDetected = property["type description"]["values"];
-				$("#deviceDetected").remove();
-				$("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");
+				if(property) {
+					var deviceDetected = property["type description"]["values"];
 
-				_.each(deviceDetected, function(device) {
-					var li = $("<li></li>", {
-						text: device["name"] + " " + device["nick"],
-						class: 'source',
-						data: {
-							name: className,
-							devicedetected: device["value"]
-						},
+					$("#deviceDetected").remove();
+					$("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");
+
+					_.each(deviceDetected, function(device) {
+						var li = $("<li></li>", {
+							text: device["name"] + " " + device["nick"],
+							class: 'source',
+							data: {
+								name: className,
+								devicedetected: device["value"]
+							},
+						});
+						$("#deviceDetected").append(li);
 					});
-					$("#deviceDetected").append(li);
-				});
+				} else {
+					views.global.notification("error", "no device video detected.");
+				}
 			});
 		},
 		updateVuMeter: function(quiddName, value) {
@@ -149,9 +185,7 @@ define([
 				valueMethod = $("[data-name='" + method + "']").val();
 
 			if (method && valueMethod) {
-				console.log("setMethod", method, "to", valueMethod);
 				model.setMethod(method, [valueMethod], function(ok) {
-					console.log("ok!", ok);
 					that.getPropertiesAndMethods(model);
 				});
 			}
@@ -161,7 +195,6 @@ define([
 				model = collections.quidds.get($("#quiddName").val());
 
 			model.setMethod("start", [], function() {
-				console.log("set Start");
 				//the method has set correctly now we refresh properties in panel
 				that.getPropertiesAndMethods(model);
 			});

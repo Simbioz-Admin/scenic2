@@ -36,7 +36,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
-
+				
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {

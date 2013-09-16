@@ -40,10 +40,11 @@ console.log("connect : ", switcher.invoke("vumeter", "connect", ["/tmp/switcher_
 console.log("subscribe", switcher.subscribe_to_property("vumeter", "byte-rate"));
 
 
-// console.log("start : ", switcher.set_property_value(vid, "started", "stop"));
-// console.log("start : ", switcher.set_property_value(vid, "started", "true"));
-
+console.log("start : ", switcher.set_property_value(vid, "started", "stop"));
+console.log("start : ", switcher.set_property_value(vid, "started", "true"));
 console.log("remove",switcher.remove("vumeter"));
+
+
 console.log("create : ", switcher.create("fakesink", "vumeter"));
 
 console.log("shmdatas", $.parseJSON(switcher.get_property_value(vid, "shmdata-writers")).shmdata_writers);

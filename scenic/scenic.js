@@ -18,7 +18,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
-			//if (qprop != "byte-rate")
+			if (qprop != "byte-rate")
 				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
 			//broadcast all the modification on properties
@@ -82,19 +82,28 @@ module.exports = function(config, switcher, $, _, io, log) {
 			}
 
 			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
-
 			var subscribe = switcher.subscribe_to_property(vumeter, "byte-rate");
-			console.log("subscribe to property ", subscribe)
-
-
 		});
+	}
+
+
+	function removeVumeters(quiddName) {
+		//remove the vumeter
+		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
+		if (shmdatas != "property not found") {
+			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
+			$.each(shmdatas, function(index, shmdata) {
+				//for the moment create a segmentation fault
+				log("info", "remove vumeter : vumeter_"+shmdata.path);
+				switcher.remove('vumeter_' + shmdata.path);
+
+			});
+		}
 	}
 
 	function sendShmdatas(quiddName) {
 		log("info", "send Shmdatas for ", quiddName);
-
 		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
-		console.log("TEst", shmdatas);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 		io.sockets.emit("updateShmdatas", quiddName, shmdatas);
 	}
@@ -111,19 +120,12 @@ module.exports = function(config, switcher, $, _, io, log) {
 			}
 		});
 
-		//remove the vumeter
-		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
-		if (shmdatas != "property not found") {
-			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
-			$.each(shmdatas, function(index, shmdata) {
-				//for the moment create a segmentation fault
-				switcher.remove('vumeter_' + shmdata.path);
-
-			});
-		}
+		removeVumeters(quiddName);
 
 		return switcher.remove(quiddName);
 	}
+
+
 
 
 	function getQuiddPropertiesWithValues(quiddName) {
@@ -189,6 +191,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 	return {
 		initialize: initialize,
 		createVuMeter: createVuMeter,
+		removeVumeters : removeVumeters,
 		remove: remove,
 		getQuiddPropertiesWithValues: getQuiddPropertiesWithValues,
 		get_classes_docs_type: get_classes_docs_type,

@@ -21,33 +21,38 @@
 
 				<!-- Type input for float / int and bool -->
 				<% if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "string" || info.type == "uint"){ %>
-				<input 
-					class="property" 
-					data-current="<%=valueField%>" 
-					data-min="<%=info.minimum%>" 
-					data-maximum="<%=info.maximum%>" 
-					type="text" 
-					value="<%=valueField%>"
-					name="<%=property.name%>" 
-					placeholder="value type <%=info.type%>" />
-				<% } %>
-
+				<div class="property-content">
+					<div class="<%=property.name%>"></div>
+					<input 
+						class="property <%=info.type%> slider" 
+						data-current="<%=valueField%>" 
+						data-min="<%=info.minimum%>" 
+						data-maximum="<%=info.maximum%>" 
+						type="text" 
+						value="<%=valueField%>"
+						name="<%=property.name%>" 
+						placeholder="value type <%=info.type%>" />
+					<%  } %>
+				</div>
 				<!-- Radion button for boolean -->
 				<% if(info.type == "boolean"){ %>
+				<div class="property-content">
 					<label><input class="property checkbox" type="checkbox" name="<%=property.name%>"  value="<%=valueField%>" <% if(valueField == "true"){ %> checked="checked" <% } %> > active</label>
+				</div>
 				<% } %>
 
 
 				<!-- Dropdown for enum -->
 				<% if(info.type == "enum"){ %>
-				<select class="property" name="<%=property.name%>"
-					data-current="<%=valueField%>"
-					<% _.each(info.values, function(value){ %>>
-	  					<option value="<%=value.value%>"  <%  if(valueField == value.name){ %>  selected="selected" <% } %>  ><%= value.name%></option>
-					<% }); %>
-				</select>
-				<% } %>
-
+				<div class="property-content">
+					<select class="property" name="<%=property.name%>"
+						data-current="<%=valueField%>"
+						<% _.each(info.values, function(value){ %>>
+		  					<option value="<%=value.value%>"  <%  if(valueField == value.name){ %>  selected="selected" <% } %>  ><%= value.name%></option>
+						<% }); %>
+					</select>
+					<% } %>
+				</div>
 			</li>
 			<% }  %>
 		<% }); %>
@@ -55,18 +60,7 @@
 		</ul>
 
 
-		
-		<h3 class="info" title="select encoder">Select an encoder</h3>
-		<select class="property" name="encoder" >
-			<option value="none">none</option>
-			<% _.each(encoders, function(encoder){ %>
-			<option value="<%=encoder["class name"]%>" >
-				<%= encoder["short description"] %>
-			</option>
-			<% }); %>
-		</select>
-
-		<% _.each(methods, function(method){ console.log(method.name); %>
+		<% _.each(methods, function(method){ %>
 			<%  if(method.name != "set_runtime" && method.name != "remove_midi_property" && method.name != "next_midi_event_to_property" && method.name != "set-sink-property" && method.name != "set-source-property"){  %>
 
 					<div style="position:relative;">

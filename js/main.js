@@ -7,7 +7,8 @@ require.config({
     underscore: 'libs/underscore-min',
     backbone: 'libs/backbone-min',
     util: 'libs/util',
-    jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min'
+    jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
+    noUiSlider : 'libs/jquery.nouislider.min'
   },
   shim: {
     underscore: {
@@ -20,6 +21,10 @@ require.config({
     jqueryui: {
       deps: ["jquery"],
       exports: "jqueryui"
+    },
+    noUiSlider : {
+      deps: ['jquery'],
+      exports: "noUiSlider"
     }
   }
 });
@@ -35,6 +40,8 @@ require([
   config = {}
 ], function(app, launch, util, socket) {
 
+
+  $("#test").slider();
   var socket = io.connect();
   //recovery config information from the server
   socket.emit("getConfig", function(configServer) {

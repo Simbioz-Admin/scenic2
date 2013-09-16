@@ -82,23 +82,30 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("setPropertyValue", function(quiddName, property, value, callback) {
 
-			//TEMPORARY SUBSCRIBE PROPERTY BECAUSE NEED SIGNAL FOR NEW PROPERTY
-			//switcher.subscribe_to_property(quiddName, property);
-			var ok = switcher.set_property_value(quiddName, property, value);
-			if (ok) {
-				callback(property, value);
-				socket.broadcast.emit("setPropertyValue", quiddName, property, value);
+			//check for remove shmdata when set properties started to false
+			if(property == "started" && value == "false") {
+				scenic.removeVumeters(quiddName);
+			}
 
-				if (property == "started") {
-					var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-					_.each(properties, function(property) {
+			if(quiddName && property && value) {
+				var ok = switcher.set_property_value(quiddName, property, String(value));
+				if (ok) {
+					callback(property, value);
+					socket.broadcast.emit("setPropertyValue", quiddName, property, value);
 
-						switcher.subscribe_to_property(quiddName, property.name);
-					});
+					if (property == "started") {
+						var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+						_.each(properties, function(property) {
 
+							switcher.subscribe_to_property(quiddName, property.name);
+						});
+
+					}
+				} else {
+					socket.emit("msg", "error", "the property " + property + " of " + quiddName + "is not set");
 				}
 			} else {
-				socket.emit("msg", "error", "the property " + property + " of " + quiddName + "is not set");
+				log("info", "missing arguments for set property value :", quiddName, property, value);
 			}
 		});
 

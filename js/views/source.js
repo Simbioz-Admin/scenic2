@@ -54,10 +54,10 @@ define([
 					sourceName: that.model.get("name"),
 					shmdata: null
 				});
-				$(that.el).append($(template));
+
 
 			}
-
+			$(".property", that.el).hide();
 			//here we define were go the source  vhttpsdpdec
 			if (this.model.get("class") == "httpsdpdec") {
 				$("#" + that.table + " #remote-sources").prepend($(that.el));
@@ -65,9 +65,9 @@ define([
 				$("#" + that.table + " #local-sources").prepend($(that.el));
 			}
 
-
 		},
 		edit: function() {
+			console.log("AAA");
 			this.model.edit();
 		},
 		removeClick: function() {

@@ -111,10 +111,9 @@ define([
 			
 			var model = collections.quidds.get($("#quiddName").val()),
 				that = this;
-
 				property = (element.target ? element.target.name : element.name);
 				value = (element.target ? element.target.value : element.value),
-			}
+			
 
 			model.setPropertyValue(property, value, function() {
 				// 	//make confirmation message set attributes ok

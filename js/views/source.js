@@ -59,8 +59,6 @@ define([
 
 			}
 
-			}
-			$(".property", that.el).hide();
 			//here we define were go the source  vhttpsdpdec
 			if (this.model.get("class") == "httpsdpdec") {
 				$("#" + that.table + " #remote-sources").prepend($(that.el));

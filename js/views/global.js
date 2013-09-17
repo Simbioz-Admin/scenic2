@@ -17,7 +17,6 @@ define([
 			"click #close-panelInfoSource": "closePanelInfoSource",
 			"change .checkbox": 'stateCheckbox',
 			"click #btn-irc, .close-irc": 'panelIrc',
-			// "click #btn-log": 'panelLog',
 			"click #btn-info": 'panelInfo',
 			"click #btnSave": 'save',
 			"click #btnLoadScratch": 'load_from_scratch',

@@ -3,14 +3,14 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers',
-  'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers'
+  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
+  'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
 
 ], function(_,
   Backbone,
   $,
-  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers,
-  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers
+  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
+  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
 ) {
   var initialize = function() {
 	"use strict";
@@ -46,8 +46,8 @@ define([
 	  }
 	});
 
-
-
+	collections.irc = new CollectionIrcs();
+	views.ircs = new ViewIrcs();
   }
 
 

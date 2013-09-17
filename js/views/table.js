@@ -24,7 +24,7 @@ define([
 				}
 			});
 			btnTable.append("<div class='content'></div>");
-			$("#panelTables").append(btnTable);
+			$("#panelTables").prepend(btnTable);
 
 			// generate the table
 			var template = _.template(TemplateTable, {

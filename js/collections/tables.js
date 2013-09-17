@@ -16,21 +16,6 @@ define([
 			//create the first table for manage transfert
 
 			this.add({
-				name: "transfer",
-				type: "transfer",
-				description: "it's the default table for transfer.",
-				menus: {
-					sources: {
-						type: "quidds",
-						name: "source"
-					},
-					destinations: {
-						type: "client",
-						name: "destination"
-					}
-				}
-			});
-			this.add({
 				name: "controler",
 				type: "control",
 				description: "it's the default table for controler.",
@@ -43,6 +28,21 @@ define([
 					destinations: {
 						type: "quiddsProperties",
 						name: "property"
+					}
+				}
+			});
+			this.add({
+				name: "transfer",
+				type: "transfer",
+				description: "it's the default table for transfer.",
+				menus: {
+					sources: {
+						type: "quidds",
+						name: "source"
+					},
+					destinations: {
+						type: "client",
+						name: "destination"
 					}
 				}
 			});

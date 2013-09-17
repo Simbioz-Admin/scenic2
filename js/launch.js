@@ -4,9 +4,8 @@ define([
   'backbone',
   'jquery',
   'views/launch',
-], function(_,  Backbone,  $, launchView)
-{
-  var initialize = function(){
+], function(_, Backbone, $, launchView) {
+  var initialize = function() {
     "use strict";
     views.launch = new launchView();
 
@@ -17,4 +16,3 @@ define([
   };
 
 });
-

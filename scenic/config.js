@@ -1,14 +1,16 @@
 //-- config.js
 module.exports = {
-	host : "localhost",
-	port : {
-		soap : 8085,
-		scenic : 8095
+	host: "localhost",
+	port: {
+		soap: 8085,
+		scenic: 8095
 	},
-	debugLevel : "info",
-	logSocketIo : false,
-	nameComputer : "scenic",
-	quiddExclude : ['create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
-	propertiesExclude : ["shmdata-readers", "shmdata-writers"],
-	deviceAutoDetect : ["v4l2src"]
+	debugLevel: "error",
+	logSocketIo: false,
+	nameComputer: "scenic",
+	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
+	propertiesExclude: ["shmdata-readers", "shmdata-writers"],
+	deviceAutoDetect: ["v4l2src", "pulsesrc"],
+	defaultPanelTable: "transfer",
+	listQuiddsAndSocketId: {}
 }

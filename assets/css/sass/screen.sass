@@ -28,11 +28,11 @@
 		margin : -8px 0 0 -8px
 		padding : 8px
 		+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px inset)
-		//+background-image(linear-gradient(rgba(255,255,255, 0.1), rgba(255,255,255, 0.5)))
+		//+background-image(linear-gradient(rgba(255,255,255, 0.1), rgba(255,255,/255, 0.5)))
 		+border-radius(3px)
 
 
-$heightHeader : 38px
+$heightHeader : 50px
 $grey1 : #f1f1f1
 $grey2 : #333
 $colorSat : #be2620
@@ -127,17 +127,23 @@ header
 	position : fixed
 	top : 0
 	z-index: 11
+	.btn
+		margin-top : 10px
 
-#logo
-	width : 140px
-	height : 35px
+#logoSat
+	width : 50px
+	height : 50px
 	float : left
-	padding : 10px 0 0 50px
-	margin-left : 10px
-	font-size : 2em
-	font-family : "Irma Light"
-	background : url(../../images/logo_sat.png) no-repeat 10px 6px
+	//padding : 10px 0 0 50px
+	//margin-left : 3px
+	background : #be2620 url(../../images/logo_sat.png) no-repeat 8px 12px
+#logoScenic
 	color : white
+	font-size : 2em
+	letter-spacing : 0.09em
+	margin : 15px 0 0 15px
+	float : left
+	font-family : "Irma Light"
 
 .scenic2
 	#logo
@@ -158,6 +164,7 @@ header
 	border : 1px solid #333
 	+background-image(linear-gradient(#444 10%, #333 90%))
 	+transition(.1s linear all)
+	text-decoration : none
 	position : relative
 	&:hover
 		//background-image: (linear-gradient(#e52a22 40%, #be2620 90%))
@@ -195,21 +202,24 @@ header
 
 
 #msgHighLight
-	min-width : 250px
+	width : 250px
 	position : absolute
-	z-index : 1000
-	+border-radius(3px)
+	left : 50%
+	right : 50%
+	top : -50px
+	margin-left : -125px
+	z-index : 1
+	+border-radius(0 0 3px 3px)
 	color : white
 	font-size : 1.6em
 	text-align : center
 	padding : 7px 20px
-	top : 4px
-	right : 4px
-	margin-left : -150px
-	display : none
+	+box-shadow(rgba(black, 0.3) 0px 3px 12px)
+	cursor : pointer
+	//display : none
 	&.error
 		background : #be2620
-	&.valid
+	&.valid, &.info
 		background : green
 
 
@@ -261,9 +271,8 @@ header
 			//+box-shadow(rgba(black, 0.3) 0px 7px 11px)
 			li
 				min-width : 115px
-				height : 25px
-				line-height : 25px
-				padding : 0 10px
+				line-height : 15px
+				padding : 5px 10px
 				background : #333
 				border-bottom : 1px #3a3a3a solid
 				position : relative
@@ -328,6 +337,44 @@ header
 			background : #be2620
 		
 
+
+/**  TABLE MENU **/
+
+#panelTables
+	position : fixed
+	background : #333
+	width : 50px
+	height : 100%
+	padding-top : 52px
+	//background : url(../../images/bgTable.png)
+
+	.tabTable
+		width : 45px
+		height : 45px
+		border-bottom : 1px solid #666
+		float : right
+		margin : 5px 0 0
+		+box-shadow(rgba(black, 0.2) -2px 0px 10px inset)
+		opacity : 0.8
+		background : url(../../images/bgTable.png)
+		+border-radius(3px 0 0 3px)
+		&:hover
+			cursor : pointer
+			opacity : 1
+		&.active
+			box-shadow : none
+			opacity : 1
+
+		.content
+			width : 100%
+			height : 100%
+
+		&.transfer .content
+			background : url(../../images/iconeTransmission.png) no-repeat center center
+		&.control .content
+			background : url(../../images/iconeControle.png) no-repeat center center
+
+
 #headerDest
 	position : absolute
 	z-index : 10
@@ -371,7 +418,8 @@ header
 
 #panelLeft
 	float : left
-	width : 100%
+	margin : 5px 0 0 45px
+	//width : 100%
 	height : 100%
 	
 .hidden
@@ -401,6 +449,36 @@ header
 		+border-radius(5px)
 		height : 35px
 		width : 95%
+
+	.ui-slider
+		background : #eee
+		float : left
+		width : 67%
+		margin : 12px 14px 15px 5px
+		+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 7px -2px inset)
+		+border-radius(5px)
+		.ui-slider-range
+			background : #aaa
+			+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 10px 0px inset)
+			+border-radius(5px)
+		.ui-slider-handle
+			background : #fcfcfc
+			+border-radius(16px)
+			width : 16px
+			height : 16px
+			top : -.4em
+			+box-shadow(rgba(0, 0, 0, 0.5) 0px 1px 16px -2px)
+			&:hover
+				background : white
+
+	input.slider
+		width : 60px
+		padding : 0 8px
+		height : 20px
+		text-align: right
+		color : #777
+		background : none
+
 
 	input[type=text].input50
 		width : 45%
@@ -457,7 +535,20 @@ header
 		text-decoration : none
 		&:hover
 			border-bottom : 1px #be2620 dashed
+	.btnMethod
+		text-decoration:  none
 
+	.preview-value .content-value
+		position : absolute
+		width : 30px
+		padding : 8px 0
+		+border-radius(0 3px 3px 0)
+		text-align : center
+		top : 40px
+		right : 7px
+		border : 1px #ddd solid
+		z-index : 100
+		background : #fcfcfc
 
 #panelInfo
 	width : 200px
@@ -541,7 +632,7 @@ th:last-child
 td
 	min-width : 100px
 
-#globalTable
+.table
 	//background : #fcfcfc
 	//background : url(../../images/bgTable.png)
 	padding : 10px
@@ -549,6 +640,7 @@ td
 	margin : 50px 10px
 	//+boxShadow
 	position : fixed
+	display : none
 	+border-radius(2px)
 	#headerTable
 		position : relative
@@ -569,6 +661,7 @@ td
 			+border-radius(3px)
 			border: none
 			color : #333
+			text-transform: uppercase
 			&:hover
 				+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
 
@@ -584,7 +677,7 @@ td
 		background : #333 url(../../images/titleInOut.png) center -3px no-repeat
 		opacity : 0.9
 		+border-radius(2px)
-		display : none
+		// display : none
 
 	#titleHeader
 		padding : 0
@@ -599,14 +692,19 @@ td
 		background : #333 url(../../images/titleInOut.png) -5px center no-repeat
 		opacity : 0.9
 		+border-radius(2px)
-		display : none
+		// display : none
+	&.active
+		display : block
+
+// #control
+// 	background : #ddd
 
 
 
 #tempi-snake
 	#titleHeader
 		border : none
-	#testTable
+	.tableScenic
 		margin-left : 30px
 	#titleIn
 		margin : 165px 0 10px 1px
@@ -654,7 +752,32 @@ td
 				cursor : pointer
 
 
-#testTable
+.sources
+	position : relative
+	.source:first-child
+		margin-top : 30px
+		&:before
+			content : "Remote sources"
+			//font-family: "Irma Light"
+			background : #333
+			padding : 2px 5px
+			color : white
+			position : absolute
+			top : 14px
+			left : 5px
+			+border-radius(3px 3px 0 0 )
+
+#remote-sources .source:first-child:before
+	content : "Remote sources"
+
+#local-sources .source:first-child
+	margin-top : 15px
+	&:before
+		top : 0px
+		content : "Local sources"
+
+
+.tableScenic
 	float : left
 	display : block
 	padding-top : 31px
@@ -668,7 +791,7 @@ td
 	min-width : 420px
 
 	table.source
-		margin: 0 0 5px 30px
+		margin: 0 0 5px 0px
 		// &:nth-child(odd) 
 		// 	background : #eee
 		// &:nth-child(even)
@@ -678,7 +801,7 @@ td
 			&:after
 				content : ""
 				position : absolute
-				left : 280px
+				left : 250px
 				margin-top : 9px
 				// top : 5px
 				z-index : 20
@@ -704,21 +827,26 @@ td
 			right : 0
 			top : 6px
 		.preview
-			background : url(../../images/icon-preview.png) no-repeat center center
+			background : url(../../images/icon-preview.png) no-repeat top center
 			opacity : 1
 			transition: 0.2s
+			height : 10px
+			margin : 3px 0 0 
 			&:hover
 				opacity : 0.6
 				cursor : pointer
+			&.active
+				background-position : bottom center
 
 		.status
 			top : 0px
+			right : 0
 			border-bottom : 1px solid #ccc
 		.info
 			cursor : help
 
 	.infoTable
-		width : 288px
+		width : 258px
 		padding : 0
 		border : none
 
@@ -731,6 +859,13 @@ td
 		overflow : hidden
 		height : 35px
 		padding : 0 9px
+
+		.mapper
+			background : #333
+			width : 100%
+			height : 100%
+			padding : 0 10px
+			margin : 0 0 0 -10px
 
 	.group
 		//background : #eee
@@ -783,11 +918,11 @@ td
 	.hideBox
 		border : none
 
-	td#sources
+	td.sources
 		padding : 0
 		border : none
 
-.scenic2 #destinations
+.scenic2 .destinations
 	display : block
 	margin-bottom : 5px
 	.nameInOut
@@ -1165,7 +1300,8 @@ $sizeBulle : 12px
 			&:hover
 				background : #fcfcfc!important
 				color : #333!important
-
+		.btnCreate
+			text-transform: uppercase
 
 	#list-names
 		left : inherit
@@ -1428,20 +1564,92 @@ $sizeBulle : 12px
 
 /**** LOG ****/
 #log
-	position : fixed
-	right : -761px
+	position : absolute
+	right : 20px
 	top : 60px
-	width : 700px
-	max-height : 700px
-	padding : 10px 30px
-	font-size : 1.4em
+	width : 525px
+	// max-height : 400px
+	padding : 10px 5px
 	background : #FCFCFC
 	border : 1px solid #ddd
-	.content
-		overflow: auto
-		height : 680px
-		width : 720px
+	display : none
+	&.active
 		display : block
+	.filter
+		margin : 28px 0 10px
+		float : left
+		padding : 5px 2px
+		label
+			font-size: 15px
+			padding: 2px 10px 2px 25px
+			margin : 0 5px 0 0
+			border : 1px solid
+			+border-radius(5px)
+			position : relative
+			input
+				position : absolute
+				left : 2px
+				top : 2px
+
+			&.info
+				border-color : rgba(0, 128, 0, 0.5)
+			&.error
+				border-color : rgba(213, 1, 1, 0.51)
+			&.warn
+				border-color : rgba(213, 1, 1, 0.51)
+			&.debug
+				border-color : rgba(126, 168, 173, 0.73)
+
+	.content
+		font-size : 1.4em
+		overflow: auto
+		height : 370px
+		width : 525px
+		display : block
+		margin : 30px 0 0 0
+		.msgLog
+			position : relative
+			float : left
+			//width : 100%
+			padding : 0 0 0 140px
+			margin : 0 0 5px 0
+			border : 1px solid rgba(0,0,0,0.07)
+			+border-radius(5px)
+			// margin : 0 0 10px 0
+			line-height: 20px
+			.type
+				float : left
+				margin : 0 5px 0 0
+				width : 50px
+				height : 100%
+				+border-radius(3px 0 0 3px)
+				position : absolute
+				color : white
+				left : 0
+				text-align: center
+				line-height: 20px
+				&.info
+					background : rgba(0, 128, 0, 0.5)
+				&.error
+					background : rgba(213, 1, 1, 0.51)
+				&.warn
+					background : rgba(213, 1, 1, 0.51)
+				&.debug
+					background : rgba(126, 168, 173, 0.73)
+			.date
+				position : absolute
+				width : 75px
+				background : rgba(0,0,0,0.04)
+				left : 50px
+				text-align:  center
+				height : 100%
+				color : #666
+			.message
+				float : right
+				width : 360px
+				word-wrap: break-word
+				margin : 0px 0 0 0
+
 	h3
 		width : 30px
 		border : none
@@ -1745,9 +1953,3 @@ html[xmlns] .clearfix
 	table
 		border-collapse : inherit!important
 		border-spacing : 2px!important
-
-	#globalTable 
-		#titleIn
-			margin : 146px 0 19px 2px
-		#titleOut
-			margin : 55px 17px 0 308px

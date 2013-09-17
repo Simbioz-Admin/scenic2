@@ -1,51 +1,43 @@
 define([
 	'underscore',
 	'backbone',
-	'text!/templates/destination.html'
-	],function(_, Backbone, templateDestination){
+	'text!/templates/destination.html',
+], function(_, Backbone, TemplateDestination) {
 
-		var DestinationsView = Backbone.View.extend({
-			tagName : 'td',
-			className : 'nameInOut',
-			events : {
-				"click .remove" : "askForRemove",
+	var ViewDestination = Backbone.View.extend({
+		tagName: 'td',
+		className: 'nameInOut',
+		table: null,
+		events: {
+			"click .edit": "edit",
+			"click .remove": "removeClick"
+		},
+		initialize: function() {
+			this.model.on('remove', this.removeView, this);
+			this.table = this.options.table;
 
-			},
-			initialize : function()
-			{
-				this.render();
-				this.model.on('remove', this.remove, this);
-			},
-			render : function()
-			{
-				that = this;
-				var template = _.template(templateDestination, {name : this.model.get("name")});
-				$(this.el).append(template);
-				$("#destinations").append($(this.el));
-				$(".shmdata").each(function(index, source){
-					$(this).append("<td class='box' data-hostname='"+that.model.get('name')+"'></td>");
+			var that = this,
+				template = _.template(TemplateDestination, {
+					name: this.model.get("name")
 				});
-				//views.destinations.displayTitle();
-			},
-			askForRemove : function()
-			{
-				var name = this.model.get("name");
-				var result = confirm("Are you sure?");
-				if (result==true)
-				{
-					views.methods.setMethod("defaultrtp", "remove_destination", [name], function(ok){});
-				}
-			},
-			remove : function()
-			{
-				var name = this.model.get("name");
-				$(this.el).remove();
-				$("[data-hostname='"+name+"']").remove();
-				views.destinations.displayTitle();
 
-			}
-			
-		});
+			$(this.el).append(template);
+			$("#" + this.table + " .destinations").append($(this.el));
+			$("#" + this.table + " .shmdata").each(function(index, source) {
+				$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "'></td>");
+			});
 
-		return DestinationsView;
-	})
+		},
+		edit: function() {
+			this.model.edit();
+		},
+		removeClick: function() {
+			this.model.delete();
+		},
+		removeView: function() {
+			this.remove();
+		}
+	});
+
+	return ViewDestination;
+})

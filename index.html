@@ -8,6 +8,8 @@
 
 	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/stylesheets/nouislider.fox.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	
 	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css" />
 	<link rel="shortcut icon" href="http://sat.qc.ca/sites/default/files/sat_icon.png" type="image/png" />
@@ -19,43 +21,18 @@
 
 </head>
 <body class="scenic2">
+	<div id="test"></div>
 		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
 		<header id="header">
-			<div id="logo">SCENIC2</div>
+			<div id="logoSat"></div>
+			<div id="logoScenic">SCENIC 2</div>
 			<div class="btn" id="btn-info" style="float:right">?</div>
 			<div class="btn" id="btn-log" style="float:right">LOG</div>
 			<div class="btn" id="btnSave" style="float:right" >SAVE</div>
 			<div class="btn" id="btnLoadScratch" style="float:right" >LOAD</div>
 		</header>
-
-
-		<div id="panelLeft">
-			<div id="globalTable">
-				
-				<div id="titleIn"></div>
-				<div id="titleOut"></div>
-
-				<div id="headerTable">
-					<ul id="menuTable" class="headerMenu"></ul>
-				</div><!-- headerTable -->
-
-				<table id="testTable">
-					<thead>
-						<tr>
-							<th rowspan="2" colspan="3" class="infoTable">
-							</th>
-						</tr>
-						<tr id="destinations"></tr>
-					</thead>
-					<tbody >
-						<!-- <tr > <td rowspan="2">test</td> </tr> -->
-						<tr><td colspan="7" id="sources" ></td></tr>
-					</tbody>
-			</table>
-
-			</div><!-- end globalTable -->
-		</div><!-- end panelLeft -->
-
+		<div id="panelTables"></div>
+		<div id="panelLeft"></div>
 		<div id="panelRight">
 			<class class="content clearfix ui-widget-content"></class>
 		</div>
@@ -78,8 +55,6 @@
 	    	<div id="channels" ></div>
 
 	    </div>
-
-		<div id="log" > <class class="content"></class> </div>
 
 	</body>
 </html>

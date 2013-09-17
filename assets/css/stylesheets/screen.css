@@ -2301,9 +2301,10 @@ td.active .rows_inactive .active {
 #log .content .msgLog .message {
   float: right;
   width: 360px;
+  word-wrap: break-word;
   margin: 0px 0 0 0;
 }
-/* line 1652, ../sass/screen.sass */
+/* line 1653, ../sass/screen.sass */
 #log h3 {
   width: 30px;
   border: none;
@@ -2322,7 +2323,7 @@ td.active .rows_inactive .active {
   border-radius: 3px 0 0 3px;
 }
 
-/* line 1665, ../sass/screen.sass */
+/* line 1666, ../sass/screen.sass */
 #shutdown {
   position: absolute;
   background: rgba(51, 51, 51, 0.5);
@@ -2344,7 +2345,7 @@ td.active .rows_inactive .active {
   border-radius: 3px;
 }
 
-/* line 1679, ../sass/screen.sass */
+/* line 1680, ../sass/screen.sass */
 .clearfix:after {
   content: ".";
   display: block;
@@ -2354,28 +2355,28 @@ td.active .rows_inactive .active {
   height: 0;
 }
 
-/* line 1687, ../sass/screen.sass */
+/* line 1688, ../sass/screen.sass */
 .clearfix {
   display: inline-block;
 }
 
-/* line 1690, ../sass/screen.sass */
+/* line 1691, ../sass/screen.sass */
 html[xmlns] .clearfix {
   display: block;
 }
 
-/* line 1693, ../sass/screen.sass */
+/* line 1694, ../sass/screen.sass */
 * html .clearfix {
   height: 1%;
 }
 
 @media screen and (min-device-width: 320px) and (max-device-width: 1024px) {
-  /* line 1701, ../sass/screen.sass */
+  /* line 1702, ../sass/screen.sass */
   .box {
     -webkit-user-select: none;
   }
 
-  /* line 1704, ../sass/screen.sass */
+  /* line 1705, ../sass/screen.sass */
   .box:hover {
     background: none;
     -webkit-box-shadow: rgba(0, 0, 0, 0) 0 0 30px inset;
@@ -2383,31 +2384,31 @@ html[xmlns] .clearfix {
     box-shadow: rgba(0, 0, 0, 0) 0 0 30px inset;
   }
 }
-/* line 1712, ../sass/screen.sass */
+/* line 1713, ../sass/screen.sass */
 #launch {
   width: 295px;
   font-size: 1.9em;
   color: #888888;
   margin: 0 auto;
 }
-/* line 1718, ../sass/screen.sass */
+/* line 1719, ../sass/screen.sass */
 #launch label {
   font-size: 0.8em;
   margin: 5px 0;
   display: block;
 }
-/* line 1722, ../sass/screen.sass */
+/* line 1723, ../sass/screen.sass */
 #launch .info {
   font-size: 0.7em;
 }
-/* line 1724, ../sass/screen.sass */
+/* line 1725, ../sass/screen.sass */
 #launch .identification {
   position: relative;
   float: left;
   width: 300px;
   margin: 0 0 20px;
 }
-/* line 1730, ../sass/screen.sass */
+/* line 1731, ../sass/screen.sass */
 #launch input[type=password], #launch input[type=text] {
   float: left;
   width: 120px;
@@ -2427,7 +2428,7 @@ html[xmlns] .clearfix {
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px -3px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px -3px;
 }
-/* line 1742, ../sass/screen.sass */
+/* line 1743, ../sass/screen.sass */
 #launch input[type=submit] {
   float: right;
   width: inherit;
@@ -2443,39 +2444,39 @@ html[xmlns] .clearfix {
   -o-transition: 0.3s;
   transition: 0.3s;
 }
-/* line 1750, ../sass/screen.sass */
+/* line 1751, ../sass/screen.sass */
 #launch input[type=submit]:hover {
   background: #be2620;
   cursor: pointer;
 }
-/* line 1754, ../sass/screen.sass */
+/* line 1755, ../sass/screen.sass */
 #launch input[type=text] {
   width: 270px;
 }
-/* line 1757, ../sass/screen.sass */
+/* line 1758, ../sass/screen.sass */
 #launch .ports {
   float: left;
   border-top: 1px dotted #dddddd;
   padding-top: 10px;
 }
-/* line 1761, ../sass/screen.sass */
+/* line 1762, ../sass/screen.sass */
 #launch .ports .port {
   float: left;
   width: 142px;
 }
-/* line 1764, ../sass/screen.sass */
+/* line 1765, ../sass/screen.sass */
 #launch .ports .port:first-child {
   margin-right: 10px;
 }
-/* line 1766, ../sass/screen.sass */
+/* line 1767, ../sass/screen.sass */
 #launch .ports label {
   width: 120px;
 }
-/* line 1768, ../sass/screen.sass */
+/* line 1769, ../sass/screen.sass */
 #launch .ports input {
   width: 120px;
 }
-/* line 1771, ../sass/screen.sass */
+/* line 1772, ../sass/screen.sass */
 #launch #btnServer {
   display: inline-block;
   width: 270px;
@@ -2483,7 +2484,7 @@ html[xmlns] .clearfix {
   left: -300px;
   display: none;
 }
-/* line 1779, ../sass/screen.sass */
+/* line 1780, ../sass/screen.sass */
 #launch #msg {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(255, 255, 255, 0.7)), color-stop(100%, rgba(255, 255, 255, 0.3)));
   background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
@@ -2504,7 +2505,7 @@ html[xmlns] .clearfix {
   overflow: hidden;
   font-size: 1.9em;
 }
-/* line 1795, ../sass/screen.sass */
+/* line 1796, ../sass/screen.sass */
 #launch #msg:after {
   content: "";
   width: 0;
@@ -2516,7 +2517,7 @@ html[xmlns] .clearfix {
   right: 127px;
   top: 16px;
 }
-/* line 1810, ../sass/screen.sass */
+/* line 1811, ../sass/screen.sass */
 #launch #url {
   position: absolute;
   display: inline-block;
@@ -2552,7 +2553,7 @@ html[xmlns] .clearfix {
   text-align: right;
   padding: 0 15px 0 0;
 }
-/* line 1831, ../sass/screen.sass */
+/* line 1832, ../sass/screen.sass */
 #launch #url:hover {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0.8)));
   background-image: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0.8));
@@ -2561,7 +2562,7 @@ html[xmlns] .clearfix {
   background-image: linear-gradient(#ffffff, rgba(255, 255, 255, 0.8));
   cursor: pointer;
 }
-/* line 1834, ../sass/screen.sass */
+/* line 1835, ../sass/screen.sass */
 #launch #url:before {
   content: "";
   position: absolute;
@@ -2577,14 +2578,14 @@ html[xmlns] .clearfix {
   -o-border-radius: 3px;
   border-radius: 3px;
 }
-/* line 1845, ../sass/screen.sass */
+/* line 1846, ../sass/screen.sass */
 #launch #url .address {
   position: absolute;
   bottom: 2px;
   right: 16px;
   font-size: 0.8em;
 }
-/* line 1851, ../sass/screen.sass */
+/* line 1852, ../sass/screen.sass */
 #launch .switch {
   width: 80px;
   height: 80px;
@@ -2592,7 +2593,7 @@ html[xmlns] .clearfix {
   top: 20px;
   z-index: 2;
 }
-/* line 1858, ../sass/screen.sass */
+/* line 1859, ../sass/screen.sass */
 #launch .switch input {
   /* First, we make it as wide as the container */
   position: absolute;
@@ -2606,7 +2607,7 @@ html[xmlns] .clearfix {
   cursor: pointer;
   left: 0;
 }
-/* line 1872, ../sass/screen.sass */
+/* line 1873, ../sass/screen.sass */
 #launch .switch label {
   display: block;
   width: 100%;
@@ -2633,7 +2634,7 @@ html[xmlns] .clearfix {
   -moz-box-shadow: 0 2px 3px rgba(255, 255, 255, 0.13) inset, 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
   box-shadow: 0 2px 3px rgba(255, 255, 255, 0.13) inset, 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
 }
-/* line 1888, ../sass/screen.sass */
+/* line 1889, ../sass/screen.sass */
 #launch .switch label:before {
   content: "";
   position: absolute;
@@ -2649,7 +2650,7 @@ html[xmlns] .clearfix {
   -webkit-filter: blur(1px);
   filter: blur(1px);
 }
-/* line 1902, ../sass/screen.sass */
+/* line 1903, ../sass/screen.sass */
 #launch .switch label:after {
   content: "";
   position: absolute;
@@ -2664,7 +2665,7 @@ html[xmlns] .clearfix {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.15);
   opacity: 0.2;
 }
-/* line 1914, ../sass/screen.sass */
+/* line 1915, ../sass/screen.sass */
 #launch .switch .icon-off:before {
   content: "\f011";
   font-family: FontAwesome;
@@ -2674,7 +2675,7 @@ html[xmlns] .clearfix {
   top: 50%;
   margin: -20px 0 0 -18px;
 }
-/* line 1923, ../sass/screen.sass */
+/* line 1924, ../sass/screen.sass */
 #launch .switch .icon-off:after {
   content: "";
   display: block;
@@ -2698,7 +2699,7 @@ html[xmlns] .clearfix {
   -webkit-filter: blur(1px);
   filter: blur(1px);
 }
-/* line 1940, ../sass/screen.sass */
+/* line 1941, ../sass/screen.sass */
 #launch .switch input:checked ~ label {
   color: #8ec06a;
   -webkit-box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.35), 0 3px 10px 4px rgba(0, 0, 0, 0.2);
@@ -2707,17 +2708,17 @@ html[xmlns] .clearfix {
 }
 
 @-moz-document url-prefix() {
-  /* line 1946, ../sass/screen.sass */
+  /* line 1947, ../sass/screen.sass */
   .preview {
     right: 2px !important;
   }
 
-  /* line 1949, ../sass/screen.sass */
+  /* line 1950, ../sass/screen.sass */
   .shmdata.inactive:after, .shmdata.active:after {
     left: 295px !important;
   }
 
-  /* line 1952, ../sass/screen.sass */
+  /* line 1953, ../sass/screen.sass */
   table {
     border-collapse: inherit !important;
     border-spacing: 2px !important;

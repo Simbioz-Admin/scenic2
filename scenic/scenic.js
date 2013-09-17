@@ -16,7 +16,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			log('debug', 'log : ', msg);
 		});
 
-		switcher.create("videotestsrc");
+		// switcher.create("videotestsrc");
 		
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {

@@ -27,7 +27,7 @@ module.exports = function(config, _, app, io) {
       ,   minutes = (now.getMinutes().toString().length == 1 ? "0" : "" )+now.getMinutes()
       ,   seconds = (now.getSeconds().toString().length == 1 ? "0" : "" )+now.getSeconds();
       
-      console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
+      //console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
 
       var message = {from : "switcher", date : hours+":"+minutes+":"+seconds, level : level, message : message};
       //add to the list of log  message

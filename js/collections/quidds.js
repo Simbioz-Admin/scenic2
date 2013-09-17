@@ -22,8 +22,10 @@ define([
 
 			socket.on("remove", function(quidd) {
 				var model = that.get(quidd);
-				model.trigger('destroy', model, that);
-				views.global.notification("info", quidd + "  has deleted");
+				if(model) {
+					model.trigger('destroy', model, that);
+					views.global.notification("info", quidd + "  has deleted");
+				}
 
 			});
 
@@ -50,22 +52,10 @@ define([
 
 			socket.on("updateShmdatas", function(qname, shmdatas) {
 				var quidd = that.get(qname);
-				console.log(quidd, shmdatas);
 				//sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
 				if (quidd) {
 					quidd.set("shmdatas", shmdatas);
-
-					//control if encoder is ask for this quidd
-					// _.each(that.listEncoder, function(encoder, index) {
-						// if (encoder.quiddName == qname) {
-				// 			that.create(encoder.encoder, qname + "_enc", function(quidd) {
-				// 				views.methods.setMethod(quidd.name, "connect", [shmdatas[0].path]);
-				// 				that.listEncoder.splice(index, 1);
-				// 			});
-						// }
-					// });
 				}
-
 			});
 
 			socket.on("remove", function(quiddName) {

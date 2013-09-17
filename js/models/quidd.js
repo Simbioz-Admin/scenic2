@@ -78,15 +78,22 @@ define([
 				if (info[0].indexOf("video") >= 0) type = "gtkvideosink";
 				if (info[0].indexOf("audio") >= 0) type = "pulsesink";
 
-				if (type != null) {
-					collections.quidds.create(type, that.get("name")+type , function(quiddInfo) {
-						console.log(quiddInfo.name, "connect", [path]);
-						setTimeout(function() {
-							socket.emit("invoke", quiddInfo.name, "connect", [path]);
-						}, 1000);
-					});
-				}
+				//check if the quiddity have already a preview active
+				socket.emit("get_quiddity_description", that.get("name")+type, function(quiddInfo) {
+					if(quiddInfo.error && type != null) {
+						collections.quidds.create(type, that.get("name")+type , function(quiddInfo) {
+							setTimeout(function() {
+								socket.emit("invoke", quiddInfo.name, "connect", [path]);
+							}, 1000);
+						});
+					} else {
+						collections.quidds.delete(that.get("name")+type);
+					}
+
+				});
+
 			});
+
 		},
 		info: function(element) {
 			var shmdata = $(element.target).closest('tr').data("path");

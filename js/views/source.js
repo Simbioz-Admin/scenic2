@@ -18,7 +18,7 @@ define([
 			this.model.on('remove', this.removeView, this);
 			this.model.on('change', this.render, this);
 			this.table = this.options.table;
-			this.render();
+			//this.render();
 
 		},
 		render: function() {
@@ -26,7 +26,6 @@ define([
 			var that = this,
 				shmdatas = this.model.get("shmdatas"),
 				destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
-
 
 			if (typeof shmdatas == "object" && shmdatas.length != 0) {
 				_.each(shmdatas, function(shmdata, index) {
@@ -39,13 +38,20 @@ define([
 					});
 					$(that.el).append($(template));
 
-
 					//get info about vumeter for know if we can create a preview
 					setTimeout(function() {
 						collections.quidds.getPropertyValue({ name : "vumeter_" + shmdata.path }, "caps", function(info) {
 							info = info.split(",");
-							if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv")
-								$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview'></div>");
+
+							if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") {
+								
+								var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
+								//check if the quiddity have already a preview active
+								socket.emit("get_quiddity_description", that.model.get("name")+type, function(quiddInfo) {
+									var active = (quiddInfo.name ? "active" : "");
+									$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview "+active+"'></div>");
+								});
+							}
 						});
 					}, 500);
 				});
@@ -79,6 +85,7 @@ define([
 		},
 		preview: function(element) {
 			this.model.preview(element);
+			$(element.target).toggleClass("active");
 		},
 		info: function(element) {
 			this.model.info(element);

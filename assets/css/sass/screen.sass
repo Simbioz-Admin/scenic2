@@ -827,12 +827,16 @@ td
 			right : 0
 			top : 6px
 		.preview
-			background : url(../../images/icon-preview.png) no-repeat center center
+			background : url(../../images/icon-preview.png) no-repeat top center
 			opacity : 1
 			transition: 0.2s
+			height : 10px
+			margin : 3px 0 0 
 			&:hover
 				opacity : 0.6
 				cursor : pointer
+			&.active
+				background-position : bottom center
 
 		.status
 			top : 0px

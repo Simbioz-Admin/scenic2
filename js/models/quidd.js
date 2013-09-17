@@ -79,9 +79,9 @@ define([
 				if (info[0].indexOf("audio") >= 0) type = "pulsesink";
 
 				//check if the quiddity have already a preview active
-				socket.emit("get_quiddity_description", that.get("name")+type, function(quiddInfo) {
+				socket.emit("get_quiddity_description", type+"_"+path, function(quiddInfo) {
 					if(quiddInfo.error && type != null) {
-						collections.quidds.create(type, that.get("name")+type , function(quiddInfo) {
+						collections.quidds.create(type, type+"_"+path , function(quiddInfo) {
 							setTimeout(function() {
 								socket.emit("invoke", quiddInfo.name, "connect", [path]);
 							}, 1000);

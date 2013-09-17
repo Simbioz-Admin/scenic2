@@ -3,14 +3,14 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties',
-  'views/clients', 'views/global', 'views/quidds', 'views/control_properties'
+  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers',
+  'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers'
 
 ], function(_,
   Backbone,
   $,
-  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties,
-  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties
+  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers,
+  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers
 ) {
   var initialize = function() {
 	"use strict";
@@ -28,6 +28,10 @@ define([
 
 		collections.controlProperties = new CollectionsControlProperties();
 		collections.controlProperties.fetch();
+
+		collections.loggers = new CollectionLoggers();
+		views.logger = new ViewLoggers({collection : collections.loggers});
+
 		//loading views
 		views.clients = new ViewClients({
 		  collection: collections.clients

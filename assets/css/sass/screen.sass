@@ -28,7 +28,7 @@
 		margin : -8px 0 0 -8px
 		padding : 8px
 		+box-shadow(rgba(black, 0.5) 0px 0px 8px -3px inset)
-		//+background-image(linear-gradient(rgba(255,255,255, 0.1), rgba(255,255,255, 0.5)))
+		//+background-image(linear-gradient(rgba(255,255,255, 0.1), rgba(255,255,/255, 0.5)))
 		+border-radius(3px)
 
 
@@ -1564,20 +1564,91 @@ $sizeBulle : 12px
 
 /**** LOG ****/
 #log
-	position : fixed
-	right : -761px
+	position : absolute
+	right : 20px
 	top : 60px
-	width : 700px
-	max-height : 700px
-	padding : 10px 30px
-	font-size : 1.4em
+	width : 525px
+	// max-height : 400px
+	padding : 10px 5px
 	background : #FCFCFC
 	border : 1px solid #ddd
-	.content
-		overflow: auto
-		height : 680px
-		width : 720px
+	display : none
+	&.active
 		display : block
+	.filter
+		margin : 28px 0 10px
+		float : left
+		padding : 5px 2px
+		label
+			font-size: 15px
+			padding: 2px 10px 2px 25px
+			margin : 0 5px 0 0
+			border : 1px solid
+			+border-radius(5px)
+			position : relative
+			input
+				position : absolute
+				left : 2px
+				top : 2px
+
+			&.info
+				border-color : rgba(0, 128, 0, 0.5)
+			&.error
+				border-color : rgba(213, 1, 1, 0.51)
+			&.warn
+				border-color : rgba(213, 1, 1, 0.51)
+			&.debug
+				border-color : rgba(126, 168, 173, 0.73)
+
+	.content
+		font-size : 1.4em
+		overflow: auto
+		height : 370px
+		width : 525px
+		display : block
+		margin : 30px 0 0 0
+		.msgLog
+			position : relative
+			float : left
+			//width : 100%
+			padding : 0 0 0 140px
+			margin : 0 0 5px 0
+			border : 1px solid rgba(0,0,0,0.07)
+			+border-radius(5px)
+			// margin : 0 0 10px 0
+			line-height: 20px
+			.type
+				float : left
+				margin : 0 5px 0 0
+				width : 50px
+				height : 100%
+				+border-radius(3px 0 0 3px)
+				position : absolute
+				color : white
+				left : 0
+				text-align: center
+				line-height: 20px
+				&.info
+					background : rgba(0, 128, 0, 0.5)
+				&.error
+					background : rgba(213, 1, 1, 0.51)
+				&.warn
+					background : rgba(213, 1, 1, 0.51)
+				&.debug
+					background : rgba(126, 168, 173, 0.73)
+			.date
+				position : absolute
+				width : 75px
+				background : rgba(0,0,0,0.04)
+				left : 50px
+				text-align:  center
+				height : 100%
+				color : #666
+			.message
+				float : right
+				width : 360px
+				margin : 0px 0 0 0
+
 	h3
 		width : 30px
 		border : none

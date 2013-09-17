@@ -5,7 +5,7 @@ module.exports = {
 		soap: 8085,
 		scenic: 8095
 	},
-	debugLevel: "info",
+	debugLevel: "error",
 	logSocketIo: false,
 	nameComputer: "scenic",
 	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],

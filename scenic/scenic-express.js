@@ -1,4 +1,4 @@
-module.exports = function(config, $, _, app, scenic, switcher, scenicStart) {
+module.exports = function(config, $, _, app, scenic, switcher, scenicStart, log) {
 	var express = require("express");
 
 	// ------------------------------------ EXPRESS CONFIGURATION ---------------------------------------------//
@@ -49,6 +49,8 @@ module.exports = function(config, $, _, app, scenic, switcher, scenicStart) {
 			res.send(quiddsFiltered);
 		}
 	});
+
+
 
 	app.get('/methods_doc', function(request, response) {
 		response.contentType('application/json');

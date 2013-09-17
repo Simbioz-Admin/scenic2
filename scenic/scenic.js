@@ -12,7 +12,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		//var json = [{ name : "videotest_freq", quiddName : "videotest", property : "freq" },{ name : "videotest_saturation", quiddName : "videotest", property : "saturation" } ];
 		//switcher.set_property_value(dico, "controlProperties", JSON.stringify(json));
 		switcher.register_log_callback(function(msg) {
-			io.sockets.emit("messageLog", msg);
+			//io.sockets.emit("messageLog", msg);
 			log('debug', 'log : ', msg);
 		});
 
@@ -21,7 +21,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			if (qprop != "byte-rate")
-				log('info', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 
 			//broadcast all the modification on properties
 			io.sockets.emit("signals_properties", qname, qprop, pvalue);
@@ -42,7 +42,6 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
-					console.log("subscribe to property :", property);
 					switcher.subscribe_to_property(pvalue[0], property.name);
 				});
 
@@ -69,7 +68,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 	//create the vumeter for shmdata
 
 	function createVuMeter(quiddName) {
-		console.log("-------------------------- CREATE VUMETER ------------------------------");
+
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 
 		$.each(shmdatas, function(index, shmdata) {
@@ -78,7 +77,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
 
 			if(!vumeter) { 
-				log("info", "failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
+				log("error", "failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
 				return false;
 			} else {
 				log("info", "fakesink quiddity created : ", "vumeter_" + shmdata.path);
@@ -91,6 +90,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 
 	function removeVumeters(quiddName) {
+
 		//remove the vumeter
 		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
 		if (shmdatas != "property not found") {
@@ -105,9 +105,11 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 	function sendShmdatas(quiddName) {
-		log("info", "send Shmdatas for ", quiddName);
+
 		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
+
+		log("info", "send Shmdatas for ", quiddName);
 		io.sockets.emit("updateShmdatas", quiddName, shmdatas);
 	}
 
@@ -118,11 +120,10 @@ module.exports = function(config, switcher, $, _, io, log) {
 		var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
 		_.each(quidds, function(quidd) {
 			if(quidd.name.indexOf(quiddName+"-sink") != -1) {
-				log("info", "delete ",quidd.name, " associate to ", quiddName);
 				switcher.remove(quidd.name);
 			}
 		});
-
+		log("info", "quiddity "+quiddName+" has been removed.");
 		removeVumeters(quiddName);
 
 		return switcher.remove(quiddName);

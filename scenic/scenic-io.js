@@ -1,50 +1,18 @@
 module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, network) {
 	io.sockets.on('connection', function(socket) {
 
-		socket.on("createAndGetProperties", function(className, name, callback) {
-			if (name) var quiddName = switcher.create(className, name);
-			else var quiddName = switcher.create(className);
-
-			//switcher.subscribe_to_property (quiddName, "shmdata-writers");
-			//recover the default properties with values
-
-			if (!_.contains(config.quiddExclude, className) && quiddName) {
-				var properties = scenic.getQuiddPropertiesWithValues(quiddName);
-				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
-
-				scenic.createVuMeter(shmdatas);
-				//callback is used by the user who has created the Quidd for directly set properties or create encoder
-				callback({
-					name: quiddName,
-					class: className,
-					properties: properties,
-					shmdatas: shmdatas
-				});
-			} else {
-				callback({
-					name: quiddName,
-					class: className
-				});
-			}
-
-
-		});
-
 		socket.on("create", function(className, quiddName, callback) {
-			log("info", "ask for create quiddity "+className+" "+quiddName);
-			if (quiddName)
-				var quiddName = switcher.create(className, quiddName);
-			else
-				var quiddName = switcher.create(className);
 
+			var quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
 
 			if (quiddName) {
 				config.listQuiddsAndSocketId[quiddName] = socket.id;
 				var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
+				log("info", "quiddity "+quiddName+" ("+className+") is created.");
 				callback(quiddInfo);
 
 			} else {
-				log("info", "failed to create a quiddity class ", className);
+				log("error", "failed to create a quiddity class ", className);
 				socket.emit("msg", "error", "failed to create "+className+" maybe this name is already used?");
 			}
 		});
@@ -53,6 +21,13 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("remove", function(quiddName) {
 			var quiddDelete = scenic.remove(quiddName);
+
+			if(quiddDelete) { 
+				log("info", "quiddity "+quiddName+" is removed.");
+			}
+			else {
+				log("error", "failed to remove "+quiddName);
+			}
 			io.sockets.emit("remove", quiddName);
 		});
 
@@ -91,6 +66,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			if(quiddName && property && value) {
 				var ok = switcher.set_property_value(quiddName, property, String(value));
 				if (ok) {
+					log("info", "the porperty "+ property + " of " + quiddName + "is set to "+value);
 					callback(property, value);
 					socket.broadcast.emit("setPropertyValue", quiddName, property, value);
 
@@ -103,10 +79,11 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 					}
 				} else {
-					socket.emit("msg", "error", "the property " + property + " of " + quiddName + "is not set");
+					log("error", "failed to set the property "+ property + " of " + quiddName);
+					socket.emit("msg", "error", "the property " + property + " of " + quiddName + " is not set");
 				}
 			} else {
-				log("info", "missing arguments for set property value :", quiddName, property, value);
+				log("error", "missing arguments for set property value :", quiddName, property, value);
 			}
 		});
 
@@ -138,6 +115,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback) {
 			var invoke = switcher.invoke(quiddName, method, parameters);
+			log("info", "the method "+method+" of "+quiddName+" is invoked with "+parameters);
 			if (callback) callback(invoke);
 
 			if (method == "add_destination")
@@ -148,12 +126,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			if (method == "add_udp_stream_to_dest")
 				io.sockets.emit("add_connection", invoke, quiddName, parameters)
-				//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").addClass("active");
 
 			if (method == "remove_udp_stream_to_dest")
 				io.sockets.emit("remove_connection", invoke, quiddName, parameters);
-			//$("[data-path='"+parameters[0]+"'] [data-hostname='"+parameters[1]+"']").removeClass("active");
-
 
 			//io.sockets.emit("invoke", invoke, quiddName, method, parameters);
 		});

@@ -28,7 +28,7 @@ define([
 				port_soap = $("#clientSoap").val();
 
 			collections.clients.create(name, host_name, port_soap);
-
+			views.global.closePanel();
 			return false;
 		},
 		displayTitle: function() {

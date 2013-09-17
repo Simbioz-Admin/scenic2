@@ -16,7 +16,6 @@ define([
 			"click #close-panelRight": "closePanel",
 			"click #close-panelInfoSource": "closePanelInfoSource",
 			"change .checkbox": 'stateCheckbox',
-			"click #btn-irc, .close-irc": 'panelIrc',
 			"click #btn-info": 'panelInfo',
 			"click #btnSave": 'save',
 			"click #btnLoadScratch": 'load_from_scratch',
@@ -102,30 +101,6 @@ define([
 
 			if (check.is(':checked')) check.val('true').attr('checked', true);
 			else check.val('false').attr('checked', false);
-		},
-		panelIrc: function() {
-			if (!this.statePanelIrc) {
-				$("#chat").show();
-				this.statePanelIrc = true;
-				if (collections.irc.active) {
-					var modelIrc = collections.irc.get($(".channel.active").attr("id"));
-					modelIrc.set({
-						active: true
-					});
-					collections.irc.totalMsg = collections.irc.totalMsg - modelIrc.get("msgNotView");
-					modelIrc.set({
-						msgNotView: 0
-					});
-				}
-			} else {
-				$("#chat").hide();
-				this.statePanelIrc = false;
-				collections.irc.each(function(channel) {
-					channel.set({
-						active: false
-					})
-				});
-			}
 		},
 		save: function() {
 			console.log("ask for saving");

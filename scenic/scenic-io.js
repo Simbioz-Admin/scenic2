@@ -45,6 +45,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			} else {
 				log("info", "failed to create a quiddity class ", className);
+				socket.emit("msg", "error", "failed to create "+className+" maybe this name is already used?");
 			}
 		});
 

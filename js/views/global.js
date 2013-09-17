@@ -38,6 +38,10 @@ define([
 				$("#log .content").scrollTop(100000000000000000);
 			});
 
+			socket.on("msg", function(type, msg) {
+				that.notification(type, msg);
+			});
+
 
 			//$("#globalTable").draggable({ cursor: "move", handle:"#headerTable"});
 			$("#panelRight .content, .panelInfoSource").draggable({

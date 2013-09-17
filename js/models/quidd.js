@@ -87,7 +87,7 @@ define([
 							}, 1000);
 						});
 					} else {
-						collections.quidds.delete(that.get("name")+type);
+						collections.quidds.delete(type+"_"+path);
 					}
 
 				});

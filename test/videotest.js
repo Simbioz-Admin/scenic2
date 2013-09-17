@@ -33,7 +33,7 @@ console.log(switcher.get_property_value(vid, "codec"));
 console.log(switcher.get_property_value(vid, "more_codecs"));
 
 
-var propertiesQuidd = switcher.get_properties_description(vid);
+var propertiesQuidd = switcher.get_quiddity_description(vid);
 console.log(propertiesQuidd);
 
 console.log(switcher.set_property_value(vid, "codec","2"));

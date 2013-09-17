@@ -16,6 +16,8 @@ module.exports = function(config, switcher, $, _, io, log) {
 			log('debug', 'log : ', msg);
 		});
 
+		switcher.create("videotestsrc");
+		
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			if (qprop != "byte-rate")
@@ -40,6 +42,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
+					console.log("subscribe to property :", property);
 					switcher.subscribe_to_property(pvalue[0], property.name);
 				});
 

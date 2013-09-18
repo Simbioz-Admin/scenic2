@@ -22,6 +22,7 @@ define([
 			//"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
 			//"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
 			"click .tabTable": 'showTable',
+			"touchstart .tabTable": 'showTable'
 
 			//"touchstart td.nameInOut, .groupSource, .mapper": "showActions",
 

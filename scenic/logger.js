@@ -31,7 +31,9 @@ module.exports = function(config, _, app, io) {
 
       var message = {from : "switcher", date : hours+":"+minutes+":"+seconds, level : level, message : message};
       //add to the list of log  message
-      jsonLog.push(message);
+      if(level == "info" || level == "error") {
+        jsonLog.push(message);
+      }
       //send to the interface
       io.sockets.emit("messageLog", message);
 

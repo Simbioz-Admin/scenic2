@@ -59,7 +59,6 @@ define([
 					that = this;
 
 
-				console.log(model.get("soapClient"));
 
 				//add to the session the shmdata 
 				//views.methods.setMethod("defaultrtp", "add_data_stream", [path], function(ok){ console.log("data added to stream");});

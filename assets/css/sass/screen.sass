@@ -601,6 +601,7 @@ header
 		width : 100px
 
 #panelRight
+	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	.content
 		position : absolute
 		right : 10px
@@ -655,6 +656,7 @@ td
 .table
 	//background : #fcfcfc
 	//background : url(../../images/bgTable.png)
+	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	padding : 10px
 	float : left
 	margin : 50px 10px
@@ -886,6 +888,9 @@ td
 			height : 100%
 			padding : 0 10px
 			margin : 0 0 0 -10px
+			&:hover .actions
+				display : table
+				opacity : 1
 
 	.group
 		//background : #eee
@@ -905,9 +910,15 @@ td
 	tr .groupSource
 		//padding : 5px 10px
 		//+box-shadow(rgba(#333, 0.1) 2px 0px 4px)
+		cursor : pointer
 		text-align : center
 		background : rgba(white, 0.5)
 		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
+		+transition-property(opacity)
+		+transition-duration(2s)
+		&:hover .actions
+			display : table
+			opacity : 1
 
 	.vertical
 		display : block
@@ -924,6 +935,9 @@ td
 		//padding : 15px 20px
 		min-width : 70px
 		min-height: 50px
+		&:hover .actions
+			display : table
+			opacity : 1
 		a
 			color : #333
 			text-decoration : none

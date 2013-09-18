@@ -63,6 +63,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		});
 
 		log("info", "scenic is now initialize");
+		require('./tmp-quidds.js')(_,switcher);
 	}
 
 	//create the vumeter for shmdata

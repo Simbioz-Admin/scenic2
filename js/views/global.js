@@ -19,9 +19,12 @@ define([
 			"click #btn-info": 'panelInfo',
 			"click #btnSave": 'save',
 			"click #btnLoadScratch": 'load_from_scratch',
-			"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
-			"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
-			"click .tabTable": 'showTable'
+			//"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
+			//"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
+			"click .tabTable": 'showTable',
+
+			//"touchstart td.nameInOut, .groupSource, .mapper": "showActions",
+
 
 		},
 
@@ -167,9 +170,11 @@ define([
 			}
 		},
 		showActions: function(event) {
+
 			$(".actions", event.target).css("display", "table").animate({
 				opacity: 1
 			}, 200);
+
 		},
 		hideActions: function(event) {
 			$(".actions", event.currentTarget).animate({

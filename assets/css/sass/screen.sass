@@ -445,6 +445,28 @@ header
 .hidden
 	display : none
 
+
+.ui-slider
+	background : #eee
+	float : left
+	width : 67%
+	margin : 12px 14px 15px 5px
+	+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 7px -2px inset)
+	+border-radius(5px)
+	.ui-slider-range
+		background : #aaa
+		+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 10px 0px inset)
+		+border-radius(5px)
+	.ui-slider-handle
+		background : #fcfcfc
+		+border-radius(16px)
+		width : 16px
+		height : 16px
+		top : -.4em
+		+box-shadow(rgba(0, 0, 0, 0.5) 0px 1px 16px -2px)
+		&:hover
+			background : white
+
 #panelRight, .panelInfoSource
 	display : none
 	//+box-shadow(rgba(black, 0.3) 1px 1px 2px inset)
@@ -470,26 +492,7 @@ header
 		height : 35px
 		width : 95%
 
-	.ui-slider
-		background : #eee
-		float : left
-		width : 67%
-		margin : 12px 14px 15px 5px
-		+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 7px -2px inset)
-		+border-radius(5px)
-		.ui-slider-range
-			background : #aaa
-			+box-shadow(rgba(0, 0, 0, 0.5) 0px 0px 10px 0px inset)
-			+border-radius(5px)
-		.ui-slider-handle
-			background : #fcfcfc
-			+border-radius(16px)
-			width : 16px
-			height : 16px
-			top : -.4em
-			+box-shadow(rgba(0, 0, 0, 0.5) 0px 1px 16px -2px)
-			&:hover
-				background : white
+	
 
 	input.slider
 		width : 60px

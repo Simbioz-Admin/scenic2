@@ -4,8 +4,7 @@ define([
 	'models	/quidd',
 	'text!/templates/createQuidd.html',
 	'text!/templates/quidd.html',
-	'noUiSlider'
-], function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate, noUiSlider) {
+], function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate) {
 
 	var QuiddView = Backbone.View.extend({
 		el: 'body',

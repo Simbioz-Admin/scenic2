@@ -8,7 +8,7 @@ require.config({
     backbone: 'libs/backbone-min',
     util: 'libs/util',
     jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
-    noUiSlider : 'libs/jquery.nouislider.min'
+    punch : 'libs/punch'
   },
   shim: {
     underscore: {
@@ -22,9 +22,8 @@ require.config({
       deps: ["jquery"],
       exports: "jqueryui"
     },
-    noUiSlider : {
-      deps: ['jquery'],
-      exports: "noUiSlider"
+    punch: {
+      deps: ['jquery', 'jqueryui']
     }
   }
 });
@@ -34,14 +33,13 @@ require([
   'app',
   'launch',
   'util',
+  'punch',
   collections = [],
   views = [],
   socket = io.connect(),
   config = {}
 ], function(app, launch, util, socket) {
 
-
-  $("#test").slider();
   var socket = io.connect();
   //recovery config information from the server
   socket.emit("getConfig", function(configServer) {

@@ -1,4 +1,4 @@
-define(["jquery", "jqueryui"], // Require jquery
+define(["jquery"], // Require jquery
        function($){
 
         //transform serializeArray to JSON format
@@ -33,14 +33,14 @@ define(["jquery", "jqueryui"], // Require jquery
         });
 
         //define tooltip global with jquery UI
-        $(document).tooltip({
-            track: true,
-            content: function() {
-                var element = $(this);
-                return element.attr("title");
+        // $(document).tooltip({
+        //     track: true,
+        //     content: function() {
+        //         var element = $(this);
+        //         return element.attr("title");
                 
-            }
-        });
+        //     }
+        // });
 });
 
 

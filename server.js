@@ -20,6 +20,7 @@ var express = require("express")
 , passSet = false
 , standalone = false;
 
+require("./scenic/utils.js")(_);
 
 
 //----------------- INIT CONFIGURATION -----------------//

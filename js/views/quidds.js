@@ -58,18 +58,9 @@ define([
 				//check if autoDetect it's true if yes we set the value device with device selected
 				if (deviceDetected) {
 					model.setPropertyValue("device", deviceDetected, function(ok) {
-						that.getPropertiesAndMethods(model);
+						model.edit();
 					});
-				} else that.getPropertiesAndMethods(model);
-			});
-		},
-		getPropertiesAndMethods: function(model, callback) {
-			var that = this;
-			model.getProperties(function(properties) {
-				model.getMethodsDescription(function(methods) {
-					that.openPanel(model.get("name"), properties, methods);
-					if (callback) callback("ok");
-				});
+				} else model.edit();
 			});
 		},
 		openPanel: function(quiddName, properties, methods) {
@@ -116,9 +107,9 @@ define([
 			model.setPropertyValue(property, value, function() {
 				// 	//make confirmation message set attributes ok
 				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-				if (property == "started") {
-					that.getPropertiesAndMethods(model);
-				}
+				// if (property == "started") {
+				// 	that.getPropertiesAndMethods(model);
+				// }
 			});
 		
 

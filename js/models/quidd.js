@@ -1,9 +1,9 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 
+	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
 	'text!/templates/panelInfoSource.html'
-], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper,
+], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd,
 	infoTemplate) {
 
 	var QuiddModel = Backbone.Model.extend({
@@ -19,45 +19,44 @@ define([
 			"methods": [],
 			"encoder_category": null,
 			"shmdatas": null,
-			"view" : null
+			"view" : null,
+			"viewEdit" : null
 		},
 		initialize: function() {
 			var that = this;
 
 			//get properties, methods and shmdatas when quidd is created
 			that.getShmdatas(function(shmdatas) {
-				that.getProperties(function() {
-					that.getMethodsDescription(function() {
+				if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
+					that.set("view", new ViewSource({
+						model: that,
+						table: "transfer"
+					}));
+					
+				}
+				if (that.get("class") == "midisrc") {
+					that.set("view", new ViewSourceProperty({
+						model: that,
+						table: "control"
+					}));
+				} 
 
-						if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
-							that.set("view", new ViewSource({
-								model: that,
-								table: "transfer"
-							}));
-							
-						}
-						if (that.get("class") == "midisrc") {
-							that.set("view", new ViewSourceProperty({
-								model: that,
-								table: "control"
-							}));
-						} 
-
-						if(that.get("category") == "mapper") {
-							that.set("view", new ViewMapper({
-								model : that,
-								table: "control"
-							}));
-						}
-					});
-				});
+				if(that.get("category") == "mapper") {
+					that.set("view", new ViewMapper({
+						model : that,
+						table: "control"
+					}));
+				}
 			});
-
-
-
 		},
 		edit: function() {
-			views.quidds.openPanel(this.get("name"), this.get("properties"), this.get("methods"), this.get("encoder_category"));
+			var that = this;
+			that.getProperties(function() {
+				that.getMethodsDescription(function() {
+					that.set("viewEdit", new ViewEditQuidd({model : that})); 
+					// views.quidds.openPanel(that.get("name"), that.get("properties"), that.get("methods"), that.get("encoder_category"));
+				});
+			});
 		},
 		delete: function() {
 			var that = this;
@@ -133,11 +132,27 @@ define([
 		},
 		getProperties: function(callback) {
 			var that = this;
-			socket.emit("getPropertiesOfQuidd", this.get("name"), function(propertiesOfQuidd) {
-				that.set("properties", propertiesOfQuidd);
-				callback(propertiesOfQuidd);
+			socket.emit("get_properties_description", this.get("name"), function(properties_description) {
+				that.set("properties", properties_description);
+				callback(properties_description);
 			});
 		},
+
+		removeProperty: function(property) {
+			var viewEdit = this.get("viewEdit");
+			viewEdit.addProperty(property);
+			delete this.get("properties")[property];
+			//console.log("removed prop", property, this.get("properties"));
+		},
+
+		addProperty: function(property) {
+			var that = this;
+			socket.emit("get_property_description", this.get("name"), property, function(description) {
+				that.get("properties")[property] = description;
+				//console.log("add prop", property, that.get("properties"));
+			});
+		},
+
 		getPropertyValue: function(property, callback) {
 			var that = this;
 			socket.emit("get_property_value", this.get("name"), property, function(propertyValue) {

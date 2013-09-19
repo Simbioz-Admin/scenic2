@@ -22,13 +22,17 @@ define([
 			//"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
 			//"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
 			"click .tabTable": 'showTable',
-			"touchstart .tabTable": 'showTable'
-
+			"touchstart .tabTable": 'showTable',
+			"click .edit": 'subscribe_info_quidd',
 			//"touchstart td.nameInOut, .groupSource, .mapper": "showActions",
 
 
 		},
-
+		subscribe_info_quidd : function(element) {
+			var quidd = $(element.target).closest("tr").data("quiddname");
+			console.log(quidd);
+			socket.emit("subscribe_info_quidd", quidd);
+		},
 		//generation of the main Menu 
 		initialize: function() {
 
@@ -88,7 +92,8 @@ define([
 		closePanel: function(e) {
 			//use fore delete quidd add method start with no method start launch
 			$("#panelRight").hide();
-
+			console.log($("#quiddName").val());
+			socket.emit("unsubscribe_info_quidd", $("#quiddName").val());
 			// $("#panelLeft").delay(100).animate({width : "100%"});
 			// $("#panelRight").animate({width : "0px"});
 		},

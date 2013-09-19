@@ -150,10 +150,25 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			callback(propertyByClass);
 		});
 
+		socket.on("get_property_description", function(quiddName, property, callback) {
+			var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
+
+			callback(property_description);
+		});
 
 		socket.on("getPropertiesOfQuidd", function(quiddName, callback) {
 			var propertiesOfQuidd = scenic.getQuiddPropertiesWithValues(quiddName);
 			callback(propertiesOfQuidd);
+		});
+
+		socket.on("get_properties_description", function(quiddName, callback) {
+			var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties
+			,	properties_to_send = {};
+			//re-order properties for get key = name property
+			_.each(properties_description, function(property) {
+				properties_to_send[property.name] = property;
+			});
+			callback(properties_to_send);
 		});
 
 		socket.on("get_quiddity_description", function(quiddName, callback) {
@@ -175,6 +190,31 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			
 			callback(quidds);
 		});
+
+
+		socket.on("subscribe_info_quidd", function(quiddName) {
+			log("debug", "socketId ("+socket.id+") subscribe info "+quiddName);
+			console.log("debug", "socketId ("+socket.id+") subscribe info "+quiddName);
+
+			config.subscribe_quidd_info[socket.id] = quiddName;
+		});
+
+		socket.on("unsubscribe_info_quidd", function(quiddName) {
+			log("debug", "socketId ("+socket.id+") unsubscribe info "+quiddName);
+			console.log("debug", "socketId ("+socket.id+") unsubscribe info "+quiddName);
+
+			delete config.subscribe_quidd_info[socket.id];
+		});
+
+		socket.on("disconnect", function(){
+			//check if user subscribe to quidd (panel open) and close the connection
+			if(config.subscribe_quidd_info[socket.id]) {
+				delete config.subscribe_quidd_info[socket.id];
+			}
+		});
+
+
+		//************************* SAUVEGARDE ****************************//
 
 
 		socket.on("save", function(name, callback) {

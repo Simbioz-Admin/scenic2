@@ -14,7 +14,7 @@
 			%>
 			<li>
 
-				<% var valueField = property.value; %>
+				<% var valueField = property.description["type description"]["default value"]; %>
 
 				<% var moreInfo =  info.minimum ? "Min : "+info.minimum+" &nbsp; Max : "+info.maximum : "";  %>
 				<h3 class="info" title="<%=property.description['short description']%><br><%=moreInfo%>" ><%=property.description['long name']%></h3>

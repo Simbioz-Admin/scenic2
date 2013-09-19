@@ -6,7 +6,9 @@ define([
 	var ViewIrcs = Backbone.View.extend({
 		el: 'body',
 		events: {
-			"click #btn-irc, .close-irc": 'panelIrc'
+			"click #btn-irc, .close-irc": 'panelIrc',
+			"touchstart #btn-irc .close-irc": 'panelIrc'
+
 		},
 		initialize : function() {
 			console.log("view IRCS");

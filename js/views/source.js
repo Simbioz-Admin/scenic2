@@ -38,22 +38,9 @@ define([
 					});
 					$(that.el).append($(template));
 
-					//get info about vumeter for know if we can create a preview
 					setTimeout(function() {
-						collections.quidds.getPropertyValue({ name : "vumeter_" + shmdata.path }, "caps", function(info) {
-							info = info.split(",");
-
-							if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") {
-								
-								var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
-								//check if the quiddity have already a preview active
-								socket.emit("get_quiddity_description", that.model.get("name")+type, function(quiddInfo) {
-									var active = (quiddInfo.name ? "active" : "");
-									$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview "+active+"'></div>");
-								});
-							}
-						});
-					}, 500);
+						that.setPreview(shmdata);
+					}, 1000);
 				});
 			} else {
 				var template = _.template(TemplateSource, {
@@ -71,6 +58,24 @@ define([
 			} else {
 				$("#" + that.table + " #local-sources").prepend($(that.el));
 			}
+
+		},
+		setPreview : function(shmdata) {
+			var that = this;
+			//get info about vumeter for know if we can create a preview
+			collections.quidds.getPropertyValue({ name : "vumeter_" + shmdata.path }, "caps", function(info) {
+				info = info.split(",");
+
+				if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") {
+					
+					var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
+					//check if the quiddity have already a preview active
+					socket.emit("get_quiddity_description", that.model.get("name")+type, function(quiddInfo) {
+						var active = (quiddInfo.name ? "active" : "");
+						$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview "+active+"'></div>");
+					});
+				}
+			});
 
 		},
 		edit: function() {

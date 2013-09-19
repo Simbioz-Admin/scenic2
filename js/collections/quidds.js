@@ -31,7 +31,8 @@ define([
 
 			socket.on("signals_properties", function(quiddName, prop, value) {
 				if (prop == "byte-rate") {
-					views.quidds.updateVuMeter(quiddName, value)
+					views.quidds.updateVuMeter(quiddName, value);
+					
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {

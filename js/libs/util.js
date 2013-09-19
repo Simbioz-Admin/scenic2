@@ -1,4 +1,4 @@
-define(["jquery"], // Require jquery
+define(["jquery", 'jqueryui'], // Require jquery
        function($){
 
         //transform serializeArray to JSON format
@@ -32,15 +32,15 @@ define(["jquery"], // Require jquery
             $("#lightBox, #bgLightbox").fadeOut(200);
         });
 
-        //define tooltip global with jquery UI
-        // $(document).tooltip({
-        //     track: true,
-        //     content: function() {
-        //         var element = $(this);
-        //         return element.attr("title");
+        // define tooltip global with jquery UI
+        $(document).tooltip({
+            track: true,
+            content: function() {
+                var element = $(this);
+                return element.attr("title");
                 
-        //     }
-        // });
+            }
+        });
 });
 
 

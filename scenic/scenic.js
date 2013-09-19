@@ -94,8 +94,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		//remove the vumeter
 		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
-		if (shmdatas != "property not found") {
+		if (shmdatas == "undefined" && shmdatas != "property not found") {
 			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
+			console.log("test", shmdatas);
 			$.each(shmdatas, function(index, shmdata) {
 				//for the moment create a segmentation fault
 				log("info", "remove vumeter : vumeter_"+shmdata.path);

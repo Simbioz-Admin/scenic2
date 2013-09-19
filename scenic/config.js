@@ -8,7 +8,7 @@ module.exports = {
 	debugLevel: "error",
 	logSocketIo: false,
 	nameComputer: "scenic",
-	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer',  'SOAPcontrolClient'],
+	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude: ["shmdata-readers", "shmdata-writers"],
 	deviceAutoDetect: ["v4l2src", "pulsesrc"],
 	defaultPanelTable: "transfer",

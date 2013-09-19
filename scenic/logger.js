@@ -27,15 +27,19 @@ module.exports = function(config, _, app, io) {
       ,   minutes = (now.getMinutes().toString().length == 1 ? "0" : "" )+now.getMinutes()
       ,   seconds = (now.getSeconds().toString().length == 1 ? "0" : "" )+now.getSeconds();
       
-      //console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
 
       var message = {from : "switcher", date : hours+":"+minutes+":"+seconds, level : level, message : message};
       //add to the list of log  message
+      if(level == "error") {
+        console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
+      }
+
       if(level == "info" || level == "error") {
+        // console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
         jsonLog.push(message);
+        io.sockets.emit("messageLog", message);
       }
       //send to the interface
-      io.sockets.emit("messageLog", message);
 
     }
   }

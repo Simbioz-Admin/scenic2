@@ -88,8 +88,7 @@ define([
 				var info = property.description["type description"];
 				if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "uint") {
 
-					var step = (parseInt(info.maximum) - parseInt(info.minimum))/200;
-					
+					var step = (info.type == "int" || info.type == "uint" ? 1 : (parseInt(info.maximum) - parseInt(info.minimum))/200);
 					$("."+property.name).slider({
 						range: "min",
 					    value: property.value,

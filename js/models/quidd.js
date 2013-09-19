@@ -82,9 +82,7 @@ define([
 				socket.emit("get_quiddity_description", type+"_"+path, function(quiddInfo) {
 					if(quiddInfo.error && type != null) {
 						collections.quidds.create(type, type+"_"+path , function(quiddInfo) {
-							setTimeout(function() {
-								socket.emit("invoke", quiddInfo.name, "connect", [path]);
-							}, 1000);
+						socket.emit("invoke", quiddInfo.name, "connect", [path]);
 						});
 					} else {
 						collections.quidds.delete(type+"_"+path);

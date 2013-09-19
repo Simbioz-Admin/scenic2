@@ -121,9 +121,11 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			if (method == "add_destination")
 				io.sockets.emit("add_destination", invoke, quiddName, parameters);
 
-			if (method == "remove_destination")
+			if (method == "remove_destination") { 
 				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
+				switcher.remove("soapClient-"+parameters[0]);
 
+			}
 			if (method == "add_udp_stream_to_dest")
 				io.sockets.emit("add_connection", invoke, quiddName, parameters)
 

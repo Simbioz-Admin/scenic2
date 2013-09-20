@@ -61,7 +61,7 @@ define([
 				    max: parseInt(prop.maximum),
 				    slide: function(event, ui) {
 				        $("[name='"+prop.name+"']").val(ui.value);
-				        views.quidds.setProperty({name : prop.name, value : ui.value});
+				       that.setProperty({name : prop.name, value : ui.value});
 				  	}
 				});
 			}
@@ -93,10 +93,13 @@ define([
 		},
 		setProperty: function(element) {
 			
-			var that = this;
-				property = (element.target ? element.target.name : element.name);
-				value = (element.target ? element.target.value : element.value),
-			
+			var that = this
+			,	property = (element.target ? element.target.name : element.name)
+			,	value = (element.target ? element.target.value : element.value);
+
+				if($(element.target).addClass("checkbox"))
+					value = String(element.target.checked);
+
 			this.model.setPropertyValue(property, value, function() {
 				// 	//make confirmation message set attributes ok
 				// 	//console.log("the property  :", property, "with value : ", value, "has set!");

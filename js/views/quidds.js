@@ -10,11 +10,8 @@ define([
 		el: 'body',
 		events: {
 			"click .createDevice[data-name], .deviceDetected li": "defineName",
-			"click #create": "create",
-			
+			"click #create": "create",	
 			"click .setMethod": "setMethod",
-			'click #methodStart': 'methodStart',
-			'click #methodStop': 'methodStop',
 			"mouseenter .autoDetect": "autoDetect",
 			// "click #create-midi" : "createMidi"
 		},
@@ -39,17 +36,6 @@ define([
 				that = this,
 				deviceDetected = $("#device").val();
 
-
-
-			/**
-			 *
-			 * 1 - create the quiddity without name
-			 * 2 - check if the user select autoDetect (contains value) (if false go point 4)
-			 * 3 - define the properties device
-			 * 4 - get properties / methods of the device
-			 * 5 - show the panelEdit with form
-			 */
-
 			//create first quiddity for get the good properties
 			collections.quidds.create(className, name, function(quiddInfo) {
 
@@ -63,45 +49,12 @@ define([
 				} else model.edit();
 			});
 		},
-		openPanel: function(quiddName, properties, methods) {
-			var that = this;
-			var template = _.template(quiddTemplate, {
-				title: "Set " + quiddName,
-				quiddName: quiddName,
-				properties: properties,
-				methods: methods
-			});
-			$("#panelRight .content").html(template);
-			views.global.openPanel();
-
-			//generate slider for properties
-			_.each(properties, function(property) {
-				var info = property.description["type description"];
-				if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "uint") {
-
-					var step = (info.type == "int" || info.type == "uint" ? 1 : (parseInt(info.maximum) - parseInt(info.minimum))/200);
-					$("."+property.name).slider({
-						range: "min",
-					    value: property.value,
-					    step: step,
-					    min: parseInt(info.minimum),
-					    max: parseInt(info.maximum),
-					    slide: function(event, ui) {
-					        $("[name='"+property.name+"']").val(ui.value);
-
-					        that.setProperty({name : property.name, value : ui.value});
-					  	}
-					});
-				}
-			});
-
-		},
 		autoDetect: function(element) {
 			//create temporary v4l2 quiddity for listing device available
 			var className = $(element.target).data("name");
 			collections.classesDoc.getPropertyByClass(className, "device", function(property) {
 				if(property) {
-					var deviceDetected = property["type description"]["values"];
+					var deviceDetected = property["values"];
 
 					$("#deviceDetected").remove();
 					$("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");
@@ -138,23 +91,6 @@ define([
 					that.getPropertiesAndMethods(model);
 				});
 			}
-		},
-		methodStart: function() {
-			var that = this,
-				model = collections.quidds.get($("#quiddName").val());
-
-			model.setMethod("start", [], function() {
-				//the method has set correctly now we refresh properties in panel
-				that.getPropertiesAndMethods(model);
-			});
-		},
-		methodStop: function() {
-			var that = this,
-				model = collections.quidds.get($("#quiddName").val());
-
-			model.setMethod("stop", [], function() {
-				that.getPropertiesAndMethods(model);
-			});
 		}
 
 	});

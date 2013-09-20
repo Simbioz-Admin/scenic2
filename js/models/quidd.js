@@ -20,7 +20,7 @@ define([
 			"encoder_category": null,
 			"shmdatas": null,
 			"view" : null,
-			"viewEdit" : null
+			// "viewEdit" : null
 		},
 		initialize: function() {
 			var that = this;
@@ -53,7 +53,7 @@ define([
 			var that = this;
 			that.getProperties(function() {
 				that.getMethodsDescription(function() {
-					that.set("viewEdit", new ViewEditQuidd({model : that})); 
+					new ViewEditQuidd({model : that}); 
 					// views.quidds.openPanel(that.get("name"), that.get("properties"), that.get("methods"), that.get("encoder_category"));
 				});
 			});
@@ -139,17 +139,17 @@ define([
 		},
 
 		removeProperty: function(property) {
-			var viewEdit = this.get("viewEdit");
-			viewEdit.addProperty(property);
 			delete this.get("properties")[property];
-			//console.log("removed prop", property, this.get("properties"));
+			//need to trigger the modification on properties beceause backbone not detect changement in depth object
+			this.trigger("remove:property", property);
 		},
 
 		addProperty: function(property) {
 			var that = this;
 			socket.emit("get_property_description", this.get("name"), property, function(description) {
 				that.get("properties")[property] = description;
-				//console.log("add prop", property, that.get("properties"));
+				//need to trigger the modification on properties beceause backbone not detect changement in depth object
+				that.trigger("add:property", property);
 			});
 		},
 
@@ -182,6 +182,17 @@ define([
 			socket.emit("invoke", this.get("name"), method, parameters, function(ok) {
 				callback(ok);
 			});
+		},
+		addMethod: function(method) {
+			var that = this;
+			socket.emit("get_method_description", this.get("name"), method, function(description) {
+				that.get("methods")[method] = description;
+				that.trigget("add:method", method);
+			});
+		},
+		removeMethod: function(method) {
+			delete this.get("methods")[method];
+			this.trigger("remove:method", method);
 		}
 	});
 

@@ -103,7 +103,11 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("getMethodsDescription", function(quiddName, callback) {
 			var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
-			callback(methods);
+			var methods_to_send = {};
+			_.each(methods, function(method) {
+				methods_to_send[method.name] = method;
+			});
+			callback(methods_to_send);
 		});
 
 

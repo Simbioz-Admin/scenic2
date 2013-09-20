@@ -80,7 +80,7 @@ define([
 			$("#listDevicesMidi").remove();
 			collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
 
-				var devicesMidi = property["type description"]["values"];
+				var devicesMidi = property["values"];
 				_.each(devicesMidi, function(device, index) {
 					collections.quidds.each(function(quidd) {
 						if(quidd.get("class") == "midisrc") {

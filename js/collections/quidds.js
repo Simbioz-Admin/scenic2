@@ -38,6 +38,12 @@ define([
 				if(prop == "on-new-property") {
 					model.addProperty(value[0]);
 				}
+				if(prop == "on-new-method") {
+					model.addMethod(value[0]);
+				}
+				if(prop == "on-method-removed") {
+					model.removeMethod(value[0]);
+				}
 			});
 
 			socket.on("signals_properties_value", function(quiddName, prop, value) {

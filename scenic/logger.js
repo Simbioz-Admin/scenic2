@@ -1,4 +1,4 @@
-module.exports = function(config, _, app, io) {
+module.exports = function(config, _, app, io, $) {
 
   var jsonLog = [];
 
@@ -31,7 +31,7 @@ module.exports = function(config, _, app, io) {
       var message = {from : "switcher", date : hours+":"+minutes+":"+seconds, level : level, message : message};
       //add to the list of log  message
       if(level == "error") {
-        console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
+        console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ $.parseJSON(message));
       }
 
       if(level == "info" || level == "error") {

@@ -30,7 +30,7 @@ define([
 			});
 
 			socket.on("signals_properties_info", function(prop, quiddName, value) {
-				//console.log("signals_properties_info ", quiddName, prop, value);
+				console.log("signals_properties_info ", quiddName, prop, value);
 				var model = collections.quidds.get(quiddName);
 				if(prop == "on-property-removed") {
 					model.removeProperty(value[0]);
@@ -53,7 +53,7 @@ define([
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
-						//console.log(quiddName, prop, value);
+						console.log(quiddName, prop, value);
 						model.get("properties")[prop]["default value"] = value;
 						model.trigger("update:value", prop);
 						// model.setLocalpropertyValue(prop, value);

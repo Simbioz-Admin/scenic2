@@ -88,7 +88,7 @@ define([
 
 			if (method && valueMethod) {
 				model.setMethod(method, [valueMethod], function(ok) {
-					that.getPropertiesAndMethods(model);
+					//that.getPropertiesAndMethods(model);
 				});
 			}
 		}

@@ -44,7 +44,7 @@ define([
 				if(quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
 					var listProperties = [];
 					_.each(quidd.get("properties"), function(property) {
-						if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.description.writable == "true" && property.name != "started") {
+						if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
 							listProperties.push(property.name);
 							quiddsMenu[quidd.get("name")] = listProperties;
 						}

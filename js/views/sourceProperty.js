@@ -16,10 +16,18 @@ define([
 		},
 		initialize: function() {
 			this.model.on('remove', this.removeView, this);
-			this.model.on('change:properties', this.render, this);
+			this.model.on('add:property', this.render, this);
+			this.model.on('remove:property', this.render, this);
 
 			this.table = this.options.table;
 			this.render();
+
+			//here we define were go the source  vhttpsdpdec
+			if (this.model.get("class") == "httpsdpdec") {
+				$("#" + this.table + " #remote-sources").prepend($(this.el));
+			} else {
+				$("#" + this.table + " #local-sources").prepend($(this.el));
+			}
 
 		},
 		render: function() {
@@ -54,12 +62,7 @@ define([
 				$(that.el).append($(template));
 			}
 
-			//here we define were go the source  vhttpsdpdec
-			if (this.model.get("class") == "httpsdpdec") {
-				$("#" + that.table + " #remote-sources").prepend($(that.el));
-			} else {
-				$("#" + that.table + " #local-sources").prepend($(that.el));
-			}
+
 
 			//check if mapper exist for the 
 			collections.quidds.each(function(quidd) {
@@ -71,7 +74,6 @@ define([
 
 		},
 		edit: function() {
-			console.log("AA");
 			this.model.edit();
 		},
 		removeClick: function() {

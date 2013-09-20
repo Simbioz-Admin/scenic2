@@ -20,6 +20,7 @@ define([
 			this.model.on('remove:method', this.removeMethod, this);
 			this.model.on('add:method', this.addMethod, this);
 			this.model.on("update:value", this.updateValue, this);
+			
 			//generate template for receive properties and methods
 			var template = _.template(TemplateQuidd, {
 				title: "Set " + this.model.get("name"),
@@ -35,7 +36,6 @@ define([
 
 			//add methods
 			_.each(this.model.get("methods"), function(method) {
-				//console.log(method)
 				that.addMethod(method.name);
 			});
 
@@ -100,13 +100,7 @@ define([
 			if($(element.target).hasClass("checkbox"))
 				value = String(element.target.checked);
 
-			this.model.setPropertyValue(property, value, function() {
-				// 	//make confirmation message set attributes ok
-				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-				// if (property == "started") {
-				// 	that.getPropertiesAndMethods(model);
-				// }
-			});
+			this.model.setPropertyValue(property, value, function() {});
 		
 
 		},
@@ -122,9 +116,8 @@ define([
 				$("[name='"+property+"']").prop("checked", value).val(value);
 				if(value == "false") $("[name='"+property+"']").removeAttr("checked");
 			}
-			console.log(type);
 			if(type == "enum") {
-				console.log("enum", value);
+				$("[name='"+property+"']").val(value);
 			}
 			
 		}

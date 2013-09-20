@@ -29,7 +29,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			//broadcast all the modification on properties
 			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 				if(quiddName == qname) {
-					console.log("properties send to sId ("+socketId+") "+qname+" "+qprop+" : "+pvalue);
+					log("debug","properties send to sId ("+socketId+") "+qname+" "+qprop+" : "+pvalue);
 					var socket = io.sockets.sockets[socketId];
 					socket.emit("signals_properties_value", qname, qprop, pvalue);
 				}
@@ -82,7 +82,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//console.log("New property for ",qname, pvalue);
 				 _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 					if(quiddName == qname) {
-						console.log("send to sId ("+socketId+") "+qprop+" : "+pvalue);
+						log("debug","send to sId ("+socketId+") "+qprop+" : "+pvalue);
 						var socket = io.sockets.sockets[socketId];
 						socket.emit('signals_properties_info', qprop, qname, pvalue);
 					}
@@ -94,6 +94,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				console.log("Subscribe ", qname, pvalue[0]);
 				switcher.subscribe_to_property(qname, pvalue[0]);
 			}
+			//unsubscribe to the property removed
 			if(qprop == "on-property-removed") {
 				console.log("Unsubscribe ", qname, pvalue[0]);
 				switcher.unsubscribe_to_property(qname, pvalue[0]);

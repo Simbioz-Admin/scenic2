@@ -11,7 +11,7 @@ define([
 		events: {
 			"click .createDevice[data-name], .deviceDetected li": "defineName",
 			"click #create": "create",
-			"change input.property, select.property": "setProperty",
+			
 			"click .setMethod": "setMethod",
 			'click #methodStart': 'methodStart',
 			'click #methodStop': 'methodStop',
@@ -94,24 +94,6 @@ define([
 					});
 				}
 			});
-
-		},
-		setProperty: function(element) {
-			
-			var model = collections.quidds.get($("#quiddName").val()),
-				that = this;
-				property = (element.target ? element.target.name : element.name);
-				value = (element.target ? element.target.value : element.value),
-			
-
-			model.setPropertyValue(property, value, function() {
-				// 	//make confirmation message set attributes ok
-				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
-				// if (property == "started") {
-				// 	that.getPropertiesAndMethods(model);
-				// }
-			});
-		
 
 		},
 		autoDetect: function(element) {

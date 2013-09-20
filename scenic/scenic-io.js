@@ -58,7 +58,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("setPropertyValue", function(quiddName, property, value, callback) {
 
-			//check for remove shmdata when set properties started to false
+			//check for remove shmdata when set property started to false
 			if(property == "started" && value == "false") {
 				scenic.removeVumeters(quiddName);
 			}

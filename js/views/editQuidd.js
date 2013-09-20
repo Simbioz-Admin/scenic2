@@ -8,7 +8,7 @@ define([
 		// tagName: 'td',
 		// className: 'nameInOut',
 		events: {
-			//'click h3' : 'test',
+			"change input.property, select.property": "setProperty",
 		 },
 		initialize : function() {
 
@@ -43,44 +43,6 @@ define([
 			views.global.openPanel();
 
 		},
-		// initialize2: function() {
-
-		// 	this.model.on('remove:property', this.removeProperty, this);
-		// 	this.model.on('add:property', this.addProperty, this);
-
-		// 	var that = this;
-		// 	var template = _.template(TemplateQuidd, {
-		// 		title: "Set " + this.model.get("name"),
-		// 		quiddName: this.model.get("name"),
-		// 		properties: this.model.get("properties"),
-		// 		methods: this.model.get("methods")
-		// 	});
-
-		// 	$(this.el).append(template);
-
-		// 	$("#panelRight .content").html($(this.el));
-		// 	views.global.openPanel();
-
-		// 	//generate slider for properties
-		// 	_.each(this.model.get("properties"), function(property) {
-		// 		var info = property;
-		// 		if(info.type == "float" || info.type == "int" || info.type == "double" || info.type == "uint") {
-
-		// 			var step = (info.type == "int" || info.type == "uint" ? 1 : (parseInt(info.maximum) - parseInt(info.minimum))/200);
-		// 			$("."+property.name).slider({
-		// 				range: "min",
-		// 			    value: property.value,
-		// 			    step: step,
-		// 			    min: parseInt(info.minimum),
-		// 			    max: parseInt(info.maximum),
-		// 			    slide: function(event, ui) {
-		// 			        $("[name='"+property.name+"']").val(ui.value);
-		// 			        that.setProperty({name : property.name, value : ui.value});
-		// 			  	}
-		// 			});
-		// 		}
-		// 	});
-		// },
 		addProperty : function(property) {
 			var prop = this.model.get("properties")[property];
 			var templateProp = _.template(TemplateQuiddProperty, {property : prop});
@@ -99,7 +61,7 @@ define([
 				    max: parseInt(prop.maximum),
 				    slide: function(event, ui) {
 				        $("[name='"+prop.name+"']").val(ui.value);
-				        that.model.setPropertyValue({name : prop.name, value : ui.value});
+				        views.quidds.setProperty({name : prop.name, value : ui.value});
 				  	}
 				});
 			}
@@ -128,6 +90,22 @@ define([
 			else {
 				$("#properties", this.el).prepend(templateToAdd);
 			}
+		},
+		setProperty: function(element) {
+			
+			var that = this;
+				property = (element.target ? element.target.name : element.name);
+				value = (element.target ? element.target.value : element.value),
+			
+			this.model.setPropertyValue(property, value, function() {
+				// 	//make confirmation message set attributes ok
+				// 	//console.log("the property  :", property, "with value : ", value, "has set!");
+				// if (property == "started") {
+				// 	that.getPropertiesAndMethods(model);
+				// }
+			});
+		
+
 		}
 	});
 

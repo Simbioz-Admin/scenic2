@@ -54,7 +54,8 @@ define([
 			that.getProperties(function() {
 				that.getMethodsDescription(function() {
 					new ViewEditQuidd({model : that}); 
-					// views.quidds.openPanel(that.get("name"), that.get("properties"), that.get("methods"), that.get("encoder_category"));
+					//subscribe for have information about modification on quidd
+					socket.emit("subscribe_info_quidd", that.get("name"));
 				});
 			});
 		},

@@ -53,7 +53,9 @@ define([
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
-
+						//console.log(quiddName, prop, value);
+						model.get("properties")[prop]["default value"] = value;
+						model.trigger("update:value", prop);
 						// model.setLocalpropertyValue(prop, value);
 						// if (prop == "started") {
 						// 		model.getProperties(function(properties) {

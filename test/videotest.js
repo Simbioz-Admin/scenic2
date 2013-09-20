@@ -19,7 +19,7 @@ switcher.register_signal_callback(function (qname, qprop, pvalue){
 
 switcher.register_prop_callback(function (qname, qprop, pvalue)
 {
-	console.log('...PROP...: ', qname, ' ', qprop, ' ', $.parseJSON(pvalue));
+	console.log('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 });
 
 switcher.create("rtpsession", "defaultrtp");
@@ -28,18 +28,9 @@ switcher.invoke("soap", "set_port", [8074]);
 
 
 var vid = switcher.create("videotestsrc", "vid");
-//console.log("start : ", switcher.invoke(vid, "start", ["true"]));
-console.log(switcher.get_property_value(vid, "codec"));
-console.log(switcher.get_property_value(vid, "more_codecs"));
-
-
-var propertiesQuidd = switcher.get_quiddity_description(vid);
-console.log(propertiesQuidd);
-
-console.log(switcher.set_property_value(vid, "codec","2"));
-console.log(switcher.get_property_value(vid, "codec"));
-
-
+console.log(switcher.set_property_value(vid, "started", "true"));
+console.log(switcher.subscribe_to_property(vid, "pattern"));
+console.log(switcher.set_property_value(vid, "pattern", "3"));
 
 // //recover the value set for the properties
 // $.each(propertiesQuidd, function(index, property) {

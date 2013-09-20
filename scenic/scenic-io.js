@@ -68,16 +68,17 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				if (ok) {
 					log("info", "the porperty "+ property + " of " + quiddName + "is set to "+value);
 					callback(property, value);
-					socket.broadcast.emit("setPropertyValue", quiddName, property, value);
+					
+					//socket.broadcast.emit("setPropertyValue", quiddName, property, value);
 
-					if (property == "started") {
-						var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-						_.each(properties, function(property) {
+					// if (property == "started") {
+					// 	var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
+					// 	_.each(properties, function(property) {
+					// 		console.log(quiddName, property.name);
+					// 		switcher.subscribe_to_property(quiddName, property.name);
+					// 	});
 
-							switcher.subscribe_to_property(quiddName, property.name);
-						});
-
-					}
+					// }
 				} else {
 					log("error", "failed to set the property "+ property + " of " + quiddName);
 					socket.emit("msg", "error", "the property " + property + " of " + quiddName + " is not set");

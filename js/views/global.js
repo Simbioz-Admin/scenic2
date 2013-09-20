@@ -23,15 +23,9 @@ define([
 			//"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
 			"click .tabTable": 'showTable',
 			"touchstart .tabTable": 'showTable',
-			"click .edit": 'subscribe_info_quidd',
 			//"touchstart td.nameInOut, .groupSource, .mapper": "showActions",
 
 
-		},
-		subscribe_info_quidd : function(element) {
-			var quidd = $(element.target).closest("tr").data("quiddname");
-			console.log(quidd);
-			socket.emit("subscribe_info_quidd", quidd);
 		},
 		//generation of the main Menu 
 		initialize: function() {
@@ -122,7 +116,7 @@ define([
 			console.log("ask for load history from scratch");
 			socket.emit("load_from_scratch", "save.scenic", function(ok) {
 				if (ok) {
-					collections.destinations.fetch({
+					collections.clients.fetch({
 						success: function(response) {
 							//generate destinations
 							$("#destinations").html("");

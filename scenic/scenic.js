@@ -20,11 +20,21 @@ module.exports = function(config, switcher, $, _, io, log) {
 		
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
-			if (qprop != "byte-rate")
+			if (qprop != "byte-rate") {
 				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+			}else {
+				io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
+			}
 
 			//broadcast all the modification on properties
-			io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
+			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
+				if(quiddName == qname) {
+					console.log("properties send to sId ("+socketId+") "+qname+" "+qprop+" : "+pvalue);
+					var socket = io.sockets.sockets[socketId];
+					socket.emit("signals_properties_value", qname, qprop, pvalue);
+				}
+			});
+			// io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
 
 
 			if (qprop == "shmdata-writers") {
@@ -79,6 +89,16 @@ module.exports = function(config, switcher, $, _, io, log) {
 				});
 				
 			}
+			//subscribe to the property added
+			if(qprop == "on-new-property") {
+				console.log("Subscribe ", qname, pvalue[0]);
+				switcher.subscribe_to_property(qname, pvalue[0]);
+			}
+			if(qprop == "on-property-removed") {
+				console.log("Unsubscribe ", qname, pvalue[0]);
+				switcher.unsubscribe_to_property(qname, pvalue[0]);
+			}
+
 
 		});
 

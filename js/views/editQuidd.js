@@ -19,7 +19,7 @@ define([
 			this.model.on('add:property', this.addProperty, this);
 			this.model.on('remove:method', this.removeMethod, this);
 			this.model.on('add:method', this.addMethod, this);
-
+			this.model.on("update:value", this.updateValue, this);
 			//generate template for receive properties and methods
 			var template = _.template(TemplateQuidd, {
 				title: "Set " + this.model.get("name"),
@@ -57,7 +57,7 @@ define([
 					range: "min",
 				    value: prop["default value"],
 				    step: step,
-				    min: parseInt(prop.minimum),
+				    min: parseInt(prop.minimum), 
 				    max: parseInt(prop.maximum),
 				    slide: function(event, ui) {
 				        $("[name='"+prop.name+"']").val(ui.value);
@@ -97,8 +97,8 @@ define([
 			,	property = (element.target ? element.target.name : element.name)
 			,	value = (element.target ? element.target.value : element.value);
 
-				if($(element.target).addClass("checkbox"))
-					value = String(element.target.checked);
+			if($(element.target).hasClass("checkbox"))
+				value = String(element.target.checked);
 
 			this.model.setPropertyValue(property, value, function() {
 				// 	//make confirmation message set attributes ok
@@ -109,6 +109,24 @@ define([
 			});
 		
 
+		},
+		updateValue : function(property) {
+			var value = this.model.get("properties")[property]["default value"];
+			var type = this.model.get("properties")[property]["type"];
+			
+			if(type == "float" || type == "int" || type == "double" || type == "string" || type == "uint") {
+				$("."+property).slider('value', value);
+				$("[name='"+property+"']").val(value);
+			}
+			if(type == "boolean") {	
+				$("[name='"+property+"']").prop("checked", value).val(value);
+				if(value == "false") $("[name='"+property+"']").removeAttr("checked");
+			}
+			console.log(type);
+			if(type == "enum") {
+				console.log("enum", value);
+			}
+			
 		}
 	});
 

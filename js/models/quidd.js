@@ -1,9 +1,9 @@
 define([
 	'underscore',
 	'backbone',
-	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 
+	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
 	'text!/templates/panelInfoSource.html'
-], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper,
+], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd,
 	infoTemplate) {
 
 	var QuiddModel = Backbone.Model.extend({
@@ -19,45 +19,45 @@ define([
 			"methods": [],
 			"encoder_category": null,
 			"shmdatas": null,
-			"view" : null
+			"view" : null,
+			// "viewEdit" : null
 		},
 		initialize: function() {
 			var that = this;
 
 			//get properties, methods and shmdatas when quidd is created
 			that.getShmdatas(function(shmdatas) {
-				that.getProperties(function() {
-					that.getMethodsDescription(function() {
+				if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
+					that.set("view", new ViewSource({
+						model: that,
+						table: "transfer"
+					}));
+					
+				}
+				if (that.get("class") == "midisrc") {
+					that.set("view", new ViewSourceProperty({
+						model: that,
+						table: "control"
+					}));
+				} 
 
-						if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
-							that.set("view", new ViewSource({
-								model: that,
-								table: "transfer"
-							}));
-							
-						}
-						if (that.get("class") == "midisrc") {
-							that.set("view", new ViewSourceProperty({
-								model: that,
-								table: "control"
-							}));
-						} 
-
-						if(that.get("category") == "mapper") {
-							that.set("view", new ViewMapper({
-								model : that,
-								table: "control"
-							}));
-						}
-					});
-				});
+				if(that.get("category") == "mapper") {
+					that.set("view", new ViewMapper({
+						model : that,
+						table: "control"
+					}));
+				}
 			});
-
-
-
 		},
 		edit: function() {
-			views.quidds.openPanel(this.get("name"), this.get("properties"), this.get("methods"), this.get("encoder_category"));
+			var that = this;
+			that.getProperties(function() {
+				that.getMethodsDescription(function() {
+					new ViewEditQuidd({model : that}); 
+					//subscribe for have information about modification on quidd
+					socket.emit("subscribe_info_quidd", that.get("name"));
+				});
+			});
 		},
 		delete: function() {
 			var that = this;
@@ -133,11 +133,27 @@ define([
 		},
 		getProperties: function(callback) {
 			var that = this;
-			socket.emit("getPropertiesOfQuidd", this.get("name"), function(propertiesOfQuidd) {
-				that.set("properties", propertiesOfQuidd);
-				callback(propertiesOfQuidd);
+			socket.emit("get_properties_description", this.get("name"), function(properties_description) {
+				that.set("properties", properties_description);
+				callback(properties_description);
 			});
 		},
+
+		removeProperty: function(property) {
+			delete this.get("properties")[property];
+			//need to trigger the modification on properties beceause backbone not detect changement in depth object
+			this.trigger("remove:property", property);
+		},
+
+		addProperty: function(property) {
+			var that = this;
+			socket.emit("get_property_description", this.get("name"), property, function(description) {
+				that.get("properties")[property] = description;
+				//need to trigger the modification on properties beceause backbone not detect changement in depth object
+				that.trigger("add:property", property);
+			});
+		},
+
 		getPropertyValue: function(property, callback) {
 			var that = this;
 			socket.emit("get_property_value", this.get("name"), property, function(propertyValue) {
@@ -167,6 +183,17 @@ define([
 			socket.emit("invoke", this.get("name"), method, parameters, function(ok) {
 				callback(ok);
 			});
+		},
+		addMethod: function(method) {
+			var that = this;
+			socket.emit("get_method_description", this.get("name"), method, function(description) {
+				that.get("methods")[method] = description;
+				that.trigget("add:method", method);
+			});
+		},
+		removeMethod: function(method) {
+			delete this.get("methods")[method];
+			this.trigger("remove:method", method);
 		}
 	});
 

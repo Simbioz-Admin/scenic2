@@ -29,24 +29,33 @@ define([
 
 			});
 
-			socket.on("signals_properties", function(quiddName, prop, value) {
+			socket.on("signals_properties_info", function(prop, quiddName, value) {
+				console.log("signals_properties_info ", quiddName, prop, value);
+				var model = collections.quidds.get(quiddName);
+				if(prop == "on-property-removed") {
+					model.removeProperty(value[0]);
+				}
+				if(prop == "on-new-property") {
+					model.addProperty(value[0]);
+				}
+				if(prop == "on-new-method") {
+					model.addMethod(value[0]);
+				}
+				if(prop == "on-method-removed") {
+					model.removeMethod(value[0]);
+				}
+			});
+
+			socket.on("signals_properties_value", function(quiddName, prop, value) {
 				if (prop == "byte-rate") {
 					views.quidds.updateVuMeter(quiddName, value);
 					
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
-
-						model.setLocalpropertyValue(prop, value);
-						if (prop == "started") {
-								model.getProperties(function(properties) {
-									model.getMethodsDescription(function(methods) {
-									});
-								});
-						}
-						//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
-						//var input = $("[name$='"+prop+"']");
-						//if(input) input.val(value);
+						//console.log(quiddName, prop, value);
+						model.get("properties")[prop]["default value"] = value;
+						model.trigger("update:value", prop);
 					}
 				}
 			});

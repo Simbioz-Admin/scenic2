@@ -12,5 +12,6 @@ module.exports = {
 	propertiesExclude: ["shmdata-readers", "shmdata-writers"],
 	deviceAutoDetect: ["v4l2src", "pulsesrc"],
 	defaultPanelTable: "transfer",
-	listQuiddsAndSocketId: {}
+	listQuiddsAndSocketId: {},
+	subscribe_quidd_info : {}
 }

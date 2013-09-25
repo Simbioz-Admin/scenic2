@@ -22,13 +22,11 @@ define([
 			//"mouseenter td.nameInOut, .groupSource, .mapper": "showActions",
 			//"mouseleave td.nameInOut, .groupSource, .mapper": "hideActions",
 			"click .tabTable": 'showTable',
-			"touchstart .tabTable": 'showTable'
-
+			"touchstart .tabTable": 'showTable',
 			//"touchstart td.nameInOut, .groupSource, .mapper": "showActions",
 
 
 		},
-
 		//generation of the main Menu 
 		initialize: function() {
 
@@ -88,7 +86,8 @@ define([
 		closePanel: function(e) {
 			//use fore delete quidd add method start with no method start launch
 			$("#panelRight").hide();
-
+			console.log($("#quiddName").val());
+			socket.emit("unsubscribe_info_quidd", $("#quiddName").val());
 			// $("#panelLeft").delay(100).animate({width : "100%"});
 			// $("#panelRight").animate({width : "0px"});
 		},
@@ -117,7 +116,7 @@ define([
 			console.log("ask for load history from scratch");
 			socket.emit("load_from_scratch", "save.scenic", function(ok) {
 				if (ok) {
-					collections.destinations.fetch({
+					collections.clients.fetch({
 						success: function(response) {
 							//generate destinations
 							$("#destinations").html("");

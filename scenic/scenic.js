@@ -20,11 +20,21 @@ module.exports = function(config, switcher, $, _, io, log) {
 		
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
-			if (qprop != "byte-rate")
+			if (qprop != "byte-rate") {
 				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+			}else {
+				io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
+			}
 
 			//broadcast all the modification on properties
-			io.sockets.emit("signals_properties", qname, qprop, pvalue);
+			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
+				if(quiddName == qname) {
+					log("debug","properties send to sId ("+socketId+") "+qname+" "+qprop+" : "+pvalue);
+					var socket = io.sockets.sockets[socketId];
+					socket.emit("signals_properties_value", qname, qprop, pvalue);
+				}
+			});
+			// io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
 
 
 			if (qprop == "shmdata-writers") {
@@ -39,11 +49,19 @@ module.exports = function(config, switcher, $, _, io, log) {
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 				
+				
+				//subscribe signal for properties add/remove and methods add/remove
+				switcher.subscribe_to_signal (pvalue[0], "on-new-property");
+				switcher.subscribe_to_signal (pvalue[0], "on-property-removed");
+				switcher.subscribe_to_signal (pvalue[0], "on-new-method");
+				switcher.subscribe_to_signal (pvalue[0], "on-method-removed");
+
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);
 				});
+
 
 				//the socketId of the user created quidd is memories in config, we filtered for not send again "create"
 				var socketIdCreatedThisQuidd = false;
@@ -59,6 +77,29 @@ module.exports = function(config, switcher, $, _, io, log) {
 				}
 
 			}
+
+			if(qprop == "on-new-property" || qprop == "on-property-removed" || qprop == "on-new-method" || qprop == "on-method-removed") {
+				//console.log("New property for ",qname, pvalue);
+				 _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
+					if(quiddName == qname) {
+						log("debug","send to sId ("+socketId+") "+qprop+" : "+pvalue);
+						var socket = io.sockets.sockets[socketId];
+						socket.emit('signals_properties_info', qprop, qname, pvalue);
+					}
+				});
+				
+			}
+			//subscribe to the property added
+			if(qprop == "on-new-property") {
+				console.log("Subscribe ", qname, pvalue[0]);
+				switcher.subscribe_to_property(qname, pvalue[0]);
+			}
+			//unsubscribe to the property removed
+			if(qprop == "on-property-removed") {
+				console.log("Unsubscribe ", qname, pvalue[0]);
+				switcher.unsubscribe_to_property(qname, pvalue[0]);
+			}
+
 
 		});
 

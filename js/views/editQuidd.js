@@ -105,9 +105,10 @@ define([
 
 		},
 		updateValue : function(property) {
+
 			var value = this.model.get("properties")[property]["default value"];
 			var type = this.model.get("properties")[property]["type"];
-			
+			console.log(property, value, type);
 			if(type == "float" || type == "int" || type == "double" || type == "string" || type == "uint") {
 				$("."+property).slider('value', value);
 				$("[name='"+property+"']").val(value);
@@ -118,6 +119,11 @@ define([
 			}
 			if(type == "enum") {
 				$("[name='"+property+"']").val(value);
+			}
+
+			//exeption for last midi value : need to show for have indication click on midi device
+			if(property == "last-midi-value") {
+				$(".preview-value").html("<div class='content-value'>"+value+"</div>");
 			}
 			
 		}

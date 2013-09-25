@@ -53,19 +53,9 @@ define([
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
-						console.log(quiddName, prop, value);
+						//console.log(quiddName, prop, value);
 						model.get("properties")[prop]["default value"] = value;
 						model.trigger("update:value", prop);
-						// model.setLocalpropertyValue(prop, value);
-						// if (prop == "started") {
-						// 		model.getProperties(function(properties) {
-						// 			model.getMethodsDescription(function(methods) {
-						// 			});
-						// 		});
-						// } 
-						//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
-						//var input = $("[name$='"+prop+"']");
-						//if(input) input.val(value);
 					}
 				}
 			});

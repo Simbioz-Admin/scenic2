@@ -22,7 +22,7 @@ define([
 			this.table = this.options.table;
 			this.render();
 
-			//here we define were go the source  vhttpsdpdec
+			//here we define were go the source httpsdpdec
 			if (this.model.get("class") == "httpsdpdec") {
 				$("#" + this.table + " #remote-sources").prepend($(this.el));
 			} else {
@@ -39,11 +39,10 @@ define([
 
 			_.each(properties, function(property, index) {
 				if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
-
 					var template = _.template(TemplateSourceProperty, {
 						property: property,
 						index: countProperty,
-						nbProperties: properties.length,
+						nbProperties: Object.keys(properties).length,
 						sourceName: that.model.get("name"),
 						destinations: destinations
 					});

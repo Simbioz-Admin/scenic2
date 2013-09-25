@@ -9,6 +9,7 @@ define([
 		// className: 'nameInOut',
 		events: {
 			"change input.property, select.property": "setProperty",
+			"click .setMethod": "setMethod",
 		 },
 		initialize : function() {
 
@@ -108,7 +109,7 @@ define([
 
 			var value = this.model.get("properties")[property]["default value"];
 			var type = this.model.get("properties")[property]["type"];
-			console.log(property, value, type);
+
 			if(type == "float" || type == "int" || type == "double" || type == "string" || type == "uint") {
 				$("."+property).slider('value', value);
 				$("[name='"+property+"']").val(value);
@@ -126,6 +127,24 @@ define([
 				$(".preview-value").html("<div class='content-value'>"+value+"</div>");
 			}
 			
+		},
+		setMethod: function(element) {
+			console.log("setMethod");
+
+			var that = this,
+				method = $(element.target).attr("id"),
+				valueMethod = $("[name='" + method + "']").val();
+
+			console.log(method, valueMethod);
+
+			if (method && valueMethod) {
+				this.model.setMethod(method, [valueMethod], function(ok) {
+					console.log(ok);
+					//that.getPropertiesAndMethods(model);
+				});
+			} else {
+				views.global.notification("error", "error with set method value");
+			}
 		}
 	});
 

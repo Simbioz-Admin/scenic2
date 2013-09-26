@@ -1,0 +1,47 @@
+
+
+<% if(property.writable == "true") { %>
+<li id="<%=property.name%>" data-weight="<%=property['position weight']%>">
+
+	<% var valueField = property["default value"]; %>
+
+	<% var moreInfo =  property.minimum ? "Min : "+property.minimum+" &nbsp; Max : "+property.maximum : "";  %>
+	<h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
+
+	<!-- Type input for float / int and bool -->
+	<% if(property.type == "float" || property.type == "int" || property.type == "double" || property.type == "string" || property.type == "uint"){ %>
+	<div class="property-content">
+		<div class="<%=property.name%>"></div>
+		<input 
+			class="property <%=property.type%> slider" 
+			data-current="<%=property["default value"]%>" 
+			data-min="<%=property.minimum%>" 
+			data-maximum="<%=property.maximum%>" 
+			type="text" 
+			value="<%=property["default value"]%>"
+			name="<%=property.name%>" 
+			placeholder="value type <%=property.type%>" />
+		<%  } %>
+	</div>
+	<!-- Radion button for boolean -->
+	<% if(property.type == "boolean"){ %>
+	<div class="property-content">
+		<label><input class="property checkbox" type="checkbox" name="<%=property.name%>"  value="<%=property["default value"]%>" <% if(property["default value"] == "true"){ %> checked="checked" <% } %> > active</label>
+	</div>
+	<% } %>
+
+
+	<!-- Dropdown for enum -->
+	<% if(property.type == "enum"){ %>
+	<div class="property-content">
+		<select class="property" name="<%=property.name%>"
+			
+			data-current="<%=property["default value"]["value"]%>"
+			<% _.each(property.values, function(value){ %>>
+					<option value="<%=value.name%>"  <%  if(property["default value"]["name"] == value.name){ %>  selected="selected" <% } %>  ><%= value.name%></option>
+			<% }); %>
+		</select>
+		<% } %>
+	</div>
+</li>
+<% } %>

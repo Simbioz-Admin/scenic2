@@ -1,0 +1,15 @@
+<li id="<%=method.name%>" data-weight="<%=method['position weight']%>">
+	<%  if(method.name != "set_runtime" && method.name != "remove_midi_property" && method.name != "next_midi_event_to_property" && method.name != "set-sink-property" && method.name != "set-source-property"){  %>
+
+			<div style="position:relative;">
+				<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
+				<% _.each(method["arguments"], function(argument){ %>
+					<div class="preview-value"></div>
+					<input class="method-value" name="<%=method['name']%>" type="text" value="">
+					<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
+				<% }); %> 	
+
+			</div>
+			
+	<%	} %>
+</li>

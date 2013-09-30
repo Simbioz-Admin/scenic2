@@ -47,6 +47,7 @@ define([
 		},
 		render: function() {
 			collections.clients.each(function(model) {
+				console.log(model);
 				var view = new ViewDestination({
 					model: model
 				});

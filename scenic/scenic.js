@@ -45,7 +45,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
 			log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
-
+			console.log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 				

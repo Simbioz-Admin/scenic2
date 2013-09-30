@@ -36,25 +36,25 @@ define([
 			if (this.collection.size() != 0) $("#titleOut").show();
 			else $("#titleOut").hide();
 		},
-		connection: function() {
-			var box = $(event.target),
+		connection: function(element) {
+			var box = $(element.target),
 				destName = box.data("hostname"),
 				path = box.parent().data("path");
 
 			if (box.hasClass("active")) {
 				socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok) {});
 			} else {
-				box.html("<input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'>");
+				box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
 			}
 		},
-		setConnection: function(event) {
+		setConnection: function(element) {
 
-			if (event.which == 13) //touch enter
+			if (element.which == 13) //touch enter
 			{
-				var box = $(event.target).parent(),
+				var box = $(element.target).parent(),
 					destName = box.data("hostname"),
 					path = box.parent().data("path"),
-					port = $(event.target).val(),
+					port = $(element.target).val(),
 					model = this.collection.get(destName),
 					that = this;
 
@@ -82,12 +82,12 @@ define([
 						}
 					});
 
-					that.removeInputDestination(event);
+					that.removeInputDestination(element);
 				});
 			}
 		},
-		removeInputDestination: function(event) {
-			$(event.target).parent().html("");
+		removeInputDestination: function(element) {
+			$(element.target).parent().html("");
 		}
 	});
 

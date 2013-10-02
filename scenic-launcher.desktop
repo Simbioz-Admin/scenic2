@@ -1,13 +1,13 @@
-#!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
 Name=scenic2
-Exec=sh -c "node /home/pacman/src/scenic2/server.js & PID=`echo $!` sleep 1 && chromium-browser --app="http://localhost:8090/" --app-window-size=960,700 kill -n 2 $PID"
+#Exec=sh -c "node /home/pacman/src/scenic2/server.js & PID=`echo $!` sleep 1 && chromium-browser --app="http://localhost:8090/" --app-window-size=960,700 kill -n 2 $PID"
 #Exec=/usr/bin/chromium-browser --app=http://localhost:8090
+Exec=node /opt/scenic2/server.js
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=/home/pacman/src/scenic2/assets/images/icons/128.png
+Icon=/opt/scenic2/assets/images/icons/128.png
 Categories=Network;WebBrowser;
 StartupNotify=true
 StartupWMClass=http://localhost:8090

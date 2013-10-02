@@ -51,9 +51,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 				
 				
 				//subscribe signal for properties add/remove and methods add/remove
-				switcher.subscribe_to_signal (pvalue[0], "on-new-property");
+				switcher.subscribe_to_signal (pvalue[0], "on-property-added");
 				switcher.subscribe_to_signal (pvalue[0], "on-property-removed");
-				switcher.subscribe_to_signal (pvalue[0], "on-new-method");
+				switcher.subscribe_to_signal (pvalue[0], "on-method-added");
 				switcher.subscribe_to_signal (pvalue[0], "on-method-removed");
 
 				//we subscribe all properties of quidd created
@@ -78,7 +78,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			}
 
-			if(qprop == "on-new-property" || qprop == "on-property-removed" || qprop == "on-new-method" || qprop == "on-method-removed") {
+			if(qprop == "on-property-added" || qprop == "on-property-removed" || qprop == "on-method-added" || qprop == "on-method-removed") {
 				//console.log("New property for ",qname, pvalue);
 				 _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 					if(quiddName == qname) {
@@ -90,7 +90,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				
 			}
 			//subscribe to the property added
-			if(qprop == "on-new-property") {
+			if(qprop == "on-property-added") {
 				console.log("Subscribe ", qname, pvalue[0]);
 				switcher.subscribe_to_property(qname, pvalue[0]);
 			}

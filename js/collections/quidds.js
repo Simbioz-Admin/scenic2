@@ -35,10 +35,10 @@ define([
 				if(prop == "on-property-removed") {
 					model.removeProperty(value[0]);
 				}
-				if(prop == "on-new-property") {
+				if(prop == "on-property-added") {
 					model.addProperty(value[0]);
 				}
-				if(prop == "on-new-method") {
+				if(prop == "on-method-added") {
 					model.addMethod(value[0]);
 				}
 				if(prop == "on-method-removed") {

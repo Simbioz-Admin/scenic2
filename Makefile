@@ -14,7 +14,7 @@ all:
 
 install: all
 	@echo Making all
-	@echo "node $(DESTDIR)$(TARGETDIR)/server.js" > scenic2
+	@echo "node $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
 	@echo building directories
@@ -38,7 +38,7 @@ uninstall:
 
 clean:
 	@echo cleaning up
-	@echo "node server.js" > scenic2
+	@echo "node server.js \$$@" > scenic2
 
 test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2

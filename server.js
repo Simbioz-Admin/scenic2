@@ -1,3 +1,4 @@
+var __version = "0.4.0"
 var express = require("express")
 , config = require('./scenic/config.js')
 ,  os = require("os")
@@ -34,16 +35,20 @@ config.nameComputer = os.hostname();
 
 //*** ARGUMENTS LISTEN LAUCNCH APP.JS ***//
 
-	function puts(error, stdout, stderr) { sys.puts(stdout) }
-	var rl = readline.createInterface({
-	  input: process.stdin,
-	  output: process.stdout
-	});
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-	process.argv.forEach(function (val, index, array)
-	{
-	  if(val == "-s") standalone = true;
-	});
+process.argv.forEach(function (val, index, array)
+	             {
+	                 if(val == "-s") standalone = true;
+                         if(val == "-v" || val == "--version") {
+                             console.log("This is scenic version " + __version);
+                             process.exit();
+                         }
+	             });
 
 
 //-------------- CONFIGURATION EXPRESS ---------------------//
@@ -63,72 +68,73 @@ require("./scenic/scenic-io.js")(config, scenicStart, io, switcher, scenic, $, _
 		
 //*** Open scenic2 with default navigator ***//
 exec("chromium-browser --app=http://"+config.host+":"+config.port.scenic, puts);
+console.log("running scenic2 as PID " + process.pid);
 log("info", "scenic2 automaticlly open in your browser define by default : http://"+config.host+":"+config.port.scenic);
 
-
 app.get('/', function(req, res) {
-
-	if(!passSet)
-	{
-		res.sendfile(__dirname +'/index.html');
-	}
-	else
-	{
-	    ident.apply(req, res, function(username) {
+    
+    if(!passSet)
+    {
+	res.sendfile(__dirname +'/index.html');
+    }
+    else
+    {
+	ident.apply(req, res, function(username) {
 	        res.sendfile(__dirname +'/index.html');
-	    });
-	}
+	});
+    }
 });
 
 
 
-io.sockets.on('connection', function (socket)
-{
-	socket.on("getConfig", function(callback)
-	{
-		callback(config);
-	});
-
-	socket.on("scenicStart", function(callback)
-	{
-		callback(scenicStart);
-	});
-
-	socket.on("checkPort", function(port, callback)
-	{
-		network.checkPort(port, function(ok)
-		{
-			callback(ok);
-		})
-	});
-
-	socket.on("startScenic", function(params, callback)
-	{
-		if(!scenicStart)
-		{
-			config.nameComputer = params.username;
-			config.port.soap = params.portSoap;
-			if(params.pass != "" && params.pass == params.confirmPass)
-			{
-				ident = auth({
-				    authRealm : "Private area.",
-				    authList : [params.username+':'+params.pass]
-				});
-				log("info", "password has set");
-				passSet = true;
-			}
-			scenic.initialize();
-			scenicStart = true;
-			//resend configuration updated
-			callback(config);
-		}
-		else
-		{
-			log("info", "the server scenic2 is already started");
-		}
-	});
-
-});
+io.sockets.on('connection', 
+              function (socket)
+              {
+	          socket.on("getConfig", function(callback)
+	                    {
+		                callback(config);
+	                    });
+                  
+	          socket.on("scenicStart", function(callback)
+	                    {
+		                callback(scenicStart);
+	                    });
+                  
+	          socket.on("checkPort", function(port, callback)
+	                    {
+		                network.checkPort(port, function(ok)
+		                                  {
+			                              callback(ok);
+		                                  })
+	                    });
+                  
+	          socket.on("startScenic", function(params, callback)
+	                    {
+		                if(!scenicStart)
+		                {
+			            config.nameComputer = params.username;
+			            config.port.soap = params.portSoap;
+			            if(params.pass != "" && params.pass == params.confirmPass)
+			            {
+				        ident = auth({
+				            authRealm : "Private area.",
+				            authList : [params.username+':'+params.pass]
+				        });
+				        log("info", "password has set");
+				        passSet = true;
+			            }
+			            scenic.initialize();
+			            scenicStart = true;
+			            //resend configuration updated
+			            callback(config);
+		                }
+		                else
+		                {
+			            log("info", "the server scenic2 is already started");
+		                }
+	                    });
+                  
+              });
 
 
 

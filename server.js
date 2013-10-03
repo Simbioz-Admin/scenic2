@@ -62,7 +62,7 @@ require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, sceni
 require("./scenic/scenic-io.js")(config, scenicStart, io, switcher, scenic, $, _, log, network);
 		
 //*** Open scenic2 with default navigator ***//
-exec("xdg-open http://"+config.host+":"+config.port.scenic, puts);
+exec("chromium-browser --app=http://"+config.host+":"+config.port.scenic, puts);
 log("info", "scenic2 automaticlly open in your browser define by default : http://"+config.host+":"+config.port.scenic);
 
 

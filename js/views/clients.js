@@ -52,12 +52,11 @@ define([
 			if (element.which == 13) //touch enter
 			{
 				var box = $(element.target).parent(),
-					destName = box.data("hostname"),
-					path = box.parent().data("path"),
+					destName = $(element.target).closest("td").data("hostname"),
+					path = $(element.target).closest("tr").data("path"),
 					port = $(element.target).val(),
 					model = this.collection.get(destName),
 					that = this;
-
 
 
 				//add to the session the shmdata 

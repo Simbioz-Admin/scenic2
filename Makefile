@@ -1,16 +1,24 @@
-PROJDIRS := js scenic templates assets
+VERSION := $(shell ./scenic2 -v)
+PROJDIRS := js scenic templates assets node_modules
 SRCFILES := package.json \
 	server.js \
 	index.html \
 	login.html \
-	scenic2
+	scenic2 
+ALTFILES := COPYING \
+	INSTALL \
+	NEWS \
+	README \
+	Makefile
 
 ALLFILES := $(PROJDIRS) $(SRCFILES)
 TARGETDIR := /opt/scenic2
+ARCHIVE := scenic2_$(VERSION)
 
 all:
 	@echo Usage:
 	@echo sudo make install
+	@echo $(VERSION)
 
 install: all
 	@echo Making all
@@ -18,6 +26,7 @@ install: all
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
 	@echo building directories
+	npm cache clean node-switcher && npm install;\
 	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files
 	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
@@ -25,8 +34,7 @@ install: all
 		echo " copying $$f"; \
 		cp -r $$f $(DESTDIR)$(TARGETDIR); \
 		done; \
-	cd $(DESTDIR)$(TARGETDIR) && npm cache clean node-switcher && npm install;\
-	ln -nsf $(DESTDIR)$(TARGETDIR)/scenic2 /usr/local/bin
+	install scenic2 $(DESTDIR)/usr/local/bin
 	install scenic-launcher.desktop /usr/local/share/applications
 	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
 
@@ -39,9 +47,21 @@ uninstall:
 clean:
 	@echo cleaning up
 	@echo "node server.js \$$@" > scenic2
+	rm -fr node_modules
 
 test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
-	@tar czf scenic.tgz $(ALLFILES)
+	mkdir -p $(ARCHIVE)
+	install $(SRCFILES) $(ARCHIVE)
+	install $(ALTFILES) $(ARCHIVE)
+	install scenic-launcher.desktop $(ARCHIVE)
+	@for f in $(PROJDIRS); do \
+		echo " copying $$f to archive"; \
+		cp -r $$f $(ARCHIVE); \
+		done; 
+	@echo building tarball
+	@tar czf $(ARCHIVE).orig.tar.gz $(ARCHIVE)
+	rm -fr $(ARCHIVE)
+	@echo $(ARCHIVE).orig.tar.gz is done!

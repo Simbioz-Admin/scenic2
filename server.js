@@ -45,7 +45,7 @@ process.argv.forEach(function (val, index, array)
 	             {
 	                 if(val == "-s") standalone = true;
                          if(val == "-v" || val == "--version") {
-                             console.log("This is scenic version " + __version);
+                             console.log(__version);
                              process.exit();
                          }
 	             });

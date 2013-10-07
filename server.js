@@ -1,4 +1,14 @@
-var __version = "0.4.0"
+var __version = "0.4.4"
+
+process.argv.forEach(function (val, index, array)
+	             {
+                         if(val == "-v" || val == "--version") {
+                             console.log(__version);
+                             process.exit();
+                         }
+	             });
+
+
 var express = require("express")
 , config = require('./scenic/config.js')
 ,  os = require("os")
@@ -44,11 +54,8 @@ var rl = readline.createInterface({
 process.argv.forEach(function (val, index, array)
 	             {
 	                 if(val == "-s") standalone = true;
-                         if(val == "-v" || val == "--version") {
-                             console.log(__version);
-                             process.exit();
-                         }
 	             });
+
 
 
 //-------------- CONFIGURATION EXPRESS ---------------------//

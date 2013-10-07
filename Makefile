@@ -1,5 +1,5 @@
 VERSION := $(shell ./scenic2 -v)
-PROJDIRS := js scenic templates assets node_modules
+PROJDIRS := js scenic templates assets 
 SRCFILES := package.json \
 	server.js \
 	index.html \
@@ -16,8 +16,8 @@ TARGETDIR := /opt/scenic2
 ARCHIVE := scenic2_$(VERSION)
 
 all:
-	@echo Usage:
-	@echo sudo make install
+	npm cache clean node-switcher && npm install
+	@echo Now run sudo make install
 	@echo $(VERSION)
 
 install: all
@@ -25,24 +25,23 @@ install: all
 	@echo "node $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
-	@echo building directories
-	npm cache clean node-switcher && npm install;\
+	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
-	@echo installing files
+	@echo installing files 
 	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
 		cp -r $$f $(DESTDIR)$(TARGETDIR); \
 		done; \
 	install scenic2 $(DESTDIR)/usr/local/bin
-	install scenic-launcher.desktop /usr/local/share/applications
+	install scenic-launcher.desktop $(DESTDIR)/usr/local/share/applications
 	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
 
 uninstall:
 	rm -rf $(DESTDIR)$(TARGETDIR)
 	@echo removed $(DESTDIR)$(TARGETDIR)
-	rm /usr/local/bin/scenic2
-	rm /usr/local/share/applications/scenic-launcher.desktop
+	rm $(DESTDIT)/usr/local/bin/scenic2
+	rm $(DESTDIR)/usr/local/share/applications/scenic-launcher.desktop
 
 clean:
 	@echo cleaning up
@@ -53,6 +52,7 @@ test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
+	npm cache clean node-switcher && npm install
 	mkdir -p $(ARCHIVE)
 	install $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)

@@ -1,5 +1,5 @@
 VERSION := $(shell ./scenic2 -v)
-PROJDIRS := js scenic templates assets 
+PROJDIRS := js scenic templates assets node_modules
 SRCFILES := package.json \
 	server.js \
 	index.html \

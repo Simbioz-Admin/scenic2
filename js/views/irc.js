@@ -9,7 +9,7 @@ define([
 			tagName : "div",
 			className : "channel",
 			events : {
-				"keypress .value-input-msg" : "send_msg"
+				"keypress .value-input-msg" : "send_msg",
 			},
 			initialize : function()
 			{
@@ -60,7 +60,6 @@ define([
 			},
 			setListUsers : function()
 			{
-				console.log("refresh connected");
 				var usersConnected = this.model.get("users")
 				,	listConnected = ""
 				,	channel = this.model.get("channel");
@@ -81,13 +80,15 @@ define([
 					if(collections.irc.totalMsg <= 0)
 					{
 						collections.irc.totalMsg = 0;
-						$("#btn-irc .countMsgIrc").hide();
+						$("#btn-irc .content").removeClass("newMsg").html("");
+
 					}
 				}
 				else
 				{
 					collections.irc.totalMsg += 1;
-					$("#btn-irc .countMsgIrc").html(collections.irc.totalMsg).show();
+					$("#btn-irc .content").html(collections.irc.totalMsg).show();
+					$("#btn-irc .content").addClass("newMsg");
 					$("#"+this.model.get("channel")+" .countMsgIrc").html(this.model.get("msgNotView")).show();
 				}
 			}

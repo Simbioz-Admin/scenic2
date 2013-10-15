@@ -1,3 +1,3 @@
-[submodule "assets"]
-	path = assets
-	url = git@code.sat.qc.ca:metalab/metalab-styles.git
+[submodule "node_modules/node-switcher"]
+	path = node_modules/node-switcher
+	url = git://code.sat.qc.ca/node-addons/node-switcher.git

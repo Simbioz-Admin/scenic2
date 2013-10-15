@@ -1,43 +1,201 @@
 define([
 	'underscore',
 	'backbone',
-	'views/quidd',
-	],function(_, Backbone, ViewQuidd){
+	'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
+	'text!/templates/panelInfoSource.html'
+], function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd,
+	infoTemplate) {
 
-		var QuiddModel = Backbone.Model.extend({
-			url : "/quidd/",
-			idAttribute: "name",
-			defaults : {
-				"name" : null,
-				"class" : null,
-				"properties" : [],
-				"shmdatas" : null
-			},
-			initialize : function()
-			{
-				var that = this;
-				if(this.collection)
-				{
-					//var view = new ViewQuidd({ model : that });
-					this.setShmdatas(function(ok){
-						var view = new ViewQuidd({ model : that });
-					});
+	var QuiddModel = Backbone.Model.extend({
+		url: "/quidd/",
+		idAttribute: "name",
+		defaults: {
+			"name": null,
+			"class": null,
+			"category" : null,
+			"long name" : null,
+			"description" : null,
+			"properties": [],
+			"methods": [],
+			"encoder_category": null,
+			"shmdatas": null,
+			"view" : null,
+			// "viewEdit" : null
+		},
+		initialize: function() {
+			var that = this;
+
+			//get properties, methods and shmdatas when quidd is created
+			that.getShmdatas(function(shmdatas) {
+				if(that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
+					that.set("view", new ViewSource({
+						model: that,
+						table: "transfer"
+					}));
+					
 				}
-			},
-			setShmdatas : function(callback){
-				var that = this;
-				//ask for value of shmdatas and stock in model
-				this.collection.getPropertyValue(this.get("name"), "shmdata-writers", function(shmdatas)
-				{
-					that.set({ shmdatas  : shmdatas.shmdata_writers});
-					callback(shmdatas.shmdata_writers);
-				});
-			},
-			remove : function()
-			{
-				this.destroy();
-			}
-		});
+				if (that.get("class") == "midisrc") {
+					that.set("view", new ViewSourceProperty({
+						model: that,
+						table: "control"
+					}));
+				} 
 
-		return QuiddModel;
-	})
+				if(that.get("category") == "mapper") {
+					that.set("view", new ViewMapper({
+						model : that,
+						table: "control"
+					}));
+				}
+			});
+		},
+		edit: function() {
+			var that = this;
+			that.getProperties(function() {
+				that.getMethodsDescription(function() {
+					new ViewEditQuidd({model : that}); 
+					//subscribe for have information about modification on quidd
+					socket.emit("subscribe_info_quidd", that.get("name"));
+				});
+			});
+		},
+		delete: function() {
+			var that = this;
+			socket.emit("remove", this.get("name"));
+			//check if propertiesControl is created with the quidd deleted
+			collections.controlProperties.each(function(controlProperty) {
+				if(controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+			});
+		},
+		preview: function(element) {
+			var path = $(element.target).closest('tr').data("path"),
+				type = null,
+				that = this;
+
+			collections.quidds.getPropertyValue({ name : "vumeter_" + path }, "caps", function(info) {
+				info = info.split(",");
+
+				if (info[0].indexOf("video") >= 0) type = "gtkvideosink";
+				if (info[0].indexOf("audio") >= 0) type = "pulsesink";
+
+				//check if the quiddity have already a preview active
+				socket.emit("get_quiddity_description", type+"_"+path, function(quiddInfo) {
+					if(quiddInfo.error && type != null) {
+						collections.quidds.create(type, type+"_"+path , function(quiddInfo) {
+						socket.emit("invoke", quiddInfo.name, "connect", [path]);
+						});
+					} else {
+						collections.quidds.delete(type+"_"+path);
+					}
+
+				});
+
+			});
+
+		},
+		info: function(element) {
+			var shmdata = $(element.target).closest('tr').data("path");
+			var that = this;
+			collections.quidds.getPropertyValue( { name : "vumeter_" + shmdata} , "caps", function(val) {
+				val = val.replace(/,/g, "<br>");
+				var template = _.template(infoTemplate, {
+					info: val,
+					shmdata: shmdata
+				});
+				$("#info").remove();
+				$("body").prepend(template);
+				$("#info").css({
+					top: element.pageY,
+					left: element.pageX
+				}).show();
+				$(".panelInfo").draggable({
+					cursor: "move",
+					handle: "#title"
+				});
+			});
+		},
+		setPropertyValue: function(property, value, callback) {
+			var that = this;
+			socket.emit("setPropertyValue", this.get("name"), property, value, function(property, value) {
+				//that.get("properties")[property] = value;
+				callback("ok");
+			});
+		},
+		setLocalpropertyValue: function(prop, value) {
+			_.each(this.get("properties"), function(property) {
+				if (property.name == prop) property.value = value;
+			});
+
+			if (prop == "last-midi-value" && $("#last_midi_event_to_property").length > 0) {
+				//TODO:Find better place because this interact whit view (find type prop : string, enum etc.. for focus )
+				$(".preview-value").html("<div class='content-value'>" + value + "</div>");
+			}
+		},
+		getProperties: function(callback) {
+			var that = this;
+			socket.emit("get_properties_description", this.get("name"), function(properties_description) {
+				that.set("properties", properties_description);
+				callback(properties_description);
+			});
+		},
+
+		removeProperty: function(property) {
+			delete this.get("properties")[property];
+			//need to trigger the modification on properties beceause backbone not detect changement in depth object
+			this.trigger("remove:property", property);
+		},
+
+		addProperty: function(property) {
+			var that = this;
+			socket.emit("get_property_description", this.get("name"), property, function(description) {
+				that.get("properties")[property] = description;
+				//need to trigger the modification on properties beceause backbone not detect changement in depth object
+				that.trigger("add:property", property);
+			});
+		},
+
+		getPropertyValue: function(property, callback) {
+			var that = this;
+			socket.emit("get_property_value", this.get("name"), property, function(propertyValue) {
+				callback(propertyValue);
+			});
+		},
+		getMethodsDescription: function(callback) {
+			var that = this;
+			socket.emit("getMethodsDescription", this.get("name"), function(methodsDescription) {
+				that.set("methods", methodsDescription);
+				callback(methodsDescription);
+			});
+		},
+		getShmdatas: function(callback) {
+			var that = this;
+			//ask for value of shmdatas and stock in model
+			this.getPropertyValue("shmdata-writers", function(shmdatas) {
+				if(shmdatas) {
+					that.set({
+						shmdatas: shmdatas.shmdata_writers
+					});
+					if (callback) callback(shmdatas.shmdata_writers);
+				}
+			});
+		},
+		setMethod: function(method, parameters, callback) {
+			socket.emit("invoke", this.get("name"), method, parameters, function(ok) {
+				callback(ok);
+			});
+		},
+		addMethod: function(method) {
+			var that = this;
+			socket.emit("get_method_description", this.get("name"), method, function(description) {
+				that.get("methods")[method] = description;
+				that.trigget("add:method", method);
+			});
+		},
+		removeMethod: function(method) {
+			delete this.get("methods")[method];
+			this.trigger("remove:method", method);
+		}
+	});
+
+	return QuiddModel;
+})

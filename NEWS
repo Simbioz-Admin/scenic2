@@ -1,5 +1,22 @@
 Scenic2 release notes
 ===================
+Scenic2 0.4.4 (2013-10-15)
+-------------------------
+This release is a developer snapshot in the stable 0.4 series.
+
+New features:
+
+* Automatically detect audio/video sources
+* Control quiddities properties dynamically
+* Support MIDI
+* MIDI learn
+* Audio video previews (local and remote)
+
+Known bugs: 
+
+* Sometimes engine hangs after multiple opening/closing of preview window
+* No obvious error messages when communication with remote host is not possible
+
 
 Scenic2 0.2.0 (2013-07-05)
 -------------------------

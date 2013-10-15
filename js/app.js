@@ -1,88 +1,58 @@
 // Filename: app.js
 define([
-  
   'underscore',
   'backbone',
   'jquery',
-  'collections/classes_doc',
-  'collections/quidds',
-  'collections/shmdatas',
-  'collections/destinations',
-  'views/global',
-  'views/quidds',
-  'views/methods',
-  'collections/channels-irc',
-  'views/destinations'
+  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
+  'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
 
-], function(_, 
-          Backbone, 
-          $, 
-          ClassesDocCollection, 
-          QuiddsCollection, 
-          ShmdatasCollection, 
-          DestinationsCollection, 
-          GlobalView, 
-          QuiddsView, 
-          MethodsView, 
-          ChannelsCollection, 
-          DestinationsView
-  ){
-  var initialize = function(){
-    "use strict";
+], function(_,
+  Backbone,
+  $,
+  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
+  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
+) {
+  var initialize = function() {
+	"use strict";
 
-    //recovery config information from the server
-    socket.emit("getConfig", function(configServer) { config = configServer; });
-    
+	//loading the different collections
+	collections.classesDoc = new CollectionClassesDoc();
+	collections.classesDoc.fetch({
+	  success: function(response) {
+		collections.tables = new CollectionTables();
+		collections.clients = new CollectionClients();
+		collections.clients.fetch();
 
-    //*** init the different collection of the project ***//
+		collections.quidds = new CollectionQuidds();
+		collections.quidds.fetch();
 
-    //the colelction classesDoc contain all informations about the different quiddities existing with switcher and there properties
-    collections.classesDoc = new ClassesDocCollection();
-    collections.classesDoc.fetch({
-      success : function(response)
-      {
-        //Need to fetch collection before create view
-        views.global = new GlobalView({collection : collections.classesDoc.getByCategory("source")});
-      }
-    });
+		collections.controlProperties = new CollectionsControlProperties();
+		collections.controlProperties.fetch();
 
+		collections.loggers = new CollectionLoggers();
+		views.logger = new ViewLoggers({collection : collections.loggers});
 
+		//loading views
+		views.clients = new ViewClients({
+		  collection: collections.clients
+		});
+		views.global = new ViewGlobal();
+		views.quidds = new ViewQuidds({
+		  collection: collections.quidds
+		});
+		views.controlProperties = new ViewControlProperties({
+		  collection: collections.controlProperties
+		});
+	  }
+	});
 
-    collections.destinations = new DestinationsCollection();
-    collections.destinations.fetch
-    ({
-      success : function(response)
-      {
-        collections.destinations.render();
-        views.destinations = new DestinationsView({ collection : collections.destinations });
-
-        //init the Collections of quidd where is stocked all informations about the quidds existing.
-        collections.quidds = new QuiddsCollection();
-        collections.quidds.fetch
-        ({
-          success : function(response)
-          {
-            //collections.quidds.render();
-            views.quidds = new QuiddsView({collection : collections.quidds});
-          }
-        });
-      },
-      error : function(res)
-      {
-        console.log(res);
-        console.log("error fetch destinations");
-      }
-    });
-
-
-    collections.irc = new ChannelsCollection();
-
-    views.methods = new MethodsView();
+	collections.irc = new CollectionIrcs();
+	views.ircs = new ViewIrcs();
   }
 
+
   return {
-    initialize: initialize
+	initialize: initialize
   };
 
 });
-

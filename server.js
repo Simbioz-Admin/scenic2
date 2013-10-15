@@ -1,4 +1,4 @@
-var __version = "0.4.4"
+var __version = "0.4.5"
 
 process.argv.forEach(function (val, index, array)
 	             {

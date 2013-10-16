@@ -1,1 +1,1 @@
-node server.js
+node /opt/scenic2/server.js

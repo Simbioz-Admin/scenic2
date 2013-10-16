@@ -86,7 +86,7 @@ define([
 			}
 		},
 		removeInputDestination: function(element) {
-			$(element.target).parent().html("");
+			$(element.target).parent().parent().html("");
 		}
 	});
 

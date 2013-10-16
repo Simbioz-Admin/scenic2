@@ -161,11 +161,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			callback(property_description);
 		});
 
-		socket.on("getPropertiesOfQuidd", function(quiddName, callback) {
-			var propertiesOfQuidd = scenic.getQuiddPropertiesWithValues(quiddName);
-			callback(propertiesOfQuidd);
-		});
-
 		socket.on("get_properties_description", function(quiddName, callback) {
 			var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties
 			,	properties_to_send = {};

@@ -14,8 +14,7 @@ module.exports = function(config, $, _, app, scenic, switcher, scenicStart, log)
 		} else if (req.params.className) {
 			res.send($.parseJSON(switcher.get_class_doc(req.params.className)));
 		} else {
-			if (req.query.category) res.send(scenic.get_classes_docs_type(req.query.category));
-			else res.send($.parseJSON(switcher.get_classes_doc()));
+			res.send($.parseJSON(switcher.get_classes_doc()));
 		}
 	});
 
@@ -50,12 +49,6 @@ module.exports = function(config, $, _, app, scenic, switcher, scenicStart, log)
 		}
 	});
 
-
-
-	app.get('/methods_doc', function(request, response) {
-		response.contentType('application/json');
-		response.send(scenic.getQuidditiesWithMethods());
-	});
 
 	app.get('/shmdatas', function(request, response) {
 		response.contentType('application/json');

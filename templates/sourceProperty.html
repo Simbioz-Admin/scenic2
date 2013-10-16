@@ -4,10 +4,10 @@
 			<div style="position:relative">
 				<div class="edit"></div>
 				<div class="vertical short"><%=sourceName%></div>
-			</div>
-			<div class="actions">
-				<div class="action"><div class="edit edit-source"></div></div>
-				<div class="action"><div class="remove remove-source">x</div></div>
+				<div class="actions">
+					<div class="action"><div class="edit edit-source"></div></div>
+					<div class="action"><div class="remove remove-source">x</div></div>
+				</div>
 			</div>
 			
 		</td>
@@ -18,9 +18,9 @@
 		</div>
 
 	</th>
-	<% _.each(destinations, function(destination){
-		var active = false;
-	 %>
+<% _.each(destinations, function(destination){
+	var active = false;
+ %>
 		<td class="box connect-properties<% if(active){ %> active <% } %>" data-nameAndProperty="<%=destination.name%>"></td>
 	<% }); %>
 </tr>
@@ -29,10 +29,10 @@
 			<div style="position:relative">
 				<div class="edit"></div>
 				<div class="vertical short"><%=sourceName%></div>
-			</div>
-			<div class="actions">
-				<div class="action"><div class="edit edit-source"></div></div>
-				<div class="action"><div class="remove remove-source">x</div></div>
+				<div class="actions">
+					<div class="action"><div class="edit edit-source"></div></div>
+					<div class="action"><div class="remove remove-source">x</div></div>
+				</div>
 			</div>
 		</td>
 	</tr>

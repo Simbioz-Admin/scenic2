@@ -1,8 +1,25 @@
+/** 
+ *
+ * 	@file scenic.js: Contains all functions,
+ *	signals to communicate with switcher. When the file and required
+ *	by server.js we initialize different quiddities necessary for the
+ *	proper functioning of scenic2
+ *
+ **/
+
+
+
+
 define([
 	'underscore',
 	'backbone',
 	'models/quidd',
 ], function(_, Backbone, QuiddModel) {
+
+	/**
+	 * 	A module that says hello!
+	 * 	@module collection/quidds
+	 */
 
 	var QuiddsCollection = Backbone.Collection.extend({
 		model: QuiddModel,
@@ -22,7 +39,7 @@ define([
 
 			socket.on("remove", function(quidd) {
 				var model = that.get(quidd);
-				if(model) {
+				if (model) {
 					model.trigger('destroy', model, that);
 					views.global.notification("info", quidd + "  has deleted");
 				}
@@ -32,16 +49,16 @@ define([
 			socket.on("signals_properties_info", function(prop, quiddName, value) {
 				console.log("signals_properties_info ", quiddName, prop, value);
 				var model = collections.quidds.get(quiddName);
-				if(prop == "on-property-removed") {
+				if (prop == "on-property-removed") {
 					model.removeProperty(value[0]);
 				}
-				if(prop == "on-property-added") {
+				if (prop == "on-property-added") {
 					model.addProperty(value[0]);
 				}
-				if(prop == "on-method-added") {
+				if (prop == "on-method-added") {
 					model.addMethod(value[0]);
 				}
-				if(prop == "on-method-removed") {
+				if (prop == "on-method-removed") {
 					model.removeMethod(value[0]);
 				}
 			});
@@ -49,7 +66,7 @@ define([
 			socket.on("signals_properties_value", function(quiddName, prop, value) {
 				if (prop == "byte-rate") {
 					views.quidds.updateVuMeter(quiddName, value);
-					
+
 				} else {
 					var model = collections.quidds.get(quiddName);
 					if (model) {
@@ -81,6 +98,14 @@ define([
 				});
 			});
 		},
+		
+		/*
+		 *	Ask to the server to create a quiddity
+		 *	@param {string} className the class name of the whatness
+		 *	@param {string} [quiddName] the name  you want for the quiddity. If you do not définisser a default name will be assigned
+		 *	@param {object} callback Return the name of the quiddity
+		 */
+
 		create: function(className, quiddName, callback) {
 			//ask for create a Quidd
 			socket.emit("create", className, quiddName, function(quidd) {
@@ -107,32 +132,6 @@ define([
 				if (callback) callback(ok);
 			});
 		}
-		// delete : function(quiddName)
-		// {
-		// 	socket.emit("remove", quiddName);
-		// },
-		// getProperties : function(nameQuidd, callback)
-		// {
-		// 	socket.emit("getPropertiesOfQuidd", nameQuidd, function(propertiesOfQuidd)
-		// 	{
-		// 		callback(propertiesOfQuidd);
-		// 	});
-		// },
-		// getMethodsDescription : function(nameQuidd, callback)
-		// {	
-		// 	socket.emit("getMethodsDescription", nameQuidd, function(methodsDescription)
-		// 	{
-		// 		callback(methodsDescription);
-		// 	});
-		// },
-		// getPropertiesWithValues : function(nameQuidd, callback)
-		// {
-		// 	console.log("ask for get properties and value :", nameQuidd);
-		// 	socket.emit("getPropertiesOfQuiddWithValues", nameQuidd, function(propertiesOfQuidd)
-		// 	{
-		// 		callback(propertiesOfQuidd);
-		// 	});
-		// },
 	});
 
 	return QuiddsCollection;

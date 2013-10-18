@@ -72,7 +72,7 @@ define([
 				type = null,
 				that = this;
 
-			collections.quidds.getPropertyValue({ name : "vumeter_" + path }, "caps", function(info) {
+			collections.quidds.getPropertyValue("vumeter_" + path, "caps", function(info) {
 				info = info.split(",");
 
 				if (info[0].indexOf("video") >= 0) type = "gtkvideosink";
@@ -81,11 +81,11 @@ define([
 				//check if the quiddity have already a preview active
 				socket.emit("get_quiddity_description", type+"_"+path, function(quiddInfo) {
 					if(quiddInfo.error && type != null) {
-						collections.quidds.create(type, type+"_"+path , function(quiddInfo) {
-						socket.emit("invoke", quiddInfo.name, "connect", [path]);
+						socket.emit("create", type, type+"_"+path, function(quiddInfo) {
+							socket.emit("invoke", quiddInfo.name, "connect", [path]);
 						});
 					} else {
-						collections.quidds.delete(type+"_"+path);
+						socket.emit("remove", type+"_"+path);
 					}
 
 				});
@@ -96,7 +96,7 @@ define([
 		info: function(element) {
 			var shmdata = $(element.target).closest('tr').data("path");
 			var that = this;
-			collections.quidds.getPropertyValue( { name : "vumeter_" + shmdata} , "caps", function(val) {
+			collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
 				val = val.replace(/,/g, "<br>");
 				var template = _.template(infoTemplate, {
 					info: val,

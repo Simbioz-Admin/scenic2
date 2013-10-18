@@ -21,7 +21,7 @@ define([
 				that = this,
 				quiddName = $(element.target).closest("ul").data("quiddname");
 
-			this.collection.setDico(quiddName, property, function(quiddName) {
+			this.collection.create(quiddName, property, function(quiddName) {
 				$(element.target).remove();
 			});
 		},
@@ -36,10 +36,8 @@ define([
 			,	sinkProperty = destination[1]
 			,	nameQuidd = "mapper_"+quiddSource+"_"+propertySource+"_"+$(element.target).data("nameandproperty");
 
-
-			collections.quidds.create("property-mapper", nameQuidd, function(infoQuidd) {
-
-				var model = collections.quidds.createClientSide(infoQuidd);
+			socket.emit("create", "property-mapper", nameQuidd, function(infoQuidd) {
+				var model = collections.quidds.create(infoQuidd);
 				console.log("set-source-property", quiddSource, propertySource);
 				socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok){ console.log("set-source-property", ok)});
 				console.log("set-sink-property", sinkSource, sinkProperty);

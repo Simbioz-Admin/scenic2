@@ -16,7 +16,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 
 	/**
-	 *	Initialization and creation of differents quiddities and signals 
+	 *	Initialization and creation of differents quiddities and signals
 	 *	for the proper functioning of the communication between switcher and scenic2
 	 */
 
@@ -134,10 +134,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 
-	
 
 	/**	
-	 *	Creating a view meter for viewing continuously from the 
+	 *	Creating a view meter for viewing continuously from the
 	 *	interface if the video and audio streams are sent or received
 	 *	@param {string} quiddName The name (id) of the quiddity
 	 */
@@ -220,15 +219,33 @@ module.exports = function(config, switcher, $, _, io, log) {
 			if (shmdata != "property not found") {
 				var shmdataJson = $.parseJSON(shmdata);
 				// if (shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc") {
-					shmdatas.push({
-						"quiddName": quidd.name,
-						"paths": shmdataJson.shmdata_writers
-					});
+				shmdatas.push({
+					"quiddName": quidd.name,
+					"paths": shmdataJson.shmdata_writers
+				});
 				// }
 			}
 
 		})
 		return shmdatas;
+	}
+
+	function getQuiddPropertiesWithValues(quiddName) {
+
+		var propertiesQuidd = switcher.get_properties_description(quiddName);
+		if (propertiesQuidd != "") {
+			propertiesQuidd = $.parseJSON(propertiesQuidd).properties;
+
+			//recover the value set for the properties
+			$.each(propertiesQuidd, function(index, property) {
+				var valueOfproperty = switcher.get_property_value(quiddName, property.name);
+				if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
+				propertiesQuidd[index].value = valueOfproperty;
+			});
+
+			return propertiesQuidd;
+		}
+
 	}
 
 	return {
@@ -237,6 +254,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		removeVumeters: removeVumeters,
 		remove: remove,
 		getShmdatas: getShmdatas,
+		getQuiddPropertiesWithValues : getQuiddPropertiesWithValues
 	}
 
 }

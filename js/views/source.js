@@ -65,7 +65,7 @@ define([
 		setPreview : function(shmdata) {
 			var that = this;
 			//get info about vumeter for know if we can create a preview
-			collections.quidds.getPropertyValue({ name : "vumeter_" + shmdata.path }, "caps", function(info) {
+			collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
 				info = info.split(",");
 
 				if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") {

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 node /opt/scenic2/server.js
+=======
+node server.js $@
+>>>>>>> 6114a9a09aacfdbf5fa879166415a3851a3d2168

@@ -30,23 +30,24 @@ define([
 			views.global.openPanel();
 		},
 		create: function(element) {
-			var className = $("#className").val(),
-				name = $("#quiddName").val(),
-				that = this,
+			
+			var that = this,
+				className = $("#className").val(),
+				quiddName = $("#quiddName").val(),
 				deviceDetected = $("#device").val();
 
-			//create first quiddity for get the good properties
-			collections.quidds.create(className, name, function(quiddInfo) {
 
-				var model = collections.quidds.createClientSide(quiddInfo);
-				
-				//check if autoDetect it's true if yes we set the value device with device selected
-				if (deviceDetected) {
-					model.setPropertyValue("device", deviceDetected, function(ok) {
-						model.edit();
-					});
-				} else model.edit();
-			});
+				socket.emit("create", className, quiddName, function(quiddInfo) {
+
+					var model = collections.quidds.create(quiddInfo);
+					//check if autoDetect it's true if yes we set the value device with device selected
+					if (deviceDetected) {
+						model.setPropertyValue("device", deviceDetected, function(ok) {
+							model.edit();
+						});
+					} else model.edit();
+				});
+
 		},
 		autoDetect: function(element) {
 			//create temporary v4l2 quiddity for listing device available

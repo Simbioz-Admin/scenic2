@@ -1,95 +1,132 @@
-define([
-	'underscore',
-	'backbone',
-	'models/client',
-], function(_, Backbone, ClientModel) {
+define(
 
-	var ClientsCollection = Backbone.Collection.extend({
-		model: ClientModel,
-		url: '/destinations/',
-		parse: function(results, xhr) {
-			return results.destinations;
-		},
-		initialize: function() {
-			var that = this;
+	/** 
+	 *	A module for creating collection of clients
+	 *	@exports collections/clients
+	 */
 
-			socket.on("add_destination", function(invoke, quiddName, parameters) {
-				that.add({
-					name: parameters[0],
-					host_name: parameters[1]
-				});
-				views.global.notification("info", "the client " + parameters[0] + " is added");
-			});
 
-			socket.on("remove_destination", function(invoke, quiddName, parameters) {
-				var model = that.get(parameters[0]);
-				model.trigger('destroy', model, that);
-				//remove box here
-				console.log("REMOVE DEST", parameters[0]);
-				$("[data-hostname='" + parameters[0] + "']").remove();
+	[
+		'underscore',
+		'backbone',
+		'models/client',
+	],
 
-				views.global.notification("info", "client " + parameters[0] + " has deleted");
-			});
+	function(_, Backbone, ClientModel) {
 
-			socket.on("add_connection", function(invoke, quiddName, parameters) {
-				$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").addClass("active");
-			})
+		/** 
+		 *	@constructor
+		 *  @requires Underscore
+		 *  @requires Backbone
+		 *	@requires ClientModel
+		 *  @augments module:Backbone.Collection
+		 */
 
-			socket.on("remove_connection", function(invoke, quiddName, parameters) {
-				$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").removeClass("active");
-			})
+		var ClientsCollection = Backbone.Collection.extend(
 
-			// this.bind("add", function(model)
-			// {
-			// 	var view = new ViewDestination({model : model});
-			// 	views.destinations.displayTitle();
-			// });
-		},
-		render: function() {
-			collections.clients.each(function(model) {
-				console.log(model);
-				var view = new ViewDestination({
-					model: model
-				});
-			});
-		},
-		create: function(clientName, clientHost, portSoap) {
-			socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok) {
-				///*** set connection with another scenic computer ***//
+			/**
+			 *	@lends module:collections/clients~ClientsCollection.prototype
+			 */
 
-				if (portSoap) {
-					if (clientHost.indexOf("http://") < 0) clientHost = "http://" + clientHost;
-					var soapClient = "soapClient-" + clientName,
-						addressClient = clientHost + ":" + portSoap;
+			{
 
-					collections.quidds.create("SOAPcontrolClient", soapClient, function(ok) {
+				model: ClientModel,
+				url: '/destinations/',
+				parse: function(results, xhr) {
+					return results.destinations;
+				},
 
-						if (ok) {
+				/** Initialization of the clients collection
+				 *	We declare all events for receive information about clients
+				 */
 
-							console.log("set_remote_url", addressClient)
-							socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok) {
-								if (ok == "true") {
-									views.global.notification("info", "scenic server detected");
-									console.log("create", ["httpsdpdec", config.nameComputer])
-									socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer], function(ok) {
-										console.log("httpsdpdec", ok);
+				initialize: function() {
+
+					var that = this;
+
+					/** Event called when the server add a new destination (client) */
+					socket.on("add_destination", function(invoke, quiddName, parameters) {
+						that.add({
+							name: parameters[0],
+							host_name: parameters[1]
+						});
+						views.global.notification("info", "the client " + parameters[0] + " is added");
+					});
+
+					/** Event called when the server has removed a destination (client) */
+					socket.on("remove_destination", function(invoke, quiddName, parameters) {
+						var model = that.get(parameters[0]);
+						model.trigger('destroy', model, that);
+						$("[data-hostname='" + parameters[0] + "']").remove();
+						views.global.notification("info", "client " + parameters[0] + " has deleted");
+					});
+
+					/** Event called when a connection is made between a source and a destination */
+					socket.on("add_connection", function(invoke, quiddName, parameters) {
+						$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").addClass("active");
+					})
+
+					/** Event called when a connection between a source and a destination is removed  */
+					socket.on("remove_connection", function(invoke, quiddName, parameters) {
+						$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").removeClass("active");
+					})
+
+				},
+
+
+				/**
+				 *	Rendering destinations once the destinations have been added to the collection Clients
+				 */
+
+				render: function() {
+					collections.clients.each(function(model) {
+						var view = new ViewDestination({
+							model: model
+						});
+					});
+				},
+
+
+				/**
+				 *	Ask to switcher to create a destination
+				 *	At the same time we see if the server is added to a SOAP server, if this is
+				 *	the case we create a quiddity on the destination computer to add sources that are sent
+				 *	@param {string} clientName Username or remote server name
+				 *	@param {string} clientHost adress ip or hostname
+				 *	@param {int} [portSoap]  the port of the remote server switcher
+				 */
+
+				create: function(clientName, clientHost, portSoap) {
+					socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok) {
+
+						//** set connection with another scenic computer if the port soap is define **/
+						if (portSoap) {
+							if (clientHost.indexOf("http://") < 0) clientHost = "http://" + clientHost;
+							var soapClient = "soapClient-" + clientName,
+								addressClient = clientHost + ":" + portSoap;
+
+							/**  create quiddity SOAPcontrolClient for control the remote switcher server */
+							socket.emit("create", "SOAPcontrolClient", soapClient, function(quiddInfo) {
+
+								if (quiddInfo) {
+
+									socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok) {
+										if (ok == "true") {
+											views.global.notification("info", "scenic server detected");
+											socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
+											collections.clients.get(clientName).set("soapClient", true);
+										} else {
+											views.global.notification("error", "no scenic server detected");
+											socket.emit("remove", soapClient);
+										}
 									});
-									collections.clients.get(clientName).set("soapClient", true);
-									console.log(collections.clients.get(clientName));
-								} else {
-									views.global.notification("error", "no scenic server detected");
-									socket.emit("remove", soapClient);
 								}
 							});
-
-
 						}
+
 					});
 				}
-
 			});
-		}
-	});
 
-	return ClientsCollection;
-})
+		return ClientsCollection;
+	})

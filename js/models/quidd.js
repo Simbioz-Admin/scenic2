@@ -1,8 +1,8 @@
 define(
 
 	/** 
-     *	The modle quidd manage all interaction between the server and a specific quiddity 
-     *	@exports Models/quidds
+     *	Manage all interaction between the server/views with a specific quiddity
+     *	@exports Models/quidd
  	 */
 
 	[
@@ -29,6 +29,10 @@ define(
 
 		var QuiddModel = Backbone.Model.extend(
 
+			/**
+			 *	@lends module:Models/quidd~QuiddModel.prototype
+			 */
+
 			{
 				url: "/quidd/",
 				idAttribute: "name",
@@ -45,11 +49,13 @@ define(
 					"view": null,
 				},
 
+				
 				/**
 				 *	Function executed when the model quiddity is created
 				 *	It's used for created a view associate to the model
 				 *	This view need to know if it's in table controler or transfer and if it's a source or destination
 				 */
+
 				initialize: function() {
 					var that = this;
 
@@ -308,7 +314,6 @@ define(
 				 *	@param {string} method Name of the method
 				 *	@param {array} parameters Parameters of the method
 				 *	@param {function} callback Confirm the method is setted
-
 				 */
 
 				setMethod: function(method, parameters, callback) {

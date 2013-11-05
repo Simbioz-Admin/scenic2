@@ -1,20 +1,41 @@
-define([
-	'underscore',
-	'backbone'
-], function(_, Backbone) {
+define(
 
-	var class_doc = Backbone.Model.extend({
-		idAttribute: "class name",
-		defaults: {
-			"class name": null,
-			"category": null,
-			"short_description": null,
-			"properties": null
-		},
-		initialize: function() {
-			//ask for create node osc-receive\
-		}
-	});
+	/** 
+	 *	Model ClassDoc
+	 *	A Model of client contain information about a specific quiddity
+	 *	@exports Models/ClassDoc
+	 */
 
-	return class_doc;
-})
+	[
+		'underscore',
+		'backbone'
+	],
+
+	function(_, Backbone) {
+
+		/** 
+		 *	@constructor
+		 *  @requires Underscore
+		 *  @requires Backbone
+		 *	@requires ViewControlProperty
+		 *  @augments module:Backbone.Model
+		 */
+
+		var ClassDocModel = Backbone.Model.extend(
+
+		/**
+		 *	@lends module: Models/ClassDoc~ClassDocModel.prototype
+		 */
+
+		{
+			idAttribute: "class name",
+			defaults: {
+				"class name": null,
+				"category": null,
+				"short_description": null,
+				"properties": null
+			}
+		});
+
+		return ClassDocModel;
+	})

@@ -35,6 +35,7 @@ define([
 				shmdatas = this.model.get("shmdatas"),
 				destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
 
+			console.log(shmdatas);
 			if (typeof shmdatas == "object" && shmdatas.length != 0) {
 				_.each(shmdatas, function(shmdata, index) {
 					var template = _.template(TemplateSource, {

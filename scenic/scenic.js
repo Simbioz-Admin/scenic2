@@ -103,6 +103,10 @@ module.exports = function(config, switcher, $, _, io, log) {
 				}
 
 			}
+			//Emits to users a quiddity is removed
+			if(qprop == "on-quiddity-removed") {
+				io.sockets.emit("remove", pvalue);
+			}
 
 			if (qprop == "on-property-added" || qprop == "on-property-removed" || qprop == "on-method-added" || qprop == "on-method-removed") {
 				//console.log("New property for ",qname, pvalue);

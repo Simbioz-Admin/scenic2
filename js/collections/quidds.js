@@ -50,6 +50,7 @@ define(
 
 					/** Event called when the server has removed a quiddity */
 					socket.on("remove", function(quidd) {
+						console.log(quidd);
 						that.delete(quidd);
 					});
 

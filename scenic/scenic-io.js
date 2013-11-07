@@ -28,7 +28,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			else {
 				log("error", "failed to remove "+quiddName);
 			}
-			io.sockets.emit("remove", quiddName);
 		});
 
 		socket.on("setPropertyValueOfDico", function(property, value, callback) {

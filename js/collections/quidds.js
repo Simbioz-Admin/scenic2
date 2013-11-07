@@ -50,7 +50,12 @@ define(
 
 					/** Event called when the server has removed a quiddity */
 					socket.on("remove", function(quidd) {
-						console.log(quidd);
+
+						var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
+						if(!PreviewQuidd.test(quidd[0])) {
+							console.log("close preview !");
+							views.quidds.removePreviewIcon(quidd);
+						}
 						that.delete(quidd);
 					});
 

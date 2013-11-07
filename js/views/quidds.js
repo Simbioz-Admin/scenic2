@@ -79,6 +79,9 @@ define([
 			var shmdata = quiddName.replace("vumeter_", "");
 			if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
 			else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
+		},
+		removePreviewIcon : function(shmdata) {
+			console.log($("[data-quiddname='"+shmdata[0].split('_')[3]+"'] .preview").removeClass("active"));
 		}
 
 	});

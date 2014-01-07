@@ -23,10 +23,11 @@ var express = require("express"),
 		log: config.logSocketIo
 	}),
 	log = require('./scenic/logger.js')(config, _, app, io, $),
-	readline = require('readline'),
+	// readline = require('readline'),
 	sys = require('sys'),
 	exec = require('child_process').exec,
 	auth = require("http-auth"),
+	argv = require('optimist').argv,
 	ident = false,
 	scenicStart = false,
 	passSet = false,
@@ -34,33 +35,90 @@ var express = require("express"),
 
 require("./scenic/utils.js")(_);
 
+//set hostName with name of computer
+config.nameComputer = os.hostname();
+
 
 //*** ARGUMENTS LISTEN LAUCNCH APP.JS ***//
+
+function leftColumn(str) {
+	var n = (25 - str.length);
+	return str + require('underscore.string').repeat(' ', n);
+}
+
+if (argv.h || argv.helper) {
+
+	var message = "\n\nCommand helper for scenic2 \n";
+	message += "----------------------------------------------------------\n"
+	message += leftColumn('-n, -nogui     ') + "Launch scenic2 on mode standalone\n";
+	message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
+	message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.port.soap + ")\n";
+	message += leftColumn('-i, --ident ') + "name of identification (default is " + config.nameComputer + ")\n";
+	console.log(message);
+	return;
+}
+
+//parameter for define the port of gui scenic
+if (argv.g || argv.guiport) {
+	var port = (argv.g ? argv.g : argv.guiport);
+	if (typeof port != "number" || port.toString().length != 4) {
+		console.log("The GUI port is not valid : ", port);
+		return;
+	} else {
+		config.port.scenic = port;
+	}
+}
+
+//parameter for define port soap
+if (argv.s || argv.soapport) {
+	var port = (argv.s ? argv.s : argv.soapport);
+	if (typeof port != "number" || port.toString().length != 4) {
+		console.log("The soap port is not valid : ", port);
+		return;
+	} else {
+		config.port.soap = port;
+	}
+}
+
+//parameter for identification
+if (argv.i || argv.ident) {
+	var ident = (argv.i ? argv.i : argv.ident);
+	config.nameComputer = ident;
+}
+
+//launch scenic2 without interface
+if (argv.n || argv.nogui) {
+	standalone = true;
+	scenicStart = true;
+	var message = '\nScenic2 is launch in standalone mode\n';
+	message += "------------------------------------------------\n";
+	message += leftColumn("GUI scenic2") + "http://" + config.host + ":" + config.port.scenic + "\n";
+	message += leftColumn("Port SOAP") + config.port.soap + "\n";
+	message += leftColumn("Identification") + config.nameComputer + "\n";
+	message += "------------------------------------------------\n";
+	console.log(message);
+}
 
 function puts(error, stdout, stderr) {
 	sys.puts(stdout)
 }
-var rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
+// var rl = readline.createInterface({
+// 	input: process.stdin,
+// 	output: process.stdout
+// });
 
-process.argv.forEach(function(val, index, array) {
-	if (val == "-s") standalone = true;
-	if (val == "-p") config.port.scenic = array[index + 1];
-});
+// process.argv.forEach(function(val, index, array) {
+// 	if (val == "-s") standalone = true;
+// 	if (val == "-p") config.port.scenic = array[index + 1];
+// });
 
 //launch the server with the port define in the file scenic/config.js
 server.listen(config.port.scenic);
 
 
-//set hostName with name of computer
-config.nameComputer = os.hostname();
-
-
 
 //-------------- CONFIGURATION EXPRESS ---------------------//
-//param necessart for access file and use authentification
+//param necessary for access file and use authentification
 
 
 app.use("/assets", express.static(__dirname + "/assets"));
@@ -75,11 +133,11 @@ require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, sceni
 require("./scenic/scenic-io.js")(config, scenicStart, io, switcher, scenic, $, _, log, network);
 
 
-//*** Open scenic2 with default navigator ***//
-exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts);
-console.log("running scenic2 as PID " + process.pid);
-log("info", "scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
-
+if (!standalone) {
+	//*** Open scenic2 with default navigator ***//
+	exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts);
+	log("info", "scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
+}
 
 app.get('/', function(req, res) {
 
@@ -94,58 +152,54 @@ app.get('/', function(req, res) {
 });
 
 
-io.sockets.on('connection',
-	function(socket) {
-		socket.on("getConfig", function(callback) {
-			callback(config);
-		});
+io.sockets.on('connection', function(socket) {
 
-		socket.on("scenicStart", function(callback) {
-			callback(scenicStart);
-		});
-
-		socket.on("checkPort", function(port, callback) {
-			network.checkPort(port, function(ok) {
-				callback(ok);
-			})
-		});
-
-		socket.on("startScenic", function(params, callback) {
-			if (!scenicStart) {
-				config.nameComputer = params.username;
-				config.port.soap = params.portSoap;
-				if (params.pass != "" && params.pass == params.confirmPass) {
-					ident = auth({
-						authRealm: "Private area.",
-						authList: [params.username + ':' + params.pass]
-					});
-					log("info", "password has set");
-					passSet = true;
-				}
-				scenic.initialize();
-				scenicStart = true;
-				//resend configuration updated
-				callback(config);
-			} else {
-				log("info", "the server scenic2 is already started");
-			}
-		});
-
+	socket.on("getConfig", function(callback) {
+		callback(config);
 	});
 
+	socket.on("scenicStart", function(callback) {
+		callback(scenicStart);
+	});
 
+	socket.on("checkPort", function(port, callback) {
+		network.checkPort(port, function(ok) {
+			callback(ok);
+		})
+	});
 
-function puts(error, stdout, stderr) {
-	sys.puts(stdout)
-}
-var rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
+	socket.on("startScenic", function(params, callback) {
+		if (!scenicStart) {
+			config.nameComputer = params.username;
+			config.port.soap = params.portSoap;
+			if (params.pass != "" && params.pass == params.confirmPass) {
+				ident = auth({
+					authRealm: "Private area.",
+					authList: [params.username + ':' + params.pass]
+				});
+				log("info", "password has set");
+				passSet = true;
+			}
+			scenic.initialize();
+			scenicStart = true;
+			//resend configuration updated
+			callback(config);
+		} else {
+			log("info", "the server scenic2 is already started");
+		}
+	});
+
 });
 
-process.argv.forEach(function(val, index, array) {
-	if (val == "-s") standalone = true;
-});
+
+
+// function puts(error, stdout, stderr) {
+// 	sys.puts(stdout)
+// }
+// var rl = readline.createInterface({
+// 	input: process.stdin,
+// 	output: process.stdout
+// });
 
 //----------- PROCESS --------------------------//
 

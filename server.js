@@ -4,6 +4,10 @@ process.argv.forEach(function(val, index, array) {
 	if (val == "-v" || val == "--version") {
 		console.log(__version);
 		process.exit();
+	} 
+    if (val == "-h" || val == "--help") {
+		console.log("This is help function for Scenic2:");
+		process.exit();
 	}
 });
 
@@ -48,6 +52,10 @@ var rl = readline.createInterface({
 process.argv.forEach(function(val, index, array) {
 	if (val == "-s") standalone = true;
 	if (val == "-p") config.port.scenic = array[index + 1];
+	if (val == "-h" || val == "--help") {
+		console.log("This is help function for Scenic2:");
+		process.exit();
+	}
 });
 
 //launch the server with the port define in the file scenic/config.js

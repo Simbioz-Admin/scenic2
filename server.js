@@ -4,6 +4,10 @@ process.argv.forEach(function(val, index, array) {
 	if (val == "-v" || val == "--version") {
 		console.log(__version);
 		process.exit();
+	} 
+    if (val == "-h" || val == "--help") {
+		console.log("This is help function for Scenic2:");
+		process.exit();
 	}
 });
 
@@ -102,15 +106,6 @@ if (argv.n || argv.nogui) {
 function puts(error, stdout, stderr) {
 	sys.puts(stdout)
 }
-// var rl = readline.createInterface({
-// 	input: process.stdin,
-// 	output: process.stdout
-// });
-
-// process.argv.forEach(function(val, index, array) {
-// 	if (val == "-s") standalone = true;
-// 	if (val == "-p") config.port.scenic = array[index + 1];
-// });
 
 //launch the server with the port define in the file scenic/config.js
 server.listen(config.port.scenic);

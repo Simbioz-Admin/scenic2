@@ -1,16 +1,3 @@
-var __version = "0.4.5"
-
-process.argv.forEach(function(val, index, array) {
-	if (val == "-v" || val == "--version") {
-		console.log(__version);
-		process.exit();
-	} 
-    if (val == "-h" || val == "--help") {
-		console.log("This is help function for Scenic2:");
-		process.exit();
-	}
-});
-
 
 var express = require("express"),
 	config = require('./scenic/config.js'),
@@ -27,7 +14,6 @@ var express = require("express"),
 		log: config.logSocketIo
 	}),
 	log = require('./scenic/logger.js')(config, _, app, io, $),
-	// readline = require('readline'),
 	sys = require('sys'),
 	exec = require('child_process').exec,
 	auth = require("http-auth"),
@@ -43,8 +29,8 @@ require("./scenic/utils.js")(_);
 config.nameComputer = os.hostname();
 
 
-//*** ARGUMENTS LISTEN LAUCNCH APP.JS ***//
 
+//scenic2 settings for the server start
 function leftColumn(str) {
 	var n = (25 - str.length);
 	return str + require('underscore.string').repeat(' ', n);
@@ -54,12 +40,20 @@ if (argv.h || argv.helper) {
 
 	var message = "\n\nCommand helper for scenic2 \n";
 	message += "----------------------------------------------------------\n"
+	message += leftColumn('-v, --version  ') + "port for GUI scenic2 (actual version " + config.version + ")\n";
 	message += leftColumn('-n, -nogui     ') + "Launch scenic2 on mode standalone\n";
 	message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
 	message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.port.soap + ")\n";
 	message += leftColumn('-i, --ident ') + "name of identification (default is " + config.nameComputer + ")\n";
 	console.log(message);
-	return;
+	process.exit();
+}
+
+//parameter for get the version of scenic2
+if(argv.v || argv.version) {
+	var version = (argv.v ? argv.v : argv.version);
+	console.log("Scenic2 v"+config.version);
+	process.exit();
 }
 
 //parameter for define the port of gui scenic
@@ -110,12 +104,7 @@ function puts(error, stdout, stderr) {
 //launch the server with the port define in the file scenic/config.js
 server.listen(config.port.scenic);
 
-
-
-//-------------- CONFIGURATION EXPRESS ---------------------//
 //param necessary for access file and use authentification
-
-
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
@@ -134,6 +123,7 @@ if (!standalone) {
 	log("info", "scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
 }
 
+
 app.get('/', function(req, res) {
 
 	if (!passSet) {
@@ -149,7 +139,13 @@ app.get('/', function(req, res) {
 
 io.sockets.on('connection', function(socket) {
 
+
 	socket.on("getConfig", function(callback) {
+		//use socket.id for register who start the server
+		if(!config.masterSocketId) {
+			config.masterSocketId = socket.id;
+		}
+		
 		callback(config);
 	});
 
@@ -164,7 +160,9 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on("startScenic", function(params, callback) {
+
 		if (!scenicStart) {
+
 			config.nameComputer = params.username;
 			config.port.soap = params.portSoap;
 			if (params.pass != "" && params.pass == params.confirmPass) {
@@ -184,17 +182,15 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
+	//if the user started the server close the page web we stop scenic server
+	socket.on('disconnect', function(){
+		if(config.masterSocketId == socket.id) {
+			process.exit();
+		}
+	});
+
 });
 
-
-
-// function puts(error, stdout, stderr) {
-// 	sys.puts(stdout)
-// }
-// var rl = readline.createInterface({
-// 	input: process.stdin,
-// 	output: process.stdout
-// });
 
 //----------- PROCESS --------------------------//
 

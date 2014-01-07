@@ -1,5 +1,6 @@
 //-- config.js
 module.exports = {
+	version: "0.4.5",
 	host: "localhost",
 	port: {
 		soap: 8085,

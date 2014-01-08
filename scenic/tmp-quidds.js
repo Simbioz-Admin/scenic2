@@ -2,7 +2,7 @@
 
 module.exports = function(_, switcher) {
 
-	console.log("loading quidds for test");
+	//console.log("loading quidds for test");
  
 	// //create default for test interface
 	// for (i = 0; i < 1; i++) 

@@ -23,24 +23,29 @@ module.exports = function(config, switcher, $, _, io, log) {
 	function initialize() {
 
 		//create the default quiddities necessary for use switcher
-		switcher.create("rtpsession", "defaultrtp");
+		switcher.create("rtpsession", config.rtpsession);
 		switcher.create("SOAPcontrolServer", "soap");
-		switcher.invoke("soap", "set_port", [config.port.soap]);
 
+		if (typeof config.port.soap == "number" && config.port.soap.toString().length == 4) {
+			switcher.invoke("soap", "set_port", [config.port.soap]);
+		} else {
+			log.error("The soap port is not valid"+ config.port.soap);
+			process.exit();
+		}
 		//create default dico for stock information
 		var dico = switcher.create("dico", "dico");
 
 		//create the properties controlProperties for stock properties of quidds for control
 		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
 		switcher.register_log_callback(function(msg) {
-			log('debug', 'log : ', msg);
+			log.debug(msg);
 		});
 
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
 			//we exclude byte-reate because its call every second (almost a spam...)
 			if (qprop != "byte-rate") {
-				log('debug', '...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+				log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
 			} else {
 				io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
 			}
@@ -48,7 +53,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			//broadcast all the modification on properties
 			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 				if (quiddName == qname) {
-					log("debug", "properties send to sId (" + socketId + ") " + qname + " " + qprop + " : " + pvalue);
+					log.debug("properties send to sId (" + socketId + ") " + qname + " " + qprop + " : " + pvalue);
 					var socket = io.sockets.sockets[socketId];
 					socket.emit("signals_properties_value", qname, qprop, pvalue);
 				}
@@ -64,14 +69,14 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//Send to all users informing the creation of shmdatas for a specific quiddity
 				var shmdatas = switcher.get_property_value(qname, "shmdata-writers");
 				var shmdatas = $.parseJSON(switcher.get_property_value(qname, "shmdata-writers")).shmdata_writers;
-				log("info", "send Shmdatas for ", qname);
+				log.debug("send Shmdatas for ", qname);
 				io.sockets.emit("updateShmdatas", qname, shmdatas);
 			}
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
 
-			log("info", '...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+			log.debug('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 
@@ -112,7 +117,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				//console.log("New property for ",qname, pvalue);
 				_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 					if (quiddName == qname) {
-						log("debug", "send to sId (" + socketId + ") " + qprop + " : " + pvalue);
+						log.debug("send to sId (" + socketId + ") " + qprop + " : " + pvalue);
 						var socket = io.sockets.sockets[socketId];
 						socket.emit('signals_properties_info', qprop, qname, pvalue);
 					}
@@ -121,19 +126,19 @@ module.exports = function(config, switcher, $, _, io, log) {
 			}
 			//subscribe to the property added
 			if (qprop == "on-property-added") {
-				console.log("Subscribe ", qname, pvalue[0]);
+				log.debug("Subscribe ", qname, pvalue[0]);
 				switcher.subscribe_to_property(qname, pvalue[0]);
 			}
 			//unsubscribe to the property removed
 			if (qprop == "on-property-removed") {
-				console.log("Unsubscribe ", qname, pvalue[0]);
+				log.debug("Unsubscribe ", qname, pvalue[0]);
 				switcher.unsubscribe_to_property(qname, pvalue[0]);
 			}
 
 
 		});
 
-		log("info", "scenic is now initialize");
+		log.debug("scenic is now initialize");
 		require('./tmp-quidds.js')(_, switcher);
 	}
 
@@ -155,10 +160,10 @@ module.exports = function(config, switcher, $, _, io, log) {
 			var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
 
 			if (!vumeter) {
-				log("error", "failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
+				log.error("failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
 				return false;
 			} else {
-				log("info", "fakesink quiddity created : ", "vumeter_" + shmdata.path);
+				log.debug("fakesink quiddity created : ", "vumeter_" + shmdata.path);
 			}
 
 			var ok = switcher.invoke(vumeter, "connect", [shmdata.path]);
@@ -178,9 +183,8 @@ module.exports = function(config, switcher, $, _, io, log) {
 		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
 		if (shmdatas == "undefined" && shmdatas != "property not found") {
 			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
-			console.log("test", shmdatas);
 			$.each(shmdatas, function(index, shmdata) {
-				log("info", "remove vumeter : vumeter_" + shmdata.path);
+				lo.debug("remove vumeter : vumeter_" + shmdata.path);
 				switcher.remove('vumeter_' + shmdata.path);
 			});
 		}
@@ -201,7 +205,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				switcher.remove(quidd.name);
 			}
 		});
-		log("info", "quiddity " + quiddName + " has been removed.");
+		log.debug("quiddity " + quiddName + " has been removed.");
 		removeVumeters(quiddName);
 		return switcher.remove(quiddName);
 	}

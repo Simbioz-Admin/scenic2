@@ -1,3 +1,6 @@
+
+var	os = require("os");
+
 //-- config.js
 module.exports = {
 	version: "0.4.5",
@@ -6,9 +9,12 @@ module.exports = {
 		soap: 8085,
 		scenic: 8095
 	},
-	debugLevel: "error",
+	rtpsession : "defaultrtp",
+	logLevel: "warn",
 	logSocketIo: false,
-	nameComputer: "scenic",
+	standalone : false,
+	scenicStart : true,
+	nameComputer: os.hostname(),
 	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude: ["shmdata-readers", "shmdata-writers"],
 	deviceAutoDetect: ["v4l2src", "pulsesrc"],

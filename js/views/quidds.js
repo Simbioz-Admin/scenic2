@@ -52,7 +52,9 @@ define([
 		autoDetect: function(element) {
 			//create temporary v4l2 quiddity for listing device available
 			var className = $(element.target).data("name");
-			collections.classesDoc.getPropertyByClass(className, "device", function(property) {
+			console.log(className);
+			socket.emit("getPropertyByClass", className, "device", function(property) {
+				console.log(property);
 				if(property) {
 					var deviceDetected = property["values"];
 

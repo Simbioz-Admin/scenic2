@@ -79,7 +79,7 @@ define([
 		getMenuMidiDevice: function(element) {
 			$("#listDevicesMidi").remove();
 			collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
-
+				console.log(property);
 				var devicesMidi = property["values"];
 				_.each(devicesMidi, function(device, index) {
 					collections.quidds.each(function(quidd) {

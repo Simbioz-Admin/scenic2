@@ -38,7 +38,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		//create the properties controlProperties for stock properties of quidds for control
 		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
 		switcher.register_log_callback(function(msg) {
-			log.debug(msg);
+			//log.debug(msg);
 		});
 
 		//signals for modification properties
@@ -76,7 +76,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
 
-			log.debug('...SIGNAL...: ', qname, ' ', qprop, ' ', pvalue);
+			log.debug('signal : ', qname, ' ', qprop, ' ', pvalue);
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 
@@ -111,6 +111,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			//Emits to users a quiddity is removed
 			if(qprop == "on-quiddity-removed") {
 				io.sockets.emit("remove", pvalue);
+				log.debug("the quiddity "+ pvalue +"is removed");
 			}
 
 			if (qprop == "on-property-added" || qprop == "on-property-removed" || qprop == "on-method-added" || qprop == "on-method-removed") {
@@ -151,7 +152,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 	 */
 
 	function createVuMeter(quiddName) {
-
+		log.debug("create vuMeter for " + quiddName);
 		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 
 		$.each(shmdatas, function(index, shmdata) {
@@ -180,11 +181,12 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 	function removeVumeters(quiddName) {
 
-		var shmdatas = switcher.get_property_value(quiddName, "shmdata-writers");
-		if (shmdatas == "undefined" && shmdatas != "property not found") {
-			shmdatas = $.parseJSON(shmdatas).shmdata_writers;
+		var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
+
+		if(shmdatas && !shmdatas.error) {
+			shmdatas = shmdatas.shmdata_writers;
 			$.each(shmdatas, function(index, shmdata) {
-				lo.debug("remove vumeter : vumeter_" + shmdata.path);
+				log.debug("remove vumeter : vumeter_" + shmdata.path);
 				switcher.remove('vumeter_' + shmdata.path);
 			});
 		}
@@ -200,6 +202,12 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		//check if another quiddities is associate to
 		var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+
+		if(!quidds) {
+			log.error("failed remove quiddity " + quiddName);
+			return;
+		}
+
 		_.each(quidds, function(quidd) {
 			if (quidd.name.indexOf(quiddName + "-sink") != -1) {
 				switcher.remove(quidd.name);
@@ -219,20 +227,29 @@ module.exports = function(config, switcher, $, _, io, log) {
 	function getShmdatas() {
 		var shmdatas = [];
 		var quiddities = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+
+		if(!quiddities) {
+			log.error("failed to get quiddities description");
+			return;
+		}
+
 		//merge the properties of quiddities with quiddities
 		$.each(quiddities, function(index, quidd) {
 
 			var shmdata = switcher.get_property_value(quidd.name, "shmdata-writers");
 
-			if (shmdata != "property not found") {
-				var shmdataJson = $.parseJSON(shmdata);
-				// if (shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc") {
-				shmdatas.push({
-					"quiddName": quidd.name,
-					"paths": shmdataJson.shmdata_writers
-				});
-				// }
+			if(shmdata == "property not found") {
+				log.error("failed to get property value of", quidd.name);
+				return;
 			}
+
+			var shmdataJson = $.parseJSON(shmdata);
+			// if (shmdataJson.shmdata_writers.length > 0 && quidd.class != "gstvideosrc") {
+			shmdatas.push({
+				"quiddName": quidd.name,
+				"paths": shmdataJson.shmdata_writers
+			});
+			// }
 
 		})
 		return shmdatas;
@@ -241,18 +258,22 @@ module.exports = function(config, switcher, $, _, io, log) {
 	function getQuiddPropertiesWithValues(quiddName) {
 
 		var propertiesQuidd = switcher.get_properties_description(quiddName);
-		if (propertiesQuidd != "") {
-			propertiesQuidd = $.parseJSON(propertiesQuidd).properties;
-
-			//recover the value set for the properties
-			$.each(propertiesQuidd, function(index, property) {
-				var valueOfproperty = switcher.get_property_value(quiddName, property.name);
-				if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
-				propertiesQuidd[index].value = valueOfproperty;
-			});
-
-			return propertiesQuidd;
+		if(propertiesQuidd == "") {
+			log.error("failed to get properties description of" + quiddName);
+			return;
 		}
+
+		propertiesQuidd = $.parseJSON(propertiesQuidd).properties;
+
+		//recover the value set for the properties
+		$.each(propertiesQuidd, function(index, property) {
+			var valueOfproperty = switcher.get_property_value(quiddName, property.name);
+			if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
+			propertiesQuidd[index].value = valueOfproperty;
+		});
+
+		return propertiesQuidd;
+		
 
 	}
 

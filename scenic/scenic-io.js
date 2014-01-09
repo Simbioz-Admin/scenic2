@@ -1,5 +1,24 @@
+/** 
+ *
+ * 	@file scenic-io.js: Contains all functions,
+ *	manage the communiction between the interface <=> Server and Server <=> Switcher
+ *
+ **/
+
+/**
+ * 	A module that says hello!
+ * 	@module scenic
+ */
+
+
 module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, network) {
+
 	io.sockets.on('connection', function(socket) {
+
+		log.debug("New user connect (socketId : " + socket.id + ")");
+
+
+		/* Request by client for create a quiddity */
 
 		socket.on("create", function(className, quiddName, callback) {
 
@@ -8,27 +27,29 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			if (quiddName) {
 				config.listQuiddsAndSocketId[quiddName] = socket.id;
 				var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
-				log.debug("quiddity "+quiddName+" ("+className+") is created.");
+				log.debug("quiddity " + quiddName + " (" + className + ") is created.");
 				callback(quiddInfo);
 
 			} else {
 				log.error("failed to create a quiddity class ", className);
-				socket.emit("msg", "error", "failed to create "+className+" maybe this name is already used?");
+				socket.emit("msg", "error", "failed to create " + className + " maybe this name is already used?");
 			}
 		});
 
 
+		/* Request by client for remove a quiddity */
 
 		socket.on("remove", function(quiddName) {
 			var quiddDelete = scenic.remove(quiddName);
 
-			if(quiddDelete) { 
-				log.debug("quiddity "+quiddName+" is removed.");
-			}
-			else {
-				log.error("failed to remove "+quiddName);
+			if (quiddDelete) {
+				log.debug("quiddity " + quiddName + " is removed.");
+			} else {
+				log.error("failed to remove " + quiddName);
 			}
 		});
+
+		/* Currently the dico is used for save the property of quiddity manage in  the table control */
 
 		socket.on("setPropertyValueOfDico", function(property, value, callback) {
 			var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
@@ -55,31 +76,23 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 
+		/* Set value property of a specific quiddity */
+
 		socket.on("setPropertyValue", function(quiddName, property, value, callback) {
 
 			//check for remove shmdata when set property started to false
-			if(property == "started" && value == "false") {
+			if (property == "started" && value == "false") {
 				scenic.removeVumeters(quiddName);
 			}
 
-			if(quiddName && property && value) {
+			if (quiddName && property && value) {
 				var ok = switcher.set_property_value(quiddName, property, String(value));
 				if (ok) {
-					log.debug("the porperty "+ property + " of " + quiddName + "is set to "+value);
+					log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
 					callback(property, value);
-					
-					//socket.broadcast.emit("setPropertyValue", quiddName, property, value);
 
-					// if (property == "started") {
-					// 	var properties = $.parseJSON(switcher.get_properties_description(quiddName)).properties;
-					// 	_.each(properties, function(property) {
-					// 		console.log(quiddName, property.name);
-					// 		switcher.subscribe_to_property(quiddName, property.name);
-					// 	});
-
-					// }
 				} else {
-					log.error("failed to set the property "+ property + " of " + quiddName);
+					log.error("failed to set the property " + property + " of " + quiddName);
 					socket.emit("msg", "error", "the property " + property + " of " + quiddName + " is not set");
 				}
 			} else {
@@ -90,6 +103,10 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("getMethodDescription", function(quiddName, method, callback) {
 			var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
+			if (!descriptionJson) {
+				log.error("failed to get " + method + " method description" + quiddName);
+				return;
+			}
 			callback(descriptionJson);
 		});
 
@@ -97,12 +114,20 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("getMethodsDescriptionByClass", function(quiddName, callback) {
 			var methodsDescriptionByClass = $.parseJSON(switcher.get_methods_description_by_class(quiddName)).methods;
+			if (!methodsDescriptionByClass) {
+				log.error("failed to get methods description by class " + quiddName);
+				return;
+			}
 			callback(methodsDescriptionByClass);
 		});
 
 
 		socket.on("getMethodsDescription", function(quiddName, callback) {
 			var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			if (!methods) {
+				log.error("failed to get methods description " + quiddName);
+				return;
+			}
 			var methods_to_send = {};
 			_.each(methods, function(method) {
 				methods_to_send[method.name] = method;
@@ -113,21 +138,29 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("getMethodsByQuidd", function(quiddName, callback) {
 			var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+			if (!methods) {
+				log.error("failed to get methods description " + quiddName);
+				return;
+			}
 			callback(methods);
 		});
 
 
 		socket.on("invoke", function(quiddName, method, parameters, callback) {
 			var invoke = switcher.invoke(quiddName, method, parameters);
-			log.debug("the method "+method+" of "+quiddName+" is invoked with "+parameters);
+			log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
+			if (!invoke) {
+				log.error("failed to invoke " + quiddname + " method " + method);
+				return;
+			}
 			if (callback) callback(invoke);
 
 			if (method == "add_destination")
 				io.sockets.emit("add_destination", invoke, quiddName, parameters);
 
-			if (method == "remove_destination") { 
+			if (method == "remove_destination") {
 				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
-				switcher.remove("soapClient-"+parameters[0]);
+				switcher.remove("soapClient-" + parameters[0]);
 
 			}
 			if (method == "add_udp_stream_to_dest")
@@ -141,28 +174,46 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 		socket.on("getPropertiesOfClass", function(className, callback) {
-			var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
+			try {
+				var propertiesofClass = $.parseJSON(switcher.get_properties_description_by_class(className)).properties;
+			} catch (e) {
+				log.error("failed to get properties description by class " + className);
+				return;
+			}
 			callback(propertiesofClass);
 		});
 
 		socket.on("getPropertyByClass", function(className, propertyName, callback) {
-			try {
-				var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
-			} catch (e) {
-				var propertyByClass = "no property found";
+			log.debug("try get property by class",className, propertyName);
+			console.log("prop", switcher.get_property_description_by_class(className, propertyName));
+			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
+
+			if (propertyByClass && propertyByClass.error) {
+				log.error(propertyByClass.error + "(property : " + propertyName + ", class : " + className + ")");
+				return;
 			}
 			callback(propertyByClass);
 		});
 
 		socket.on("get_property_description", function(quiddName, property, callback) {
+			
 			var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
-
+			if(property_description && property_description.error) {
+				log.error(property_description.error + "(property : " + propertyName + ", quiddity : " + quiddName + ")");
+				return;
+			}
 			callback(property_description);
 		});
 
 		socket.on("get_properties_description", function(quiddName, callback) {
+
 			var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties
 			,	properties_to_send = {};
+
+			if(properties_description && properties_description.error) {
+				log.error(properties_description.error + "(quiddity : " + quiddName + ")");
+				return;
+			}
 			//re-order properties for get key = name property
 			_.each(properties_description, function(property) {
 				properties_to_send[property.name] = property;
@@ -171,39 +222,45 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("get_quiddity_description", function(quiddName, callback) {
-			var quiddDescription = $.parseJSON(switcher.get_quiddity_description(quiddName));
-			callback(quiddDescription);
+			try {
+				var quiddDescription = $.parseJSON(switcher.get_quiddity_description(quiddName));
+				callback(quiddDescription);
+			} catch (e) {
+				log.error("failed to get quiddity description " + quiddName);
+				return;
+			}
 		});
 
 		socket.on("get_property_value", function(quiddName, property, callback) {
 
-			if(quiddName && property) {
+			if (quiddName && property) {
 				try {
 					var quidds = $.parseJSON(switcher.get_property_value(quiddName, property));
-
 				} catch (e) {
-					//log('debug', e);
 					var quidds = switcher.get_property_value(quiddName, property);
 				}
+			} else {
+				log.error("failed o get property value (quiddity: " + quiddName + " property: " + property);
+				return;
 			}
-			
+
 			callback(quidds);
 		});
 
 
 		socket.on("subscribe_info_quidd", function(quiddName) {
-			log.debug("socketId ("+socket.id+") subscribe info "+quiddName);
+			log.debug("socketId (" + socket.id + ") subscribe info " + quiddName);
 			config.subscribe_quidd_info[socket.id] = quiddName;
 		});
 
 		socket.on("unsubscribe_info_quidd", function(quiddName) {
-			log.debug("socketId ("+socket.id+") unsubscribe info "+quiddName);
+			log.debug("socketId (" + socket.id + ") unsubscribe info " + quiddName);
 			delete config.subscribe_quidd_info[socket.id];
 		});
 
-		socket.on("disconnect", function(){
+		socket.on("disconnect", function() {
 			//check if user subscribe to quidd (panel open) and close the connection
-			if(config.subscribe_quidd_info[socket.id]) {
+			if (config.subscribe_quidd_info[socket.id]) {
 				delete config.subscribe_quidd_info[socket.id];
 			}
 		});
@@ -213,6 +270,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 		socket.on("save", function(name, callback) {
+			log.debug("try save scenic2");
 			var save = switcher.save_history(name);
 			callback(save);
 		});

@@ -71,6 +71,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on("getConfig", function(callback) {
 		//use socket.id for register who start the server
 		if (!config.masterSocketId) {
+			log.debug("the master socketId : ", socket.id );
 			config.masterSocketId = socket.id;
 		}
 
@@ -86,6 +87,12 @@ io.sockets.on('connection', function(socket) {
 			callback(ok);
 		})
 	});
+	log.debug(config.scenicStart, config.standalone);
+	if(!config.scenicStart && config.standalone) {
+
+		scenic.initialize();
+		config.scenicStart = true;
+	}
 
 	socket.on("startScenic", function(params, callback) {
 
@@ -112,7 +119,7 @@ io.sockets.on('connection', function(socket) {
 
 	//if the user started the server close the page web we stop scenic server
 	socket.on('disconnect', function() {
-		if (config.masterSocketId == socket.id) {
+		if (config.masterSocketId == socket.id && config.standalone == false) {
 			process.exit();
 		}
 	});

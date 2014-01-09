@@ -10,10 +10,11 @@ define(
 		'underscore',
 		'backbone',
 		'text!/templates/quidd.html',
-		'text!/templates/panelInfo.html'
+		'text!/templates/panelInfo.html',
+		'app'
 	],
 
-	function(_, Backbone, quiddTemplate, panelInfoTemplate) {
+	function(_, Backbone, quiddTemplate, panelInfoTemplate, app) {
 
 		/** 
 		 *	@constructor
@@ -140,7 +141,7 @@ define(
 				save: function() {
 					console.log("ask for saving");
 					socket.emit("save", "save.scenic", function(ok) {
-						views.global.notification("info", "save return :", ok);
+						views.global.notification("info", "save", ok);
 					})
 
 				},
@@ -155,14 +156,19 @@ define(
 					console.log("ask for load history from scratch");
 					socket.emit("load_from_scratch", "save.scenic", function(ok) {
 						if (ok) {
+							
 							collections.clients.fetch({
 								success: function(response) {
 									//generate destinations
-									$("#destinations").html("");
-									collections.destinations.render();
-									views.destinations.displayTitle();
+									$(".destinations").html("");
+									collections.clients.fetch();
+									views.clients.displayTitle();
+									//regenerate source transfer
 									$("#sources").html("");
 									collections.quidds.fetch();
+
+									collections.controlProperties.fetch();
+
 								}
 							});
 						}

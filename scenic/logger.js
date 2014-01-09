@@ -20,7 +20,7 @@ module.exports = function(config, _, app, io, $) {
 
   log.error = function(msg) {
     var fileAndLine = traceCaller(1);
-    return logger_info_old.call(this, fileAndLine + ":" + msg);
+    return logger_info_old.call(this, fileAndLine + ": " + msg);
   }
 
   /**

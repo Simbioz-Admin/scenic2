@@ -87,6 +87,7 @@ define(
 						templateProp = _.template(TemplateQuiddProperty, {property: prop });
 					
 					//check position weight for place the property added
+					console.log(prop.name, prop["position weight"]);
 					this.addWithPositionWeight(prop["position weight"], templateProp);
 
 					//generate slider for specific type of property 
@@ -202,8 +203,6 @@ define(
 					var that = this,
 						method = $(element.target).attr("id"),
 						valueMethod = $("[name='" + method + "']").val();
-
-					console.log(method, valueMethod);
 
 					if (method && valueMethod) {
 						this.model.setMethod(method, [valueMethod], function(ok) {});

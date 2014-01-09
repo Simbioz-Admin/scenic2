@@ -26,17 +26,29 @@ module.exports = function(config, switcher, $, _, io, log) {
 		switcher.create("rtpsession", config.rtpsession);
 		switcher.create("SOAPcontrolServer", "soap");
 
-		if (typeof config.port.soap == "number" && config.port.soap.toString().length == 4) {
-			switcher.invoke("soap", "set_port", [config.port.soap]);
+		if(config.loadFile) {
+			var load = switcher.load_history_from_scratch(config.loadFile);
+			if(load == "true") {
+				log.info("the file ", config.loadFile, "is loaded");
+			} else {
+				log.error("the file " + config.loadFile + "is not found!");
+			}
 		} else {
-			log.error("The soap port is not valid"+ config.port.soap);
-			process.exit();
-		}
-		//create default dico for stock information
-		var dico = switcher.create("dico", "dico");
 
-		//create the properties controlProperties for stock properties of quidds for control
-		switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
+			if (typeof config.port.soap == "number" && config.port.soap.toString().length == 4) {
+				switcher.invoke("soap", "set_port", [config.port.soap]);
+			} else {
+				log.error("The soap port is not valid"+ config.port.soap);
+				process.exit();
+			}
+			//create default dico for stock information
+			var dico = switcher.create("dico", "dico");
+
+			//create the properties controlProperties for stock properties of quidds for control
+			switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
+			
+		}
+
 		switcher.register_log_callback(function(msg) {
 			//log.debug(msg);
 		});

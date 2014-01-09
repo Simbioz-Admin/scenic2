@@ -87,8 +87,8 @@ io.sockets.on('connection', function(socket) {
 			callback(ok);
 		})
 	});
-	log.debug(config.scenicStart, config.standalone);
-	if(!config.scenicStart && config.standalone) {
+
+	if(!config.scenicStart && config.configSet) {
 
 		scenic.initialize();
 		config.scenicStart = true;

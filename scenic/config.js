@@ -15,6 +15,7 @@ module.exports = {
 	standalone : false,
 	scenicStart : false,
 	configSet : false,
+	loadFIle : false,
 	nameComputer: os.hostname(),
 	quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink', 'SOAPcontrolClient'],
 	propertiesExclude: ["shmdata-readers", "shmdata-writers"],

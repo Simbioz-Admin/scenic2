@@ -2,8 +2,8 @@
 
 module.exports = function(_, switcher) {
 
-	switcher.create("audiotestsrc","audiotest");
-	switcher.create("videotestsrc", "videotest");
+	// switcher.create("audiotestsrc","audiotest");
+	// switcher.create("videotestsrc", "videotest");
  	
  	// console.log("prop", switcher.get_property_description_by_class("pulsesrc", "device"));
 	// //create default for test interface

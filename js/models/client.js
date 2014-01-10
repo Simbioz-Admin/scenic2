@@ -47,6 +47,9 @@ define(
 						model: this,
 						table: "transfer"
 					});
+
+					//check if it's SOAPClient if true we test a connection
+					console.log("test connection SOAP", this);
 				},
 
 

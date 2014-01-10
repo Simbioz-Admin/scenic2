@@ -32,6 +32,7 @@ define(
 
 				model: ClientModel,
 				url: '/destinations/',
+				timer : 5000,
 				parse: function(results, xhr) {
 					return results.destinations;
 				},
@@ -97,6 +98,7 @@ define(
 				 */
 
 				create: function(clientName, clientHost, portSoap) {
+					var that = this;
 					socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok) {
 
 						//** set connection with another scenic computer if the port soap is define **/
@@ -110,20 +112,32 @@ define(
 
 								if (quiddInfo) {
 
-									socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok) {
-										if (ok == "true") {
-											views.global.notification("info", "scenic server detected");
-											socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
-											collections.clients.get(clientName).set("soapClient", true);
-										} else {
-											views.global.notification("error", "no scenic server detected");
-											socket.emit("remove", soapClient);
-										}
-									});
+									that.connectSOAP(soapClient, addressClient)
 								}
 							});
 						}
 
+					});
+				},
+
+				connectSOAP: function(soapClient, addressClient) {
+					var that = this;
+					if(that.timer < 60000) {
+						that.timer = that.timer*2;
+					}
+					socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok) {
+						if (ok == "true") {
+							views.global.notification("info", "scenic server detected");
+							socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
+							collections.clients.get(clientName).set("soapClient", true);
+						} else {
+							views.global.notification("error", "no scenic server detected");
+							setTimeout(function(){
+								console.log("retry get clientSOAP");
+								that.connectSOAP(soapClient, addressClient);
+							}, that.timer);
+							//socket.emit("remove", soapClient);
+						}
 					});
 				}
 			});

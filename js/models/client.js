@@ -59,10 +59,13 @@ define(
 				 */
 
 				delete: function() {
-					var result = confirm("Are you sure?");
-					if (result == true) {
-						socket.emit("invoke", "defaultrtp", "remove_destination", [this.get("name")], function(ok) {});
-					}
+					var that = this;
+
+					var result = views.global.confirmation("Are you sure?", function(ok){
+						if(ok){
+							socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
+						}
+					});
 				}
 			});
 

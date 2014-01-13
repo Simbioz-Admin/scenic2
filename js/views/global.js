@@ -13,10 +13,11 @@ define(
 		'text!/templates/panelInfo.html',
 		'text!/templates/panelLoadFiles.html',
 		'text!/templates/panelSaveFile.html',
+		'text!/templates/confirmation.html',
 		'app'
 	],
 
-	function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, app) {
+	function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, app) {
 
 		/** 
 		 *	@constructor
@@ -24,6 +25,7 @@ define(
 		 *  @requires Backbone
 		 *	@requires quiddTemplate
 		 *	@requires panelInfoTemplate
+		 *	@requires confirmationTemplate
 		 *  @augments module:Backbone.View
 		 */
 
@@ -99,6 +101,26 @@ define(
 					})
 				},
 
+				/* Called when we need confirmation for actions */
+
+				confirmation: function(msg, callback){
+
+					if(!callback) {
+						callback = msg;
+						msg = "Are you sure?";
+					}
+
+					var template = _.template(confirmationTemplate, {msg : msg});
+					$("body").prepend(template);
+
+					$("#confirmation .btn_confirmation").on("click", function(){
+						callback($(this).data("val"));
+						$("#overlay_confirmation").remove();
+					});
+					//var result = confirm(msg);
+					//return result
+				},
+
 
 				/* Called for open the panel Right (use for edit and create quiddity) */
 
@@ -121,7 +143,11 @@ define(
 
 				keyboardAction: function(event) {
 					var that = this;
-					if (event.which == 27) this.closePanel();
+					if (event.which == 27) 
+						{
+							this.closePanel();
+							if($("#overlay_confirmation").length > 0) $("#overlay_confirmation").remove(); 
+						}
 				},
 
 

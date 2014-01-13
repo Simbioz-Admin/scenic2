@@ -11,10 +11,13 @@ define(
 		'backbone',
 		'text!/templates/quidd.html',
 		'text!/templates/panelInfo.html',
+		'text!/templates/panelLoadFiles.html',
+		'text!/templates/panelSaveFile.html',
+		'text!/templates/confirmation.html',
 		'app'
 	],
 
-	function(_, Backbone, quiddTemplate, panelInfoTemplate, app) {
+	function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, app) {
 
 		/** 
 		 *	@constructor
@@ -22,6 +25,7 @@ define(
 		 *  @requires Backbone
 		 *	@requires quiddTemplate
 		 *	@requires panelInfoTemplate
+		 *	@requires confirmationTemplate
 		 *  @augments module:Backbone.View
 		 */
 
@@ -35,7 +39,6 @@ define(
 				el: 'body',
 				statePanelIrc: false,
 				statePanelLog: false,
-				statePanelInfo: false,
 
 				//assocition between action on elements html and functions
 				events: {
@@ -43,8 +46,11 @@ define(
 					"click #close-panelInfoSource": "closePanelInfoSource",
 					"change .checkbox": 'stateCheckbox',
 					"click #btn-info": 'panelInfo',
-					"click #btnSave": 'save',
-					"click #btnLoadScratch": 'load_from_scratch',
+					"click #btnSave": 'save_file',
+					"submit #saveFile" : 'save',
+					"click #btnGetFiles": 'get_save_file',
+					'click #panelFiles .file' : 'load_file',
+					'click .remove_save' : 'remove_save',
 					"click .tabTable": 'showTable',
 					"touchstart .tabTable": 'showTable',
 
@@ -95,6 +101,26 @@ define(
 					})
 				},
 
+				/* Called when we need confirmation for actions */
+
+				confirmation: function(msg, callback){
+
+					if(!callback) {
+						callback = msg;
+						msg = "Are you sure?";
+					}
+
+					var template = _.template(confirmationTemplate, {msg : msg});
+					$("body").prepend(template);
+
+					$("#confirmation .btn_confirmation").on("click", function(){
+						callback($(this).data("val"));
+						$("#overlay_confirmation").remove();
+					});
+					//var result = confirm(msg);
+					//return result
+				},
+
 
 				/* Called for open the panel Right (use for edit and create quiddity) */
 
@@ -117,7 +143,11 @@ define(
 
 				keyboardAction: function(event) {
 					var that = this;
-					if (event.which == 27) this.closePanel();
+					if (event.which == 27) 
+						{
+							this.closePanel();
+							if($("#overlay_confirmation").length > 0) $("#overlay_confirmation").remove(); 
+						}
 				},
 
 
@@ -133,28 +163,64 @@ define(
 				},
 
 
-				/* 
-				 *	Called for saving the current state of scenic
-				 *	@TODO make this work !
-				 */
-
-				save: function() {
-					console.log("ask for saving");
-					socket.emit("save", "save.scenic", function(ok) {
-						views.global.notification("info", "save", ok);
-					})
-
+				save_file: function() {
+					if ($("#panelSave").length == 0) {
+							$(".panelBox").remove();
+							var template = _.template(panelSaveTemplate, {});
+							$("#btnSave").after(template);
+						} else {
+							$(".panelBox").remove();
+						}
 				},
 
+				/* 
+				 *	Called for saving the current state of scenic
+				 */
+
+				save: function(e) {
+					e.preventDefault();
+					var nameFile = $("#name_file").val()
+					,	that = this;
+
+					if(nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
+						that.notification("error", "the name is not correct (ex : save_202) ");
+						return;
+					}
+
+					console.log("ask for saving ", nameFile );
+					socket.emit("save", nameFile+".scenic", function(ok) {
+						views.global.notification("info", nameFile +" is successfully saved", ok);
+						$(".panelBox").remove();
+					})
+				},
+
+				/* 
+				 *	Called for get files saved on the server
+				 */
+
+				get_save_file : function() {
+					var that = this;
+					socket.emit('get_save_file', function(saveFiles) {
+						if ($("#panelFiles").length == 0) {
+							$(".panelBox").remove();
+							var template = _.template(panelLoadtemplate, {
+								files : saveFiles
+							});
+							$("#btnGetFiles").after(template);
+						} else {
+							$(".panelBox").remove();
+						}
+					});
+				},
 
 				/*
 				 *	Called for loading the state saved of scenic without the current state
 				 *	@TODO make this work !
 				 */
 
-				load_from_scratch: function() {
-					console.log("ask for load history from scratch");
-					socket.emit("load_from_scratch", "save.scenic", function(ok) {
+				load_file: function(e) {
+
+					socket.emit("load_file", "save_files/"+$(e.target).html(), function(ok) {
 						if (ok) {
 							
 							collections.clients.fetch({
@@ -166,27 +232,24 @@ define(
 									//regenerate source transfer
 									$("#sources").html("");
 									collections.quidds.fetch();
-
 									collections.controlProperties.fetch();
+
 
 								}
 							});
+							views.global.notification("info", $(e.target).html() + " is loaded");
 						}
-
-						console.log("load from scratch return :", ok);
-					})
+					});
+					$("#panelFiles").remove();
 				},
 
-
-				/*
-				 *	Called for loading the state saved of scenic with the current state
-				 *	@TODO make this work !
-				 */
-
-				load_from_current_state: function() {
-					console.log("ask for load history from current state");
-					socket.emit("load_from_current_state", "save", function(ok) {
-						console.log("load from current state return :", ok);
+				remove_save : function(e) {
+					var name = $(e.target).data("name");
+					console.log("REMOVE!", name);
+					socket.emit("remove_file", name, function(ok){
+						if(ok) {
+							$(e.target).parent().remove();
+						}
 					})
 				},
 
@@ -216,17 +279,16 @@ define(
 				/* Called for showing panel Info  */
 
 				panelInfo: function() {
-					if (!this.statePanelInfo) {
+					if ($("#panelInfo").length == 0) {
+						$(".panelBox").remove();
 						var template = _.template(panelInfoTemplate, {
 							username: config.nameComputer,
 							host: config.host,
 							soap: config.port.soap
 						});
-						$("#btn-info").after(template);
-						this.statePanelInfo = true;
+						$("#btn-info").after(template);;
 					} else {
 						$("#panelInfo").remove();
-						this.statePanelInfo = false;
 					}
 				},
 

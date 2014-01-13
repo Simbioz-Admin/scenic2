@@ -19,16 +19,27 @@ var express = require("express"),
 	ident = false,
 	passSet = false;
 
-	require("./scenic/utils.js")(_);
+require("./scenic/utils.js")(_);
+
+var port = require('portastic');
+
 
 
 //launch the server with the port define in the file scenic/config.js
-if (typeof config.port.scenic == "number" && config.port.scenic.toString().length == 4) {
-	server.listen(config.port.scenic);
-} else {
-	log.error("The GUI port is not valid", config.port.scenic);
-	process.exit();
-}
+port.test(config.port.scenic, function(err, data) {
+
+	if (data == false) {
+		log.error("The port " + config.port.scenic + " is not open");
+		process.exit();
+	} else if (typeof config.port.scenic == "number" && config.port.scenic.toString().length == 4) {
+
+		server.listen(config.port.scenic);
+	} else {
+		log.error("The GUI port is not valid", config.port.scenic);
+		process.exit();
+	}
+});
+
 
 
 //param necessary for access file and use authentification
@@ -44,9 +55,12 @@ require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, confi
 require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, $, _, log, network);
 
 
+
 if (!config.standalone) {
 	//*** Open scenic2 with default navigator ***//
-	function puts(error, stdout, stderr) { sys.puts(stdout) }
+	function puts(error, stdout, stderr) {
+		sys.puts(stdout)
+	}
 	exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts)
 	log.info("scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
 }
@@ -65,13 +79,20 @@ app.get('/', function(req, res) {
 });
 
 
+//if the user ask to start directly the server scenic
+
+if (!config.scenicStart && config.configSet) {
+	scenic.initialize();
+	config.scenicStart = true;
+}
+
 io.sockets.on('connection', function(socket) {
 
 
 	socket.on("getConfig", function(callback) {
 		//use socket.id for register who start the server
 		if (!config.masterSocketId) {
-			log.debug("the master socketId : ", socket.id );
+			log.debug("the master socketId : ", socket.id);
 			config.masterSocketId = socket.id;
 		}
 
@@ -83,16 +104,11 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on("checkPort", function(port, callback) {
-		network.checkPort(port, function(ok) {
-			callback(ok);
-		})
+		port.test(port, function(err, data) {
+			callback(data);
+		});
 	});
-	log.debug(config.scenicStart, config.standalone);
-	if(!config.scenicStart && config.standalone) {
 
-		scenic.initialize();
-		config.scenicStart = true;
-	}
 
 	socket.on("startScenic", function(params, callback) {
 

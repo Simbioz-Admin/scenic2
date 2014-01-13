@@ -116,11 +116,14 @@ define(
 
 				delete: function() {
 					var that = this;
-					socket.emit("remove", this.get("name"));
 
-					//check if propertiesControl is created with the quidd deleted
-					collections.controlProperties.each(function(controlProperty) {
-						if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+					views.global.confirmation(function(ok){
+						socket.emit("remove", that.get("name"));
+
+						//check if propertiesControl is created with the quidd deleted
+						collections.controlProperties.each(function(controlProperty) {
+							if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+						});
 					});
 				},
 

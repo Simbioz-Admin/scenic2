@@ -271,20 +271,37 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("save", function(name, callback) {
 			log.debug("try save scenic2");
-			var save = switcher.save_history(name);
+			var save = switcher.save_history("save_files/"+name);
 			callback(save);
 		});
 
-		socket.on("load_from_scratch", function(name, callback) {
+		socket.on("load_file", function(name, callback) {
 			var load = switcher.load_history_from_scratch(name);
 			callback(load);
 		});
 
-		socket.on("load_from_current_state", function(name, callback) {
-			var load = switcher.load_history_from_current_state(name);
-			callback(load);
+		socket.on("remove_file", function(name, callback) {
+			var fs = require('fs');
+			fs.unlink('save_files/'+name, function(err){
+				if(err) { 
+					log.error(err); 
+					return;
+				}
+				callback('ok');
+			});
+			
 		});
-
+		socket.on("get_save_file", function(callback) {
+			var fs = require('fs');
+			fs.readdir('./save_files', function(err, dir) {
+				if(err){
+					log.error(err);
+					return;
+				}
+				callback(dir);
+			});
+			// callback("aahaha");
+		});
 	});
 
 }

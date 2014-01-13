@@ -4,7 +4,7 @@ define(
 	 *	View Destination
 	 *	Manage interaction with the Destination Model (quiddity)
 	 *	@exports Views/Destination
-	 */	
+	 */
 
 	[
 		'underscore',
@@ -42,7 +42,7 @@ define(
 
 				initialize: function() {
 
-					/* subscribe to suppression of the model */	
+					/* subscribe to suppression of the model */
 					this.model.on('remove', this.removeView, this);
 					this.table = this.options.table;
 
@@ -63,14 +63,14 @@ define(
 				},
 
 
-				/* Called when the click event is on the button edit destination */ 
+				/* Called when the click event is on the button edit destination */
 
 				edit: function() {
 					this.model.edit();
 				},
 
 
-				/* Called when the click event is on the button remove destination */ 
+				/* Called when the click event is on the button remove destination */
 
 				removeClick: function() {
 					this.model.delete();

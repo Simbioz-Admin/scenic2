@@ -120,6 +120,14 @@ define(
 					});
 				},
 
+
+				/**
+				 *	Called for connect SoapClient
+				 *	if the port soap not respond we retry with increasingly large
+				 *	@param {int} soapClient port of SOAP client
+				 *	@param {string} address Client
+				 */
+
 				connectSOAP: function(soapClient, addressClient) {
 					var that = this;
 					if(that.timer < 60000) {

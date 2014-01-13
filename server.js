@@ -24,6 +24,7 @@ require("./scenic/utils.js")(_);
 var port = require('portastic');
 
 
+
 //launch the server with the port define in the file scenic/config.js
 port.test(config.port.scenic, function(err, data) {
 
@@ -52,6 +53,7 @@ var scenic = require("./scenic/scenic.js")(config, switcher, $, _, io, log);
 require("./scenic/irc.js")(io, $, log);
 require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, config.scenicStart);
 require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, $, _, log, network);
+
 
 
 if (!config.standalone) {
@@ -102,9 +104,9 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on("checkPort", function(port, callback) {
-		network.checkPort(port, function(ok) {
-			callback(ok);
-		})
+		port.test(port, function(err, data) {
+			callback(data);
+		});
 	});
 
 

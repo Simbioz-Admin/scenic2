@@ -32,7 +32,9 @@ module.exports = function(io, $, log, config) {
 		});
 
 		socket.on("disconnect", function(){
-			usersIrc[socket.id].disconnect();
+			if(usersIrc[socket.id]){
+				usersIrc[socket.id].disconnect();
+			}
 		});
 	});
 

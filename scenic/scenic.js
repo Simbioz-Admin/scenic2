@@ -50,7 +50,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		}
 
 		switcher.register_log_callback(function(msg) {
-			//log.debug(msg);
+			log.debug(msg);
 		});
 
 		//signals for modification properties

@@ -80,7 +80,6 @@ define(
 					});
 					$(event).addClass("active");
 
-
 					collections.irc.totalMsg = collections.irc.totalMsg - this.model.get("msgNotView");
 					this.model.set({
 						msgNotView: 0

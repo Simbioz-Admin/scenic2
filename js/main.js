@@ -8,7 +8,8 @@ require.config({
     backbone: 'libs/backbone-min',
     util: 'libs/util',
     jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
-    punch : 'libs/punch'
+    punch : 'libs/punch',
+    jqueryCookie:'libs/jquery.cookie',
   },
   shim: {
     underscore: {
@@ -24,6 +25,10 @@ require.config({
     },
     punch: {
       deps: ['jquery', 'jqueryui']
+    },
+    jqueryCookie: {
+      deps : ['jquery'],
+      exports: 'jquerycookie'
     }
   }
 });
@@ -34,6 +39,7 @@ require([
   'launch',
   'util',
   'punch',
+  'jqueryCookie',
   collections = [],
   views = [],
   socket = io.connect(),
@@ -41,6 +47,7 @@ require([
 ], function(app, launch, util, socket) {
 
   var socket = io.connect();
+  
   //recovery config information from the server
   socket.emit("getConfig", function(configServer) {
     config = configServer;

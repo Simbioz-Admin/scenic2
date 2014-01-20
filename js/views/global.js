@@ -112,10 +112,14 @@ define(
 
 					var template = _.template(confirmationTemplate, {msg : msg});
 					$("body").prepend(template);
+					$("#container").addClass("blur");
+					$("#overlay_confirmation").animate({opacity : 1},100);
 
 					$("#confirmation .btn_confirmation").on("click", function(){
 						callback($(this).data("val"));
 						$("#overlay_confirmation").remove();
+						$("#container").removeClass("blur");
+
 					});
 					//var result = confirm(msg);
 					//return result
@@ -146,7 +150,10 @@ define(
 					if (event.which == 27) 
 						{
 							this.closePanel();
-							if($("#overlay_confirmation").length > 0) $("#overlay_confirmation").remove(); 
+							if($("#overlay_confirmation").length > 0){ 
+								$("#overlay_confirmation").remove(); 
+								$("#container").removeClass("blur");
+							}
 						}
 				},
 

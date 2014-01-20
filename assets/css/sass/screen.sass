@@ -224,17 +224,26 @@ header
 
 
 
+.blur
+	+filter(blur(5px))
+	+transition(0.2s)
+
 #overlay_confirmation
 	position : fixed
 	top : 0
 	left : 0
 	right : 0
 	bottom : 0
-	background : rgba(0,0,0,0.3)
 	width : 100%
 	height : 100%
 	z-index : 100000
-	color : #444
+	background : rgba(0,0,0,0.5)
+	// +transition(0.2s)
+	opacity : 0
+	#bg
+		background : rgba(0,0,0,0.3)
+		+filter(blur(5px))
+
 	#confirmation
 		width : 300px
 		background : rgba(255,255,255,0.8)

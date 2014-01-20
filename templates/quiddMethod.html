@@ -7,7 +7,12 @@
 					<div class="preview-value"></div>
 					<input class="method" name="<%=method['name']%>" type="text" value="">
 					<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
-				<% }); %> 	
+				<% }); %> 
+
+				<% if(method["arguments"].length == 0){%>
+					<input class="method" name="<%=method['name']%>" type="text" value="">
+					<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
+				<% } %>
 
 			</div>
 			

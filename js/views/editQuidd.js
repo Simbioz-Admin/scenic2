@@ -109,6 +109,7 @@ define(
 						});
 					}
 
+					/* add virtual button for send modification of property type string */
 					if(prop.type == "string") {
 						console.log("#btn-"+prop.name);
 						$("#btn-"+prop.name,  this.el).on("click", function(){
@@ -131,7 +132,7 @@ define(
 				addMethod: function(method) {
 					var meth = this.model.get("methods")[method],
 						templateMeth = _.template(TemplateQuiddMethod, { method: meth });
-
+						console.log(meth);
 					this.addWithPositionWeight(meth["position weight"], templateMeth);
 				},
 

@@ -129,23 +129,15 @@ define(
 				 */
 
 				connectSOAP: function(soapClient, addressClient) {
-					var that = this;
-					if(that.timer < 60000) {
-						that.timer = that.timer*2;
-					}
-					socket.emit("invoke", soapClient, "set_remote_url", [addressClient], function(ok) {
+
+					socket.emit("invoke", soapClient, "set_remote_url_retry", [addressClient], function(ok) {
+						
 						if (ok == "true") {
 							views.global.notification("info", "scenic server detected");
 							socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
 							collections.clients.get(clientName).set("soapClient", true);
-						} else {
-							views.global.notification("error", "no scenic server detected");
-							setTimeout(function(){
-								console.log("retry get clientSOAP");
-								that.connectSOAP(soapClient, addressClient);
-							}, that.timer);
-							//socket.emit("remove", soapClient);
 						}
+
 					});
 				}
 			});

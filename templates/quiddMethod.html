@@ -5,7 +5,7 @@
 				<h3 class="info" title="<%=method["description"]%>"><%=method["long name"]%></h3>
 				<% _.each(method["arguments"], function(argument){ %>
 					<div class="preview-value"></div>
-					<input class="method-value" name="<%=method['name']%>" type="text" value="">
+					<input class="method" name="<%=method['name']%>" type="text" value="">
 					<a href="#" class="setMethod btn" id="<%=method['name']%>" >Send</a>
 				<% }); %> 	
 

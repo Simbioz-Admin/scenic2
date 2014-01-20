@@ -37,8 +37,8 @@ define(
 				events: {
 					"click .createDevice[data-name], .deviceDetected li": "defineName",
 					"click #create": "create",
-					"mouseenter .autoDetect": "autoDetect",
-					"mouseleave .autoDetect" : "leaveAutoDetect"
+					//"mouseenter .autoDetect": "autoDetect",
+					//"mouseleave .autoDetect" : "leaveAutoDetect"
 					// "click #create-midi" : "createMidi"
 				},
 				delayAutoDetect : false,
@@ -49,16 +49,34 @@ define(
 
 				defineName: function(element) {
 
-					var className = $(element.target).data("name")
-					,	deviceDetected = $(element.target).data("devicedetected")
-					,	template = _.template(quiddCreateTemplate, {
-							title: "Define name for " + className,
-							className: className,
-							deviceDetected: deviceDetected
+					var className = $(element.target).data("name");
+					var getDevices = $(element.target).hasClass("autoDetect");
+					/* get  the information about the device in property value of quiddity */
+					if(getDevices){
+						socket.emit("getPropertyByClass", className, "device", function(property) {
+							if (property) {
+								console.log("Property", property.values);
+								openPanelDefineName(property.values);
+							} else {
+								views.global.notification("error", "no device video detected.");
+							}
 						});
+					} else {
+						openPanelDefineName(false);
+					}
 
-					$("#panelRight .content").html(template);
-					views.global.openPanel();
+					function openPanelDefineName(devices){
+
+						var	template = _.template(quiddCreateTemplate, {
+								title: "Define name for " + className,
+								className: className,
+								devices: devices
+							});
+
+						$("#panelRight .content").html(template);
+						views.global.openPanel();
+						
+					}
 				},
 				
 
@@ -70,7 +88,6 @@ define(
 					,	className = $("#className").val()
 					,	quiddName = $("#quiddName").val()
 					,	deviceDetected = $("#device").val();
-
 					/* Ask to the server create a new quiddity with className and name quiddity*/
 					socket.emit("create", className, quiddName, function(quiddInfo) {
 

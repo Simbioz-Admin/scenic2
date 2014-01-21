@@ -11,8 +11,8 @@ define(
 		'underscore',
 		'backbone',
 		'jquery',
-		'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
-		'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
+		'collections/tables', 'collections/classes_doc', 'collections/destinations', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
+		'views/destinations', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
 
 	],
 
@@ -20,8 +20,8 @@ define(
 		_,
 		Backbone,
 		$,
-		CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
-		ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
+		CollectionTables, CollectionClassesDoc, CollectionDestinations, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
+		ViewDestinations, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
 	) {
 
 		/** 
@@ -30,12 +30,12 @@ define(
 		 *  @requires Jquery
 		 *	@requires CollectionTables
 		 *	@requires CollectionClassesDoc
-		 *	@requires CollectionClients
+		 *	@requires CollectionDestinations
 		 *	@requires CollectionQuidds
 		 *	@requires CollectionsControlProperties
 		 *	@requires CollectionLoggers
 		 *	@requires CollectionIrcs
-		 *	@requires ViewClients
+		 *	@requires ViewDestinations
 		 *	@requires ViewGlobal
 		 *	@requires ViewQuidds
 		 *	@requires ViewControlProperties
@@ -52,8 +52,8 @@ define(
 			collections.classesDoc.fetch({
 				success: function(response) {
 					collections.tables = new CollectionTables();
-					collections.clients = new CollectionClients();
-					collections.clients.fetch();
+					collections.destinations = new CollectionDestinations();
+					collections.destinations.fetch();
 
 					collections.quidds = new CollectionQuidds();
 					collections.quidds.fetch();
@@ -67,8 +67,8 @@ define(
 					});
 
 					//loading views
-					views.clients = new ViewClients({
-						collection: collections.clients
+					views.clients = new ViewDestinations({
+						collection: collections.destinations
 					});
 					views.global = new ViewGlobal();
 					views.quidds = new ViewQuidds({

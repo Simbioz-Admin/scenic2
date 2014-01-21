@@ -230,11 +230,11 @@ define(
 					socket.emit("load_file", "save_files/"+$(e.target).html(), function(ok) {
 						if (ok) {
 							
-							collections.clients.fetch({
+							collections.destinations.fetch({
 								success: function(response) {
 									//generate destinations
 									$(".destinations").html("");
-									collections.clients.fetch();
+									collections.destinations.fetch();
 									views.clients.displayTitle();
 									//regenerate source transfer
 									$("#sources").html("");

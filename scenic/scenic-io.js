@@ -155,8 +155,8 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			}
 			if (callback) callback(invoke);
 
-			if (method == "add_destination")
-				io.sockets.emit("add_destination", invoke, quiddName, parameters);
+			// if (method == "add_destination")
+			// 	io.sockets.emit("add_destination", invoke, quiddName, parameters);
 
 			if (method == "remove_destination") {
 				io.sockets.emit("remove_destination", invoke, quiddName, parameters);
@@ -184,7 +184,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("getPropertyByClass", function(className, propertyName, callback) {
-			log.debug("try get property by class",className, propertyName);
+			log.debug("try get property by class", className, propertyName);
 			console.log("prop", switcher.get_property_description_by_class(className, propertyName));
 			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
 
@@ -196,9 +196,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 		socket.on("get_property_description", function(quiddName, property, callback) {
-			
+
 			var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
-			if(property_description && property_description.error) {
+			if (property_description && property_description.error) {
 				log.error(property_description.error + "(property : " + propertyName + ", quiddity : " + quiddName + ")");
 				return;
 			}
@@ -207,10 +207,10 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("get_properties_description", function(quiddName, callback) {
 
-			var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties
-			,	properties_to_send = {};
+			var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties,
+				properties_to_send = {};
 
-			if(properties_description && properties_description.error) {
+			if (properties_description && properties_description.error) {
 				log.error(properties_description.error + "(quiddity : " + quiddName + ")");
 				return;
 			}
@@ -266,12 +266,137 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 		});
 
 
+		//************************* DESTINATION ****************************//
+
+
+		/*
+		 *	At the create of destination we check if is not already existing in dico destination (if yes cb(exist))
+		 *	If not : we add information into the dico and add destination to the rtpsession
+		 *	If a soap port is define we create a quidd type controlClient and set remote url retry
+		 */
+
+		socket.on("create_destination", function(clientName, hostName, portSoap, cb) {
+
+			var destinations = switcher.get_property_value("dico", "destinations"),
+				destinations = $.parseJSON(destinations),
+				exist = _.findWhere(destinations, {
+					name: clientName
+				});
+
+			if (hostName.indexOf("http://") < 0) hostName = "http://" + hostName;
+
+			if (exist) {
+				return cb({
+					error: "the destination already exists"
+				});
+				log.warn("destination with the name " + hostName + "already exists");
+			}
+
+			/* not existing : inseration into the dico */
+			var destination = {
+				"name": clientName,
+				"hostName": hostName,
+				"portSoap": portSoap
+			};
+			destinations.push(destination);
+			var setDestination = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+			if (!setDestination) {
+				var msg = "Failed to set property destination for add " + hostName;
+				log.error(msg);
+				return cb({
+					error: msg
+				});
+			}
+
+			/* add the destination to the quiddity rtpsession */
+			var addToRtpSession = switcher.invoke("defaultrtp", "add_destination", [clientName, hostName]);
+
+			if (!addToRtpSession) {
+				var msg = "Failed to add the destination to the quidd RTPSession";
+				log.error(msg);
+				return cb({
+					error: msg
+				});
+			}
+
+			/* if port SOAP define we create a quiddity for communiate with the other scenic machine */
+			if (portSoap) {
+				log.info("Soap Define, we create quiddity for ");
+				var soapClient = "soapClient-" + clientName,
+					addressClient = hostName + ":" + portSoap;
+
+				var createSoapClient = switcher.create("SOAPcontrolClient", soapClient);
+				if (!createSoapClient) {
+					var msg = "Failed to create Quiddity " + soapClient;
+					log.error(msg);
+					return cb({
+						error: msg
+					});
+				}
+
+				var setUrl = switcher.invoke(soapClient, "set_remote_url_retry", [addressClient]);
+				if (!setUrl) {
+					var msg = "Failed to set the method set_remote_url_retry for " + soapClient;
+					log.error(msg);
+					return cb({
+						error: msg
+					});
+				}
+
+				/* we try to create soapClient on the server remote */
+				var CreateHttpsdpdec = switcher.invoke(soapClient, "create", ["httpsdpdec", config.nameComputer]);
+				log.info("Quidds httpsdpdec created?", CreateHttpsdpdec);
+
+			}
+
+			/* callback success create destination */
+			cb({
+				success: "The destination " + clientName + " is added"
+			});
+			/* Send all creation of destination */
+			io.sockets.emit("create_destination", destination);
+
+		});
+
+		/* Called when user ask to remove a destination 
+		 * In first step we remove destination to the rtpsession  and after that to the dico */
+
+		socket.on("remove_destination", function(destination, cb) {
+
+			var removeToRtp = switcher.invoke("defaultrtp", "remove_destination", [destination.name]);
+			if (!removeToRtp) {
+				var msg = "Failed to remove destination " + destination.name;
+				log.error(msg);
+				return cb({
+					error: msg
+				});
+			}
+			/* remove destination of the dico */
+			var destinations = $.parseJSON(switcher.get_property_value("dico","destinations"));
+			var destinationsWhitout = _.reject(destinations, function(dest) {
+				return dest.name == destination.name;
+			});
+			var setDicoWithout = switcher.set_property_value("dico", "destinations", JSON.stringify(destinationsWhitout));
+			if(!setDicoWithout) {
+				var msg = "Failed to set destination ";
+				log.error(msg);
+				return cb({
+					error: msg
+				});
+			}
+			
+			/* Alert all destination has been removed */
+			io.sockets.emit("remove_destination", destination);
+
+		});
+
+
 		//************************* SAUVEGARDE ****************************//
 
 
 		socket.on("save", function(name, callback) {
 			log.debug("try save scenic2");
-			var save = switcher.save_history("save_files/"+name);
+			var save = switcher.save_history("save_files/" + name);
 			callback(save);
 		});
 
@@ -282,19 +407,19 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("remove_file", function(name, callback) {
 			var fs = require('fs');
-			fs.unlink('save_files/'+name, function(err){
-				if(err) { 
-					log.error(err); 
+			fs.unlink('save_files/' + name, function(err) {
+				if (err) {
+					log.error(err);
 					return;
 				}
 				callback('ok');
 			});
-			
+
 		});
 		socket.on("get_save_file", function(callback) {
 			var fs = require('fs');
 			fs.readdir('./save_files', function(err, dir) {
-				if(err){
+				if (err) {
 					log.error(err);
 					return;
 				}

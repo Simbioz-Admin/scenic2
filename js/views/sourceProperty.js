@@ -64,7 +64,7 @@ define(
 
 					var that = this
 					,	properties = this.model.get("properties")
-					,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : collections.controlProperties.toJSON())
+					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.controlProperties.toJSON())
 					,	countProperty = 0;
 
 					$(this.el).html("");

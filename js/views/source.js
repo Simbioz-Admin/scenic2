@@ -64,7 +64,7 @@ define(
 					
 					var that = this
 					,	shmdatas = this.model.get("shmdatas")
-					,	destinations = (this.table == "transfer" ? collections.clients.toJSON() : null);
+					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : null);
 
 					$(this.el).html("");
 

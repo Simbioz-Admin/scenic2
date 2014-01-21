@@ -86,10 +86,14 @@ define(
 						that = this,
 						templateProp = _.template(TemplateQuiddProperty, {property: prop });
 					
-					//check position weight for place the property added
+					/* check position weight for place the property added */
+					//temporary add negative weight for started (need to be always on top)
+					if(prop.name == "started") prop["position weight"] = -1000;
 					this.addWithPositionWeight(prop["position weight"], templateProp);
 
-					//generate slider for specific type of property 
+
+					/* generate slider for specific type of property */
+
 					if (prop.type == "float" || prop.type == "int" || prop.type == "double" || prop.type == "uint") {
 						prop["default value"] = prop["default value"].replace(",",".");
 						var step = (prop.type == "int" || prop.type == "uint" ? 1 : (parseInt(prop.maximum) - parseInt(prop.minimum)) / 200);
@@ -111,9 +115,7 @@ define(
 
 					/* add virtual button for send modification of property type string */
 					if(prop.type == "string") {
-						console.log("#btn-"+prop.name);
 						$("#btn-"+prop.name,  this.el).on("click", function(){
-							console.log("Change input string!");
 							$("." + prop.name, this.el).trigger($.Event('keypress', {which: 13}));
 						});
 					}
@@ -132,7 +134,6 @@ define(
 				addMethod: function(method) {
 					var meth = this.model.get("methods")[method],
 						templateMeth = _.template(TemplateQuiddMethod, { method: meth });
-						console.log(meth);
 					this.addWithPositionWeight(meth["position weight"], templateMeth);
 				},
 
@@ -148,7 +149,7 @@ define(
 
 				addWithPositionWeight: function(weight, templateToAdd) {
 					var putAfter = null;
-					$("[data-weight]", this.el).each(function(property, element) {
+					$("[data-weight]", this.el).each(function(index, element) {
 						if (weight > $(element).data("weight")) {
 							putAfter = $(element);
 						}

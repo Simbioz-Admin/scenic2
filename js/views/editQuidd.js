@@ -87,11 +87,11 @@ define(
 						templateProp = _.template(TemplateQuiddProperty, {property: prop });
 					
 					//check position weight for place the property added
-					console.log(prop.name, prop["position weight"]);
 					this.addWithPositionWeight(prop["position weight"], templateProp);
 
 					//generate slider for specific type of property 
 					if (prop.type == "float" || prop.type == "int" || prop.type == "double" || prop.type == "uint") {
+						prop["default value"] = prop["default value"].replace(",",".");
 						var step = (prop.type == "int" || prop.type == "uint" ? 1 : (parseInt(prop.maximum) - parseInt(prop.minimum)) / 200);
 						$("." + prop.name, this.el).slider({
 							range: "min",
@@ -106,6 +106,15 @@ define(
 									value: ui.value
 								});
 							}
+						});
+					}
+
+					/* add virtual button for send modification of property type string */
+					if(prop.type == "string") {
+						console.log("#btn-"+prop.name);
+						$("#btn-"+prop.name,  this.el).on("click", function(){
+							console.log("Change input string!");
+							$("." + prop.name, this.el).trigger($.Event('keypress', {which: 13}));
 						});
 					}
 				},
@@ -123,7 +132,7 @@ define(
 				addMethod: function(method) {
 					var meth = this.model.get("methods")[method],
 						templateMeth = _.template(TemplateQuiddMethod, { method: meth });
-
+						console.log(meth);
 					this.addWithPositionWeight(meth["position weight"], templateMeth);
 				},
 

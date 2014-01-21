@@ -22,42 +22,42 @@
 
 </head>
 <body class="scenic2">
+		<div id="container">
+			<!-- <div id="errorMsg">Test de message d'erreur</div> -->
+			<header id="header">
+				<div id="logoSat"></div>
+				<div id="logoScenic">SCENIC 2</div>
+				<div class="btn" id="btn-info" style="float:right">?</div>
+				<div class="btn" id="btn-log" style="float:right">LOG</div>
+				<div class="btn" id="btnSave" style="float:right" >SAVE</div>
+				<div class="btn" id="btnGetFiles" style="float:right" >LOAD</div>
+				
+			</header>
+			<div id="panelTables"></div>
+			<div id="panelLeft"></div>
+			<div id="panelRight">
+				<class class="content clearfix ui-widget-content"></class>
+			</div>
+		    
 
-		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
-		<header id="header">
-			<div id="logoSat"></div>
-			<div id="logoScenic">SCENIC 2</div>
-			<div class="btn" id="btn-info" style="float:right">?</div>
-			<div class="btn" id="btn-log" style="float:right">LOG</div>
-			<div class="btn" id="btnSave" style="float:right" >SAVE</div>
-			<div class="btn" id="btnGetFiles" style="float:right" >LOAD</div>
-			
-		</header>
-		<div id="panelTables"></div>
-		<div id="panelLeft"></div>
-		<div id="panelRight">
-			<class class="content clearfix ui-widget-content"></class>
-		</div>
-	    
+		    <div id="chat">
+		    	<div class="close close-irc">X</div>
+		    	<div class="title"></div>
+		    	<ul class="headerMenu"></ul>
 
-	    <div id="chat">
-	    	<div class="close close-irc">X</div>
-	    	<div class="title"></div>
-	    	<ul class="headerMenu"></ul>
+		    	<div id="login">
+		    		<form >
+		    			<div class="info">You need to discuss about scenic? Connect you on IRC public just here!</div>
+		    			<input type="text" placeholder="username" id="username-chat"><br>
+		    			<input type="text" placeholder="channel" id="channel-chat">
+		    			<input type="submit" value="go to chat !" id="submit-chat">
+		    		</form>
+		    	</div>
 
-	    	<div id="login">
-	    		<form >
-	    			<div class="info">You need to discuss about scenic? Connect you on IRC public just here!</div>
-	    			<input type="text" placeholder="username" id="username-chat"><br>
-	    			<input type="text" placeholder="channel" id="channel-chat">
-	    			<input type="submit" value="go to chat !" id="submit-chat">
-	    		</form>
-	    	</div>
+		    	<div id="channels" ></div>
 
-	    	<div id="channels" ></div>
-
+		    </div>
 	    </div>
-
 
 	</body>
 </html>

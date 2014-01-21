@@ -9,7 +9,7 @@
 	<h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
 
 	<!-- Type input for float / int and bool -->
-	<% if(property.type == "float" || property.type == "int" || property.type == "double" || property.type == "string" || property.type == "uint"){ %>
+	<% if(property.type == "float" || property.type == "int" || property.type == "double" || property.type == "uint"){ %>
 	<div class="property-content">
 		<div class="<%=property.name%>"></div>
 		<input 
@@ -18,15 +18,22 @@
 			data-min="<%=property.minimum%>" 
 			data-maximum="<%=property.maximum%>" 
 			type="text" 
-			value="<%=property["default value"]%>"
+			value="<%=property["default value"].replace(',','.')%>"
 			name="<%=property.name%>" 
 			placeholder="value type <%=property.type%>" />
-		<%  } %>
 	</div>
+	<%  } %>
+	
+	<% if(property.type == "string"){ %>
+	<input class="property <%=property.type%>" name="<%=property.name%>" type="text" value="<%=property["default value"]%>" placeholder="value type <%=property.type%>">
+	<a href="#" class="btn sendProperty" id="btn-<%=property.name%>" >Send</a>
+	<%  } %>
+
 	<!-- Radion button for boolean -->
 	<% if(property.type == "boolean"){ %>
 	<div class="property-content">
-		<label><input class="property checkbox" type="checkbox" name="<%=property.name%>"  value="<%=property["default value"]%>" <% if(property["default value"] == "true"){ %> checked="checked" <% } %> > active</label>
+		<input class="property checkbox" type="checkbox" id="check-<%=property.name%>" name="<%=property.name%>"  value="<%=property["default value"]%>" <% if(property["default value"] == "true"){ %> checked="checked" <% } %> >
+		<label class="checkbox" for="check-<%=property.name%>"></label>
 	</div>
 	<% } %>
 

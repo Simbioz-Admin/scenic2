@@ -41,8 +41,8 @@ define(
 
 				initialize: function() {
 					var that = this;
-
-					this.model.bind("change:users", this.setListUsers, this);
+					/* Subscribe to the modification about users and message not view */
+						this.model.bind("change:users", this.setListUsers, this);
 					this.model.bind("change:msgNotView", this.countMsg, this);
 
 
@@ -64,8 +64,11 @@ define(
 					$("#channels").append($(this.el));
 
 				},
+
+				/* Called for switch between the different channels irc */
+
 				showChannel: function(event) {
-					//remove status for the channel
+					//set all channel to false for define current active
 					$("#chat .headerMenu li").removeClass("active");
 					collections.irc.each(function(channel) {
 						channel.set({
@@ -77,7 +80,6 @@ define(
 					});
 					$(event).addClass("active");
 
-
 					collections.irc.totalMsg = collections.irc.totalMsg - this.model.get("msgNotView");
 					this.model.set({
 						msgNotView: 0
@@ -87,6 +89,9 @@ define(
 					$("#channels .channel").hide();
 					$(this.el).show();
 				},
+
+				/* Called for send a message to the active channel */
+
 				send_msg: function(event) {
 					if (event.which == 13) //touch enter
 					{
@@ -96,6 +101,9 @@ define(
 						collections.irc.sendMessage(this.model.get("channel"), msg);
 					}
 				},
+
+				/* Called when the list users is updated */
+
 				setListUsers: function() {
 					var usersConnected = this.model.get("users"),
 						listConnected = "",
@@ -111,6 +119,9 @@ define(
 					});
 					$(".list-connected", this.el).html(listConnected);
 				},
+
+				/* Called when the number of message not view is updated */
+
 				countMsg: function() {
 					if (this.model.get("msgNotView") == 0) {
 						$("#" + this.model.get("channel") + " .countMsgIrc").html("").hide();

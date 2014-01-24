@@ -2,8 +2,10 @@
 
 module.exports = function(_, switcher) {
 
-	console.log("loading quidds for test");
- 
+	// switcher.create("audiotestsrc","audiotest");
+	// switcher.create("videotestsrc", "videotest");
+ 	
+ 	// console.log("prop", switcher.get_property_description_by_class("pulsesrc", "device"));
 	// //create default for test interface
 	// for (i = 0; i < 1; i++) 
 	// { 

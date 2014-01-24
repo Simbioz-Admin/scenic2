@@ -1,9 +1,9 @@
 define(
 
 	/** 
-     *	Manage all interaction between the server/views with a specific quiddity
-     *	@exports Models/quidd
- 	 */
+	 *	Manage all interaction between the server/views with a specific quiddity
+	 *	@exports Models/quidd
+	 */
 
 	[
 		'underscore',
@@ -13,7 +13,7 @@ define(
 	],
 
 	function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
-		
+
 		/** 
 		 *	@constructor
 		 *  @requires Underscore
@@ -49,7 +49,7 @@ define(
 					"view": null,
 				},
 
-				
+
 				/**
 				 *	Function executed when the model quiddity is created
 				 *	It's used for created a view associate to the model
@@ -59,7 +59,7 @@ define(
 				initialize: function() {
 					var that = this;
 
-					
+
 					that.getShmdatas(function(shmdatas) {
 
 						/* ViewSource it's a view for create a entry source to the table transfer */
@@ -116,17 +116,21 @@ define(
 
 				delete: function() {
 					var that = this;
-					socket.emit("remove", this.get("name"));
 
-					//check if propertiesControl is created with the quidd deleted
-					collections.controlProperties.each(function(controlProperty) {
-						if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+					views.global.confirmation(function(ok) {
+						if (ok) {
+							socket.emit("remove", that.get("name"));
+							//check if propertiesControl is created with the quidd deleted
+							collections.controlProperties.each(function(controlProperty) {
+								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
+							});
+						}
 					});
 				},
 
 
 				/**
-				 *	Allows viewing of video quiddities type and audio 
+				 *	Allows viewing of video quiddities type and audio
 				 */
 
 				preview: function(element) {
@@ -158,7 +162,7 @@ define(
 				},
 
 				/*
-				 *	Get information about the quiddity and show on the interface. 
+				 *	Get information about the quiddity and show on the interface.
 				 *	the information is present in vumeter quiddity created with each quiddity soruce
 				 */
 
@@ -185,7 +189,7 @@ define(
 				},
 
 				/*
-				 *	Set the property value of the quiddity 
+				 *	Set the property value of the quiddity
 				 *	@param {string} property The name of the property
 				 *	@param {string} value The value of the property
 				 *	@param {function} callback Confirms that the property defined
@@ -233,7 +237,7 @@ define(
 
 
 				/*
-				 *	Remove a specific property 
+				 *	Remove a specific property
 				 *	This function is called by the server when a property is removed
 				 *	@param {string} property The name of the property
 				 */
@@ -247,8 +251,8 @@ define(
 
 
 				/*
-				 *	Add a specific property 
-				 *	This function is called by the server when a property is added	
+				 *	Add a specific property
+				 *	This function is called by the server when a property is added
 				 *	@param {string} property The name of the property
 				 */
 
@@ -265,7 +269,7 @@ define(
 				/*
 				 *	Get the property Value of the quiddity
 				 *	@param {string} property The name of the property
-				 *	
+				 *
 				 */
 
 				getPropertyValue: function(property, callback) {

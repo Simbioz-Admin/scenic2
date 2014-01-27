@@ -277,33 +277,32 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("create_destination", create_destination);
 
-		function create_destination(clientName, hostName, portSoap, cb) {
+		function create_destination(destination, cb) {
 
 			var destinations = switcher.get_property_value("dico", "destinations"),
 				destinations = $.parseJSON(destinations),
 				exist = _.findWhere(destinations, {
-					name: clientName
+					name: destination.name
 				});
 
-			if (hostName.indexOf("http://") < 0) hostName = "http://" + hostName;
+
+			/* define a id before create client side */
+			destination["id"] = _.uniqueId("destination");
+
+			if (destination.hostName.indexOf("http://") < 0) destination.hostName = "http://" + destination.hostName;
 
 			if (exist) {
 				return cb({
 					error: "the destination already exists"
 				});
-				log.warn("destination with the name " + hostName + "already exists");
+				log.warn("destination with the name " + destination.hostName + "already exists");
 			}
 
-			/* not existing : inseration into the dico */
-			var destination = {
-				"name": clientName,
-				"hostName": hostName,
-				"portSoap": portSoap
-			};
+
 			destinations.push(destination);
 			var setDestination = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
 			if (!setDestination) {
-				var msg = "Failed to set property destination for add " + hostName;
+				var msg = "Failed to set property destination for add " + destination.hostName;
 				log.error(msg);
 				return cb({
 					error: msg
@@ -311,7 +310,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			}
 
 			/* add the destination to the quiddity rtpsession */
-			var addToRtpSession = switcher.invoke("defaultrtp", "add_destination", [clientName, hostName]);
+
+			log.info("add to rtpdefault", destination.id);
+			var addToRtpSession = switcher.invoke("defaultrtp", "add_destination", [destination.id, destination.hostName]);
 
 			if (!addToRtpSession) {
 				var msg = "Failed to add the destination to the quidd RTPSession";
@@ -322,23 +323,23 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			}
 
 			/* if port SOAP define we create a quiddity for communiate with the other scenic machine */
-			if (portSoap) {
+			if (destination.portSoap) {
 				log.info("Soap Define, we create quiddity for ");
-				var soapClient = "soapClient-" + clientName,
-					addressClient = hostName + ":" + portSoap;
+				// var soapClient = "soapClient-" + destination.id,
+				var	addressClient = destination.hostName + ":" + destination.portSoap;
 
-				var createSoapClient = switcher.create("SOAPcontrolClient", soapClient);
+				var createSoapClient = switcher.create("SOAPcontrolClient", "control-"+destination.id);
 				if (!createSoapClient) {
-					var msg = "Failed to create Quiddity " + soapClient;
+					var msg = "Failed to create Quiddity " + destination.id;
 					log.error(msg);
 					return cb({
 						error: msg
 					});
 				}
 
-				var setUrl = switcher.invoke(soapClient, "set_remote_url_retry", [addressClient]);
+				var setUrl = switcher.invoke("control-"+destination.id, "set_remote_url_retry", [addressClient]);
 				if (!setUrl) {
-					var msg = "Failed to set the method set_remote_url_retry for " + soapClient;
+					var msg = "Failed to set the method set_remote_url_retry for " + destination.id;
 					log.error(msg);
 					return cb({
 						error: msg
@@ -346,16 +347,16 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				}
 
 				/* we try to create soapClient on the server remote */
-				var CreateHttpsdpdec = switcher.invoke(soapClient, "create", ["httpsdpdec", config.nameComputer]);
+				var CreateHttpsdpdec = switcher.invoke("control-"+destination.id, "create", ["httpsdpdec", config.nameComputer]);
 				log.info("Quidds httpsdpdec created?", CreateHttpsdpdec);
 
 			}
 
 			/* callback success create destination */
 			cb({
-				success: "The destination " + clientName + " is added"
+				success: "The destination " + destination.name + " is added"
 			});
-			/* Send all creation of destination */
+			/* Send all creation of destination */ 
 			io.sockets.emit("create_destination", destination);
 
 		};
@@ -366,44 +367,51 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("remove_destination", remove_destination);
 
-		function remove_destination(name, cb) {
+		function remove_destination(id, cb) {
 
-			var removeToRtp = switcher.invoke("defaultrtp", "remove_destination", [name]);
+			log.info("ASK for remove", id);
+
+			var removeToRtp = switcher.invoke("defaultrtp", "remove_destination", [id]);
 			if (!removeToRtp) {
-				var msg = "Failed to remove destination " + name;
+				var msg = "Failed to remove destination " + id;
 				log.error(msg);
 				return cb({
 					error: msg
 				});
 			}
+
+			/* Remove SoapClient to the destination with port SOAP */
+			var removeSoapClient = switcher.invoke("control-"+id, "remove", [config.nameComputer]);
+			var removeCOntrolCLient = switcher.remove("control-"+id);
+
 			/* remove destination of the dico */
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 			var destinationsWhitout = _.reject(destinations, function(dest) {
-				return dest.name == name;
+				return dest.id == id;
 			});
 			var setDicoWithout = switcher.set_property_value("dico", "destinations", JSON.stringify(destinationsWhitout));
 			if (!setDicoWithout) {
-				var msg = "Failed to set destination ", name;
+				var msg = "Failed to set destination ", id;
 				log.error(msg);
 				return cb({
 					error: msg
 				});
-				log.info("success to remove destination", name);
+				log.info("success to remove destination", id);
 			}
 
 			cb({sucess : "sucess remove destination"});
 			/* Alert all destination has been removed */
-			io.sockets.emit("remove_destination", name);
+			io.sockets.emit("remove_destination", id);
 
 		};
 
-		socket.on("update_destination", function(oldName, destination, cb) {
+		socket.on("update_destination", function(oldId, destination, cb) {
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 			
 			/* first we remove destination */
-			remove_destination(oldName, function(data) {
+			remove_destination(oldId, function(data) {
 				if (data.error) return log.error(data.error);
-				create_destination(destination.name, destination.hostName, destination.portSoap, function(data) {
+				create_destination(destination, function(data) {
 					if (data.error) return log.error(data.error);
 					cb({success : "success update destination"});
 				})

@@ -92,10 +92,17 @@ define(
 				connection: function(element) {
 					var box = $(element.target),
 						destName = box.data("hostname"),
+						id = box.data("id"),
 						path = box.parent().data("path");
 
+						console.log(destName, id);
+						
 					if (box.hasClass("active")) {
-						socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok) {});
+						console.log("REMOVE CONNECT");
+						socket.emit("remove_connection", path, id, function(ok){
+							console.log("remove connect", ok);
+						});
+						//socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, id], function(ok) {  console.log("remove ok",ok); });
 					} else {
 						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
 					}
@@ -104,6 +111,7 @@ define(
 				/* Asks the server to connect a source to a destination, it's trigger when the user define a port and press enter  */
 
 				setConnection: function(element) {
+					var that = this;
 
 					if (element.which == 13) //touch enter
 					{
@@ -116,7 +124,7 @@ define(
 
 						console.log(id, path, port, portSoap );
 						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
-							console.log("connect destination", ok);
+							that.removeInputDestination(element);
 						});
 					}
 					// 	//add to the session the shmdata 

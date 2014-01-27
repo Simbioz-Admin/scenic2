@@ -57,7 +57,7 @@ define(
 
 					/* add for each shmdata of source transfer a new box for the connection */
 					$("#" + this.table + " .shmdata").each(function(index, source) {
-						$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + " data-id='" + that.model.get('id') + "'></td>");
+						$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
 					});
 
 				},

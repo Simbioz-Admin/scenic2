@@ -62,13 +62,14 @@ define(
 					});
 
 					/** Event called when a connection is made between a source and a destination */
-					socket.on("add_connection", function(invoke, quiddName, parameters) {
-						$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").addClass("active");
+					socket.on("add_connection", function(path, id) {
+						console.log("add_connection", path, id)
+						$("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
 					})
 
 					/** Event called when a connection between a source and a destination is removed  */
-					socket.on("remove_connection", function(invoke, quiddName, parameters) {
-						$("[data-path='" + parameters[0] + "'] [data-hostname='" + parameters[1] + "']").removeClass("active");
+					socket.on("remove_connection", function(path, id) {
+						$("[data-path='" + path + "'] [data-id='" + id + "']").removeClass("active");
 					})
 
 				},

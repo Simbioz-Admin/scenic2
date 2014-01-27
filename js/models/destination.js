@@ -77,7 +77,7 @@
 					var result = views.global.confirmation("Are you sure?", function(ok){
 						if(ok){
 							
-							socket.emit("remove_destination", that.get("id"), function(data) {
+							socket.emit("remove_destination", that.get("id"), that.get("portSoap"), function(data) {
 								if(data.error) {
 									return views.global.notifications("error", data.error);
 								}

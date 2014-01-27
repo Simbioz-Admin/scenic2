@@ -328,7 +328,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				// var soapClient = "soapClient-" + destination.id,
 				var	addressClient = destination.hostName + ":" + destination.portSoap;
 
-				var createSoapClient = switcher.create("SOAPcontrolClient", "control-"+destination.id);
+				var createSoapClient = switcher.create("SOAPcontrolClient", "control_"+destination.id);
 				if (!createSoapClient) {
 					var msg = "Failed to create Quiddity " + destination.id;
 					log.error(msg);
@@ -337,7 +337,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 					});
 				}
 
-				var setUrl = switcher.invoke("control-"+destination.id, "set_remote_url_retry", [addressClient]);
+				var setUrl = switcher.invoke("control_"+destination.id, "set_remote_url_retry", [addressClient]);
 				if (!setUrl) {
 					var msg = "Failed to set the method set_remote_url_retry for " + destination.id;
 					log.error(msg);
@@ -347,7 +347,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				}
 
 				/* we try to create soapClient on the server remote */
-				var CreateHttpsdpdec = switcher.invoke("control-"+destination.id, "create", ["httpsdpdec", config.nameComputer]);
+				var CreateHttpsdpdec = switcher.invoke("control_"+destination.id, "create", ["httpsdpdec", config.nameComputer]);
 				log.info("Quidds httpsdpdec created?", CreateHttpsdpdec);
 
 			}
@@ -367,7 +367,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("remove_destination", remove_destination);
 
-		function remove_destination(id, cb) {
+		function remove_destination(id, portSoap,  cb) {
 
 			log.info("ASK for remove", id);
 
@@ -381,8 +381,10 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			}
 
 			/* Remove SoapClient to the destination with port SOAP */
-			var removeSoapClient = switcher.invoke("control-"+id, "remove", [config.nameComputer]);
-			var removeCOntrolCLient = switcher.remove("control-"+id);
+			if(portSoap != ""){
+				var removeSoapClient = switcher.invoke("control_"+id, "remove", [config.nameComputer]);
+				var removeCOntrolCLient = switcher.remove("control_"+id);
+			}
 
 			/* remove destination of the dico */
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
@@ -417,6 +419,31 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				})
 			});
 
+		});
+
+
+		socket.on("connect_destination", function(path, id, port, portSoap, cb){
+
+			log.info("ask for connect destination", path, id, port);
+
+			/* we add the path to the defaultrtp */
+			var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
+
+			if(!addDataStream) return cb("error add data stream");
+			
+			log.info("Create add udp stream to dest", path, id, port);
+			var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
+			if(!addUdp) return cb("error add Udp");
+
+			if(portSoap != "") {
+				var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id ;
+				log.info("its soap client ! ", url);
+				var updateShm = switcher.invoke("control_"+id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
+				if(!updateShm) return cb("error updateShm");
+
+			}
+
+			return cb(true);
 		});
 
 

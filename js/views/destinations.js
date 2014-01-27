@@ -111,38 +111,41 @@ define(
 							id = $(element.target).closest("td").data("id"),
 							path = $(element.target).closest("tr").data("path"),
 							port = $(element.target).val(),
-							model = this.collection.get(id),
+							portSoap = this.collection.get(id).get("portSoap"),
 							that = this;
 
-
-						console.log(id, path, port, model );
-						//add to the session the shmdata 
-						socket.emit("invoke", "defaultrtp", "add_data_stream", [path], function(ok) {
-
-						});
-						//connect shmdata to destination
-
-						socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, id, port], function(ok) {
-							console.log("success add udp stream to dest");
-
-							//check if its soapClient
-							socket.emit("get_quiddity_description", "control-" + id, function(description) {
-								console.log(description);
-
-								if (description.name) {
-									setTimeout(function() {
-										console.log('http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id);
-										socket.emit("invoke", "control-" + id, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id],
-											function(ok) {
-												console.log("OK", ok)
-											});
-									}, 1000);
-								}
-							});
-
-							that.removeInputDestination(element);
+						console.log(id, path, port, portSoap );
+						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
+							console.log("connect destination", ok);
 						});
 					}
+					// 	//add to the session the shmdata 
+					// 	socket.emit("invoke", "defaultrtp", "add_data_stream", [path], function(ok) {
+
+					// 	});
+					// 	//connect shmdata to destination
+
+					// 	socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, id, port], function(ok) {
+					// 		console.log("success add udp stream to dest");
+
+					// 		//check if its soapClient
+					// 		socket.emit("get_quiddity_description", "control-" + id, function(description) {
+					// 			console.log(description);
+
+					// 			if (description.name) {
+					// 				setTimeout(function() {
+					// 					console.log('http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id);
+					// 					socket.emit("invoke", "control-" + id, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id],
+					// 						function(ok) {
+					// 							console.log("OK", ok)
+					// 						});
+					// 				}, 1000);
+					// 			}
+					// 		});
+
+					// 		that.removeInputDestination(element);
+					// 	});
+					// }
 				},
 
 

@@ -517,11 +517,13 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 			var destinations = _.map(destinations, function(destination) {
 				if(destination.id == id) {
-					_.each(destination.data_streams, function(data, index) {
-						if(data.path == path) {
-							destination.data_streams.splice(index, 1);
-						}
-					});
+					if(_.size(destinations.data_streams) > 0) {
+						_.each(destination.data_streams, function(data, index) {
+							if(data.path == path) {
+								destination.data_streams.splice(index, 1);
+							}
+						});
+					}
 				}
 				return destination;
 			});

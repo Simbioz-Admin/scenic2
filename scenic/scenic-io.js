@@ -463,6 +463,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers"));
 
+
 			if(!_.findWhere(shmdataDefaultrtp.shmdata_readers, {path : path})) {
 				/* we add the path to the defaultrtp */
 				var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
@@ -479,7 +480,16 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			/* 3. we save data stream to the dico destination */
 
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
-			var destinations = _.map(destinations, function(destination) {
+
+
+			/* when just one destination we don't get an array with the destinations_rtp but directly the destination */
+			if(destinations.id) {
+				var temp_destination = destinations;
+				destinations = [];
+				destinations.push(temp_destination);
+			}
+
+			var destinations = _.find(destinations, function(destination) {
 
 				if(destination.id == id) {
 					destination.data_streams.push({ path : path, port : port});
@@ -493,10 +503,12 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			/* 4. if a soap Port is define we set the shmdata to the httpsdpdec */
 
 			if (portSoap != "") {
-				var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
-				var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
-				if (!updateShm) return cb("error updateShm");
-
+				/* need wait 1sec for update url rtp to the ControlClient */
+				setTimeout(function(){
+					var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
+					var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
+					if (!updateShm) return cb("error updateShm");
+				},1000);
 			}
 
 			io.sockets.emit("add_connection", path, port, id);
@@ -514,20 +526,26 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			/* 3. we remove data stream to the dico destination */
 
-			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
-			var destinations = _.map(destinations, function(destination) {
-				if(destination.id == id) {
-					if(_.size(destinations.data_streams) > 0) {
-						_.each(destination.data_streams, function(data, index) {
-							if(data.path == path) {
-								destination.data_streams.splice(index, 1);
-							}
-						});
-					}
-				}
-				return destination;
+			var destinations_rtp = $.parseJSON(switcher.get_property_value("defaultrtp", "destinations-json")).destinations;
+
+			var destination_rtp = _.findWhere(destinations_rtp , { name : id });
+
+			var destDico = switcher.get_property_value("dico", "destinations");
+			var destinations_dico = JSON.parse(switcher.get_property_value("dico", "destinations"));
+			
+			/* when just one destination we don't get an array with the destinations_rtp but directly the destination */
+			if(destinations_dico.name) {
+				var temp_destination = destinations_dico;
+				destinations_dico = [];
+				destinations_dico.push(temp_destination);
+			}
+
+			destinations_dico = _.find(destinations_dico, function(dest) {
+				if(dest.id == id) dest.data_streams = destination_rtp.data_streams;
+				return dest;
 			});
-			var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+
+			var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations_dico));
 			if(!setPropertyValueOfDico) return cb("error when saving Destinations Dico");
 
 

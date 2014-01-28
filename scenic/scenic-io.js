@@ -425,10 +425,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 				create_destination(destination, function(data) {
 					if (data.error) return log.error(data.error);
-					// cb({
-					// 	success: "success update destination"
-					// });
-
 
 					/* 3. Recreate the connection */
 					/* SetTimeout is necessary for waiting recrate destination in client side for recreate connection after */

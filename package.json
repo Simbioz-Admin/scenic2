@@ -21,7 +21,8 @@
     "winston": "~0.7.2",
     "optimist": "~0.6.0",
     "portastic": "0.0.1",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3.3",
+    "node-uuid": "~1.4.1"
   },
   "devDependencies": {},
   "scripts": {

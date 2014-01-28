@@ -46,7 +46,8 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			//create the properties controlProperties for stock properties of quidds for control
 			switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-			
+			switcher.invoke(dico, "new-entry", ["destinations", "stock informations about destinations for manage edition", "dico for manage destinations"]);
+			switcher.set_property_value("dico", "destinations", '[]');
 		}
 
 		switcher.register_log_callback(function(msg) {
@@ -89,6 +90,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
 
 			log.debug('signal : ', qname, ' ', qprop, ' ', pvalue);
+			
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
 
@@ -98,11 +100,13 @@ module.exports = function(config, switcher, $, _, io, log) {
 				switcher.subscribe_to_signal(pvalue[0], "on-property-removed");
 				switcher.subscribe_to_signal(pvalue[0], "on-method-added");
 				switcher.subscribe_to_signal(pvalue[0], "on-method-removed");
+				switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
 
 				//we subscribe all properties of quidd created
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);
+					log.info("subscribe to ",pvalue[0], property.name);
 				});
 
 

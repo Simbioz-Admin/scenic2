@@ -57,14 +57,25 @@ define(
 
 				/* Creates a new destination  */
 
-				create: function() {
-					var name = $("#clientName").val(),
-						host_name = $("#clientHost").val(),
-						port_soap = $("#clientSoap").val();
+				create: function(e) {
+					e.preventDefault();
 
-					collections.clients.create(name, host_name, port_soap);
-					views.global.closePanel();
-					return false;
+					var destination = {
+						name : $("#clientName").val(),
+						hostName : $("#clientHost").val(),
+						portSoap : $("#clientSoap").val()
+					}
+
+					//collections.destinations.create(name, host_name, port_soap);
+
+					socket.emit("create_destination", destination , function(data) {
+						if (data.error) {
+							return views.global.notification("error", data.error);
+						}
+						views.global.notification("info", data.success);
+						views.global.closePanel();
+					});
+		
 				},
 
 
@@ -80,10 +91,13 @@ define(
 				connection: function(element) {
 					var box = $(element.target),
 						destName = box.data("hostname"),
+						id = box.data("id"),
 						path = box.parent().data("path");
 
+
 					if (box.hasClass("active")) {
-						socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, destName], function(ok) {});
+						socket.emit("remove_connection", path, id, function(ok){
+						});
 					} else {
 						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
 					}
@@ -92,40 +106,22 @@ define(
 				/* Asks the server to connect a source to a destination, it's trigger when the user define a port and press enter  */
 
 				setConnection: function(element) {
+					var that = this;
 
 					if (element.which == 13) //touch enter
 					{
 						var box = $(element.target).parent(),
-							destName = $(element.target).closest("td").data("hostname"),
+							id = $(element.target).closest("td").data("id"),
 							path = $(element.target).closest("tr").data("path"),
 							port = $(element.target).val(),
-							model = this.collection.get(destName),
+							portSoap = this.collection.get(id).get("portSoap"),
 							that = this;
 
-						//add to the session the shmdata 
-						socket.emit("invoke", "defaultrtp", "add_data_stream", [path], function(ok) {
-
-						});
-						//connect shmdata to destination
-
-						socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, destName, port], function(ok) {
-
-
-							//check if its soapClient
-							socket.emit("get_quiddity_description", "soapClient-" + destName, function(description) {
-								if (description.name) {
-									setTimeout(function() {
-										socket.emit("invoke", "soapClient-" + destName, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + destName],
-											function(ok) {
-
-											});
-									}, 2000);
-								}
-							});
-
+						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
 							that.removeInputDestination(element);
 						});
 					}
+				
 				},
 
 

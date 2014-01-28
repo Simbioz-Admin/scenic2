@@ -351,6 +351,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			/* callback success create destination */
 			cb({
+				destination : destination,
 				success: "The destination " + destination.name + " is added"
 			});
 			/* Send all creation of destination */
@@ -407,27 +408,59 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		};
 
-			socket.on("update_destination", function(oldId, destination, cb) {
-				var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 
-				/* first we remove destination */
-				remove_destination(oldId, destination.portSoap, function(data) {
+
+		socket.on("update_destination", update_destination);
+
+		function update_destination(oldId, destination, cb) {
+			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
+			var data_streams = destination.data_streams;
+
+			/* 1. we remove destination */
+
+			remove_destination(oldId, destination.portSoap, function(data) {
+				if (data.error) return log.error(data.error);
+
+				/* 2. recreate destination*/
+
+				create_destination(destination, function(data) {
 					if (data.error) return log.error(data.error);
+					// cb({
+					// 	success: "success update destination"
+					// });
 
-					create_destination(destination, function(data) {
-						if (data.error) return log.error(data.error);
-						cb({
-							success: "success update destination"
-						});
-					});
 
+					/* 3. Recreate the connection */
+					/* SetTimeout is necessary for waiting recrate destination in client side for recreate connection after */
+					setTimeout(function(){
+						if(_.size(data_streams) > 0){
+							_.each(data_streams, function(stream) {
+
+								/* 1. associate the stream with a destination on defaultrtp */
+
+								connect_destination(stream.path, data.destination.id, stream.port, data.destination.portSoap, function(ok) {
+									if(!ok) cb({"error" : "failed to reconnect destination"});
+								})
+							
+							});
+						} else {
+							return cb({"success" :  "Success update destination" });
+						}
+					}, 500);
 				});
 
 			});
 
 
 
-		socket.on("connect_destination", function(path, id, port, portSoap, cb) {
+
+		};
+
+
+
+		socket.on("connect_destination", connect_destination);
+	
+		function connect_destination(path, id, port, portSoap, cb) {
 
 
 			/* 1. we need to check if the stream is already added to defaultrtp */
@@ -470,9 +503,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			}
 
-			io.sockets.emit("add_connection", path, id);
+			io.sockets.emit("add_connection", path, port, id);
 			return cb(true);
-		});
+		};
 
 		socket.on("remove_connection", function(path, id, cb) {
 

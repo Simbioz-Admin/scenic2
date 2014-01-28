@@ -60,6 +60,7 @@ define(
 						name : $("#name", this.el).val(),
 						hostName : $("#hostName", this.el).val(),
 						portSoap : $("#portSoap", this.el).val(),
+						data_streams : this.model.get("data_streams")
 
 					},
 					oldId = this.model.get("id");

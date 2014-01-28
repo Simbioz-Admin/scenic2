@@ -60,12 +60,21 @@ define(
 					});
 
 					/** Event called when a connection is made between a source and a destination */
-					socket.on("add_connection", function(path, id) {
+					socket.on("add_connection", function(path, port, id) {
+						console.log(that.toJSON(), id);
+						var model = that.get(id);
+						model.get("data_streams").push({path : path, port : port });
+						console.log(model.toJSON());
 						$("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
 					})
 
 					/** Event called when a connection between a source and a destination is removed  */
 					socket.on("remove_connection", function(path, id) {
+						var streamsModel = that.get(id).get('data_streams');
+						_.each(streamsModel, function(stream, i) {
+							if(stream.path == path) streamsModel.splice(i, 1);
+						});
+
 						$("[data-path='" + path + "'] [data-id='" + id + "']").removeClass("active");
 					})
 

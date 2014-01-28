@@ -103,9 +103,12 @@ io.sockets.on('connection', function(socket) {
 		callback(config.scenicStart);
 	});
 
-	socket.on("checkPort", function(port, callback) {
-		port.test(port, function(err, data) {
-			callback(data);
+	socket.on("checkPort", function(portnum, callback) {
+		port.test(parseInt(portnum), function(err, data) {
+			if (err)
+                throw err;
+            else
+                callback(data);
 		});
 	});
 

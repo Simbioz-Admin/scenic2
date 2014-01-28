@@ -475,21 +475,13 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
 			if (!addUdp) return cb("error add Udp");
-			
+
 			
 			/* 3. we save data stream to the dico destination */
 
 			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 
-
-			/* when just one destination we don't get an array with the destinations_rtp but directly the destination */
-			if(destinations.id) {
-				var temp_destination = destinations;
-				destinations = [];
-				destinations.push(temp_destination);
-			}
-
-			var destinations = _.find(destinations, function(destination) {
+			var destinations = _.map(destinations, function(destination) {
 
 				if(destination.id == id) {
 					destination.data_streams.push({ path : path, port : port});
@@ -508,7 +500,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 					var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
 					var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
 					if (!updateShm) return cb("error updateShm");
-				},1000);
+				},2000);
 			}
 
 			io.sockets.emit("add_connection", path, port, id);
@@ -532,15 +524,8 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			var destDico = switcher.get_property_value("dico", "destinations");
 			var destinations_dico = JSON.parse(switcher.get_property_value("dico", "destinations"));
-			
-			/* when just one destination we don't get an array with the destinations_rtp but directly the destination */
-			if(destinations_dico.name) {
-				var temp_destination = destinations_dico;
-				destinations_dico = [];
-				destinations_dico.push(temp_destination);
-			}
 
-			destinations_dico = _.find(destinations_dico, function(dest) {
+			destinations_dico = _.map(destinations_dico, function(dest) {
 				if(dest.id == id) dest.data_streams = destination_rtp.data_streams;
 				return dest;
 			});

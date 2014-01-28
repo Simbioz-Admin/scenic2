@@ -35,8 +35,8 @@
 					"id" : null,
 					"name": null,
 					"hostName": null,
-					"portSoap": null
-					// "data_streams": [],
+					"portSoap": null,
+					"data_streams": [],
 					// "soapClient": false
 				},
 
@@ -52,7 +52,6 @@
 					});
 
 					//check if it's SOAPClient if true we test a connection
-					console.log("test connection SOAP", this);
 				},
 
 				/**
@@ -61,7 +60,6 @@
 
 				 edit : function() {
 				 	var that = this;
-				 	console.log("EDIT", this.toJSON());
 				 	new ViewEditDestination({
 				 		model : that
 				 	})

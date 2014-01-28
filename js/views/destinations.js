@@ -69,7 +69,6 @@ define(
 					//collections.destinations.create(name, host_name, port_soap);
 
 					socket.emit("create_destination", destination , function(data) {
-						console.log(data);
 						if (data.error) {
 							return views.global.notification("error", data.error);
 						}
@@ -95,14 +94,10 @@ define(
 						id = box.data("id"),
 						path = box.parent().data("path");
 
-						console.log(destName, id);
-						
+
 					if (box.hasClass("active")) {
-						console.log("REMOVE CONNECT");
 						socket.emit("remove_connection", path, id, function(ok){
-							console.log("remove connect", ok);
 						});
-						//socket.emit("invoke", "defaultrtp", "remove_udp_stream_to_dest", [path, id], function(ok) {  console.log("remove ok",ok); });
 					} else {
 						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
 					}
@@ -122,38 +117,11 @@ define(
 							portSoap = this.collection.get(id).get("portSoap"),
 							that = this;
 
-						console.log(id, path, port, portSoap );
 						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
 							that.removeInputDestination(element);
 						});
 					}
-					// 	//add to the session the shmdata 
-					// 	socket.emit("invoke", "defaultrtp", "add_data_stream", [path], function(ok) {
-
-					// 	});
-					// 	//connect shmdata to destination
-
-					// 	socket.emit("invoke", "defaultrtp", "add_udp_stream_to_dest", [path, id, port], function(ok) {
-					// 		console.log("success add udp stream to dest");
-
-					// 		//check if its soapClient
-					// 		socket.emit("get_quiddity_description", "control-" + id, function(description) {
-					// 			console.log(description);
-
-					// 			if (description.name) {
-					// 				setTimeout(function() {
-					// 					console.log('http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id);
-					// 					socket.emit("invoke", "control-" + id, "invoke1", [config.nameComputer, 'to_shmdata', 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id],
-					// 						function(ok) {
-					// 							console.log("OK", ok)
-					// 						});
-					// 				}, 1000);
-					// 			}
-					// 		});
-
-					// 		that.removeInputDestination(element);
-					// 	});
-					// }
+				
 				},
 
 

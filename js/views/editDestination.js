@@ -63,8 +63,7 @@ define(
 
 					},
 					oldId = this.model.get("id");
-
-					console.log("ask for update destination", oldId, destination);
+					
 					socket.emit("update_destination", oldId, destination, function(data) {
 						if(data.success) {
 							views.global.closePanel();

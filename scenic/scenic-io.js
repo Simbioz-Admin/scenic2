@@ -174,7 +174,6 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		socket.on("getPropertyByClass", function(className, propertyName, callback) {
 			log.debug("try get property by class", className, propertyName);
-			console.log("prop", switcher.get_property_description_by_class(className, propertyName));
 			var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
 
 			if (propertyByClass && propertyByClass.error) {
@@ -276,8 +275,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 			/* define a id before create client side */
-			destination["id"] = _.uniqueId("destination");
-
+			var uuid = require('node-uuid');
+			destination["id"] = uuid.v1();
+			destination['data_streams'] = [];
 			destination.hostName = destination.hostName.replace("http://", "");
 			if (exist) {
 				return cb({
@@ -311,14 +311,18 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			}
 
 			/* if port SOAP define we create a quiddity for communiate with the other scenic machine */
+
 			if (destination.portSoap) {
 				log.info("Soap Define, we create quiddity for ");
-				// var soapClient = "soapClient-" + destination.id,
+
+
+				/* 1. we create a SOAPControlClient for talk to te other scenic */
+
 				if (destination.hostName.indexOf("http://") < 0) destination.hostName = "http://" + destination.hostName;
 
-				var addressClient = destination.hostName + ":" + destination.portSoap;
+				var addressClient = destination.hostName + ":" + destination.portSoap
+				,	createSoapClient = switcher.create("SOAPcontrolClient", "soapControlClient-" + destination.id);
 
-				var createSoapClient = switcher.create("SOAPcontrolClient", "soapControlClient-" + destination.id);
 				if (!createSoapClient) {
 					var msg = "Failed to create Quiddity " + destination.id;
 					log.error(msg);
@@ -326,6 +330,8 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 						error: msg
 					});
 				}
+
+				/* 2. we set url of client on quidd SOAPControlClient */
 
 				var setUrl = switcher.invoke("soapControlClient-" + destination.id, "set_remote_url_retry", [addressClient]);
 				if (!setUrl) {
@@ -336,7 +342,8 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 					});
 				}
 
-				/* we try to create soapClient on the server remote */
+				/* 3. we try to create soapClient on the client scenic */
+
 				var CreateHttpsdpdec = switcher.invoke("soapControlClient-" + destination.id, "create", ["httpsdpdec", config.nameComputer]);
 				log.info("Quidds httpsdpdec created?", CreateHttpsdpdec);
 
@@ -400,32 +407,61 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 		};
 
-		socket.on("update_destination", function(oldId, destination, cb) {
-			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
+			socket.on("update_destination", function(oldId, destination, cb) {
+				var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
 
-			/* first we remove destination */
-			remove_destination(oldId, destination.portSoap, function(data) {
-				if (data.error) return log.error(data.error);
-				create_destination(destination, function(data) {
+				/* first we remove destination */
+				remove_destination(oldId, destination.portSoap, function(data) {
 					if (data.error) return log.error(data.error);
-					cb({
-						success: "success update destination"
+
+					create_destination(destination, function(data) {
+						if (data.error) return log.error(data.error);
+						cb({
+							success: "success update destination"
+						});
 					});
-				})
+
+				});
+
 			});
 
-		});
 
 
 		socket.on("connect_destination", function(path, id, port, portSoap, cb) {
 
-			/* we add the path to the defaultrtp */
-			var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
 
-			if (!addDataStream) return cb("error add data stream");
+			/* 1. we need to check if the stream is already added to defaultrtp */
+
+			var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers"));
+
+			if(!_.findWhere(shmdataDefaultrtp.shmdata_readers, {path : path})) {
+				/* we add the path to the defaultrtp */
+				var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
+				if (!addDataStream) return cb("error add data stream");
+			}
+
+
+			/* 2. we associate the stream with a destination on defaultrtp */
 
 			var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
 			if (!addUdp) return cb("error add Udp");
+			
+			
+			/* 3. we save data stream to the dico destination */
+
+			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
+			var destinations = _.map(destinations, function(destination) {
+
+				if(destination.id == id) {
+					destination.data_streams.push({ path : path, port : port});
+				}
+				return destination;
+			});
+			var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+			if(!setPropertyValueOfDico) return cb("error when saving Destinations Dico");
+
+
+			/* 4. if a soap Port is define we set the shmdata to the httpsdpdec */
 
 			if (portSoap != "") {
 				var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
@@ -433,14 +469,37 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				if (!updateShm) return cb("error updateShm");
 
 			}
-			console.log("SEND ALL", path, id);
+
 			io.sockets.emit("add_connection", path, id);
 			return cb(true);
 		});
 
 		socket.on("remove_connection", function(path, id, cb) {
+
+			/* 1. remove the association between shmdata and destination */
+
 			var remove = switcher.invoke("defaultrtp", "remove_udp_stream_to_dest", [path, id]);
-			var removeData = switcher.invoke("defaultrtp","remove_data_stream", [path]);
+			if(!remove) return cb("Error to remove udp stream to destination");
+			//var removeData = switcher.invoke("defaultrtp","remove_data_stream", [path]);
+
+
+			/* 3. we remove data stream to the dico destination */
+
+			var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
+			var destinations = _.map(destinations, function(destination) {
+				if(destination.id == id) {
+					_.each(destination.data_streams, function(data, index) {
+						if(data.path == path) {
+							destination.data_streams.splice(index, 1);
+						}
+					});
+				}
+				return destination;
+			});
+			var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+			if(!setPropertyValueOfDico) return cb("error when saving Destinations Dico");
+
+
 			io.sockets.emit("remove_connection", path, id);
 			//var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
 			//var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);

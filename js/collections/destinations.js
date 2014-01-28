@@ -48,14 +48,12 @@ define(
 					/** Event called when the server add a new destination (client) */
 					socket.on("create_destination", function(destination) {
 						that.add(destination);
-						console.log(that);
 						// views.global.notification("info", "the destination " + destination.name + " is added");
 					});
 
 					/** Event called when the server has removed a destination (client) */
 					socket.on("remove_destination", function(id) {
 						var model = that.get(id);
-						//console.log("REMOVE", model);
 						model.trigger('destroy', model, that);
 						$("[data-hostname='" + model.get("name") + "']").remove();
 						// views.global.notification("info", "Destination " + name + " is deleted");
@@ -63,7 +61,6 @@ define(
 
 					/** Event called when a connection is made between a source and a destination */
 					socket.on("add_connection", function(path, id) {
-						console.log("add_connection", path, id)
 						$("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
 					})
 
@@ -87,76 +84,6 @@ define(
 					});
 				},
 
-
-				/**
-				 *	Ask to switcher to create a destination
-				 *	At the same time we see if the server is added to a SOAP server, if this is
-				 *	the case we create a quiddity on the destination computer to add sources that are sent
-				 *	@param {string} clientName Username or remote server name
-				 *	@param {string} clientHost adress ip or hostname
-				 *	@param {int} [portSoap]  the port of the remote server switcher
-				 */
-
-				create: function(clientName, clientHost, portSoap) {
-					var that = this;
-
-
-					// socket.emit("invoke", "defaultrtp", "add_destination", [clientName, clientHost], function(ok) {
-
-					// 	console.log(ok, clientName, clientHost);
-
-					// 	/* add destination to the dico for stock data  */
-					// 	socket.emit("get_property_value","dico", "destinations", function(destinations) {
-					// 		console.log("value Destinations", destinations);
-					// 		var destination = {
-					// 			name : clientName,
-					// 			host : clientHost,
-					// 			comment : "blahblah"
-					// 		}
-
-					// 		socket.emit("setPropertyValue", "dico", "destinations", JSON.stringify(destination), function(property, value) {
-					// 			console.log("Control insert destination Dico ", property, value);
-					// 		});
-					// 	});
-					// 	//** set connection with another scenic computer if the port soap is define **/
-					// 	if (portSoap) {
-					// 		if (clientHost.indexOf("http://") < 0) clientHost = "http://" + clientHost;
-					// 		var soapClient = "soapClient-" + clientName,
-					// 			addressClient = clientHost + ":" + portSoap;
-
-					// 		/**  create quiddity SOAPcontrolClient for control the remote switcher server */
-					// 		socket.emit("create", "SOAPcontrolClient", soapClient, function(quiddInfo) {
-
-					// 			if (quiddInfo) {
-
-					// 				that.connectSOAP(soapClient, addressClient)
-					// 			}
-					// 		});
-					// 	}
-
-					// });
-				},
-
-
-				/**
-				 *	Called for connect SoapClient
-				 *	if the port soap not respond we retry with increasingly large
-				 *	@param {int} soapClient port of SOAP client
-				 *	@param {string} address Client
-				 */
-
-				// connectSOAP: function(soapClient, addressClient) {
-
-				// 	socket.emit("invoke", soapClient, "set_remote_url_retry", [addressClient], function(ok) {
-						
-				// 		if (ok == "true") {
-				// 			views.global.notification("info", "scenic server detected");
-				// 			socket.emit("invoke", soapClient, "create", ["httpsdpdec", config.nameComputer]);
-				// 			collections.destinations.get(clientName).set("soapClient", true);
-				// 		}
-
-				// 	});
-				// }
 			});
 
 		return DestinationsCollection;

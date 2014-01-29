@@ -12,17 +12,17 @@
     "requirejs": "~2.1.7",
     "passport-http": "~0.2.2",
     "passport": "~0.1.17",
-    "socket.io": "~0.9.16",
     "jsdom": "~0.7.0",
     "portchecker": "~0.1.2",
     "jquery": "~1.8.3",
     "http-auth": "~1.2.7",
-    "node-switcher": "~0.1.2",
     "winston": "~0.7.2",
     "optimist": "~0.6.0",
     "portastic": "0.0.1",
     "underscore.string": "~2.3.3",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+    "node-switcher": "~0.4.2",
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {},
   "scripts": {

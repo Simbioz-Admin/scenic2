@@ -103,6 +103,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
 
 				//we subscribe all properties of quidd created
+				console.log("Pvalue", pvalue[0]);
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);

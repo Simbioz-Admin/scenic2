@@ -12,14 +12,14 @@ define(
 		'text!/templates/panelInfoSource.html'
 	],
 
-	function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
+	function(_, Backbone, ViewSource, ViewDestinationProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
 
 		/** 
 		 *	@constructor
 		 *  @requires Underscore
 		 *  @requires Backbone
 		 *	@requires ViewSource
-		 *	@requires ViewSourceProperty
+		 *	@requires ViewDestinationProperty
 		 *	@requires ViewDestination
 		 *	@requires ViewMapper
 		 *	@requires ViewEditQuidd
@@ -59,27 +59,62 @@ define(
 				initialize: function() {
 					var that = this;
 
-
 					that.getShmdatas(function(shmdatas) {
 
+						_.each(collections.tables.models, function(tableModel) {
+
+
+							var addTableSources = tableModel.addToTable("sources", that.get("category"));
+							var table = tableModel.toJSON();
+
+							if(addTableSources){
+								new ViewSource({
+									model : that,
+									table : table.type
+								});
+							}
+
+							if(table.menus.destinations.byCategory){
+
+								var addTableDestination = tableModel.addToTable("destinations", that.get("category"));
+
+								if(addTableDestination){
+									// console.log("Add "+that.get("class")+" to the destination table "+table.type);
+									new ViewDestination({
+										model : that,
+										table : table.type
+									});
+								}
+
+
+							}
+
+
+						});
+
 						/* ViewSource it's a view for create a entry source to the table transfer */
-						if (that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
-							that.set("view", new ViewSource({
-								model: that,
-								table: "transfer"
-							}));
 
-						}
+						// if (that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
+						// 	that.set("view", new ViewSource({
+						// 		model: that,
+						// 		table: "transfer"
+						// 	}));
 
-						/* ViewSourceProperty it's a entry source for the table control */
+						// }
+
+
+						/* ViewDestinationProperty it's a entry source for the table control */
+
 						if (that.get("class") == "midisrc") {
-							that.set("view", new ViewSourceProperty({
+							that.set("view", new ViewDestinationProperty({
 								model: that,
 								table: "control"
 							}));
 						}
 
+
 						/* ViewMapper it's the connection between the source and destination in table control */
+
 						if (that.get("category") == "mapper") {
 							that.set("view", new ViewMapper({
 								model: that,
@@ -120,6 +155,10 @@ define(
 					views.global.confirmation(function(ok) {
 						if (ok) {
 							socket.emit("remove", that.get("name"));
+							
+							/* sometimes quidd is destination and have connection need to be remove */
+							$("[data-hostname='"+that.get("name")+"']").remove();
+
 							//check if propertiesControl is created with the quidd deleted
 							collections.controlProperties.each(function(controlProperty) {
 								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();

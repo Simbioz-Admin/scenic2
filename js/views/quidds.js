@@ -12,6 +12,7 @@ define(
 		'models	/quidd',
 		'text!/templates/createQuidd.html',
 		'text!/templates/quidd.html',
+
 	],
 
 	function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate) {

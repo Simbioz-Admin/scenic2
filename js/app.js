@@ -52,31 +52,40 @@ define(
 			collections.classesDoc.fetch({
 				success: function(response) {
 					collections.tables = new CollectionTables();
-					collections.destinations = new CollectionDestinations();
-					collections.destinations.fetch();
 
 					collections.quidds = new CollectionQuidds();
-					collections.quidds.fetch();
+					collections.quidds.fetch({
+						success:function(){
 
-					collections.controlProperties = new CollectionsControlProperties();
-					collections.controlProperties.fetch();
+							collections.destinations = new CollectionDestinations();
+							collections.destinations.fetch();
 
-					collections.loggers = new CollectionLoggers();
-					views.logger = new ViewLoggers({
-						collection: collections.loggers
+							collections.controlProperties = new CollectionsControlProperties();
+							collections.controlProperties.fetch();
+
+							collections.loggers = new CollectionLoggers();
+							views.logger = new ViewLoggers({
+								collection: collections.loggers
+							});
+
+							views.global = new ViewGlobal();
+
+							//loading views
+							views.clients = new ViewDestinations({
+								collection: collections.destinations
+							});
+
+							views.quidds = new ViewQuidds({
+								collection: collections.quidds
+							});
+							views.controlProperties = new ViewControlProperties({
+								collection: collections.controlProperties
+							});
+						}
 					});
 
-					//loading views
-					views.clients = new ViewDestinations({
-						collection: collections.destinations
-					});
-					views.global = new ViewGlobal();
-					views.quidds = new ViewQuidds({
-						collection: collections.quidds
-					});
-					views.controlProperties = new ViewControlProperties({
-						collection: collections.controlProperties
-					});
+				
+
 				}
 			});
 

@@ -37,23 +37,55 @@ define(
 
 			initialize: function() {
 
-				/* Default table controler. Control the properties values with device (midi osc, etc..) */
+
+				/* This table manage the audio connection locally */
 				this.add({
-					name: "controler",
-					type: "control",
-					description: "it's the default table for controler.",
+					name : "audio",
+					type : "audio",
+					description : "for manage audio source connection",
 					menus: {
 						sources: {
-							type: "midi",
-							name: "control midi",
-							dataName: "midisrc"
+							type: "sources",
+							name: "source audio",
+							byCategory : {
+								name : "source",
+								select : ["audio source"],
+								//excludes : ["midi source"]
+							}
+							// byClasses : {
+							// 	select : ["audiotestsrc", "videotestsrc"],
+							// 	excludes : ["midi source"]
+							// }
 						},
 						destinations: {
-							type: "quiddsProperties",
-							name: "property"
+							type: "destinations",
+							name: "destination audio",
+							byCategory : {
+								name : "audio",
+								select : ["audio sink"],
+								//excludes : ["midi source"]
+							}
 						}
 					}
 				});
+
+				/* Default table controler. Control the properties values with device (midi osc, etc..) */
+				// this.add({
+				// 	name: "controler",
+				// 	type: "control",
+				// 	description: "it's the default table for controler.",
+				// 	menus: {
+				// 		sources: {
+				// 			type: "midi",
+				// 			name: "control midi",
+				// 			dataName: "midisrc"
+				// 		},
+				// 		destinations: {
+				// 			type: "quiddsProperties",
+				// 			name: "property"
+				// 		}
+				// 	}
+				// });
 
 
 				/* This table manage the transfer between source and destination */
@@ -63,8 +95,16 @@ define(
 					description: "it's the default table for transfer.",
 					menus: {
 						sources: {
-							type: "quidds",
-							name: "source"
+							type: "sources",
+							name: "source",
+							byCategory : {
+								name : "source",
+								excludes : ["midi source", "audio sink"]
+							}
+							// byClasses : {
+							// 	select : ["audiotestsrc", "videotestsrc"],
+							// 	excludes : ["midi source"]
+							// }
 						},
 						destinations: {
 							type: "client",

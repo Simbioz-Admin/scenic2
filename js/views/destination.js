@@ -41,7 +41,6 @@ define(
 				/* Called when the view is initialized */
 
 				initialize: function() {
-
 					/* subscribe to suppression of the model */
 					this.model.on('remove', this.removeView, this);
 					this.table = this.options.table;
@@ -56,8 +55,23 @@ define(
 					$("#" + this.table + " .destinations").append($(this.el));
 
 					/* add for each shmdata of source transfer a new box for the connection */
-					$("#" + this.table + " .shmdata").each(function(index, source) {
-						$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
+
+					_.each(collections.tables.models, function(tableModel) {
+
+						/* this connection its for destination host */
+
+						if(tableModel.get("type") == "transfer" && that.model.get("id")) {
+							$("#transfer .shmdata").each(function(index, source) {
+								$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
+							});
+						} else if(!that.model.get("id")){
+							if(tableModel.addToTable("destinations", that.model.get("category"))) {
+								$("#"+tableModel.get("type")+" .shmdata").each(function(index, source) {
+									$(this).append("<td class='box connect-destination' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
+								});
+							}
+						}
+
 					});
 
 				},

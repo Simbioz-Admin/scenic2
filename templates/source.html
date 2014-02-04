@@ -18,7 +18,9 @@
 		</div>
 
 	</th>
-	<% _.each(destinations, function(destination){
+
+	
+<!-- 	<% _.each(destinations, function(destination){
 		console.log(destination);
 		var active = false;
 		_.each(destination.data_streams, function(path){
@@ -28,8 +30,10 @@
 			}
 			})
 	 %>
-		<td class="box connect-client<% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>" data-id="<%=destination.id%>"></td>
-	<% }); %>
+		<td class="box connect-destination <% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>" data-id="<%=destination.id%>"></td>
+	<% }); %> -->
+
+
 </tr>
 <% }else{ %><tr data-quiddName="<%=sourceName%>">
 		<td rowspan="" class="group groupSource" >

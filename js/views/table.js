@@ -35,8 +35,9 @@ define(
 				className: 'table',
 				events: {
 					"mouseenter #create-quiddsProperties": "getMenuProperties",
-					"mouseenter #create-quidds": "getMenuQuiddsByCategory",
-					"mouseenter #create-midi": "getMenuMidiDevice"
+					// "mouseenter #create-quidds": "getMenuQuiddsByCategory",
+					"mouseenter #create-midi": "getMenuMidiDevice",
+					"mouseenter .getQuidds" : 'getQuidds'
 				},
 				/* Called on initialization of the table (control / transfer) */
 				initialize: function() {
@@ -65,6 +66,58 @@ define(
 					//add to the default panel
 					$("#panelLeft").append(this.el);
 				},
+
+
+				/* Called for get list of quiddity source 
+				 *	The list of quiddity source is get when source word appear in name Class quiddity
+				 */
+
+				getQuidds : function(element){
+
+					var type = $(element.target).data("type");
+
+					if(this.model.get("menus")[type].byCategory){
+
+						var excludes =this.model.get("menus")[type].byCategory.excludes;
+						var select = this.model.get("menus")[type].byCategory.select;
+						var category = this.model.get("menus")[type].byCategory.name;
+
+						var quiddsList = _.groupBy(collections.classesDoc.getByCategory(category).toJSON(), function(source) {
+							return source.category;
+						});
+
+						if(excludes) quiddsList = _.omit(quiddsList, excludes);
+						if(select) quiddsList = _.pick(quiddsList, select);
+					}
+
+					if(this.model.get("menus")[type]["byClasses"]) {
+
+						var excludes = this.model.get("menus")[type].byClasses.excludes;
+						var select = this.model.get("menus")[type].byClasses.select;
+
+						var quiddsList = [];
+
+						_.find(collections.classesDoc.toJSON(), function(quidd) {
+							if(_.contains(select, quidd["class name"]) && quidd.category.indexOf("source") >= 0) quiddsList.push(quidd);
+						});
+
+						quiddsList = _.groupBy(quiddsList, function(source) {
+							return source.category;
+						});
+					}
+
+
+
+					$("#listSources").remove();
+
+					var template = _.template(TemplateMenu, {
+						type: "sources",
+						menus: quiddsList
+					});
+					$(element.target).after(template);
+
+				},
+
 
 				/* 
 				 *	called for showing list of properties existing
@@ -96,24 +149,6 @@ define(
 					} else {
 						views.global.notification("error", "you need to create source before to add a property");
 					}
-				},
-
-				/* Called for get list of quiddity source 
-				 *	The list of quiddity source is get when source word appear in name Class quiddity
-				 */
-
-				getMenuQuiddsByCategory: function(element) {
-					$("#listQuiddsByCategory").remove();
-					var quiddsByCategory = _.groupBy(collections.classesDoc.getByCategory("source").toJSON(), function(source) {
-						return source.category;
-					});
-
-					delete quiddsByCategory["midi source"]; //remove midi source because it's just use for table control
-					var template = _.template(TemplateMenu, {
-						type: "quiddsClass",
-						menus: quiddsByCategory
-					});
-					$(element.target).after(template);
 				},
 
 

@@ -37,7 +37,8 @@ define(
 					"mouseenter #create-quiddsProperties": "getMenuProperties",
 					// "mouseenter #create-quidds": "getMenuQuiddsByCategory",
 					"mouseenter #create-midi": "getMenuMidiDevice",
-					"mouseenter .getQuidds" : 'getQuidds'
+					"mouseenter .getQuidds" : 'getQuidds',
+					"click .connect-to-quidd" : "connectToQuidd"
 				},
 				/* Called on initialization of the table (control / transfer) */
 				initialize: function() {
@@ -118,6 +119,17 @@ define(
 
 				},
 
+				connectToQuidd : function(element){
+
+					var box = $(element.target),
+						destName = box.data("quidd"),
+						path = box.parent().data("path");
+					console.log("connect quidds",destName, path);
+
+					socket.emit("invoke", destName, "connect", [path], function(data) {
+						console.log(data);
+					});
+				},
 
 				/* 
 				 *	called for showing list of properties existing

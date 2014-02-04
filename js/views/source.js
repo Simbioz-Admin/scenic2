@@ -95,7 +95,6 @@ define(
 						$(that.el).append($(template));
 					}
 
-
 				},
 
 				/* called when we want to have a preview of the quiddity (audio or video) */

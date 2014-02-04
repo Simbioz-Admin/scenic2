@@ -33,7 +33,7 @@ define(
 				events: {
 					"click #create-client": "openPanel",
 					"click #add-client": "create",
-					"click .connect-client": "connection",
+					"click .connect-to-host": "connection",
 					"keypress #port_destination": "setConnection",
 					"blur #port_destination": "removeInputDestination"
 				},

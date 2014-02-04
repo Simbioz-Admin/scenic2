@@ -78,6 +78,7 @@ define(
 							views.quidds = new ViewQuidds({
 								collection: collections.quidds
 							});
+							
 							views.controlProperties = new ViewControlProperties({
 								collection: collections.controlProperties
 							});

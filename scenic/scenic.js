@@ -63,6 +63,17 @@ module.exports = function(config, switcher, $, _, io, log) {
 				io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
 			}
 
+
+			if(qprop == "shmdata-writers"){
+				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
+				_.each(shmdatas, function(shm) {
+					// console.log("shm", shm);
+					console.log("add data stream", shm.path);
+					var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [shm.path]);
+				});
+
+			}
+
 			//broadcast all the modification on properties
 			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 				if (quiddName == qname) {
@@ -71,6 +82,8 @@ module.exports = function(config, switcher, $, _, io, log) {
 					socket.emit("signals_properties_value", qname, qprop, pvalue);
 				}
 			});
+
+
 			// io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
 
 

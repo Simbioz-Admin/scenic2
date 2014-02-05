@@ -70,6 +70,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 					// console.log("shm", shm);
 					console.log("add data stream", shm.path);
 					var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [shm.path]);
+					console.log("add?", addDataStream);
 				});
 
 			}

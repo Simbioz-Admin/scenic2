@@ -176,6 +176,18 @@ define(
 					});
 				},
 
+				/**
+				 *	Filter for get specific quidds of this collection 
+				 */
+				 SelectQuidds: function(category) {
+
+				 	var quidds = this.filter(function(quidd) {
+				 		return quidd.get("category") == category;
+				 	});
+
+				 	return quidds;
+				 }
+
 			});
 
 		return QuiddsCollection;

@@ -51,15 +51,18 @@ define(
 			collections.classesDoc = new CollectionClassesDoc();
 			collections.classesDoc.fetch({
 				success: function(response) {
-					collections.tables = new CollectionTables();
+					
+
+
+					collections.destinations = new CollectionDestinations();
+					collections.destinations.fetch();
+							
 
 					collections.quidds = new CollectionQuidds();
 					collections.quidds.fetch({
 						success:function(){
-
-							collections.destinations = new CollectionDestinations();
-							collections.destinations.fetch();
-
+							console.log("quidds Loaded");
+							collections.tables = new CollectionTables();
 							collections.controlProperties = new CollectionsControlProperties();
 							collections.controlProperties.fetch();
 
@@ -78,7 +81,6 @@ define(
 							views.quidds = new ViewQuidds({
 								collection: collections.quidds
 							});
-							
 							views.controlProperties = new ViewControlProperties({
 								collection: collections.controlProperties
 							});

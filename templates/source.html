@@ -19,20 +19,7 @@
 
 	</th>
 
-	
-<!-- 	<% _.each(destinations, function(destination){
-		console.log(destination);
-		var active = false;
-		_.each(destination.data_streams, function(path){
-			console.log(path);
-			if(path.path == shmdata.path){
-				active = true;
-			}
-			})
-	 %>
-		<td class="box connect-destination <% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>" data-id="<%=destination.id%>"></td>
-	<% }); %> -->
-
+	<%=connexions%>
 
 </tr>
 <% }else{ %><tr data-quiddName="<%=sourceName%>">

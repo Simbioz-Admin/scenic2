@@ -82,7 +82,7 @@ define(
 									// console.log("Add "+that.get("class")+" to the destination table "+table.type);
 									new ViewDestination({
 										model : that,
-										table : table.type
+										table : tableModel
 									});
 								}
 

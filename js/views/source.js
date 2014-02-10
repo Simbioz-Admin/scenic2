@@ -9,10 +9,11 @@ define(
 	[
 		'underscore',
 		'backbone',
-		'text!/templates/source.html',
+		'views/connexion',
+		'text!/templates/source.html'
 	],
 
-	function(_, Backbone, TemplateSource) {
+	function(_, Backbone, ConnexionView, TemplateSource) {
 
 		/** 
 		 *	@constructor
@@ -56,30 +57,52 @@ define(
 					}
 
 					this.render();
-
 				},
 
 
 				render: function() {
-					
+					console.log("render source !", this.model.get("name"));
 					var that = this
 					,	shmdatas = this.model.get("shmdatas")
 					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : null);
 
+					console.log(this.table);
 					$(this.el).html("");
 
 					//render the shmdatas of the source
 					if (typeof shmdatas == "object" && shmdatas.length != 0) {
+						
+						/* for each shmdata wer create a source, this source can be connect with destination */
+
 						_.each(shmdatas, function(shmdata, index) {
+
+
+							/* Parsing destination for generate connexion */
+							var connexions = "";
+							console.log(destinations);
+							_.each(destinations, function(destination){
+								
+								/* check if the connexion existing between source and destination */
+								var active = "";
+								_.each(destination.data_streams, function(stream){
+									if(stream.path == shmdata.path) active = "active";
+								});
+								var connexion = '<td class="box connection host '+active+'" data-hostname="'+destination.name+'" data-id="'+destination.id+'"></td>';
+								connexions = connexions+connexion;
+
+							});
+
+							/* add template shmdata to the source view  */
 							var template = _.template(TemplateSource, {
 								shmdata: shmdata,
 								index: index,
 								nbShmdata: shmdatas.length,
 								sourceName: that.model.get("name"),
-								destinations: destinations
+								connexions: connexions
 							});
-							$(that.el).append($(template));
 
+							$(that.el).append(template);
+							/* wait 1sec for show status shmdata (flux actif or not) */
 							setTimeout(function() {
 								that.setPreview(shmdata);
 							}, 1000);
@@ -94,6 +117,14 @@ define(
 
 						$(that.el).append($(template));
 					}
+
+				},
+
+				/* it's a specific function for showing shmdata and update the possible connexion  */
+
+				renderConnexions : function() {
+
+
 
 				},
 

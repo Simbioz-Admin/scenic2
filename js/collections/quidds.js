@@ -76,6 +76,11 @@ define(
 					socket.on("updateShmdatas", function(qname, shmdatas) {
 						that.updateShmdatas(qname, shmdatas);
 					});
+
+					/** Event called when the shmdatas readers is updated */
+					socket.on("update_shmdatas_readers", function(name, shmdatas) {
+						console.log(name, shmdatas);
+					});
 				},
 
 

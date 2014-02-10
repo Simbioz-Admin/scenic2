@@ -33,7 +33,6 @@ define(
 				tagName: 'table',
 				className: 'source',
 				table: null,
-				firstRender : true,
 				events: {
 					"click .edit": "edit",
 					"click .remove": "removeClick",
@@ -58,20 +57,15 @@ define(
 					}
 
 					this.render();
-					this.firstRender = false;
 				},
 
 
 				render: function() {
 					//console.log("render source !", this.model.get("name"));
 					var that = this
-					,	shmdatas = this.model.get("shmdatas");
-					// ,	destinations = (this.table == "transfer" ? collections.receivers.toJSON() : null);
+					,	shmdatas = this.model.get("shmdatas")
+					,	table = collections.tables.findWhere({ type : this.table });
 
-					var table = collections.tables.findWhere({ type : this.table });
-					// console.log("try to get model Table specific for source", this.table);
-					console.log(table);
-					//console.log(this.table);
 					$(this.el).html("");
 
 					//render the shmdatas of the source
@@ -80,26 +74,37 @@ define(
 						/* for each shmdata wer create a source, this source can be connect with destination */
 						_.each(shmdatas, function(shmdata, index) {
 
-
 							/* Parsing destination for generate connexion */
-
 							var connexions = "";
-							if(!that.firstRender) {
 
-								_.each(table.get("collectionDestinations"), function(destination){
+							table.get("collectionDestinations").each(function(destination){
 
-									/* check if connection already exist */
+								/* check if the connexion existing between source and destination */
+								var active = "";
 
-									/* check if the connexion existing between source and destination */
-									var active = "";
-									_.each(destination.data_streams, function(stream){
+								if(that.table == "transfer"){
+									_.each(destination.get("data_streams"), function(stream){
 										if(stream.path == shmdata.path) active = "active";
 									});
-									var connexion = '<td class="box '+active+' '+that.table+' " data-destination="'+destination.get("name")+'" data-id="'+destination.get("id")+'"></td>';
-									connexions = connexions+connexion;
+								}
 
-								});
-							}
+								if(that.table == "audio" ){
+									
+									var shmdata_readers;
+
+									_.each(destination.get("properties"), function(prop){
+										if(prop.name == "shmdata-readers") shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+									});
+
+									_.each(shmdata_readers, function(shm) {
+										if(shm.path == shmdata.path) active = "active";
+									});
+								}
+
+								var connexion = '<td class="box '+active+' '+that.table+' " data-destination="'+destination.get("name")+'" data-id="'+destination.get("id")+'"></td>';
+								connexions = connexions+connexion;
+
+							});
 
 							/* add template shmdata to the source view  */
 							var template = _.template(TemplateSource, {

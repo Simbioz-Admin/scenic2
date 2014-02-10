@@ -47,7 +47,7 @@ define(
 					/* Create collection source and destination */
 					/* we check if it's already a collection */
 					if(this.get("sources").models){
-						this.collectionSources = this.get("sources");
+						this.set("collectionSources", this.get("sources"));
 					} else {
 						var quiddsSources = this.get_quidds("sources");
 						this.set("collectionSources", new Backbone.Collection);
@@ -55,11 +55,12 @@ define(
 					}
 
 					if(this.get("destinations").models){
-						this.collectionDestinations = this.get("destinations");
+						this.set("collectionDestinations", this.get("destinations"));
 					} else {
 						var quiddsDestinations = this.get_quidds("destinations");
 						this.set("collectionDestinations", new Backbone.Collection);
 						this.get("collectionDestinations").add(quiddsDestinations);
+
 					}
 
 					/* Create view for the table and associate this model */

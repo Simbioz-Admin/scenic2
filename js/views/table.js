@@ -38,7 +38,7 @@ define(
 					// "mouseenter #create-quidds": "getMenuQuiddsByCategory",
 					"mouseenter #create-midi": "getMenuMidiDevice",
 					"mouseenter .get_classes": 'get_classes',
-					"click .connect-to-quidd": "connectToQuidd",
+					// "click .connect-to-quidd": "connectToQuidd",
 
 					"click .box" : "ask_connection",
 					"keypress #port_destination": "set_connection",
@@ -123,7 +123,14 @@ define(
 						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
 					}
 
-					
+					if(this.model.get("type") == "audio"){
+						console.log("connect audio together");
+						socket.emit("invoke", destination, "connect", [path], function(data) {
+							console.log(data);
+						});
+					}
+
+
 				},
 
 				set_connection : function(e){
@@ -135,7 +142,7 @@ define(
 							id = $(e.target).closest("td").data("id"),
 							path = $(e.target).closest("tr").data("path"),
 							port = $(e.target).val(),
-							portSoap = this.model.collectionDestinations.get(id).get("portSoap"),
+							portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
 							that = this;
 
 						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
@@ -196,17 +203,6 @@ define(
 
 				// },
 
-				connectToQuidd: function(element) {
-
-					var box = $(element.target),
-						destName = box.data("quidd"),
-						path = box.parent().data("path");
-					console.log("connect quidds", destName, path);
-
-					socket.emit("invoke", destName, "connect", [path], function(data) {
-						console.log(data);
-					});
-				},
 
 				/* 
 				 *	called for showing list of properties existing

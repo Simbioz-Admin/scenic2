@@ -85,6 +85,11 @@ module.exports = function(config, switcher, $, _, io, log) {
 				log.debug("send Shmdatas for ", qname);
 				io.sockets.emit("updateShmdatas", qname, shmdatas);
 			}
+
+			if(qprop == "shmdata-readers") {
+				console.log("SHMDATAS READERS", qname, qprop, pvalue);
+				io.sockets.emit("update_shmdatas_readers", qname, pvalue);
+			}
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {

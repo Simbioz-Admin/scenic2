@@ -52,55 +52,39 @@ define(
 						});
 
 					$(this.el).append(template);
+
+
+
 					//add the template to the destination table transfer
 					$("#" + this.table + " .destinations").append($(this.el));
 
+					_.each($("#" + this.table + " .shmdata"), function(shmdata) {
 
-					console.log("We found ", $("#"+this.table +" .shmdata").length + " shmdatas");
+						/* check if box is already here */
+						if ($("[data-id='" + that.model.get('id') + "']", shmdata).length > 0) return;
 
-					_.each($("#"+this.table +" .shmdata"), function(shmdata){
-						
-						/* check if connection is active */					
-						var active = _.where(that.model.get("data_streams"), { path : $(shmdata).data("path")}).length > 0 ? 'active' : "";
-						var connection = "<td class='box "+active+" "+that.table+"' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>";
-						
+						/* check if connection is active */
+						if (that.table == "transfer") {
+							var active = _.where(that.model.get("data_streams"), {
+								path: $(shmdata).data("path")
+							}).length > 0 ? 'active' : "";
+						}
+
+						if (that.table == "audio") {
+							if (that.table == "audio") {
+								_.each(destination.get("shmdata-readers"), function(shmdata) {
+									console.log(shmdata);
+								});
+							}
+						}
+
+						var connection = "<td class='box " + active + " " + that.table + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>";
+
 						$(shmdata).append(connection);
 
 
 					});
 
-					/* add for each shmdata of source transfer a new box for the connection */
-					// setTimeout(function(){
-					// 	_.each(collections.tables.models, function(tableModel) {
-
-					// 		/* this connection its for destination host */
-
-					// 		if(tableModel.get("type") == "transfer" && that.model.get("id")) {
-					// 			$("#transfer .shmdata").each(function(index, source) {
-
-					// 				/* check if connection is active */					
-					// 				var active = _.where(that.model.get("data_streams"), { path : $(this).data("path")}).length > 0 ? 'active' : "";
-
-					// 				$(this).append("<td class='box connect-to-host "+active+"' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
-								
-					// 			});
-					// 		} else if(!that.model.get("id")){
-					// 			if(tableModel.addToTable("destinations", that.model.get("category"))) {
-
-					// 				$("#"+tableModel.get("type")+" .shmdata").each(function(index, source) {
-					// 					socket.emit("get_property_value", that.model.get('name'),"shmdata-readers", function(data) {
-					// 						console.log(data.shmdata_readers);
-					// 						var active = _.where(data.shmdata_readers, { path : $(source).data("path")}).length > 0 ? 'active' : "";
-					// 						console.log("active ?",active);
-					// 						$(source).append("<td class='box connect-to-quidd "+active+"' data-quidd='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
-					// 					});
-									
-					// 				});
-					// 			}
-					// 		}
-
-					// 	});
-					// },150)
 				},
 
 
@@ -122,6 +106,8 @@ define(
 
 				removeView: function() {
 					this.remove();
+					/* remove old box */
+					$("[data-id='" + this.model.get('id') + "']").remove();
 				}
 			});
 

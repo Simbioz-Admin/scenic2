@@ -33,6 +33,7 @@ define(
 				tagName: 'table',
 				className: 'source',
 				table: null,
+				firstRender : true,
 				events: {
 					"click .edit": "edit",
 					"click .remove": "removeClick",
@@ -42,12 +43,12 @@ define(
 
 				/* Called when en new source quiddity is created */
 
-				initialize: function() {
+				initialize: function(options) {
 
 					/* Subscribe for remove and change shmdatas on quiddity source */
 					this.model.on('remove', this.removeView, this);
 					this.model.on('change:shmdatas', this.render, this);
-					this.table = this.options.table;
+					this.table = options.table;
 
 					//here we define were go the source (local or remote)
 					if (this.model.get("class") == "httpsdpdec") {
@@ -57,40 +58,48 @@ define(
 					}
 
 					this.render();
+					this.firstRender = false;
 				},
 
 
 				render: function() {
-					console.log("render source !", this.model.get("name"));
+					//console.log("render source !", this.model.get("name"));
 					var that = this
-					,	shmdatas = this.model.get("shmdatas")
-					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : null);
+					,	shmdatas = this.model.get("shmdatas");
+					// ,	destinations = (this.table == "transfer" ? collections.receivers.toJSON() : null);
 
-					console.log(this.table);
+					var table = collections.tables.findWhere({ type : this.table });
+					// console.log("try to get model Table specific for source", this.table);
+					console.log(table);
+					//console.log(this.table);
 					$(this.el).html("");
 
 					//render the shmdatas of the source
 					if (typeof shmdatas == "object" && shmdatas.length != 0) {
 						
 						/* for each shmdata wer create a source, this source can be connect with destination */
-
 						_.each(shmdatas, function(shmdata, index) {
 
 
 							/* Parsing destination for generate connexion */
-							var connexions = "";
-							console.log(destinations);
-							_.each(destinations, function(destination){
-								
-								/* check if the connexion existing between source and destination */
-								var active = "";
-								_.each(destination.data_streams, function(stream){
-									if(stream.path == shmdata.path) active = "active";
-								});
-								var connexion = '<td class="box connection host '+active+'" data-hostname="'+destination.name+'" data-id="'+destination.id+'"></td>';
-								connexions = connexions+connexion;
 
-							});
+							var connexions = "";
+							if(!that.firstRender) {
+
+								_.each(table.get("collectionDestinations"), function(destination){
+
+									/* check if connection already exist */
+
+									/* check if the connexion existing between source and destination */
+									var active = "";
+									_.each(destination.data_streams, function(stream){
+										if(stream.path == shmdata.path) active = "active";
+									});
+									var connexion = '<td class="box '+active+' '+that.table+' " data-destination="'+destination.get("name")+'" data-id="'+destination.get("id")+'"></td>';
+									connexions = connexions+connexion;
+
+								});
+							}
 
 							/* add template shmdata to the source view  */
 							var template = _.template(TemplateSource, {

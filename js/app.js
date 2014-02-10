@@ -11,7 +11,7 @@ define(
 		'underscore',
 		'backbone',
 		'jquery',
-		'collections/tables', 'collections/classes_doc', 'collections/destinations', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
+		'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
 		'views/destinations', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
 
 	],
@@ -20,7 +20,7 @@ define(
 		_,
 		Backbone,
 		$,
-		CollectionTables, CollectionClassesDoc, CollectionDestinations, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
+		CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
 		ViewDestinations, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
 	) {
 
@@ -30,7 +30,7 @@ define(
 		 *  @requires Jquery
 		 *	@requires CollectionTables
 		 *	@requires CollectionClassesDoc
-		 *	@requires CollectionDestinations
+		 *	@requires CollectionReceivers
 		 *	@requires CollectionQuidds
 		 *	@requires CollectionsControlProperties
 		 *	@requires CollectionLoggers
@@ -54,15 +54,18 @@ define(
 					
 
 
-					collections.destinations = new CollectionDestinations();
-					collections.destinations.fetch();
 							
 
 					collections.quidds = new CollectionQuidds();
 					collections.quidds.fetch({
 						success:function(){
 							console.log("quidds Loaded");
+
+							collections.receivers = new CollectionReceivers();
+							collections.receivers.fetch();
+		
 							collections.tables = new CollectionTables();
+		
 							collections.controlProperties = new CollectionsControlProperties();
 							collections.controlProperties.fetch();
 
@@ -74,9 +77,9 @@ define(
 							views.global = new ViewGlobal();
 
 							//loading views
-							views.clients = new ViewDestinations({
-								collection: collections.destinations
-							});
+							// views.clients = new ViewDestinations({
+							// 	collection: collections.receivers
+							// });
 
 							views.quidds = new ViewQuidds({
 								collection: collections.quidds

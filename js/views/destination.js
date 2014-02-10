@@ -40,10 +40,11 @@ define(
 
 				/* Called when the view is initialized */
 
-				initialize: function() {
+				initialize: function(options) {
 					/* subscribe to suppression of the model */
 					this.model.on('remove', this.removeView, this);
-					this.table = this.options.table;
+					this.table = options.table;
+					var that = this;
 
 					var that = this,
 						template = _.template(TemplateDestination, {
@@ -53,6 +54,20 @@ define(
 					$(this.el).append(template);
 					//add the template to the destination table transfer
 					$("#" + this.table + " .destinations").append($(this.el));
+
+
+					console.log("We found ", $("#"+this.table +" .shmdata").length + " shmdatas");
+
+					_.each($("#"+this.table +" .shmdata"), function(shmdata){
+						
+						/* check if connection is active */					
+						var active = _.where(that.model.get("data_streams"), { path : $(shmdata).data("path")}).length > 0 ? 'active' : "";
+						var connection = "<td class='box "+active+" "+that.table+"' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>";
+						
+						$(shmdata).append(connection);
+
+
+					});
 
 					/* add for each shmdata of source transfer a new box for the connection */
 					// setTimeout(function(){

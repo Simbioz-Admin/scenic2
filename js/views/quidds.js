@@ -36,7 +36,7 @@ define(
 			{
 				el: 'body',
 				events: {
-					"click .createDevice[data-name], .deviceDetected li": "defineName",
+					"click .createQuidd, .deviceDetected li": "defineName",
 					"click #create": "create",
 					//"mouseenter .autoDetect": "autoDetect",
 					//"mouseleave .autoDetect" : "leaveAutoDetect"

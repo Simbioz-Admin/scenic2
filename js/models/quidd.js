@@ -62,34 +62,7 @@ define(
 					that.getShmdatas(function(shmdatas) {
 
 						_.each(collections.tables.models, function(tableModel) {
-
-
-							var addTableSources = tableModel.addToTable("sources", that.get("category"));
-							var table = tableModel.toJSON();
-
-							if(addTableSources){
-								new ViewSource({
-									model : that,
-									table : table.type
-								});
-							}
-
-							if(table.menus.destinations.byCategory){
-
-								var addTableDestination = tableModel.addToTable("destinations", that.get("category"));
-
-								if(addTableDestination){
-									// console.log("Add "+that.get("class")+" to the destination table "+table.type);
-									new ViewDestination({
-										model : that,
-										table : tableModel
-									});
-								}
-
-
-							}
-
-
+							tableModel.add_to_table(that);
 						});
 
 						/* ViewSource it's a view for create a entry source to the table transfer */

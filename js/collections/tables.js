@@ -45,8 +45,8 @@ define(
 					type : 'audio',
 					description : "Manage audio device and connexion audio",
 					menus : [
-						{ name : "source audio"},
-						{ name : "destination audio"}
+						{ name : "source audio", type : "sources" },
+						{ name : "destination audio", type : "destinations" }
 					],
 					sources : {
 						select : ["audio source"]
@@ -57,6 +57,25 @@ define(
 				}
 				
 				this.add(audioTable);
+
+
+				/* Create a table for manage transfer shmdatas  */
+
+				var transferTable = {
+					name : "transfer",
+					type : "transfer",
+					description : "manage connexion with destination type host",
+					menus : [
+						{ name : "source", type : "sources" },
+						{ name : "destination", type : "destinations", id : "create_receiver"}
+					],
+					sources : {
+						select : ["source"],
+						exclude : ["midi source"]
+					},
+					destinations : collections.receivers
+				}
+				this.add(transferTable);
 
 				// this.add({
 				// 	name : "audio",

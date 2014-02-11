@@ -262,12 +262,12 @@ define(
 					socket.emit("load_file", "save_files/"+$(e.target).html(), function(ok) {
 						if (ok) {
 							
-							collections.destinations.fetch({
+							collections.receivers.fetch({
 								success: function(response) {
 									//generate destinations
 									$(".destinations").html("");
-									collections.destinations.fetch();
-									views.clients.displayTitle();
+									collections.receivers.fetch();
+									//views.receivers.displayTitle();
 									//regenerate source transfer
 									$("#sources").html("");
 									collections.quidds.fetch();

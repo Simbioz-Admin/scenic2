@@ -67,7 +67,7 @@ define(
 					,	table = collections.tables.findWhere({ type : this.table });
 
 					$(this.el).html("");
-
+					
 					//render the shmdatas of the source
 					if (typeof shmdatas == "object" && shmdatas.length != 0) {
 						
@@ -93,7 +93,8 @@ define(
 									var shmdata_readers;
 
 									_.each(destination.get("properties"), function(prop){
-										if(prop.name == "shmdata-readers") shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+										
+										if(prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
 									});
 
 									_.each(shmdata_readers, function(shm) {

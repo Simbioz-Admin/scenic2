@@ -79,7 +79,17 @@ define(
 
 					/** Event called when the shmdatas readers is updated */
 					socket.on("update_shmdatas_readers", function(name, shmdatas) {
-						console.log(name, shmdatas);
+						/* we parse connection for add or remove */
+						console.log(name, $.parseJSON(shmdatas).shmdata_readers);
+						var shmdatas = $.parseJSON(shmdatas).shmdata_readers;
+
+						$("[data-destination='"+name+"']").each(function(index, box) {
+							$(box).removeClass("active");
+							var path = $(box).parent().data("path");
+							_.each(shmdatas, function(shm){
+								if(shm.path == path) $(box).addClass("active");
+							});
+						});
 					});
 				},
 

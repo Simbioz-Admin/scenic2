@@ -71,11 +71,16 @@ define(
 						}
 
 						if (that.table == "audio") {
-							if (that.table == "audio") {
-								_.each(destination.get("shmdata-readers"), function(shmdata) {
-									console.log(shmdata);
-								});
-							}
+
+							var shmdata_readers;
+
+							_.each(that.model.get("properties"), function(prop) {
+								if (prop.name == "shmdata-readers"  && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+							});
+
+							_.each(shmdata_readers, function(shm) {
+								if (shm.path == shmdata.path) active = "active";
+							});
 						}
 
 						var connection = "<td class='box " + active + " " + that.table + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>";

@@ -60,7 +60,7 @@ define(
 					var that = this;
 
 					that.getShmdatas(function(shmdatas) {
-						
+
 						_.each(collections.tables.models, function(tableModel) {
 							tableModel.add_to_table(that);
 						});
@@ -320,19 +320,9 @@ define(
 							that.set({
 								shmdatas: shmdatas.shmdata_writers
 							});
-
-							that.getPropertyValue("shmdata-readers", function(shmdatas) {
-								console.log(shmdatas);
-								if(shmdatas) {
-									that.set({shmdata_readers : shmdatas.shmdata_readers})
-								}
-								if (callback) callback();
-							});
-
+							if (callback) callback(shmdatas.shmdata_writers);
 						}
 					});
-
-					
 				},
 
 

@@ -124,10 +124,19 @@ define(
 					}
 
 					if(this.model.get("type") == "audio"){
-						console.log("connect audio together");
-						socket.emit("invoke", destination, "connect", [path], function(data) {
-							console.log(data);
-						});
+						if(box.hasClass("active")){
+							console.log("disconnect audio");
+							socket.emit("invoke", destination, "disconnect", [], function(data) {
+								console.log(data);
+							})
+						}
+						else {
+							console.log("connect audio together");
+							
+							socket.emit("invoke", destination, "connect", [path], function(data) {
+								console.log(data);
+							});
+						}
 					}
 
 

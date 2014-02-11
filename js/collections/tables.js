@@ -59,7 +59,7 @@ define(
 						}
 					}
 
-					this.add(audioTable);
+
 
 
 					/* Create a table for manage transfer shmdatas  */
@@ -82,7 +82,7 @@ define(
 						},
 						destinations: collections.receivers
 					}
-					this.add(transferTable);
+
 
 
 					var controlTable = {
@@ -103,7 +103,10 @@ define(
 						destinations: collections.receivers
 					}
 
+
+					this.add(audioTable);
 					this.add(controlTable);
+					this.add(transferTable);
 					// this.add({
 					// 	name : "audio",
 					// 	type : "audio",

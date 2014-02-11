@@ -59,24 +59,21 @@ define(
 				initialize: function() {
 					var that = this;
 
+					var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
+					if(!PreviewQuidd.test(this.get("name"))) {
+						console.log("add preview", this.get("name"));
+						views.quidds.addPreviewIcon(this.get("name"));
+					}
+
 					that.getShmdatas(function(shmdatas) {
 
+						/* ViewSource it's a view for create a entry source to the table transfer */
 
 						if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
 							_.each(collections.tables.models, function(tableModel) {
 								tableModel.add_to_table(that);
 							});
 						}
-
-						/* ViewSource it's a view for create a entry source to the table transfer */
-
-						// if (that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
-						// 	that.set("view", new ViewSource({
-						// 		model: that,
-						// 		table: "transfer"
-						// 	}));
-
-						// }
 
 
 						/* ViewSourceProperty it's a entry source for the table control */

@@ -53,8 +53,8 @@ define(
 
 						var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
 						if(!PreviewQuidd.test(quidd[0])) {
-							console.log("close preview !");
-							views.quidds.removePreviewIcon(quidd);
+							
+							views.quidds.removePreviewIcon(quidd[0]);
 						}
 						that.delete(quidd);
 					});
@@ -80,7 +80,6 @@ define(
 					/** Event called when the shmdatas readers is updated */
 					socket.on("update_shmdatas_readers", function(name, shmdatas) {
 						/* we parse connection for add or remove */
-						console.log(name, $.parseJSON(shmdatas).shmdata_readers);
 						var shmdatas = $.parseJSON(shmdatas).shmdata_readers;
 
 						$("[data-destination='"+name+"']").each(function(index, box) {

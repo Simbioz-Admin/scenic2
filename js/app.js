@@ -12,7 +12,7 @@ define(
 		'backbone',
 		'jquery',
 		'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
-		'views/destinations', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
+		'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/ircs'
 
 	],
 
@@ -20,8 +20,8 @@ define(
 		_,
 		Backbone,
 		$,
-		CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
-		ViewDestinations, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
+		CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionIrcs,
+		ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewIrcs
 	) {
 
 		/** 
@@ -32,13 +32,13 @@ define(
 		 *	@requires CollectionClassesDoc
 		 *	@requires CollectionReceivers
 		 *	@requires CollectionQuidds
-		 *	@requires CollectionsControlProperties
+		 *	@requires CollectionDestinationProperties
 		 *	@requires CollectionLoggers
 		 *	@requires CollectionIrcs
 		 *	@requires ViewDestinations
 		 *	@requires ViewGlobal
 		 *	@requires ViewQuidds
-		 *	@requires ViewControlProperties
+		 *	@requires ViewDestinationProperties
 		 *	@requires ViewLoggers
 		 *	@requires ViewIrcs
 		 *  @augments module:Backbone.View
@@ -66,8 +66,8 @@ define(
 		
 							collections.tables = new CollectionTables();
 		
-							collections.controlProperties = new CollectionsControlProperties();
-							collections.controlProperties.fetch();
+							collections.destinationProperties = new CollectionDestinationProperties();
+							collections.destinationProperties.fetch();
 
 							collections.loggers = new CollectionLoggers();
 							views.logger = new ViewLoggers({
@@ -77,15 +77,13 @@ define(
 							views.global = new ViewGlobal();
 
 							//loading views
-							// views.clients = new ViewDestinations({
-							// 	collection: collections.receivers
-							// });
 
 							views.quidds = new ViewQuidds({
 								collection: collections.quidds
 							});
-							views.controlProperties = new ViewControlProperties({
-								collection: collections.controlProperties
+
+							views.destinationProperties = new ViewDestinationProperties({
+								collection: collections.destinationProperties
 							});
 						}
 					});

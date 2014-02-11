@@ -99,7 +99,7 @@ define(
 					});
 
 					var template = _.template(TemplateMenu, {
-						type: "sources",
+						type: "classes",
 						classes: classesByCategory
 					});
 

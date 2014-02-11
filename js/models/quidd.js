@@ -12,14 +12,14 @@ define(
 		'text!/templates/panelInfoSource.html'
 	],
 
-	function(_, Backbone, ViewSource, ViewDestinationProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
+	function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
 
 		/** 
 		 *	@constructor
 		 *  @requires Underscore
 		 *  @requires Backbone
 		 *	@requires ViewSource
-		 *	@requires ViewDestinationProperty
+		 *	@requires ViewSourceProperty
 		 *	@requires ViewDestination
 		 *	@requires ViewMapper
 		 *	@requires ViewEditQuidd
@@ -61,9 +61,12 @@ define(
 
 					that.getShmdatas(function(shmdatas) {
 
-						_.each(collections.tables.models, function(tableModel) {
-							tableModel.add_to_table(that);
-						});
+
+						if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
+							_.each(collections.tables.models, function(tableModel) {
+								tableModel.add_to_table(that);
+							});
+						}
 
 						/* ViewSource it's a view for create a entry source to the table transfer */
 
@@ -76,10 +79,10 @@ define(
 						// }
 
 
-						/* ViewDestinationProperty it's a entry source for the table control */
+						/* ViewSourceProperty it's a entry source for the table control */
 
 						if (that.get("class") == "midisrc") {
-							that.set("view", new ViewDestinationProperty({
+							that.set("view", new ViewSourceProperty({
 								model: that,
 								table: "control"
 							}));
@@ -89,6 +92,7 @@ define(
 						/* ViewMapper it's the connection between the source and destination in table control */
 
 						if (that.get("category") == "mapper") {
+							console.log("mapper",that);
 							that.set("view", new ViewMapper({
 								model: that,
 								table: "control"
@@ -133,7 +137,7 @@ define(
 							$("[data-hostname='"+that.get("name")+"']").remove();
 
 							//check if propertiesControl is created with the quidd deleted
-							collections.controlProperties.each(function(controlProperty) {
+							collections.destinationProperties.each(function(controlProperty) {
 								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
 							});
 						}

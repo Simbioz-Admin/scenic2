@@ -87,7 +87,6 @@ module.exports = function(config, switcher, $, _, io, log) {
 			}
 
 			if(qprop == "shmdata-readers") {
-				console.log("SHMDATAS READERS", qname, qprop, pvalue);
 				io.sockets.emit("update_shmdatas_readers", qname, pvalue);
 			}
 		});

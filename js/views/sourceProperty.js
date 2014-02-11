@@ -39,14 +39,14 @@ define(
 					'click .info': 'info'
 				},
 
-				initialize: function() {
+				initialize: function(options) {
 
 					/* subscribe to the modification of model link to this view */
 					this.model.on('remove', this.removeView, this);
 					this.model.on('add:property', this.render, this);
 					this.model.on('remove:property', this.render, this);
 
-					this.table = this.options.table;
+					this.table = options.table;
 					this.render();
 
 					//here we define were go the source (local or remote)
@@ -64,7 +64,7 @@ define(
 
 					var that = this
 					,	properties = this.model.get("properties")
-					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.controlProperties.toJSON())
+					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON())
 					,	countProperty = 0;
 
 					$(this.el).html("");

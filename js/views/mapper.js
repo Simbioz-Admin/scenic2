@@ -38,10 +38,10 @@ define(
 				},
 
 				/* called for each new mapper */
-				initialize: function() {
+				initialize: function(options) {
 					/* Subscribe to the remove of a specific mapper */
 					this.model.on('remove', this.removeView, this);
-					this.table = this.options.table;
+					this.table = options.table;
 					this.render();
 				},
 
@@ -49,10 +49,21 @@ define(
 				render: function() {
 					var info = this.model.get("name").split("_");
 					var template = _.template(TemplateMapper);
+					var that = this;
 					$(this.el).html(template);
 					//find the connection
-					var box = $("[data-quiddname='" + info[1] + "'][data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
-					box.html($(this.el));
+
+					/* sometimes shmdata is not generate and we dont find box */
+					var IntervalAdd = setInterval(function(){
+						var box = $("[data-quiddname='" + info[1] + "'][data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
+						console.log("try add view mapper", box.length);
+						if(box.length > 0){
+							box.html($(that.el));
+							window.clearInterval(IntervalAdd);
+						} 
+					}, 10);
+
+
 				},
 				edit: function() {
 					this.model.edit();

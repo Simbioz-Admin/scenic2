@@ -53,8 +53,8 @@ define(
 
 						var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
 						if(!PreviewQuidd.test(quidd[0])) {
-							console.log("close preview !");
-							views.quidds.removePreviewIcon(quidd);
+							
+							views.quidds.removePreviewIcon(quidd[0]);
 						}
 						that.delete(quidd);
 					});
@@ -75,6 +75,20 @@ define(
 					/** Event called when the shmdatas of specific quidd is created */
 					socket.on("updateShmdatas", function(qname, shmdatas) {
 						that.updateShmdatas(qname, shmdatas);
+					});
+
+					/** Event called when the shmdatas readers is updated */
+					socket.on("update_shmdatas_readers", function(name, shmdatas) {
+						/* we parse connection for add or remove */
+						var shmdatas = $.parseJSON(shmdatas).shmdata_readers;
+
+						$("[data-destination='"+name+"']").each(function(index, box) {
+							$(box).removeClass("active");
+							var path = $(box).parent().data("path");
+							_.each(shmdatas, function(shm){
+								if(shm.path == path) $(box).addClass("active");
+							});
+						});
 					});
 				},
 
@@ -175,6 +189,18 @@ define(
 						callback(propertyValue);
 					});
 				},
+
+				/**
+				 *	Filter for get specific quidds of this collection 
+				 */
+				 SelectQuidds: function(category) {
+
+				 	var quidds = this.filter(function(quidd) {
+				 		return quidd.get("category") == category;
+				 	});
+
+				 	return quidds;
+				 }
 
 			});
 

@@ -9,8 +9,8 @@ define(
 	[
 		'underscore',
 		'backbone',
-		'text!/templates/table.html',
-		'text!/templates/menu.html'
+		'text!/templates/table/table.html',
+		'text!/templates/table/menu.html',
 	],
 
 	function(_, Backbone, TemplateTable, TemplateMenu) {
@@ -35,13 +35,20 @@ define(
 				className: 'table',
 				events: {
 					"mouseenter #create-quiddsProperties": "getMenuProperties",
-					"mouseenter #create-quidds": "getMenuQuiddsByCategory",
-					"mouseenter #create-midi": "getMenuMidiDevice"
+					// "mouseenter #create-quidds": "getMenuQuiddsByCategory",
+					"mouseenter #create-midi": "getMenuMidiDevice",
+					"mouseenter .get_classes": 'get_classes',
+					// "click .connect-to-quidd": "connectToQuidd",
+
+					"click .box" : "ask_connection",
+					"keypress #port_destination": "set_connection",
+					"blur #port_destination": "removeInputDestination"
 				},
 				/* Called on initialization of the table (control / transfer) */
 				initialize: function() {
 
-					//generate a btn for the table
+					/* generate a btn for the table */
+
 					var active = (config.defaultPanelTable == this.model.get("type") ? "active" : "");
 					var btnTable = $("<div></div>", {
 						text: "",
@@ -53,7 +60,9 @@ define(
 					btnTable.append("<div class='content'></div>");
 					$("#panelTables").prepend(btnTable);
 
-					// generate the table
+
+					/* generate the table */
+
 					var template = _.template(TemplateTable, {
 						type: this.model.get("type"),
 						menus: this.model.get("menus")
@@ -62,9 +71,147 @@ define(
 						.attr("id", this.model.get("type"))
 						.addClass(active)
 						.html(template);
-					//add to the default panel
+
+
+					/* add to the default panel */
+
 					$("#panelLeft").append(this.el);
 				},
+
+
+				/* Called for get list of quiddity source 
+				 *	The list of quiddity source is get when source word appear in name Class quiddity
+				 */
+
+				get_classes: function(e) {
+
+					/* get the quiddity classes authorized on this table */
+
+					var classes = this.model.classes_authorized($(e.target).data("type"));
+
+					/* we not load classes if nothing is return */
+					if(classes.length == 0) return;
+
+					/* GroupBy category the list of classes */
+
+					var classesByCategory = _.groupBy(classes, function(clas) {
+						return clas.category;
+					});
+
+					var template = _.template(TemplateMenu, {
+						type: "classes",
+						classes: classesByCategory
+					});
+
+					$("#listSources", this.el).remove();
+					$(e.target).after(template);
+
+				},
+
+				ask_connection : function(e){
+
+					var box = $(e.target)
+					,	destination = box.data("destination")
+					,	id = box.data("id")
+					,	path = box.parent().data("path");
+
+
+					/* if transfer we ask port for connect to the receiver */
+					if(this.model.get("type") == "transfer") {
+						/* if already connect */
+						if(box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok){});
+						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
+					}
+
+					if(this.model.get("type") == "audio"){
+						if(box.hasClass("active")){
+							console.log("disconnect audio");
+							socket.emit("invoke", destination, "disconnect", [], function(data) {
+								console.log(data);
+							})
+						}
+						else {
+							console.log("connect audio together");
+							
+							socket.emit("invoke", destination, "connect", [path], function(data) {
+								console.log(data);
+							});
+						}
+					}
+
+
+				},
+
+				set_connection : function(e){
+					var that = this;
+
+					if (e.which == 13) //touch enter
+					{
+						var box = $(e.target).parent(),
+							id = $(e.target).closest("td").data("id"),
+							path = $(e.target).closest("tr").data("path"),
+							port = $(e.target).val(),
+							portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
+							that = this;
+
+						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
+							that.removeInputDestination(e);
+						});
+					}
+				},
+
+				/* removes the input who we defined the port */
+				removeInputDestination: function(element) {
+					$(element.target).parent().parent().html("");
+				},
+
+
+				// getQuidds : function(element){
+
+				// 	var type = $(element.target).data("type");
+
+				// 	if(this.model.get("menus")[type].byCategory){
+
+				// 		var excludes =this.model.get("menus")[type].byCategory.excludes;
+				// 		var select = this.model.get("menus")[type].byCategory.select;
+				// 		var category = this.model.get("menus")[type].byCategory.name;
+
+				// 		var quiddsList = _.groupBy(collections.classesDoc.getByCategory(category).toJSON(), function(source) {
+				// 			return source.category;
+				// 		});
+
+				// 		if(excludes) quiddsList = _.omit(quiddsList, excludes);
+				// 		if(select) quiddsList = _.pick(quiddsList, select);
+				// 	}
+
+				// 	if(this.model.get("menus")[type]["byClasses"]) {
+
+				// 		var excludes = this.model.get("menus")[type].byClasses.excludes;
+				// 		var select = this.model.get("menus")[type].byClasses.select;
+
+				// 		var quiddsList = [];
+
+				// 		_.find(collections.classesDoc.toJSON(), function(quidd) {
+				// 			if(_.contains(select, quidd["class name"]) && quidd.category.indexOf("source") >= 0) quiddsList.push(quidd);
+				// 		});
+
+				// 		quiddsList = _.groupBy(quiddsList, function(source) {
+				// 			return source.category;
+				// 		});
+				// 	}
+
+
+
+				// 	$("#listSources").remove();
+
+				// 	var template = _.template(TemplateMenu, {
+				// 		type: "sources",
+				// 		menus: quiddsList
+				// 	});
+				// 	$(element.target).after(template);
+
+				// },
+
 
 				/* 
 				 *	called for showing list of properties existing
@@ -96,24 +243,6 @@ define(
 					} else {
 						views.global.notification("error", "you need to create source before to add a property");
 					}
-				},
-
-				/* Called for get list of quiddity source 
-				 *	The list of quiddity source is get when source word appear in name Class quiddity
-				 */
-
-				getMenuQuiddsByCategory: function(element) {
-					$("#listQuiddsByCategory").remove();
-					var quiddsByCategory = _.groupBy(collections.classesDoc.getByCategory("source").toJSON(), function(source) {
-						return source.category;
-					});
-
-					delete quiddsByCategory["midi source"]; //remove midi source because it's just use for table control
-					var template = _.template(TemplateMenu, {
-						type: "quiddsClass",
-						menus: quiddsByCategory
-					});
-					$(element.target).after(template);
 				},
 
 

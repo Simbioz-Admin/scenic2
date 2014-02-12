@@ -9,10 +9,11 @@ define(
 	[
 		'underscore',
 		'backbone',
-		'text!/templates/source.html',
+		'views/connexion',
+		'text!/templates/source.html'
 	],
 
-	function(_, Backbone, TemplateSource) {
+	function(_, Backbone, ConnexionView, TemplateSource) {
 
 		/** 
 		 *	@constructor
@@ -41,12 +42,12 @@ define(
 
 				/* Called when en new source quiddity is created */
 
-				initialize: function() {
+				initialize: function(options) {
 
 					/* Subscribe for remove and change shmdatas on quiddity source */
 					this.model.on('remove', this.removeView, this);
 					this.model.on('change:shmdatas', this.render, this);
-					this.table = this.options.table;
+					this.table = options.table;
 
 					//here we define were go the source (local or remote)
 					if (this.model.get("class") == "httpsdpdec") {
@@ -56,30 +57,67 @@ define(
 					}
 
 					this.render();
-
 				},
 
 
 				render: function() {
-					
+					//console.log("render source !", this.model.get("name"));
 					var that = this
 					,	shmdatas = this.model.get("shmdatas")
-					,	destinations = (this.table == "transfer" ? collections.destinations.toJSON() : null);
+					,	table = collections.tables.findWhere({ type : this.table });
 
 					$(this.el).html("");
-
+					
 					//render the shmdatas of the source
 					if (typeof shmdatas == "object" && shmdatas.length != 0) {
+						
+						/* for each shmdata wer create a source, this source can be connect with destination */
 						_.each(shmdatas, function(shmdata, index) {
+
+							/* Parsing destination for generate connexion */
+							var connexions = "";
+
+							table.get("collectionDestinations").each(function(destination){
+
+								/* check if the connexion existing between source and destination */
+								var active = "";
+
+								if(that.table == "transfer"){
+									_.each(destination.get("data_streams"), function(stream){
+										if(stream.path == shmdata.path) active = "active";
+									});
+								}
+
+								if(that.table == "audio" ){
+									
+									var shmdata_readers;
+
+									_.each(destination.get("properties"), function(prop){
+										
+										if(prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+									});
+
+									_.each(shmdata_readers, function(shm) {
+										if(shm.path == shmdata.path) active = "active";
+									});
+								}
+
+								var connexion = '<td class="box '+active+' '+that.table+' " data-destination="'+destination.get("name")+'" data-id="'+destination.get("id")+'"></td>';
+								connexions = connexions+connexion;
+
+							});
+
+							/* add template shmdata to the source view  */
 							var template = _.template(TemplateSource, {
 								shmdata: shmdata,
 								index: index,
 								nbShmdata: shmdatas.length,
 								sourceName: that.model.get("name"),
-								destinations: destinations
+								connexions: connexions
 							});
-							$(that.el).append($(template));
 
+							$(that.el).append(template);
+							/* wait 1sec for show status shmdata (flux actif or not) */
 							setTimeout(function() {
 								that.setPreview(shmdata);
 							}, 1000);
@@ -95,6 +133,13 @@ define(
 						$(that.el).append($(template));
 					}
 
+				},
+
+				/* it's a specific function for showing shmdata and update the possible connexion  */
+
+				renderConnexions : function() {
+
+
 
 				},
 
@@ -108,7 +153,7 @@ define(
 					collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
 						info = info.split(",");
 
-						if (info[0] == "audio/x-raw-int" || info[0] == "video/x-raw-yuv") {
+						if (info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") {
 
 							var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
 							//check if the quiddity have already a preview active

@@ -59,19 +59,25 @@ define(
 				initialize: function() {
 					var that = this;
 
+					var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
+					if(!PreviewQuidd.test(this.get("name"))) {
+						console.log("add preview", this.get("name"));
+						views.quidds.addPreviewIcon(this.get("name"));
+					}
 
 					that.getShmdatas(function(shmdatas) {
 
 						/* ViewSource it's a view for create a entry source to the table transfer */
-						if (that.get("category").indexOf("source") != -1 && that.get("class") != "midisrc") {
-							that.set("view", new ViewSource({
-								model: that,
-								table: "transfer"
-							}));
 
+						if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
+							_.each(collections.tables.models, function(tableModel) {
+								tableModel.add_to_table(that);
+							});
 						}
 
+
 						/* ViewSourceProperty it's a entry source for the table control */
+
 						if (that.get("class") == "midisrc") {
 							that.set("view", new ViewSourceProperty({
 								model: that,
@@ -79,8 +85,11 @@ define(
 							}));
 						}
 
+
 						/* ViewMapper it's the connection between the source and destination in table control */
+
 						if (that.get("category") == "mapper") {
+							console.log("mapper",that);
 							that.set("view", new ViewMapper({
 								model: that,
 								table: "control"
@@ -120,8 +129,12 @@ define(
 					views.global.confirmation(function(ok) {
 						if (ok) {
 							socket.emit("remove", that.get("name"));
+							
+							/* sometimes quidd is destination and have connection need to be remove */
+							$("[data-hostname='"+that.get("name")+"']").remove();
+
 							//check if propertiesControl is created with the quidd deleted
-							collections.controlProperties.each(function(controlProperty) {
+							collections.destinationProperties.each(function(controlProperty) {
 								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
 							});
 						}
@@ -300,6 +313,7 @@ define(
 				 */
 
 				getShmdatas: function(callback) {
+
 					var that = this;
 					//ask for value of shmdatas and stock in model
 					this.getPropertyValue("shmdata-writers", function(shmdatas) {

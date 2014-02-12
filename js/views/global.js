@@ -14,10 +14,11 @@ define(
 		'text!/templates/panelLoadFiles.html',
 		'text!/templates/panelSaveFile.html',
 		'text!/templates/confirmation.html',
+		'text!/templates/createReceiver.html',
 		'app'
 	],
 
-	function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, app) {
+	function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
 
 		/** 
 		 *	@constructor
@@ -53,6 +54,9 @@ define(
 					'click .remove_save' : 'remove_save',
 					"click .tabTable": 'showTable',
 					"touchstart .tabTable": 'showTable',
+
+					"click #create_receiver" : "create_receiver",
+					"click #add-receiver": "add_receiver",
 
 
 				},
@@ -143,6 +147,34 @@ define(
 				},
 
 
+				create_receiver : function(e) {
+					var template = _.template(TemplateReceiver);
+					$("#panelRight .content").html(template);
+					views.global.openPanel();
+				},
+
+
+				add_receiver : function(e) {
+					e.preventDefault();
+
+					var destination = {
+						name : $("#clientName").val(),
+						hostName : $("#clientHost").val(),
+						portSoap : $("#clientSoap").val()
+					}
+
+					//collections.destinations.create(name, host_name, port_soap);
+
+					socket.emit("create_destination", destination , function(data) {
+						if (data.error) {
+							return views.global.notification("error", data.error);
+						}
+						views.global.notification("info", data.success);
+						views.global.closePanel();
+					});
+				},
+
+
 				/* Called when we type a touch on keyboard for specified action (only use for close panel for the moment) */
 
 				keyboardAction: function(event) {
@@ -230,12 +262,12 @@ define(
 					socket.emit("load_file", "save_files/"+$(e.target).html(), function(ok) {
 						if (ok) {
 							
-							collections.destinations.fetch({
+							collections.receivers.fetch({
 								success: function(response) {
 									//generate destinations
 									$(".destinations").html("");
-									collections.destinations.fetch();
-									views.clients.displayTitle();
+									collections.receivers.fetch();
+									//views.receivers.displayTitle();
 									//regenerate source transfer
 									$("#sources").html("");
 									collections.quidds.fetch();

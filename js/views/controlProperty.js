@@ -40,11 +40,11 @@ define(
 
 				/* Called when the view is initialized */
 
-				initialize: function() {
+				initialize: function(options) {
 
 					/* subscribe to suppression of the model */	
 					this.model.on('remove', this.removeView, this);
-					this.table = this.options.table;
+					this.table = options.table;
 
 					var that = this,
 						template = _.template(TemplateDestination, {

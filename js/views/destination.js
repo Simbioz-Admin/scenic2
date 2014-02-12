@@ -40,11 +40,11 @@ define(
 
 				/* Called when the view is initialized */
 
-				initialize: function() {
-
+				initialize: function(options) {
 					/* subscribe to suppression of the model */
 					this.model.on('remove', this.removeView, this);
-					this.table = this.options.table;
+					this.table = options.table;
+					var that = this;
 
 					var that = this,
 						template = _.template(TemplateDestination, {
@@ -52,12 +52,42 @@ define(
 						});
 
 					$(this.el).append(template);
+
+
+
 					//add the template to the destination table transfer
 					$("#" + this.table + " .destinations").append($(this.el));
 
-					/* add for each shmdata of source transfer a new box for the connection */
-					$("#" + this.table + " .shmdata").each(function(index, source) {
-						$(this).append("<td class='box connect-client' data-hostname='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>");
+					_.each($("#" + this.table + " .shmdata"), function(shmdata) {
+
+						/* check if box is already here */
+						if ($("[data-id='" + that.model.get('id') + "']", shmdata).length > 0) return;
+
+						/* check if connection is active */
+						if (that.table == "transfer") {
+							var active = _.where(that.model.get("data_streams"), {
+								path: $(shmdata).data("path")
+							}).length > 0 ? 'active' : "";
+						}
+
+						if (that.table == "audio") {
+
+							var shmdata_readers;
+
+							_.each(that.model.get("properties"), function(prop) {
+								if (prop.name == "shmdata-readers"  && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+							});
+
+							_.each(shmdata_readers, function(shm) {
+								if (shm.path == shmdata.path) active = "active";
+							});
+						}
+
+						var connection = "<td class='box " + active + " " + that.table + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('id') + "'></td>";
+
+						$(shmdata).append(connection);
+
+
 					});
 
 				},
@@ -81,6 +111,8 @@ define(
 
 				removeView: function() {
 					this.remove();
+					/* remove old box */
+					$("[data-id='" + this.model.get('id') + "']").remove();
 				}
 			});
 

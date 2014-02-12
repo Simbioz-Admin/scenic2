@@ -67,10 +67,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			if(qprop == "shmdata-writers"){
 				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
 				_.each(shmdatas, function(shm) {
-					// console.log("shm", shm);
-					console.log("add data stream", shm.path);
 					var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [shm.path]);
-					console.log("add?", addDataStream);
 				});
 
 			}
@@ -92,12 +89,17 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 				//if the quidd have shmdata we create view meter
 				if ($.parseJSON(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
-
+	
 				//Send to all users informing the creation of shmdatas for a specific quiddity
 				var shmdatas = switcher.get_property_value(qname, "shmdata-writers");
-				var shmdatas = $.parseJSON(switcher.get_property_value(qname, "shmdata-writers")).shmdata_writers;
+				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
 				log.debug("send Shmdatas for ", qname);
 				io.sockets.emit("updateShmdatas", qname, shmdatas);
+
+			}
+
+			if(qprop == "shmdata-readers") {
+				io.sockets.emit("update_shmdatas_readers", qname, pvalue);
 			}
 		});
 
@@ -117,6 +119,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
 
 				//we subscribe all properties of quidd created
+
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);

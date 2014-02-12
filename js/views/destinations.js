@@ -9,7 +9,7 @@ define(
 	[
 		'underscore',
 		'backbone',
-		'text!/templates/createClient.html'
+		// 'text!/templates/createClient.html'
 	],
 
 	function(_, Backbone, templateCreateClient) {
@@ -31,9 +31,9 @@ define(
 			{
 				el: 'body',
 				events: {
-					"click #create-client": "openPanel",
+					"click #create-host": "openPanel",
 					"click #add-client": "create",
-					"click .connect-client": "connection",
+					"click .connection.host": "connection",
 					"keypress #port_destination": "setConnection",
 					"blur #port_destination": "removeInputDestination"
 				},

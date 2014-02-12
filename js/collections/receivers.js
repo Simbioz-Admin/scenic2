@@ -9,16 +9,16 @@ define(
 	[
 		'underscore',
 		'backbone',
-		'models/destination',
+		'models/receiver',
 	],
 
-	function(_, Backbone, DestinationModel) {
+	function(_, Backbone, ModelReveicer) {
 
 		/** 
 		 *	@constructor
 		 *  @requires Underscore
 		 *  @requires Backbone
-		 *	@requires DestinationModel
+		 *	@requires ModelReveicer
 		 *  @augments module:Backbone.Collection
 		 */
 
@@ -30,7 +30,7 @@ define(
 
 			{
 
-				model: DestinationModel,
+				model: ModelReveicer,
 				url: '/quidds/dico/properties/destinations/values/',
 				timer : 5000,
 				parse: function(results, xhr) {
@@ -85,13 +85,13 @@ define(
 				 *	Rendering destinations once the destinations have been added to the collection Destinations
 				 */
 
-				render: function() {
-					collections.destinations.each(function(model) {
-						var view = new ViewDestination({
-							model: model
-						});
-					});
-				},
+				// render: function() {
+				// 	collections.destinations.each(function(model) {
+				// 		var view = new ViewDestination({
+				// 			model: model
+				// 		});
+				// 	});
+				// },
 
 			});
 

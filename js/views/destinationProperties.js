@@ -8,10 +8,11 @@ define(
 
 	[
 		'underscore',
-		'backbone'
+		'backbone',
+		'text!/templates/table/menu.html',
 	],
 
-	function(_, Backbone) {
+	function(_, Backbone, TemplateMenu) {
 
 		/** 
 		 *	@constructor
@@ -32,6 +33,7 @@ define(
 				events: {
 					"click .create-ControlProperty": "createControlProperty",
 					"click .connect-properties": "connectProperties",
+					"mouseenter #get_properties" : "show_properties"
 				},
 
 
@@ -52,6 +54,38 @@ define(
 					});
 				},
 
+
+				show_properties : function(e) {
+
+
+					console.log("SHOW PROPERTIES");
+					// return;
+
+					var quidds = {};
+					collections.quidds.each(function(quidd) {
+						var quiddCategory = quidd.get("category");
+						if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
+							var listProperties = [];
+							_.each(quidd.get("properties"), function(property) {
+								if (!collections.destinationProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
+									listProperties.push(property.name);
+									quidds[quidd.get("name")] = listProperties;
+								}
+							});
+						}
+					});
+
+					$("#listQuiddsProperties").remove();
+					if (!$.isEmptyObject(quidds)) {
+						var template = _.template(TemplateMenu, {
+							type: "QuiddsAndProperties",
+							menus: quidds
+						});
+						$(e.target).after(template);
+					} else {
+						views.global.notification("error", "you need to create source before add a property");
+					}
+				},
 
 				/* Called when choose to create a connection between a quiddity control (midi) and a destination */
 

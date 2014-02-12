@@ -11,8 +11,8 @@ define(
 		'underscore',
 		'backbone',
 		'jquery',
-		'collections/tables', 'collections/classes_doc', 'collections/destinations', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
-		'views/destinations', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
+		'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
+		'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/ircs'
 
 	],
 
@@ -20,8 +20,8 @@ define(
 		_,
 		Backbone,
 		$,
-		CollectionTables, CollectionClassesDoc, CollectionDestinations, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
-		ViewDestinations, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
+		CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionIrcs,
+		ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewIrcs
 	) {
 
 		/** 
@@ -30,15 +30,15 @@ define(
 		 *  @requires Jquery
 		 *	@requires CollectionTables
 		 *	@requires CollectionClassesDoc
-		 *	@requires CollectionDestinations
+		 *	@requires CollectionReceivers
 		 *	@requires CollectionQuidds
-		 *	@requires CollectionsControlProperties
+		 *	@requires CollectionDestinationProperties
 		 *	@requires CollectionLoggers
 		 *	@requires CollectionIrcs
 		 *	@requires ViewDestinations
 		 *	@requires ViewGlobal
 		 *	@requires ViewQuidds
-		 *	@requires ViewControlProperties
+		 *	@requires ViewDestinationProperties
 		 *	@requires ViewLoggers
 		 *	@requires ViewIrcs
 		 *  @augments module:Backbone.View
@@ -51,32 +51,45 @@ define(
 			collections.classesDoc = new CollectionClassesDoc();
 			collections.classesDoc.fetch({
 				success: function(response) {
-					collections.tables = new CollectionTables();
-					collections.destinations = new CollectionDestinations();
-					collections.destinations.fetch();
+					
+
+
+							
 
 					collections.quidds = new CollectionQuidds();
-					collections.quidds.fetch();
+					collections.quidds.fetch({
+						success:function(){
+							console.log("quidds Loaded");
 
-					collections.controlProperties = new CollectionsControlProperties();
-					collections.controlProperties.fetch();
+							collections.receivers = new CollectionReceivers();
+							collections.receivers.fetch();
+		
+							collections.tables = new CollectionTables();
+		
+							collections.destinationProperties = new CollectionDestinationProperties();
+							collections.destinationProperties.fetch();
 
-					collections.loggers = new CollectionLoggers();
-					views.logger = new ViewLoggers({
-						collection: collections.loggers
+							collections.loggers = new CollectionLoggers();
+							views.logger = new ViewLoggers({
+								collection: collections.loggers
+							});
+
+							views.global = new ViewGlobal();
+
+							//loading views
+
+							views.quidds = new ViewQuidds({
+								collection: collections.quidds
+							});
+
+							views.destinationProperties = new ViewDestinationProperties({
+								collection: collections.destinationProperties
+							});
+						}
 					});
 
-					//loading views
-					views.clients = new ViewDestinations({
-						collection: collections.destinations
-					});
-					views.global = new ViewGlobal();
-					views.quidds = new ViewQuidds({
-						collection: collections.quidds
-					});
-					views.controlProperties = new ViewControlProperties({
-						collection: collections.controlProperties
-					});
+				
+
 				}
 			});
 

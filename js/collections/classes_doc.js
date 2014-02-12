@@ -54,13 +54,18 @@ define(
 				 *	@param {string} Name of the category
 				 */
 
-				getByCategory: function(category) {
+				getByCategory: function(categories) {
 
-					filtered = this.filter(function(classDoc) {
-						if (classDoc.get("category").indexOf(category) >= 0) return classDoc;
+					filtered = _.filter(this.toJSON(), function(classDoc) {
+						var sameCat = false;
+						_.each(categories, function(cat) {
+							if(classDoc.category.indexOf(cat) >= 0) sameCat = true;
+						});
+						if(sameCat) return classDoc;
+						// if(_.contains(categories, classDoc.category)) return classDoc 
 					});
 
-					return new ClassesDocCollection(filtered);
+					return filtered;
 				}
 			});
 

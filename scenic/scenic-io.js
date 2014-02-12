@@ -450,7 +450,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 
-		};
+		};w
 
 
 

@@ -82,7 +82,16 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 			//check for remove shmdata when set property started to false
 			if (property == "started" && value == "false") {
+				//remove vumemeter associate with quiddity
 				scenic.removeVumeters(quiddName);
+				//remove shmdata of rtp
+				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
+				_.each(shmdatas, function(shmdata){
+					console.log("remove data stream", shmdata.path);
+					var remove = switcher.invoke("defaultrtp","remove_data_stream", [shmdata.path]);	
+					console.log("remove", remove);
+				});
+
 			}
 
 			if (quiddName && property && value) {
@@ -464,11 +473,11 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 			var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers"));
 
 
-			if(!_.findWhere(shmdataDefaultrtp.shmdata_readers, {path : path})) {
-				/* we add the path to the defaultrtp */
-				var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
-				if (!addDataStream) return cb("error add data stream");
-			}
+			// if(!_.findWhere(shmdataDefaultrtp.shmdata_readers, {path : path})) {
+			// 	/* we add the path to the defaultrtp */
+			// 	// var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
+			// 	if (!addDataStream) return cb("error add data stream");
+			// }
 
 
 			/* 2. we associate the stream with a destination on defaultrtp */

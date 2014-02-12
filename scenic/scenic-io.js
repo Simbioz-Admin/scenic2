@@ -87,9 +87,8 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 				//remove shmdata of rtp
 				var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 				_.each(shmdatas, function(shmdata){
-					console.log("remove data stream", shmdata.path);
-					var remove = switcher.invoke("defaultrtp","remove_data_stream", [shmdata.path]);	
-					console.log("remove", remove);
+					// console.log("remove data stream", shmdata.path);
+					//var remove = switcher.invoke("defaultrtp","remove_data_stream", [shmdata.path]);	
 				});
 
 			}
@@ -459,7 +458,7 @@ module.exports = function(config, scenicStart, io, switcher, scenic, $, _, log, 
 
 
 
-		};w
+		};
 
 
 

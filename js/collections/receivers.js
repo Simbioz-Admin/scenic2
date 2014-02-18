@@ -29,7 +29,6 @@ define(
 	     */
 
 	    {
-
 		model: ModelReveicer,
 		url: '/quidds/dico/properties/destinations/values/',
 		timer : 5000,
@@ -75,8 +74,8 @@ define(
 			_.each(streamsModel, function(stream, i) {
 			    if(stream.path == path) streamsModel.splice(i, 1);
 			});
-
 			$("[data-path='" + path + "'] [data-id='" + id + "']").removeClass("active");
+                        $("[data-path='" + path + "'] [data-id='" + id + "']").html("");
 		    })
 
 		},

@@ -97,31 +97,22 @@ define(
                             + that.table + "' data-destination='" 
                             + that.model.get('name') + "' data-id='" 
                             + that.model.get('id') + "'>" + port + "</td>";
-
 			$(shmdata).append(connection);
-
-
 		    });
-
 		},
 
-
 		/* Called when the click event is on the button edit destination */
-
 		edit: function() {
 		    this.model.edit();
 		},
 
-
 		/* Called when the click event is on the button remove destination */
-
 		removeClick: function() {
 		    this.model.delete();
 		},
 
 
 		/* Called when the model is removed */
-
 		removeView: function() {
 		    this.remove();
 		    /* remove old box */

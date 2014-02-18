@@ -60,6 +60,8 @@ define(
                         // declare variabble for this scope
                         var active = "";
                         var port = 0;
+                        var shmdata_readers;
+                        var connection;
                         console.log("table gave me this shmdata: ", shmdata);
 			/* check if box is already here */
 			if ($("[data-id='" + that.model.get('id') + "']", shmdata).length > 0) return;
@@ -81,9 +83,6 @@ define(
                         }
 
 			if (that.table == "audio") {
-
-			    var shmdata_readers;
-
 			    _.each(that.model.get("properties"), function(prop) {
 				if (prop.name == "shmdata-readers"  && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
 			    });
@@ -92,8 +91,7 @@ define(
 				if (shm.path == shmdata.path) active = "active";
 			    });
 			}
-
-			var connection = "<td class='box " + active + " " 
+			connection = "<td class='box " + active + " " 
                             + that.table + "' data-destination='" 
                             + that.model.get('name') + "' data-id='" 
                             + that.model.get('id') + "'>" + port + "</td>";

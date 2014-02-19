@@ -153,7 +153,7 @@ define(
 					collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
 						info = info.split(",");
 
-						if (info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") {
+						if (info[0].indexOf("image") >= 0 ||info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") {
 
 							var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
 							//check if the quiddity have already a preview active

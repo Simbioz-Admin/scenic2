@@ -161,6 +161,7 @@ define(
 						//check if the quiddity have already a preview active
 						socket.emit("get_quiddity_description", type + "_" + path, function(quiddInfo) {
 							if (quiddInfo.error && type != null) {
+								console.log(type, type + "_" + path);
 								socket.emit("create", type, type + "_" + path, function(quiddInfo) {
 									socket.emit("invoke", quiddInfo.name, "connect", [path]);
 								});

@@ -52,7 +52,7 @@ define(
 							type: "destinations"
 						}],
 						sources: {
-							select: ["audio source"]
+							select: ["audio source", "httpsdpdec"]
 						},
 						destinations: {
 							select: ["audio sink"]

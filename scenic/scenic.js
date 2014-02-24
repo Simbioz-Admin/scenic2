@@ -12,7 +12,7 @@
  * 	@module scenic
  */
 
-module.exports = function(config, switcher, $, _, io, log) {
+module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 
 	/**
@@ -56,6 +56,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		//signals for modification properties
 		switcher.register_prop_callback(function(qname, qprop, pvalue) {
+			
+			/* here we define action when a property of quidd is modified */
+
 			//we exclude byte-reate because its call every second (almost a spam...)
 			if (qprop != "byte-rate") {
 				log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
@@ -72,6 +75,58 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			}
 
+			if (qprop == "shmdata-writers") {
+
+				//if the quidd have shmdata we create view meter
+				if ($.parseJSON(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
+	
+				//Send to all users informing the creation of shmdatas for a specific quiddity
+				//var shmdatas = switcher.get_property_value(qname, "shmdata-writers");
+				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
+				log.debug("send Shmdatas for ", qname);
+				io.sockets.emit("updateShmdatas", qname, shmdatas);
+
+
+				/* check if destination have shmdata in connection */
+				console.log("check connections existing in destinations dico",shmdatas);
+
+				var destinations = switcher.get_property_value("dico", "destinations"),
+					destinations = $.parseJSON(destinations);
+
+				if (shmdatas.length > 0) {
+					_.each(shmdatas, function(shm){
+						_.each(destinations, function(dest){
+							var findShm = _.findWhere(dest.data_streams, { path : shm.path});
+							console.log("Find Shm", findShm);
+							if(findShm){
+								//add to the rtp session
+								// var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [findShm.path]);
+								receivers.reconnect_destination(findShm.path, dest.id, findShm.port, function(err, data){
+									if(err) return log.error(err);
+								});
+							}
+
+						});
+					});
+				}
+
+			}
+
+			if(qprop == "shmdata-readers") {
+				io.sockets.emit("update_shmdatas_readers", qname, pvalue);
+			}
+
+
+			// if(qprop == "started") {
+			// 	console.log("STARTED PROPERTY ");
+			// 	var destinations = switcher.get_property_value("dico", "destinations"),
+			// 	destinations = $.parseJSON(destinations),
+			// 	exist = _.findWhere(destinations, {
+			// 		name: destination.name
+			// 	});
+			// }
+
+
 			//broadcast all the modification on properties
 			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 				if (quiddName == qname) {
@@ -80,27 +135,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 					socket.emit("signals_properties_value", qname, qprop, pvalue);
 				}
 			});
-
-
-			// io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
-
-
-			if (qprop == "shmdata-writers") {
-
-				//if the quidd have shmdata we create view meter
-				if ($.parseJSON(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
-	
-				//Send to all users informing the creation of shmdatas for a specific quiddity
-				var shmdatas = switcher.get_property_value(qname, "shmdata-writers");
-				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
-				log.debug("send Shmdatas for ", qname);
-				io.sockets.emit("updateShmdatas", qname, shmdatas);
-
-			}
-
-			if(qprop == "shmdata-readers") {
-				io.sockets.emit("update_shmdatas_readers", qname, pvalue);
-			}
+			
 		});
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {

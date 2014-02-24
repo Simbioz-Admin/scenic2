@@ -55,11 +55,11 @@ define(
 				 */
 
 				getByCategory: function(categories) {
-
 					filtered = _.filter(this.toJSON(), function(classDoc) {
 						var sameCat = false;
 						_.each(categories, function(cat) {
 							if(classDoc.category.indexOf(cat) >= 0) sameCat = true;
+							if(classDoc["class name"].indexOf(cat) >= 0) sameCat = true;
 						});
 						if(sameCat) return classDoc;
 						// if(_.contains(categories, classDoc.category)) return classDoc 

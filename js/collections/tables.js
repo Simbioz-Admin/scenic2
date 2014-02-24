@@ -52,7 +52,7 @@ define(
 							type: "destinations"
 						}],
 						sources: {
-							select: ["audio source"]
+							select: ["audio source", "httpsdpdec"]
 						},
 						destinations: {
 							select: ["audio sink"]
@@ -77,7 +77,7 @@ define(
 							id: "create_receiver"
 						}],
 						sources: {
-							select: ["source"],
+							select: ["source", "httpsdpdec"],
 							exclude: ["midi source"]
 						},
 						destinations: collections.receivers

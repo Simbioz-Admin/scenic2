@@ -133,6 +133,10 @@ define(
 							/* sometimes quidd is destination and have connection need to be remove */
 							$("[data-hostname='"+that.get("name")+"']").remove();
 
+							/* check if the panel open is for the quiddity deleted */
+							if(that.get("name") == $("#panelRight").data('quiddName')){
+								views.global.closePanel();								
+							}
 							//check if propertiesControl is created with the quidd deleted
 							collections.destinationProperties.each(function(controlProperty) {
 								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
@@ -161,6 +165,7 @@ define(
 						//check if the quiddity have already a preview active
 						socket.emit("get_quiddity_description", type + "_" + path, function(quiddInfo) {
 							if (quiddInfo.error && type != null) {
+								console.log(type, type + "_" + path);
 								socket.emit("create", type, type + "_" + path, function(quiddInfo) {
 									socket.emit("invoke", quiddInfo.name, "connect", [path]);
 								});

@@ -51,7 +51,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 		}
 
 		switcher.register_log_callback(function(msg) {
-			log.debug(msg);
+			log.switcher(msg);
 		});
 
 		//signals for modification properties
@@ -88,27 +88,9 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 
 				/* check if destination have shmdata in connection */
-				console.log("check connections existing in destinations dico",shmdatas);
-
-				var destinations = switcher.get_property_value("dico", "destinations"),
-					destinations = $.parseJSON(destinations);
-
-				if (shmdatas.length > 0) {
-					_.each(shmdatas, function(shm){
-						_.each(destinations, function(dest){
-							var findShm = _.findWhere(dest.data_streams, { path : shm.path});
-							console.log("Find Shm", findShm);
-							if(findShm){
-								//add to the rtp session
-								// var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [findShm.path]);
-								receivers.reconnect_destination(findShm.path, dest.id, findShm.port, function(err, data){
-									if(err) return log.error(err);
-								});
-							}
-
-						});
-					});
-				}
+				//if(pvalue)
+				receivers.reconnect_destination(shmdatas);
+				
 
 			}
 
@@ -117,13 +99,14 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 			}
 
 
-			// if(qprop == "started") {
-			// 	console.log("STARTED PROPERTY ");
-			// 	var destinations = switcher.get_property_value("dico", "destinations"),
-			// 	destinations = $.parseJSON(destinations),
-			// 	exist = _.findWhere(destinations, {
-			// 		name: destination.name
-			// 	});
+			// if(qprop == "started" && !pvalue) {
+			// 	log.debug("Started", )
+			// // 	console.log("STARTED PROPERTY ");
+			// // 	var destinations = switcher.get_property_value("dico", "destinations"),
+			// // 	destinations = $.parseJSON(destinations),
+			// // 	exist = _.findWhere(destinations, {
+			// // 		name: destination.name
+			// // 	});
 			// }
 
 
@@ -158,7 +141,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);
-					log.info("subscribe to ",pvalue[0], property.name);
+					log.debug("subscribe to ",pvalue[0], property.name);
 				});
 
 

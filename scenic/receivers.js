@@ -161,9 +161,33 @@ module.exports = function(config, switcher, $, _, io, log) {
 		}
 
 
-		var reconnect_destination = function(path, id, port, cb) {
-			log.debug("reconnect destination", path, id, port);
-			var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
+		var reconnect_destination = function(shmdatas, cb) {
+
+			log.info("check connections existing in destinations dico", shmdatas);
+
+				var destinations = switcher.get_property_value("dico", "destinations"),
+					destinations = $.parseJSON(destinations);
+
+				if (shmdatas.length > 0) {
+					_.each(shmdatas, function(shm){
+						_.each(destinations, function(dest){
+							var findShm = _.findWhere(dest.data_streams, { path : shm.path});
+							if(findShm){
+								//add to the rtp session
+								// var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [findShm.path]);
+								log.debug(findShm.path, dest.id, findShm.port);
+								var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [findShm.path, dest.id, findShm.port]);
+							}
+						/* if soap port is define we refresh httpsdpdec */
+						if(dest.portSoap){
+							var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + dest.id;
+							var updateShm = switcher.invoke("soapControlClient-" + dest.id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
+						}
+						});
+					});
+				}
+			
+			
 		}
 
 

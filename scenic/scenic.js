@@ -89,8 +89,6 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 				/* check if destination have shmdata in connection */
 				//if(pvalue)
-				receivers.reconnect_destination(shmdatas);
-				
 
 			}
 
@@ -99,21 +97,27 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 			}
 
 
-			// if(qprop == "started" && !pvalue) {
-			// 	log.debug("Started", )
-			// // 	console.log("STARTED PROPERTY ");
-			// // 	var destinations = switcher.get_property_value("dico", "destinations"),
-			// // 	destinations = $.parseJSON(destinations),
-			// // 	exist = _.findWhere(destinations, {
-			// // 		name: destination.name
-			// // 	});
-			// }
+			if(qprop == "started" && pvalue == "false") {
+				log.debug("remove shmdata of", qname);
+
+				var destinations = switcher.get_property_value("dico", "destinations"),
+				destinations = $.parseJSON(destinations);
+
+				_.each(destinations, function(dest){
+					_.each(dest.data_streams, function(stream){
+						if(stream.quiddName == qname){
+							log.debug("find quidd connected!", stream.path, stream.port);
+							receivers.remove_connection(stream.path, dest.id);
+						}
+					});
+				});
+
+			}
 
 
 			//broadcast all the modification on properties
 			_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 				if (quiddName == qname) {
-					log.debug("properties send to sId (" + socketId + ") " + qname + " " + qprop + " : " + pvalue);
 					var socket = io.sockets.sockets[socketId];
 					socket.emit("signals_properties_value", qname, qprop, pvalue);
 				}
@@ -123,7 +127,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 		switcher.register_signal_callback(function(qname, qprop, pvalue) {
 
-			log.debug('signal : ', qname, ' ', qprop, ' ', pvalue);
+			log.switcher('signal : ', qname, ' ', qprop, ' ', pvalue);
 			
 			var quiddClass = $.parseJSON(switcher.get_quiddity_description(pvalue[0]));
 			if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {

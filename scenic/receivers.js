@@ -113,8 +113,9 @@ module.exports = function(config, switcher, $, _, io, log) {
 		}
 
 
-		var connect_destination =  function(path, id, port, portSoap, cb) {
+		var connect_destination =  function(quiddName, path, id, port, portSoap, cb) {
 
+			log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
 			/* 1. we need to check if the stream is already added to defaultrtp */
 
@@ -135,6 +136,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 				if (destination.id == id) {
 					destination.data_streams.push({
+						quiddName : quiddName,
 						path: path,
 						port: port
 					});
@@ -221,7 +223,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 			io.sockets.emit("remove_connection", path, id);
 			//var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
 			//var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
-			cb(remove);
+			if(cb) return cb(null, remove);
 		}
 
 		var update_destination =  function(oldId, destination, cb) {

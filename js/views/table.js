@@ -150,11 +150,12 @@ define(
 						var box = $(e.target).parent(),
 							id = $(e.target).closest("td").data("id"),
 							path = $(e.target).closest("tr").data("path"),
+							quiddName = $(e.target).closest("tr").data("quiddname"),
 							port = $(e.target).val(),
 							portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
 							that = this;
 
-						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
+						socket.emit("connect_destination", quiddName, path, id, port, portSoap, function(ok) {
 							that.removeInputDestination(e);
 						});
 					}

@@ -274,15 +274,15 @@ define(
 							
 							collections.receivers.fetch({
 								success: function(response) {
-									//generate destinations
-									$(".destinations").html("");
-									collections.receivers.fetch();
 									//views.receivers.displayTitle();
 									//regenerate source transfer
 									$("#sources").html("");
 									collections.quidds.fetch();
 									collections.controlProperties.fetch();
 
+									//generate destinations
+									$(".destinations").html("");
+									collections.receivers.fetch();
 
 								}
 							});

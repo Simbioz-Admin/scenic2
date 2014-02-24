@@ -47,6 +47,9 @@ app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 
+/* temporary add express config for mini website presentation scenic*/
+app.use("/site_web", express.static(__dirname + "/site_web"));
+
 
 //Require the differents dependencies
 var receivers = require("./scenic/receivers.js")(config, switcher, $, _, io, log);

@@ -62,49 +62,49 @@ define(
 
 				render: function() {
 					//console.log("render source !", this.model.get("name"));
-					var that = this
-					,	shmdatas = this.model.get("shmdatas")
-					,	table = collections.tables.findWhere({ type : this.table });
+					var that = this,
+						shmdatas = this.model.get("shmdatas"),
+						table = collections.tables.findWhere({
+							type: this.table
+						});
 
 					$(this.el).html("");
-					
+
 					//render the shmdatas of the source
 					if (typeof shmdatas == "object" && shmdatas.length != 0) {
-						
+
 						/* for each shmdata wer create a source, this source can be connect with destination */
 						_.each(shmdatas, function(shmdata, index) {
 
 							/* Parsing destination for generate connexion */
 							var connexions = "";
 
-							table.get("collectionDestinations").each(function(destination){
-
+							table.get("collectionDestinations").each(function(destination) {
+								console.log("table.destination in souce", destination.get("data_streams"));
 								/* check if the connexion existing between source and destination */
 								var active = "";
 
-								if(that.table == "transfer"){
-									_.each(destination.get("data_streams"), function(stream){
-										if(stream.path == shmdata.path) active = "active";
+								if (that.table == "transfer") {
+									_.each(destination.get("data_streams"), function(stream) {
+										if (stream.path == shmdata.path) active = "active";
 									});
 								}
 
-								if(that.table == "audio" ){
-									
+								if (that.table == "audio") {
 									var shmdata_readers;
 
-									_.each(destination.get("properties"), function(prop){
-										
-										if(prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+									_.each(destination.get("properties"), function(prop) {
+										if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
 									});
 
 									_.each(shmdata_readers, function(shm) {
-										if(shm.path == shmdata.path) active = "active";
+										if (shm.path == shmdata.path) active = "active";
 									});
+
 								}
 
-								var connexion = '<td class="box '+active+' '+that.table+' " data-destination="'+destination.get("name")+'" data-id="'+destination.get("id")+'"></td>';
-								connexions = connexions+connexion;
-
+								var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '"></td>';
+								connexions = connexions + connexion;
 							});
 
 							/* add template shmdata to the source view  */
@@ -123,7 +123,7 @@ define(
 							}, 1000);
 						});
 
-					//if there is not a record is made shmdata anyway
+						//if there is not a record is made shmdata anyway
 					} else {
 						var template = _.template(TemplateSource, {
 							sourceName: that.model.get("name"),
@@ -132,14 +132,11 @@ define(
 
 						$(that.el).append($(template));
 					}
-
 				},
 
 				/* it's a specific function for showing shmdata and update the possible connexion  */
 
-				renderConnexions : function() {
-
-
+				renderConnexions: function() {
 
 				},
 
@@ -153,7 +150,7 @@ define(
 					collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
 						info = info.split(",");
 
-						if (info[0].indexOf("image") >= 0 ||info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv") {
+						if (info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv" || info[0] == "video/x-raw-rgb") {
 
 							var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
 							//check if the quiddity have already a preview active

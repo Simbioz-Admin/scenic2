@@ -1,112 +1,112 @@
 define(
 
+    /** 
+     *	View ControlProperties
+     *	Manage the event global (not associate to a model) for the properties in table control
+     *	@exports Models/ControlProperties
+     */
+
+    [
+	'underscore',
+	'backbone',
+	'text!/templates/table/menu.html',
+    ],
+
+    function(_, Backbone, TemplateMenu) {
+
 	/** 
-	 *	View ControlProperties
-	 *	Manage the event global (not associate to a model) for the properties in table control
-	 *	@exports Models/ControlProperties
+	 *	@constructor
+	 *  @requires Underscore
+	 *  @requires Backbone
+	 *  @augments module:Backbone.Model
 	 */
 
-	[
-		'underscore',
-		'backbone',
-		'text!/templates/table/menu.html',
-	],
+	var ControlPropertiesView = Backbone.View.extend(
 
-	function(_, Backbone, TemplateMenu) {
-
-		/** 
-		 *	@constructor
-		 *  @requires Underscore
-		 *  @requires Backbone
-		 *  @augments module:Backbone.Model
-		 */
-
-		var ControlPropertiesView = Backbone.View.extend(
-
-			/**
-			 *	@lends module: Views/ControlProperties~ControlPropertiesView.prototype
-			 */
+	    /**
+	     *	@lends module: Views/ControlProperties~ControlPropertiesView.prototype
+	     */
 
 
-			{
-				el: 'body',
-				events: {
-					"click .create-ControlProperty": "createControlProperty",
-					"click .connect-properties": "connectProperties",
-					"mouseenter #get_properties" : "show_properties"
-				},
+	    {
+		el: 'body',
+		events: {
+		    "click .create-ControlProperty": "createControlProperty",
+		    "click .connect-properties": "connectProperties",
+		    "mouseenter #get_properties" : "show_properties"
+		},
 
 
-				/* Called when the view ControlProperties is initialized */
+		/* Called when the view ControlProperties is initialized */
 
-				initialize: function() {},
-
-
-				/*  Called when a property is selected on the dropdown menu in table controler (add destination) */
-
-				createControlProperty: function(element) {
-					var property = $(element.target).data("property"),
-						that = this,
-						quiddName = $(element.target).closest("ul").data("quiddname");
-
-					this.collection.create(quiddName, property, function(quiddName) {
-						$(element.target).remove();
-					});
-				},
+		initialize: function() {},
 
 
-				show_properties : function(e) {
+		/*  Called when a property is selected on the dropdown menu in table controler (add destination) */
+
+		createControlProperty: function(element) {
+		    var property = $(element.target).data("property"),
+		    that = this,
+		    quiddName = $(element.target).closest("ul").data("quiddname");
+
+		    this.collection.create(quiddName, property, function(quiddName) {
+			$(element.target).remove();
+		    });
+		},
 
 
-					console.log("SHOW PROPERTIES");
-					// return;
+		show_properties : function(e) {
 
-					var quidds = {};
-					collections.quidds.each(function(quidd) {
-						var quiddCategory = quidd.get("category");
-						if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
-							var listProperties = [];
-							_.each(quidd.get("properties"), function(property) {
-								if (!collections.destinationProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
-									listProperties.push(property.name);
-									quidds[quidd.get("name")] = listProperties;
-								}
-							});
-						}
-					});
 
-					$("#listQuiddsProperties").remove();
-					if (!$.isEmptyObject(quidds)) {
-						var template = _.template(TemplateMenu, {
-							type: "QuiddsAndProperties",
-							menus: quidds
-						});
-						$(e.target).after(template);
-					} else {
-						views.global.notification("error", "you need to create source before add a property");
-					}
-				},
+		    console.log("SHOW PROPERTIES");
+		    // return;
 
-				/* Called when choose to create a connection between a quiddity control (midi) and a destination */
-
-				connectProperties: function(element) {
-
-					if ($(element.target).attr("class").indexOf("connect-properties") == -1) return false;
-
-					var quiddSource = $(element.target).parent().data("quiddname"),
-						propertySource = $(element.target).parent().data("propertyname"),
-						destination = $(element.target).data("nameandproperty").split("_"),
-						sinkSource = destination[0],
-						sinkProperty = destination[1],
-						nameQuidd = "mapper_" + quiddSource + "_" + propertySource + "_" + $(element.target).data("nameandproperty");
-
-					socket.emit("create", "property-mapper", nameQuidd, function(infoQuidd) {
-						var model = collections.quidds.create(infoQuidd);
-						socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok) {});
-						socket.emit("invoke", infoQuidd.name, "set-sink-property", [sinkSource, sinkProperty], function(ok) {});
-					});
+		    var quidds = {};
+		    collections.quidds.each(function(quidd) {
+			var quiddCategory = quidd.get("category");
+			if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
+			    var listProperties = [];
+			    _.each(quidd.get("properties"), function(property) {
+				if (!collections.destinationProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
+				    listProperties.push(property.name);
+				    quidds[quidd.get("name")] = listProperties;
 				}
-			});
+			    });
+			}
+		    });
 
-		return ControlPropertiesView;
-	});
+		    $("#listQuiddsProperties").remove();
+		    if (!$.isEmptyObject(quidds)) {
+			var template = _.template(TemplateMenu, {
+			    type: "QuiddsAndProperties",
+			    menus: quidds
+			});
+			$(e.target).after(template);
+		    } else {
+			views.global.notification("error", "you need to create source before adding a property");
+		    }
+		},
+
+		/* Called when choose to create a connection between a quiddity control (midi) and a destination */
+
+		connectProperties: function(element) {
+
+		    if ($(element.target).attr("class").indexOf("connect-properties") == -1) return false;
+
+		    var quiddSource = $(element.target).parent().data("quiddname"),
+		    propertySource = $(element.target).parent().data("propertyname"),
+		    destination = $(element.target).data("nameandproperty").split("_"),
+		    sinkSource = destination[0],
+		    sinkProperty = destination[1],
+		    nameQuidd = "mapper_" + quiddSource + "_" + propertySource + "_" + $(element.target).data("nameandproperty");
+
+		    socket.emit("create", "property-mapper", nameQuidd, function(infoQuidd) {
+			var model = collections.quidds.create(infoQuidd);
+			socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok) {});
+			socket.emit("invoke", infoQuidd.name, "set-sink-property", [sinkSource, sinkProperty], function(ok) {});
+		    });
+		}
+	    });
+
+	return ControlPropertiesView;
+    });

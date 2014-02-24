@@ -49,10 +49,11 @@ app.use("/templates", express.static(__dirname + "/templates"));
 
 
 //Require the differents dependencies
-var scenic = require("./scenic/scenic.js")(config, switcher, $, _, io, log);
+var receivers = require("./scenic/receivers.js")(config, switcher, $, _, io, log);
+var scenic = require("./scenic/scenic.js")(config, switcher, receivers, $, _, io, log);
 require("./scenic/irc.js")(io, $, log, config);
 require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, config.scenicStart);
-require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, $, _, log, network);
+require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, receivers, $, _, log, network);
 
 
 

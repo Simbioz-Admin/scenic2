@@ -141,6 +141,7 @@ define(
 
 				closePanel: function(e) {
 					$("#panelRight").hide();
+					$("#panelRight").data("quiddName", "");
 					/* we unsubscribe to the quiddity */
 					socket.emit("unsubscribe_info_quidd", $("#quiddName").val());
 
@@ -181,11 +182,20 @@ define(
 					var that = this;
 					if (event.which == 27) 
 						{
+							/* Close panelRight */
 							this.closePanel();
+
+							/* close confirmation message */
 							if($("#overlay_confirmation").length > 0){ 
 								$("#overlay_confirmation").remove(); 
 								$("#container").removeClass("blur");
 							}
+
+							/* Close box save/ load */
+							$(".panelBox").remove();
+
+
+
 						}
 				},
 

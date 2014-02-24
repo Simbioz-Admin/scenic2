@@ -133,6 +133,10 @@ define(
 							/* sometimes quidd is destination and have connection need to be remove */
 							$("[data-hostname='"+that.get("name")+"']").remove();
 
+							/* check if the panel open is for the quiddity deleted */
+							if(that.get("name") == $("#panelRight").data('quiddName')){
+								views.global.closePanel();								
+							}
 							//check if propertiesControl is created with the quidd deleted
 							collections.destinationProperties.each(function(controlProperty) {
 								if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();

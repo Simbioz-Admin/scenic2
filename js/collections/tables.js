@@ -77,7 +77,7 @@ define(
 							id: "create_receiver"
 						}],
 						sources: {
-							select: ["source"],
+							select: ["source", "httpsdpdec"],
 							exclude: ["midi source"]
 						},
 						destinations: collections.receivers

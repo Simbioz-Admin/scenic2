@@ -29,7 +29,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 		/* define a id before create client side */
 		var uuid = require('node-uuid');
-		destination["id"] = uuid.v1();
+		destination["id"] = destination.name;
 		destination['data_streams'] = [];
 		destination.hostName = destination.hostName.replace("http://", "");
 		if (exist) {

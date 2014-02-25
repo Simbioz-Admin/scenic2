@@ -66,7 +66,7 @@ if (!config.standalone) {
 		sys.puts(stdout)
 	}
 	exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts)
-	log.info("scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
+	log.info("scenic2 is going to open in your default browser: http://" + config.host + ":" + config.port.scenic);
 }
 
 

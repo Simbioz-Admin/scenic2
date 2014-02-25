@@ -105,6 +105,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 				_.each(destinations, function(dest){
 					_.each(dest.data_streams, function(stream){
+						log.debug(stream.quiddName, qname);
 						if(stream.quiddName == qname){
 							log.debug("find quidd connected!", stream.path, stream.port);
 							receivers.remove_connection(stream.path, dest.id);
@@ -145,7 +146,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);
-					log.debug("subscribe to ",pvalue[0], property.name);
+					log.switcher("subscribe to ",pvalue[0], property.name);
 				});
 
 
@@ -173,7 +174,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 				//console.log("New property for ",qname, pvalue);
 				_.each(config.subscribe_quidd_info, function(quiddName, socketId) {
 					if (quiddName == qname) {
-						log.debug("send to sId (" + socketId + ") " + qprop + " : " + pvalue);
+						log.switcher("send to sId (" + socketId + ") " + qprop + " : " + pvalue);
 						var socket = io.sockets.sockets[socketId];
 						socket.emit('signals_properties_info', qprop, qname, pvalue);
 					}
@@ -182,12 +183,12 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 			}
 			//subscribe to the property added
 			if (qprop == "on-property-added") {
-				log.debug("Subscribe ", qname, pvalue[0]);
+				log.switcher("Subscribe ", qname, pvalue[0]);
 				switcher.subscribe_to_property(qname, pvalue[0]);
 			}
 			//unsubscribe to the property removed
 			if (qprop == "on-property-removed") {
-				log.debug("Unsubscribe ", qname, pvalue[0]);
+				log.switcher("Unsubscribe ", qname, pvalue[0]);
 				switcher.unsubscribe_to_property(qname, pvalue[0]);
 			}
 

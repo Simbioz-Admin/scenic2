@@ -158,7 +158,7 @@ module.exports = function(config, switcher, $, _, io, log) {
 				}, 2000);
 			}
 
-			io.sockets.emit("add_connection", path, port, id);
+			io.sockets.emit("add_connection", quiddName, path, port, id);
 			return cb(true);
 		}
 
@@ -208,12 +208,17 @@ module.exports = function(config, switcher, $, _, io, log) {
 
 			var destination_rtp = _.findWhere(destinations_rtp , { name : id });
 
-			var destDico = switcher.get_property_value("dico", "destinations");
 			var destinations_dico = JSON.parse(switcher.get_property_value("dico", "destinations"));
 
-			destinations_dico = _.map(destinations_dico, function(dest) {
-				if(dest.id == id) dest.data_streams = destination_rtp.data_streams;
-				return dest;
+
+			/* 4. remove connection from dico destinations */
+			_.each(destinations_dico, function(dest, i){
+				if(dest.id == id) {
+					var newStreamsList = _.reject(dest.data_streams, function(stream){
+						return stream.path == path;
+					});
+				destinations_dico[i].data_streams = newStreamsList;
+				}
 			});
 
 			var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations_dico));

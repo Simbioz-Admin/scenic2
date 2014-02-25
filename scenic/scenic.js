@@ -98,8 +98,8 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 
 
 			if(qprop == "started" && pvalue == "false") {
-				log.debug("remove shmdata of", qname);
 
+				log.debug("remove shmdata of", qname);
 				var destinations = switcher.get_property_value("dico", "destinations"),
 				destinations = $.parseJSON(destinations);
 
@@ -111,6 +111,15 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 							receivers.remove_connection(stream.path, dest.id);
 						}
 					});
+				});
+
+				//check if another quiddities is associate to
+				var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+				_.each(quidds, function(quidd) {
+					if (quidd.name.indexOf("sink_") >=0 && quidd.name.indexOf(qname) >=0 ) {
+						log.debug("remove sink", quidd.name);
+						switcher.remove(quidd.name);
+					}
 				});
 
 			}

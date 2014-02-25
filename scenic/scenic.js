@@ -70,7 +70,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 			if(qprop == "shmdata-writers"){
 				var shmdatas = $.parseJSON(pvalue).shmdata_writers;
 				_.each(shmdatas, function(shm) {
-					var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [shm.path]);
+					//var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [shm.path]);
 				});
 
 			}

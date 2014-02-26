@@ -120,7 +120,7 @@ define(
 					if(this.model.get("type") == "transfer") {
 						/* if already connect */
 						if(box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok){});
-						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
+						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
 					}
 
 					if(this.model.get("type") == "audio"){

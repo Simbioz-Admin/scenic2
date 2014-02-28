@@ -1,6 +1,12 @@
+var switcher;
+try {
+   switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+} catch (e) { 
+   switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+}
+
 var express = require("express"),
 	config = require('./scenic/config.js'),
-	switcher = require('node-switcher'),
 	$ = require('jquery'),
 	_ = require('underscore'),
 	app = express(),

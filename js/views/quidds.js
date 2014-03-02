@@ -59,7 +59,7 @@ define(
 				console.log("Property", property.values);
 				openPanelDefineName(property.values);
 			    } else {
-				views.global.notification("error", "no device video detected.");
+				views.global.notification("error", "no video device");
 			    }
 			});
 		    } else {
@@ -131,7 +131,7 @@ define(
 				    $("#deviceDetected").append(li);
 				});
 			    } else {
-				views.global.notification("error", "no device video detected.");
+				views.global.notification("error", "no video device");
 			    }
 			});
 

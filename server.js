@@ -1,6 +1,16 @@
+var switcher;
+try {
+    switcher = require('node-switcher');
+} catch (e1) { 
+    try {
+	switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+    } catch (e2) { 
+	switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+    }
+}
+
 var express = require("express"),
 	config = require('./scenic/config.js'),
-	switcher = require('node-switcher'),
 	$ = require('jquery'),
 	_ = require('underscore'),
 	app = express(),
@@ -47,12 +57,16 @@ app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/templates", express.static(__dirname + "/templates"));
 
+/* temporary add express config for mini website presentation scenic*/
+app.use("/site_web", express.static(__dirname + "/site_web"));
+
 
 //Require the differents dependencies
-var scenic = require("./scenic/scenic.js")(config, switcher, $, _, io, log);
+var receivers = require("./scenic/receivers.js")(config, switcher, $, _, io, log);
+var scenic = require("./scenic/scenic.js")(config, switcher, receivers, $, _, io, log);
 require("./scenic/irc.js")(io, $, log, config);
 require("./scenic/scenic-express.js")(config, $, _, app, scenic, switcher, config.scenicStart);
-require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, $, _, log, network);
+require("./scenic/scenic-io.js")(config, config.scenicStart, io, switcher, scenic, receivers, $, _, log, network);
 
 
 
@@ -62,7 +76,7 @@ if (!config.standalone) {
 		sys.puts(stdout)
 	}
 	exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts)
-	log.info("scenic2 automaticlly open in your browser define by default : http://" + config.host + ":" + config.port.scenic);
+	log.info("scenic2 is going to open in your default browser: http://" + config.host + ":" + config.port.scenic);
 }
 
 

@@ -71,7 +71,8 @@ define(
 					_.each(this.model.get("methods"), function(method) {
 						that.addMethod(method.name);
 					});
-
+					
+					$("#panelRight").data("quiddName", this.model.get("name"));
 					$("#panelRight .content").html($(this.el));
 					views.global.openPanel();
 

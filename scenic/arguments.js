@@ -16,7 +16,7 @@ module.exports = function(config) {
 		message += "----------------------------------------------------------\n"
 		message += leftColumn('-v, --version  ') + "port for GUI scenic2 (actual version " + config.version + ")\n";
 		message += leftColumn('-d, --debug') + 'Start the server on mode debug\n';
-		message += leftColumn('-l, --load') + 'load a file scenic (ex : -l my_save.scenic)\n';
+		message += leftColumn('-f, --file') + 'load a file scenic (ex : -l my_save.scenic)\n';
 		message += leftColumn('-n, -nogui     ') + "Launch scenic2 without app interface\n";
 		message += leftColumn('-w, --withoutconf') + 'Launch scenic2 without the interface for pre-configuration\n';
 		message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
@@ -36,13 +36,19 @@ module.exports = function(config) {
 	}
 
 	//argument for set mode debug
+	if (argv.l || argv.log) {
+		config.logLevel = (argv.l ? argv.l : argv.log);
+	}
+
+	//argument for set mode debug
 	if (argv.d || argv.debug) {
 		config.logLevel = 'debug';
 		console.log("mode debug actif");
 	}
 
+
 	//argument for loading a save file scenic
-	if(argv.l || argv.load) {
+	if(argv.f || argv.file) {
 		config.loadFile = (argv.l ? argv.l : argv.load);
 	}
 

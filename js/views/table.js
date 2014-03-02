@@ -120,7 +120,7 @@ define(
 					if(this.model.get("type") == "transfer") {
 						/* if already connect */
 						if(box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok){});
-						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='define port'></div>");
+						box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
 					}
 
 					if(this.model.get("type") == "audio"){
@@ -150,11 +150,12 @@ define(
 						var box = $(e.target).parent(),
 							id = $(e.target).closest("td").data("id"),
 							path = $(e.target).closest("tr").data("path"),
+							quiddName = $(e.target).closest("tr").data("quiddname"),
 							port = $(e.target).val(),
 							portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
 							that = this;
 
-						socket.emit("connect_destination", path, id, port, portSoap, function(ok) {
+						socket.emit("connect_destination", quiddName, path, id, port, portSoap, function(ok) {
 							that.removeInputDestination(e);
 						});
 					}

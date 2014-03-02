@@ -59,10 +59,10 @@ define(
 		    });
 
 		    /** Event called when a connection is made between a source and a destination */
-		    socket.on("add_connection", function(path, port, id) {
+		    socket.on("add_connection", function(quiddName, path, port, id) {
 			console.log(that.toJSON(), id);
 			var model = that.get(id);
-			model.get("data_streams").push({path : path, port : port });
+			model.get("data_streams").push({ quiddName : quiddName, path : path, port : port });
 			console.log(model.toJSON());
 			$("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
                         $("[data-path='" + path + "'] [data-id='" + id + "']").html(port);

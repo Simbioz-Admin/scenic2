@@ -21,9 +21,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, receivers, 
 		/* Request by client for create a quiddity */
 
 		socket.on("create", function(className, quiddName, callback) {
-
-			var quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
-
+			console.log("ask for create", quiddName);
+			quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
+			console.log("Crearte quidd", quiddName);
 			if (quiddName) {
 				config.listQuiddsAndSocketId[quiddName] = socket.id;
 				var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));

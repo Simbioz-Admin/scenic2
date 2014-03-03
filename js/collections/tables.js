@@ -38,7 +38,6 @@ define(
 				initialize: function() {
 
 
-
 					/* Create a table for manage Audio device and connexion */
 					var audioTable = {
 						name: 'audio',

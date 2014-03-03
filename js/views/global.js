@@ -352,6 +352,8 @@ define(
 
 				showTable: function(event) {
 					var table = $(event.target).parent().data("type");
+					/* add to the local storage */
+					localStorage['currentTable'] = table;
 					collections.tables.currentTable = table;
 					$(".tabTable").removeClass("active");
 					$(event.target).parent().addClass("active");

@@ -49,7 +49,9 @@ define(
 
 					/* generate a btn for the table */
 
-					var active = (config.defaultPanelTable == this.model.get("type") ? "active" : "");
+					var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] :  config.defaultPanelTable;
+
+					var active = (currentTable == this.model.get("type") ? "active" : "");
 					var btnTable = $("<div></div>", {
 						text: "",
 						class: "tabTable " + this.model.get("type") + " " + active,

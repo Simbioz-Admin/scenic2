@@ -10,17 +10,17 @@ define(
 		'underscore',
 		'backbone',
 		'text!/templates/table/table.html',
-		'text!/templates/table/menu.html',
+		'text!/templates/table/sub_menu.html',
 	],
 
-	function(_, Backbone, TemplateTable, TemplateMenu) {
+	function(_, Backbone, TemplateTable, TemplateSubMenu) {
 
 		/** 
 		 *	@constructor
 		 *  @requires Underscore
 		 *  @requires Backbone
 		 *	@requires TemplateTable
-		 *	@requires TemplateMenu
+		 *	@requires TemplateSubMenu
 		 *  @augments module:Backbone.View
 		 */
 
@@ -85,6 +85,9 @@ define(
 
 				get_classes: function(e) {
 
+
+					$("#subMenu").remove();
+
 					/* get the quiddity classes authorized on this table */
 
 					var classes = this.model.classes_authorized($(e.target).data("type"));
@@ -98,7 +101,7 @@ define(
 						return clas.category;
 					});
 
-					var template = _.template(TemplateMenu, {
+					var template = _.template(TemplateSubMenu, {
 						type: "classes",
 						classes: classesByCategory
 					});
@@ -205,7 +208,7 @@ define(
 
 				// 	$("#listSources").remove();
 
-				// 	var template = _.template(TemplateMenu, {
+				// 	var template = _.template(TemplateSubMenu, {
 				// 		type: "sources",
 				// 		menus: quiddsList
 				// 	});
@@ -236,7 +239,7 @@ define(
 
 					$("#listQuiddsProperties").remove();
 					if (!$.isEmptyObject(quiddsMenu)) {
-						var template = _.template(TemplateMenu, {
+						var template = _.template(TemplateSubMenu, {
 							type: "QuiddsAndProperties",
 							menus: quiddsMenu
 						});
@@ -263,7 +266,7 @@ define(
 							});
 						});
 
-						var template = _.template(TemplateMenu, {
+						var template = _.template(TemplateSubMenu, {
 							type: "devicesMidi",
 							menus: devicesMidi
 						});

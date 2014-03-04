@@ -31,7 +31,7 @@ module.exports = function(config) {
 	//argument for get the version of scenic2
 	if (argv.v || argv.version) {
 		var version = (argv.v ? argv.v : argv.version);
-		console.log("Scenic2 v" + config.version);
+		console.log(config.version);
 		process.exit();
 	}
 

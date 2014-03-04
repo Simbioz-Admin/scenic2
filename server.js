@@ -1,14 +1,3 @@
-var switcher;
-try {
-	switcher = require('node-switcher');
-} catch (e1) {
-	try {
-		switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
-	} catch (e2) {
-		switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
-	}
-}
-
 var express = require("express"),
 	config = require('./scenic/config.js'),
 	$ = require('jquery'),
@@ -28,6 +17,17 @@ var express = require("express"),
 	auth = require("http-auth"),
 	ident = false,
 	passSet = false;
+
+var switcher;
+try {
+	switcher = require('node-switcher');
+} catch (e1) {
+	try {
+		switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+	} catch (e2) {
+		switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+	}
+}
 
 require("./scenic/utils.js")(_);
 

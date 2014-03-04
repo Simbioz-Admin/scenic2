@@ -1,12 +1,12 @@
 var switcher;
 try {
-    switcher = require('node-switcher');
-} catch (e1) { 
-    try {
-	switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
-    } catch (e2) { 
-	switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
-    }
+	switcher = require('node-switcher');
+} catch (e1) {
+	try {
+		switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+	} catch (e2) {
+		switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+	}
 }
 
 var express = require("express"),
@@ -32,6 +32,7 @@ var express = require("express"),
 require("./scenic/utils.js")(_);
 
 var port = require('portastic');
+var refreshTimeout;
 
 
 
@@ -41,7 +42,7 @@ port.test(config.port.scenic, function(err, data) {
 	if (data == false) {
 		log.error("The port " + config.port.scenic + " is not open");
 		process.exit();
-	} else if (typeof config.port.scenic == "number" && config.port.scenic.toString().length == 4) {
+	} else if (typeof config.port.scenic == "number" && config.port.scenic.toString().length >= 4) {
 
 		server.listen(config.port.scenic);
 	} else {
@@ -120,9 +121,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on("checkPort", function(portnum, callback) {
 		port.test(parseInt(portnum), function(err, data) {
 			if (err)
-                throw err;
-            else
-                callback(data);
+				throw err;
+			else
+				callback(data);
 		});
 	});
 
@@ -150,12 +151,28 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
-	//if the user started the server close the page web we stop scenic server
+	/* 	if the user started the server close the page web we stop scenic server
+		we detect if it's just refresh on stock socketId in localstorga clientSide
+		and send to the server side if define
+	*/
+
 	socket.on('disconnect', function() {
-		if (config.masterSocketId == socket.id && config.standalone == false) {
-			process.exit();
-		}
+		refreshTimeout = setTimeout(function() {
+			if (config.masterSocketId == socket.id && config.standalone == false) {
+				process.exit();
+			}
+		}, 2000);
+
 	});
+
+
+	socket.on("returnRefresh", function(oldSocketId, newSocketId) {
+		if (oldSocketId == config.masterSocketId) {
+			console.log("hey the master refresh the page !");
+			clearTimeout(refreshTimeout);
+			config.masterSocketId = newSocketId;
+		}
+	})
 
 });
 

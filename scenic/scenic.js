@@ -35,7 +35,7 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 			}
 		} else {
 
-			if (typeof config.port.soap == "number" && config.port.soap.toString().length == 4) {
+			if (typeof config.port.soap == "number" && config.port.soap.toString().length >= 4) {
 				switcher.invoke("soap", "set_port", [config.port.soap]);
 			} else {
 				log.error("The soap port is not valid"+ config.port.soap);
@@ -151,7 +151,6 @@ module.exports = function(config, switcher, receivers, $, _, io, log) {
 				switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
 
 				//we subscribe all properties of quidd created
-				console.log("QUIDD", pvalue[0]);
 				var properties = $.parseJSON(switcher.get_properties_description(pvalue[0])).properties;
 				_.each(properties, function(property) {
 					switcher.subscribe_to_property(pvalue[0], property.name);

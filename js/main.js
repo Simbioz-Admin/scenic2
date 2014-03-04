@@ -53,6 +53,16 @@ require([
     config = configServer;
   });
 
+
+  if(localStorage["oldId"]){
+    socket.emit("returnRefresh", localStorage["oldId"], socket.socket.sessionid);
+  }
+
+  $(window).bind('beforeunload',function(){
+      localStorage["oldId"] = socket.socket.sessionid;
+  });
+
+
   socket.on("shutdown", function() {
     $("body").html("<div id='shutdown'>the server has been shutdown...</div>");
   });

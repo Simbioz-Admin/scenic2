@@ -1,3 +1,8 @@
+/**
+ *	@module Configuration optimist
+ *	@description parameter arguments for the console to launch scenic
+ */
+
 module.exports = function(config) {
 
 

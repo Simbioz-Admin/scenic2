@@ -1,11 +1,14 @@
-module.exports = function(config, _, app, io, $) {
+/**
+ *  @module Configuration winston
+ *  @description Config the system Log
+ */
 
+module.exports = function(config, _, app, io, $) {
 
     var winston = require('winston');
 
-
     var customLevels = {
-    levels: {
+        levels: {
             switcher: 0,
             debug: 1,
             info: 2,
@@ -16,14 +19,14 @@ module.exports = function(config, _, app, io, $) {
             switcher: 'blue',
             debug: 'white',
             info: 'green',
-            warn : 'orange',
-            error:  'red'
+            warn: 'orange',
+            error: 'red'
         }
     };
 
     winston.addColors(customLevels.colors);
-    var log = new (winston.Logger)({
-        levels : customLevels.levels,
+    var log = new(winston.Logger)({
+        levels: customLevels.levels,
         transports: [
             new(winston.transports.Console)({
                 'colorize': true,
@@ -52,6 +55,7 @@ module.exports = function(config, _, app, io, $) {
      *   stack from the current call.  `n=0` gives you your current file/line.
      *  `n=1` gives the file/line that called you.
      */
+
     function traceCaller(n) {
         if (isNaN(n) || n < 0) n = 1;
         n += 1;
@@ -74,49 +78,4 @@ module.exports = function(config, _, app, io, $) {
 
     return log;
 
-    // var jsonLog = [];
-
-    // //request express for get log
-    // app.get("/log", function(request, response) {
-    //   response.contentType('application/json');
-    //   response.send(jsonLog);
-    // });
-
-
-    // io.sockets.on('connection', function(socket) {
-    //   // console.log(socket);
-    // });
-
-
-
-    // var log = function() {
-    //   var levels = ['error', 'warn', 'debug', 'info'];
-    //   if (levels.indexOf(arguments[0]) >= levels.indexOf(config.debugLevel)) {
-    //     var message = "",
-    //       level = arguments[0];
-
-    //     for (i = 1; i < arguments.length; i++) message = message + arguments[i];
-    //     var now = new Date()
-    //     ,   hours = (now.getHours().toString().length == 1 ? "0" : "" )+now.getHours()
-    //     ,   minutes = (now.getMinutes().toString().length == 1 ? "0" : "" )+now.getMinutes()
-    //     ,   seconds = (now.getSeconds().toString().length == 1 ? "0" : "" )+now.getSeconds();
-
-
-    //     var message = {from : "switcher", date : hours+":"+minutes+":"+seconds, level : level, message : message};
-    //     //add to the list of log  message
-    //     if(level == "error") {
-    //       console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ $.parseJSON(message));
-    //     }
-
-    //     if(level == "info" || level == "error") {
-    //       // console.log(hours+":"+minutes+":"+seconds, " : "+ level, " : "+ message);
-    //       jsonLog.push(message);
-    //       io.sockets.emit("messageLog", message);
-    //     }
-    //     //send to the interface
-
-    //   }
-    // }
-
-    // return log;
 }

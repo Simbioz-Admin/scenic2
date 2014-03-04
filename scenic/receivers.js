@@ -1,43 +1,44 @@
-/** 
- *
- * 	@file receveirs.js: Contains all functions,
- *	Group function for receivers, create, remove, edit etc...
- *
- **/
+
 
 /**
- * 	A module manage interaction with receveir
- * 	@module scenic
+ *	@module receivers
  */
+
 
 module.exports = function(config, switcher, $, _, io, log) {
 
-	/*
-	 *	At the create of destination we check if is not already existing in dico destination (if yes cb(exist))
-	 *	If not : we add information into the dico and add destination to the rtpsession
-	 *	If a soap port is define we create a quidd type controlClient and set remote url retry
-	 */
+
+	/** 
+	 *	Create a new Receiver : Add in dico destination, add destination in rtpsession and if a port soap is
+	 	define we create  a quidd SOAPControlClient for create an httpsdpdec on the distance server
+
+	 *	@param {string} destination name of the new destination
+	 *	@param {object} callback return informatin about the new destination and a message
+	 *	or an error message
+	**/
 
 	var create_destination = function(destination, cb) {
 
+		/* Get the destinations existing stock in dico (propety destinations) */
 		var destinations = switcher.get_property_value("dico", "destinations"),
 			destinations = $.parseJSON(destinations),
 			exist = _.findWhere(destinations, {
 				name: destination.name
 			});
 
-
-		/* define a id before create client side */
-		var uuid = require('node-uuid');
-		destination["id"] = destination.name;
-		destination['data_streams'] = [];
-		destination.hostName = destination.hostName.replace("http://", "");
+		/* check if already in the colletion */
 		if (exist) {
 			return cb({
 				error: "the destination already exists"
 			});
 			log.warn("destination with the name " + destination.hostName + "already exists");
 		}
+
+		/* define a id before create client side */
+		var uuid = require('node-uuid');
+		destination["id"] = destination.name;
+		destination['data_streams'] = [];
+		destination.hostName = destination.hostName.replace("http://", "");
 
 
 		destinations.push(destination);
@@ -113,12 +114,23 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 
+	/**
+     *	Action to send a shmdata to a specific receiver. Checking presence of shmdata 
+     	in data_stream that will be added if missing. Update the shmdata associate with a receiver in the dico Destinations
+
+     	@param quiddName {String} Name quiddity with the shmdata
+     	@param path {String} path of shmdata 
+     	@param id {String} id of receiver
+     	@param port {int} Port which is sent shmata 
+     	@param portSoap {int} Port soap remote server
+     	@param callback {object} return true if success or send message error
+	*/
+
 	var connect_destination = function(quiddName, path, id, port, portSoap, cb) {
 
 		log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
 		/* 1. we need to check if the stream is already added to defaultrtp */
-
 		var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers")).shmdata_readers;
 		var pathAlreadyAdd = _.findWhere(shmdataDefaultrtp, {path : path});
 
@@ -130,17 +142,15 @@ module.exports = function(config, switcher, $, _, io, log) {
 		} else {
 			log.debug("path already added", path);
 		}
-		/* 2. we associate the stream with a destination on defaultrtp */
 
+		/* 2. we associate the stream with a destination on defaultrtp */
 		var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
 		if (!addUdp) return cb("error add Udp");
 
 
 		/* 3. we save data stream to the dico destination */
-
 		var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
-
-		var destinations = _.map(destinations, function(destination) {
+		destinations = _.map(destinations, function(destination) {
 
 			if (destination.id == id) {
 				destination.data_streams.push({
@@ -166,58 +176,26 @@ module.exports = function(config, switcher, $, _, io, log) {
 	}
 
 
-	// var reconnect_destination = function(shmdatas, cb) {
+	/**
+     *	Remove a receiver. Remove to dico destinations and check if nobody is
+     	connected to the shmdata for remove to data stream of rtpsession
 
-	// 	log.info("check connections existing in destinations dico", shmdatas);
-
-	// 		var destinations = switcher.get_property_value("dico", "destinations"),
-	// 			destinations = $.parseJSON(destinations);
-
-	// 		if (shmdatas.length > 0) {
-	// 			_.each(shmdatas, function(shm){
-	// 				_.each(destinations, function(dest){
-	// 					var findShm = _.findWhere(dest.data_streams, { path : shm.path});
-	// 					if(findShm){
-	// 						//add to the rtp session
-	// 						// var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [findShm.path]);
-	// 						log.debug(findShm.path, dest.id, findShm.port);
-	// 						var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [findShm.path, dest.id, findShm.port]);
-	// 					}
-	// 				/* if soap port is define we refresh httpsdpdec */
-	// 				if(dest.portSoap){
-	// 					var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + dest.id;
-	// 					var updateShm = switcher.invoke("soapControlClient-" + dest.id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
-	// 				}
-	// 				});
-	// 			});
-	// 		}
-
-
-	// }
-
+     	@param path {String} path of shmdata 
+     	@param id {String} id of receiver
+     	@param callback {object} if sucess return name true
+	*/
 
 	var remove_connection = function(path, id, cb) {
 
 		/* 1. remove the association between shmdata and destination */
-
 		var remove = switcher.invoke("defaultrtp", "remove_udp_stream_to_dest", [path, id]);
 		if (!remove) return cb("Error to remove udp stream to destination");
 
-		//var removeData = switcher.invoke("defaultrtp","remove_data_stream", [path]);
-
-
-		/* 3. we remove data stream to the dico destination */
-
+		/* 2. we remove data stream to the dico destination */
 		var destinations_rtp = $.parseJSON(switcher.get_property_value("defaultrtp", "destinations-json")).destinations;
-
-		var destination_rtp = _.findWhere(destinations_rtp, {
-			name: id
-		});
-
 		var destinations_dico = JSON.parse(switcher.get_property_value("dico", "destinations"));
 
-
-		/* 4. remove connection from dico destinations */
+		/* 3. remove connection from dico destinations */
 		var soapList = [];
 		var connectWithAnother = false;
 		_.each(destinations_dico, function(dest, i) {
@@ -258,6 +236,16 @@ module.exports = function(config, switcher, $, _, io, log) {
 		//var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
 		if (cb) return cb(null, remove);
 	}
+
+
+	/**
+     *	Update destination. Currently remove the destination and create a new with the modification
+
+     	@param path {String} path of shmdata 
+     	@param oldId {String} id of  old receiver
+     	@param destination {json} Contain all information for create a new destination
+     	@param callback {object} if sucess return name message success {json}
+	*/
 
 	var update_destination = function(oldId, destination, cb) {
 
@@ -300,6 +288,16 @@ module.exports = function(config, switcher, $, _, io, log) {
 		});
 
 	}
+
+	/** 
+	 *	Remove a receiver : Remove a receiver and all connection associate
+	 	if Soap define, remove SOAPControlClient. Remove from dico destinations
+
+	 *	@param id {string} id of the destination 
+	 *	@param portSoap {string} Port Soap
+	 *	@param callback {object} return error or success message
+	**/
+
 
 	var remove_destination = function(id, portSoap, cb) {
 
@@ -345,6 +343,13 @@ module.exports = function(config, switcher, $, _, io, log) {
 		io.sockets.emit("remove_destination", id);
 
 	}
+
+	/**
+	 *	Refresh httpsdpdec of the remote receiver
+	 *	@param id {string} Id of receiver
+	 *	@param callback {object} return an error if exist
+	*/
+
 
 	var refresh_httpsdpdec = function(id, cb) {
 

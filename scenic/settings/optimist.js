@@ -1,12 +1,10 @@
 define(
     [
         'optimist',
-        'log',
         'config'
     ],
 
-    function(optimist, log, config) {
-
+    function(optimist, config) {
         var argv = optimist.argv;
 
         //scenic2 settings for the server start
@@ -44,6 +42,7 @@ define(
         //argument for set mode debug
         if (argv.l || argv.log) {
             config.logLevel = (argv.l ? argv.l : argv.log);
+            console.log("The level log is set to", config.logLevel);
         }
 
         //argument for set mode debug

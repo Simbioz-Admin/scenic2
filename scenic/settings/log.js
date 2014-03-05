@@ -36,12 +36,11 @@ define(
 
 
         var logger_info_old = log.error;
-
         log.error = function(msg) {
             var fileAndLine = traceCaller(1);
             return logger_info_old.call(this, fileAndLine + ": " + msg);
         }
-
+        log.debug("Init log.js");
         /**
          * examines the call stack and returns a string indicating
          * the file and line number of the n'th previous ancestor call.

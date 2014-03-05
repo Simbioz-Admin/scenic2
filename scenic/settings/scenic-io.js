@@ -9,9 +9,15 @@ define(
 
     function(http, log, config, portastic, switcher) {
 
+        var socketio;
+
+        var getSocketIo = function() {
+            return socketio;
+        }
+
         var initialize = function(io) {
 
-
+            socketio = io;
             log.debug("Set Socket.io");
 
             io.sockets.on('connection', function(socket) {
@@ -67,6 +73,9 @@ define(
                     }
                 });
 
+                //************************* QUIDDS ****************************//
+
+
                 socket.on("create", switcher.quidds.create);
                 socket.on("get_quiddity_description", switcher.quidds.get_description);
                 socket.on("get_properties_description", switcher.quidds.get_properties_description);
@@ -76,12 +85,23 @@ define(
                 socket.on("remove", switcher.quidds.remove);
                 socket.on("invoke", switcher.quidds.invoke);
 
+
+                //************************* DESTINATION ****************************//
+
+                socket.on("create_destination", switcher.receivers.create_destination);
+                socket.on("update_destination", switcher.receivers.update_destination);
+                socket.on("remove_destination", switcher.receivers.remove_destination);
+                socket.on("connect_destination", switcher.receivers.connect_destination);
+                socket.on("remove_connection", switcher.receivers.remove_connection);
+
+
             });
 
         }
 
         return {
             initialize: initialize,
+            getSocketIo: getSocketIo
         }
     }
 );

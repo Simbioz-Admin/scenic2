@@ -3,17 +3,22 @@ define(
         'config',
         'node-switcher',
         './scenic/switcher/quidds',
+        './scenic/switcher/receivers',
         'log',
         'underscore',
         'jquery'
     ],
 
-    function(config, switcher, quidds, log, _, $) {
+    function(config, switcher, quidds, receivers, log, _, $) {
 
 
         function initialize(io) {
 
             log.debug("Init Switcher");
+
+            /*Init Receiver */
+            receivers.initialize(io);
+
             //create the default quiddities necessary for use switcher
             switcher.create("rtpsession", config.rtpsession);
             switcher.create("SOAPcontrolServer", "soap");
@@ -232,7 +237,8 @@ define(
         return {
             test: "testSwitcher",
             initialize: initialize,
-            quidds: quidds
+            quidds: quidds,
+            receivers: receivers
         }
 
     })

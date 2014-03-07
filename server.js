@@ -20,12 +20,12 @@ var express = require("express"),
 
 var switcher;
 try {
-	switcher = require('node-switcher');
+	switcher = require('switcher');
 } catch (e1) {
 	try {
-		switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+		switcher = require('/usr/lib/nodejs/switcher_addon.node');
 	} catch (e2) {
-		switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+		switcher = require('/usr/local/lib/nodejs/switcher_addon.node');
 	}
 }
 

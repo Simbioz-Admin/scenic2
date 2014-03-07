@@ -21,8 +21,7 @@
     "portastic": "0.0.1",
     "underscore.string": "~2.3.3",
     "node-uuid": "~1.4.1",
-    "socket.io": "~0.9.16",
-    "node-switcher": "~0.4.3"
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {},
   "scripts": {

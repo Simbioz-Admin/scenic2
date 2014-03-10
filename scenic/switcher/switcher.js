@@ -18,6 +18,7 @@ define(
 
             /*Init Receiver */
             receivers.initialize(io);
+            quidds.initialize(io);
 
             //create the default quiddities necessary for use switcher
             switcher.create("rtpsession", config.rtpsession);
@@ -154,21 +155,18 @@ define(
                         log.switcher("subscribe to ", pvalue[0], property.name);
                     });
 
-
-                    //the socketId of the user created quidd is memories in config, we filtered for not send again "create"
-                    io.sockets.emit("create", quiddClass);
-                    // var socketIdCreatedThisQuidd = false;
-                    // _.each(config.listQuiddsAndSocketId, function(socketId, quiddName) {
-                    //     if (quiddName == pvalue[0])
-                    //         socketIdCreatedThisQuidd = socketId;
-                    //     delete config.listQuiddsAndSocketId[quiddName];
-                    // });
-                    // if (socketIdCreatedThisQuidd) {
-                    //     io.sockets.except(socketIdCreatedThisQuidd).emit("create", quiddClass);
-                    // } else {
-                    //     io.sockets.emit("create", quiddClass);
-                    // }
-
+                    //cehck if the quiddity is created by interface and send all except user created this
+                    var socketIdCreatedThisQuidd = false;
+                    _.each(config.listQuiddsAndSocketId, function(socketId, quiddName) {
+                        if (quiddName == pvalue[0])
+                            socketIdCreatedThisQuidd = socketId;
+                        delete config.listQuiddsAndSocketId[quiddName];
+                    });
+                    if (socketIdCreatedThisQuidd) {
+                        io.sockets.except(socketIdCreatedThisQuidd).emit("create", quiddClass);
+                    } else {
+                        io.sockets.emit("create", quiddClass);
+                    }
                 }
                 //Emits to users a quiddity is removed
                 if (qprop == "on-quiddity-removed") {
@@ -234,11 +232,50 @@ define(
         }
 
 
+        // SAUVEGARDE *************************************** */
+
+
+        function save(name, cb) {
+            log.debug("ask for saving state");
+            var save = switcher.save_history("save_files/" + name);
+            cb(save);
+        }
+
+        function load(name, cb) {
+            var load = switcher.load_history_from_scratch(name);
+            cb(load);
+        }
+
+        function remove_save(name, cb) {
+            var fs = require('fs');
+            fs.unlink('save_files/' + name, function(err) {
+                if (err) return log.error(err);
+                cb('ok');
+            });
+
+        }
+
+        function get_save_file(cb) {
+            var fs = require('fs');
+            fs.readdir('./save_files', function(err, dir) {
+                if (err) {
+                    log.error(err);
+                    return;
+                }
+                cb(dir);
+            });
+
+        }
+
         return {
-            test: "testSwitcher",
+            test: "testSwitcher ",
             initialize: initialize,
             quidds: quidds,
-            receivers: receivers
+            receivers: receivers,
+            save: save,
+            load: load,
+            remove_save: remove_save,
+            get_save_file: get_save_file
         }
 
     })

@@ -44,7 +44,7 @@ define(
                     var that = this;
 
                     /** Event called when the server has created a quiddity */
-                    socket.on("create", function(quiddInfo) {
+                    socket.on("create", function(quiddInfo, socketId) {
                         that.create(quiddInfo);
                     });
 

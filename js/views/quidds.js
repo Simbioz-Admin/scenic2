@@ -54,7 +54,7 @@ define(
                     var getDevices = $(element.target).hasClass("autoDetect");
                     /* get  the information about the device in property value of quiddity */
                     if (getDevices) {
-                        socket.emit("getPropertyByClass", className, "device", function(property) {
+                        socket.emit("get_property_by_class", className, "device", function(property) {
                             if (property) {
                                 console.log("Property", property.values);
                                 openPanelDefineName(property.values);
@@ -90,15 +90,16 @@ define(
                         quiddName = $("#quiddName").val(),
                         deviceDetected = $("#device").val();
                     /* Ask to the server create a new quiddity with className and name quiddity*/
-                    socket.emit("create", className, quiddName, function(err, quiddInfo) {
+                    console.log(socket.socket.sessionid);
+                    socket.emit("create", className, quiddName, socket.socket.sessionid, function(err, quiddInfo) {
                         if (err) return views.global.notification('error', err);
-                        // var model = collections.quidds.create(quiddInfo);
-                        // //check if autoDetect it's true if yes we set the value device with device selected
-                        // if (deviceDetected) {
-                        //     model.setPropertyValue("device", deviceDetected, function(ok) {
-                        //         model.edit();
-                        //     });
-                        // } else model.edit();
+                        var model = collections.quidds.create(quiddInfo);
+                        //check if autoDetect it's true if yes we set the value device with device selected
+                        if (deviceDetected) {
+                            model.setPropertyValue("device", deviceDetected, function(ok) {
+                                model.edit();
+                            });
+                        } else model.edit();
                     });
 
                 },
@@ -113,7 +114,7 @@ define(
                         var className = $(element.target).data("name");
 
                         /* get  the information about the device in property value of quiddity */
-                        socket.emit("getPropertyByClass", className, "device", function(property) {
+                        socket.emit("get_property_by_class", className, "device", function(property) {
                             if (property) {
                                 var deviceDetected = property["values"];
                                 //clean list existing and add the new

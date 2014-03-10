@@ -18,6 +18,7 @@ define(
             standalone: false,
             scenicStart: false,
             configSet: false,
+            passSet: null,
             loadFIle: false,
             nameComputer: os.hostname(),
             quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink'],

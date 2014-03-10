@@ -43,7 +43,6 @@ define(
                 /* Called when en new source quiddity is created */
 
                 initialize: function(options) {
-
                     /* Subscribe for remove and change shmdatas on quiddity source */
                     this.model.on('remove', this.removeView, this);
                     this.model.on('change:shmdatas', this.render, this);

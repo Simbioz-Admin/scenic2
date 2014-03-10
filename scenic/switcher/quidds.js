@@ -1,18 +1,29 @@
 define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
     function(config, switcher, log, _, $) {
 
-        function create(className, quiddName, callback) {
+
+        var io;
+
+        function initialize(socketIo) {
+            log.debug("init Receiver for get Io");
+            io = socketIo;
+        }
+
+        function create(className, quiddName, socketId, cb) {
+
+            //its not always a user ask for create a quidd
+            if (!cb) cb = socketId;
 
             quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
             if (quiddName) {
-                //config.listQuiddsAndSocketId[quiddName] = socket.id;
+                config.listQuiddsAndSocketId[quiddName] = socketId;
                 var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
                 log.debug("quiddity " + quiddName + " (" + className + ") created.");
-                callback(null, quiddInfo);
+                cb(null, quiddInfo);
 
             } else {
                 log.error("failed to create a quiddity class ", className);
-                callback("failed to create " + className + " maybe this name is already used?");
+                cb("failed to create " + className + " maybe this name is already used?");
             }
 
         }
@@ -29,11 +40,24 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
 
             if (!quidds) return log.error("failed remove quiddity " + quiddName);
 
+
+            /* Remove quiddity sink base on quidd removed */
             _.each(quidds, function(quidd) {
                 if (quidd.name.indexOf(quiddName + "-sink") != -1) {
                     switcher.remove(quidd.name);
                 }
             });
+
+            /* remove vumeters */
+            var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
+
+            if (shmdatas && !shmdatas.error) {
+                shmdatas = shmdatas.shmdata_writers;
+                $.each(shmdatas, function(index, shmdata) {
+                    log.debug("remove vumeter : vumeter_" + shmdata.path);
+                    switcher.remove('vumeter_' + shmdata.path);
+                });
+            }
 
             if (switcher.remove(quiddName)) {
                 log.debug("quiddity " + quiddName + " is removed.");
@@ -41,6 +65,8 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
                 log.error("failed to remove " + quiddName);
             }
         }
+
+
 
         function get_description(quiddName, cb) {
             log.debug("get Description quidd", quiddName);
@@ -91,6 +117,29 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
             } else {
                 log.error("missing arguments for set property value :", quiddName, property, value);
             }
+        }
+
+
+        function get_property_by_class(className, propertyName, callback) {
+            log.debug("try get property by class", className, propertyName);
+            var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
+
+            if (propertyByClass && propertyByClass.error) {
+                log.error(propertyByClass.error + "(property : " + propertyName + ", class : " + className + ")");
+                return;
+            }
+            callback(propertyByClass);
+        }
+
+
+        function get_property_description(quiddName, property, callback) {
+
+            var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
+            if (property_description && property_description.error) {
+                log.error(property_description.error + "(property : " + propertyName + ", quiddity : " + quiddName + ")");
+                return;
+            }
+            callback(property_description);
         }
 
         function get_properties_values(quiddName) {
@@ -164,7 +213,7 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
 
 
         function get_property_value(quiddName, property, cb) {
-
+            log.debug("Get property value", quiddName, property);
             if (quiddName && property) {
                 try {
                     var property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
@@ -177,7 +226,7 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
                 log.error(msg);
                 return;
             }
-
+            log.debug(property_value);
             cb(null, property_value);
         }
 
@@ -197,7 +246,46 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
             //io.sockets.emit("invoke", invoke, quiddName, method, parameters);
         }
 
+        function subscribe_info_quidd(quiddName, socketId) {
+            log.debug("socketId (" + socketId + ") subscribe info " + quiddName);
+            config.subscribe_quidd_info[socketId] = quiddName;
+        }
+
+        function unsubscribe_info_quidd(quiddName, socketId) {
+            log.debug("socketId (" + socketId + ") unsubscribe info " + quiddName);
+            delete config.subscribe_quidd_info[socketId];
+        }
+
+
+        //************************ DICO *****************************************//
+
+        function set_property_value_of_dico(property, value, callback) {
+            var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+            if (currentValueDicoProperty)
+                currentValueDicoProperty[currentValueDicoProperty.length] = value;
+            else
+                var currentValueDicoProperty = [value];
+
+            switcher.set_property_value("dico", property, JSON.stringify(currentValueDicoProperty));
+            io.sockets.emit("setDicoValue", property, value);
+            callback("ok");
+
+        }
+
+        function remove_property_value_of_dico(property, name) {
+            var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+            var newValuesDico = [];
+            _.each(currentValuesDicoProperty, function(value) {
+                if (value.name != name)
+                    newValuesDico.push(value);
+            });
+            switcher.set_property_value("dico", property, JSON.stringify(newValuesDico));
+            io.sockets.emit("removeValueOfPropertyDico", property, name);
+        }
+
+
         return {
+            initialize: initialize,
             create: create,
             remove: remove,
             get_description: get_description,
@@ -207,8 +295,13 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
             get_properties_values: get_properties_values,
             get_property_value: get_property_value,
             set_property_value: set_property_value,
-            invoke: invoke
+            get_property_description: get_property_description,
+            get_property_by_class: get_property_by_class,
+            subscribe_info_quidd: subscribe_info_quidd,
+            unsubscribe_info_quidd: unsubscribe_info_quidd,
+            invoke: invoke,
+            set_property_value_of_dico: set_property_value_of_dico,
+            remove_property_value_of_dico: remove_property_value_of_dico
         }
 
-    }
-);
+    });

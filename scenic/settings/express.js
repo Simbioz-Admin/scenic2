@@ -18,7 +18,14 @@ define(
         app.use("/templates", express.static("templates"));
 
         app.get('/', function(req, res) {
-            res.sendfile('index.html');
+            if (!config.passSet) {
+                res.sendfile('index.html');
+            } else {
+                config.passSet.apply(req, res, function(username) {
+                    res.sendfile('index.html');
+
+                });
+            }
 
         });
 
@@ -69,11 +76,6 @@ define(
             }
         });
 
-
-        app.get('/shmdatas', function(request, response) {
-            response.contentType('application/json');
-            response.send(scenic.getShmdatas());
-        });
 
         app.get('/destinations', function(request, response) {
             response.contentType('application/json');

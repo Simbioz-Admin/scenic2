@@ -4,10 +4,11 @@ define(
         'log',
         'config',
         'portastic',
-        'switcher'
+        'switcher',
+        'http-auth'
     ],
 
-    function(http, log, config, portastic, switcher) {
+    function(http, log, config, portastic, switcher, auth) {
 
         var socketio;
 
@@ -57,14 +58,13 @@ define(
                         config.nameComputer = params.username;
                         config.port.soap = parseInt(params.portSoap);
                         if (params.pass != "" && params.pass == params.confirmPass) {
-                            ident = auth({
+                            config.passSet = auth({
                                 authRealm: "Private area.",
                                 authList: [params.username + ':' + params.pass]
                             });
-                            log("info", "password has set");
-                            passSet = true;
+                            log.debug("info", "password has set");
                         }
-                        switcher.initialize();
+                        switcher.initialize(socketio);
                         config.scenicStart = true;
                         //resend configuration updated
                         callback(config);
@@ -73,17 +73,50 @@ define(
                     }
                 });
 
-                //************************* QUIDDS ****************************//
 
+                /* 
+                 * if the user started the server close the page web we stop scenic server we detect
+                 * if it 's just refresh on stock socketId in localstorga clientSide and send to the server side if define
+                 */
+
+                socket.on('disconnect', function() {
+                    refreshTimeout = setTimeout(function() {
+                        if (config.masterSocketId == socket.id && config.standalone == false) {
+                            process.exit();
+                        }
+                    }, 2000);
+
+                });
+
+
+                socket.on("returnRefresh", function(oldSocketId, newSocketId) {
+                    if (oldSocketId == config.masterSocketId) {
+                        console.log("hey the master refresh the page !");
+                        clearTimeout(refreshTimeout);
+                        config.masterSocketId = newSocketId;
+                    }
+                })
+
+                //************************* QUIDDS ****************************//
 
                 socket.on("create", switcher.quidds.create);
                 socket.on("get_quiddity_description", switcher.quidds.get_description);
                 socket.on("get_properties_description", switcher.quidds.get_properties_description);
                 socket.on("get_methods_description", switcher.quidds.get_methods_description);
+                socket.on("get_property_description", switcher.quidds.get_property_description);
                 socket.on("get_property_value", switcher.quidds.get_property_value);
                 socket.on("set_property_value", switcher.quidds.set_property_value);
+                socket.on("get_property_by_class", switcher.quidds.get_property_by_class);
                 socket.on("remove", switcher.quidds.remove);
                 socket.on("invoke", switcher.quidds.invoke);
+                socket.on("subscribe_info_quidd", switcher.quidds.subscribe_info_quidd);
+                socket.on("unsubscribe_info_quidd", switcher.quidds.unsubscribe_info_quidd);
+
+
+                //************************* DICO ****************************//
+
+                socket.on("setPropertyValueOfDico", switcher.quidds.set_property_value_of_dico);
+                socket.on("removeValuePropertyOfDico", switcher.quidds.remove_property_value_of_dico);
 
 
                 //************************* DESTINATION ****************************//
@@ -93,6 +126,13 @@ define(
                 socket.on("remove_destination", switcher.receivers.remove_destination);
                 socket.on("connect_destination", switcher.receivers.connect_destination);
                 socket.on("remove_connection", switcher.receivers.remove_connection);
+
+                //************************* SAVE ****************************//
+
+                socket.on("save", switcher.save);
+                socket.on("load", switcher.load);
+                socket.on("remove_save", switcher.remove_save);
+                socket.on("get_save_file", switcher.get_save_file);
 
 
             });

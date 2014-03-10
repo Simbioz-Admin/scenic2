@@ -122,7 +122,7 @@ define(
                                 model: that
                             });
                             //subscribe for have information about modification on quidd
-                            socket.emit("subscribe_info_quidd", that.get("name"));
+                            socket.emit("subscribe_info_quidd", that.get("name"), socket.socket.sessionid);
                         });
                     });
                 },

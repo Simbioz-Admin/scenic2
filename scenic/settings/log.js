@@ -29,7 +29,7 @@ define(
                     level: config.logLevel
                 }),
                 new(winston.transports.File)({
-                    filename: 'logging-file.log'
+                    filename: 'logs/logging-file.log'
                 })
             ]
         });

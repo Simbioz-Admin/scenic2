@@ -15,15 +15,11 @@ requirejs({
         //     "switcher": ["scenicIo"]
         // }
     },
+
 });
 
 requirejs(['./scenic/app', 'scenicIo'],
     function(app, scenicIo) {
-        // var express = require('express'),
-        //     http = require('http');
-
-        // var app = express();
-        // var server = http.createServer(app).listen(8095);
 
         // require('socket.io').listen(server); // Your app passed to socket.io
     }

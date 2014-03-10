@@ -53,7 +53,7 @@ test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
-	npm cache clean node-switcher && npm install
+	npm install
 	mkdir -p $(ARCHIVE)
 	install $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)

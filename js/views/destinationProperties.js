@@ -59,11 +59,9 @@ define(
 
                     $("#subMenu").remove();
 
-                    console.log("SHOW PROPERTIES");
                     // return;
 
                     var quidds = {};
-                    console.log(collections.quidds.toJSON());
                     collections.quidds.each(function(quidd) {
                         var quiddCategory = quidd.get("category");
                         if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
@@ -104,7 +102,7 @@ define(
                         nameQuidd = "mapper_" + quiddSource + "_" + propertySource + "_" + $(element.target).data("nameandproperty");
 
                     socket.emit("create", "property-mapper", nameQuidd, function(err, infoQuidd) {
-                        var model = collections.quidds.create(infoQuidd);
+                        // var model = collections.quidds.create(infoQuidd);
                         socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok) {});
                         socket.emit("invoke", infoQuidd.name, "set-sink-property", [sinkSource, sinkProperty], function(ok) {});
                     });

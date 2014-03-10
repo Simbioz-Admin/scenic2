@@ -61,7 +61,6 @@ define(
 
                     var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
                     if (!PreviewQuidd.test(this.get("name"))) {
-                        console.log("add preview", this.get("name"));
                         views.quidds.addPreviewIcon(this.get("name"));
                     }
 
@@ -97,7 +96,6 @@ define(
                         /* ViewMapper it's the connection between the source and destination in table control */
 
                         if (that.get("category") == "mapper") {
-                            console.log("mapper", that);
                             that.set("view", new ViewMapper({
                                 model: that,
                                 table: "control"

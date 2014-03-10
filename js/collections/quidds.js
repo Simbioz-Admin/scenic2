@@ -101,7 +101,6 @@ define(
 
                 delete: function(quiddName) {
                     var model = this.get(quiddName);
-
                     if (model) {
                         model.trigger('destroy', model);
                         views.global.notification("info", quiddName + "  has deleted");

@@ -1,3 +1,5 @@
 {"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-10T17:21:16.299Z"}
 {"level":"error","message":"quidds.js:226: failed o get property value (quiddity: null property: shmdata-writers","timestamp":"2014-03-10T17:21:31.055Z"}
 {"level":"error","message":"quidds.js:226: failed o get property value (quiddity: null property: shmdata-writers","timestamp":"2014-03-10T17:22:12.657Z"}
+{"level":"error","message":"quidds.js:25: failed to create a quiddity class ","timestamp":"2014-03-10T17:52:58.940Z"}
+{"level":"error","message":"quidds.js:65: failed to remove mapper_test_last-midi-value_test2_volume","timestamp":"2014-03-10T17:53:51.315Z"}

@@ -1,0 +1,12 @@
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-10T17:21:16.299Z"}
+{"level":"error","message":"quidds.js:226: failed o get property value (quiddity: null property: shmdata-writers","timestamp":"2014-03-10T17:21:31.055Z"}
+{"level":"error","message":"quidds.js:226: failed o get property value (quiddity: null property: shmdata-writers","timestamp":"2014-03-10T17:22:12.657Z"}
+{"level":"error","message":"quidds.js:25: failed to create a quiddity class ","timestamp":"2014-03-10T17:52:58.940Z"}
+{"level":"error","message":"quidds.js:65: failed to remove mapper_test_last-midi-value_test2_volume","timestamp":"2014-03-10T17:53:51.315Z"}
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-10T18:14:40.822Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-10T18:14:40.824Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-10T18:14:40.836Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio pac 4466 2020","timestamp":"2014-03-10T18:14:46.307Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio pac 4488/ 2020","timestamp":"2014-03-10T18:15:10.474Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio pac  2020","timestamp":"2014-03-10T18:15:14.282Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio pac 4422 2020","timestamp":"2014-03-10T18:15:22.370Z"}

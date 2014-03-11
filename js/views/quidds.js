@@ -36,7 +36,8 @@ define(
             {
                 el: 'body',
                 events: {
-                    "click .createQuidd, .deviceDetected li": "defineName",
+                    //"click .createQuidd a, .deviceDetected li": "defineName",
+                    "menuselect .createQuidd a": "defineName",
                     "click #create": "create",
                     //"mouseenter .autoDetect": "autoDetect",
                     //"mouseleave .autoDetect" : "leaveAutoDetect"
@@ -46,12 +47,16 @@ define(
 
                 initialize: function() {},
 
-                /* open the lightbox and show the properties to define for create the quidd Source */
+
+
+                /* open the lightbox and show the properties to define for create the quidd Source 
+                 * ALERT : This function is call in views/table.js Because we use jqueryui and we cant access events in view declaration
+                 */
 
                 defineName: function(element) {
-
-                    var className = $(element.target).data("name");
-                    var getDevices = $(element.target).hasClass("autoDetect");
+                    console.log(element);
+                    var className = $(element).data("name");
+                    var getDevices = $(element).hasClass("autoDetect");
                     /* get  the information about the device in property value of quiddity */
                     if (getDevices) {
                         socket.emit("get_property_by_class", className, "device", function(property) {

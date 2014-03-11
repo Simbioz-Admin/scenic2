@@ -2,11 +2,12 @@
 <!-- <div id="titleIn"></div> -->
 <!-- <div id="titleOut"></div> -->
 
+
 <div id="headerTable">
-	<ul class="menuTable headerMenu">
+	<ul class="menuTable headerMenu" >
 		<% _.each(menus, function(menu){ %>
 			<li>
-				<div class="get_classes" id="<%=menu.id%>" data-type="<%=menu.type%>" >+ <%=menu.name%></div>
+				<a href="#" class="get_classes" data-type="<%=menu.type%>" >+ <%=menu.name%></a>
 			</li>
 		<% }); %>
 	</ul>

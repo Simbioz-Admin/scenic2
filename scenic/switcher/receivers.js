@@ -277,7 +277,7 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
 
                                 /* 1. associate the stream with a destination on defaultrtp */
 
-                                connect_destination(stream.path, data.destination.id, stream.port, data.destination.portSoap, function(ok) {
+                                connect_destination(data.destination.id, stream.path, data.destination.id, stream.port, data.destination.portSoap, function(ok) {
                                     if (!ok) cb({
                                         "error": "failed to reconnect destination"
                                     });

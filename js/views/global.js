@@ -43,6 +43,7 @@ define(
 
                 //assocition between action on elements html and functions
                 events: {
+                    "keypress": "keyboardAction",
                     "click #close-panelRight": "closePanel",
                     "click #close-panelInfoSource": "closePanelInfoSource",
                     "change .checkbox": 'stateCheckbox',
@@ -60,6 +61,8 @@ define(
 
 
                 },
+
+
 
 
                 /* Called when the view is initialized */
@@ -180,10 +183,26 @@ define(
                 },
 
 
-                /* Called when we type a touch on keyboard for specified action (only use for close panel for the moment) */
+                /* here we define all action accessible with keyboard */
 
                 keyboardAction: function(event) {
                     var that = this;
+                    console.log("id Key", event.which);
+
+                    /* started or stopped quidd */
+                    if (event.which == 115) {
+                        $("#check-started").attr('checked', true);
+                    }
+
+                    /* action open menu for create quidd (id : 113 - up) */
+                    if (event.which == 113) {
+                        var currentTable = localStorage['currentTable'];
+                        currentTable = collections.tables.get(currentTable);
+                        currentTable.trigger("trigger:menu", "sources");
+                        $("#subMenu").addClass("active");
+                    }
+
+                    /* action on panel (close) */
                     if (event.which == 27) {
                         /* Close panelRight */
                         this.closePanel();
@@ -195,8 +214,7 @@ define(
                         }
 
                         /* Close box save/ load */
-                        $(".panelBox").remove();
-
+                        $(".panelBox, #subMenu").remove();
 
 
                     }

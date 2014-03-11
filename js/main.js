@@ -10,6 +10,7 @@ require.config({
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',
+        smartMenu: 'libs/smartmenus/jquery.smartmenus.min'
     },
     shim: {
         underscore: {
@@ -29,6 +30,10 @@ require.config({
         jqueryCookie: {
             deps: ['jquery'],
             exports: 'jquerycookie'
+        },
+        smartMenu: {
+            deps: ['jquery'],
+            exports: 'smartMenu'
         }
     }
 });
@@ -53,16 +58,19 @@ require([
         config = configServer;
     });
 
-
     if (localStorage["oldId"]) {
         socket.emit("returnRefresh", localStorage["oldId"], socket.socket.sessionid);
     }
 
+
+    /* stock information of sessionid in localStorage when user refresh or quit interface. 
+       Use for know how close the interface */
     $(window).bind('beforeunload', function() {
         localStorage["oldId"] = socket.socket.sessionid;
     });
 
 
+    /* When the server is closed or crash a message global is send for all user */
     socket.on("shutdown", function() {
         $("body").html("<div id='shutdown'>the server has been shutdown...</div>");
     });
@@ -72,9 +80,4 @@ require([
         if (!stateScenic) launch.initialize();
         else app.initialize();
     });
-
-
-
-    //if(page == "app") App.initialize();
-
 });

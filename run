@@ -1,0 +1,2 @@
+#!/bin/bash
+export NODE_PATH=$NODE_PATH:~/.scenic2/node_modules && nodejs server.js $@

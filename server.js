@@ -13,7 +13,7 @@ var express = require("express"),
 	argv = require('./scenic/arguments.js')(config),
 	log = require('./scenic/logger.js')(config, _, app, io, $),
 	sys = require('sys'),
-	exec = require('child_process').exec,
+        exec = require('child_process').exec,
 	auth = require("http-auth"),
 	ident = false,
 	passSet = false;
@@ -23,9 +23,9 @@ try {
 	switcher = require('node-switcher');
 } catch (e1) {
 	try {
-		switcher = require('/usr/local/nodejs/node-switcher/switcher_addon.node');
+		switcher = require('/usr/lib/nodejs/switcher.node');
 	} catch (e2) {
-		switcher = require('/usr/nodejs/node-switcher/switcher_addon.node');
+		switcher = require('/usr/lib/node-switcher/switcher_addon.node');
 	}
 }
 

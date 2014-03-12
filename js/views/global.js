@@ -190,12 +190,12 @@ define(
                     console.log("id Key", event.which);
 
                     /* started or stopped quidd */
-                    if (event.which == 115) {
+                    if (event.which == 115 && event.shiftKey) {
                         $("#check-started").attr('checked', true);
                     }
 
                     /* action open menu for create quidd (id : 113 - up) */
-                    if (event.which == 113) {
+                    if (event.which == 81 && event.shiftKey) {
                         var currentTable = localStorage['currentTable'];
                         currentTable = collections.tables.get(currentTable);
                         currentTable.trigger("trigger:menu", "sources");

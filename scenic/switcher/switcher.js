@@ -127,7 +127,7 @@ define(
                 _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
                     if (quiddName == qname) {
                         var socket = io.sockets.sockets[socketId];
-                        socket.emit("signals_properties_value", qname, qprop, pvalue);
+                        if (socket) socket.emit("signals_properties_value", qname, qprop, pvalue);
                     }
                 });
 
@@ -176,11 +176,13 @@ define(
 
                 if (qprop == "on-property-added" || qprop == "on-property-removed" || qprop == "on-method-added" || qprop == "on-method-removed") {
                     //console.log("New property for ",qname, pvalue);
+                    log.debug("subscribe List", config.subscribe_quidd_info);
                     _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
                         if (quiddName == qname) {
                             log.switcher("send to sId (" + socketId + ") " + qprop + " : " + pvalue);
+                            //log.debug(io);
                             var socket = io.sockets.sockets[socketId];
-                            socket.emit('signals_properties_info', qprop, qname, pvalue);
+                            if (socket) socket.emit('signals_properties_info', qprop, qname, pvalue);
                         }
                     });
 

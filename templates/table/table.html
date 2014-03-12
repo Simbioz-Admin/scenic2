@@ -7,7 +7,7 @@
 	<ul class="menuTable headerMenu" >
 		<% _.each(menus, function(menu){ %>
 			<li>
-				<a href="#" class="get_classes" data-type="<%=menu.type%>" >+ <%=menu.name%></a>
+				<a href="#" class="get_classes" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>" >+ <%=menu.name%></a>
 			</li>
 		<% }); %>
 	</ul>

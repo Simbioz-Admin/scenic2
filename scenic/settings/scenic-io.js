@@ -80,6 +80,8 @@ define(
                  */
 
                 socket.on('disconnect', function() {
+                    //remove subscribe of information modification quidd
+                    delete config.subscribe_quidd_info[socket.id];
                     refreshTimeout = setTimeout(function() {
                         if (config.masterSocketId == socket.id && config.standalone == false) {
                             process.exit();

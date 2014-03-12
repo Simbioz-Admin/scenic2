@@ -87,10 +87,9 @@ define(
                  */
 
                 get_classes: function(e) {
-
-                    console.log("get_classes!", e);
                     $("#subMenu").remove();
                     var type = e.target ? $(e.target).data("type") : e;
+                    console.log("get_classes!", type);
 
                     /* get the quiddity classes authorized on this table */
                     var classes = this.model.classes_authorized(type);

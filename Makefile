@@ -1,4 +1,4 @@
-VERSION := $(shell ./scenic2 -v)
+VERSION := $(shell ./run -v)
 PROJDIRS := js scenic templates assets 
 SRCFILES := package.json \
 	server.js \
@@ -21,7 +21,7 @@ all:
 
 install: all
 	@echo Making all
-	@echo "node $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules && nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > run
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
 	@echo building directories for version $(VERSION)
@@ -44,7 +44,7 @@ uninstall:
 
 clean:
 	@echo cleaning up
-	@echo "node server.js \$$@" > scenic2
+	@echo "NODE_PATH=$$NODE_PATH:~/.scenic2/node_modules && node server.js \$$@" > run
 	rm -fr node_modules
 
 test:

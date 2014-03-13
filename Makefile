@@ -1,5 +1,5 @@
 VERSION := $(shell ./scenic2 -v)
-PROJDIRS := js scenic templates assets node_modules
+PROJDIRS := js scenic templates assets 
 SRCFILES := package.json \
 	server.js \
 	index.html \
@@ -16,8 +16,6 @@ TARGETDIR := /opt/scenic2
 ARCHIVE := scenic2_$(VERSION)
 
 all:
-	npm cache clean node-switcher && npm install
-	cd node_modules/node-switcher; node-gyp clean; node-gyp rebuild; cd -
 	@echo Now run sudo make install
 	@echo $(VERSION)
 
@@ -53,7 +51,6 @@ test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
-	npm cache clean node-switcher && npm install
 	mkdir -p $(ARCHIVE)
 	install $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)

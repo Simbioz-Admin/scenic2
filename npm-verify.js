@@ -4,18 +4,21 @@ var p = "./package.json";
 var reported = [];
 
 var http = require('http');
-http.createServer(function (req, res) {
+var tmpServer = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.end('<html><head><link rel="stylesheet" type="text/css" href="./assets/css/stylesheets/screen.css"></head><title>Scenic2</title><body><center>Veryfying installation<p>Please be patient</p></center></body></html>');
-}).listen(8095, '127.0.0.1');
-console.log('Server running at http://127.0.0.1:8095/');
+});
+tmpServer.listen(8095, '127.0.0.1');
+console.log('Server running at http://127.0.0.1:8096/');
 var spawn = require('child_process').spawn
-var chrome = spawn("chromium-browser", [" --app=http://localhost:8095", "--window-size=300,300"], {
+var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,300"], {
     detached: true,
     stdio: [ 'ignore', null, null ]
 });
 chrome.unref();
 chrome.on('close', function(code){
+    tmpServer.close();
+    spawn("./run");
     process.exit();
 });
 
@@ -85,14 +88,12 @@ function scenicRequire (deps, installed, callback) {
                 npm.commands.install(toInstall, function (er, data) {
                     console.log(data);
                     chrome.kill('SIGHUP');
-                    spawn("./scenic2");
                 });
             });
         });
     } else {
         console.log("nothing to install");
         chrome.kill('SIGHUP');
-        spawn("./scenic2");
     }
 }
 

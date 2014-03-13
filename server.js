@@ -1,5 +1,8 @@
+
+
 var express = require("express"),
 	config = require('./scenic/config.js'),
+argv = require('./scenic/arguments.js')(config),
 	$ = require('jquery'),
 	_ = require('underscore'),
 	app = express(),
@@ -10,7 +13,6 @@ var express = require("express"),
 	io = require('socket.io').listen(server, {
 		log: config.logSocketIo
 	}),
-	argv = require('./scenic/arguments.js')(config),
 	log = require('./scenic/logger.js')(config, _, app, io, $),
 	sys = require('sys'),
         exec = require('child_process').exec,

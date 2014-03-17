@@ -96,11 +96,6 @@ input[type=submit] {
   border-color: #333333;
 }
 
-/* line 78, ../sass/black.sass */
-.sources .source:first-child:before {
-  color: #aaaaaa;
-}
-
 /* line 81, ../sass/black.sass */
 #panelTables .tabTable {
   background: #444444;

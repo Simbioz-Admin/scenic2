@@ -29,3 +29,20 @@
 {"level":"error","message":"quidds.js:25: failed to create a quiddity class ","timestamp":"2014-03-11T14:22:55.397Z"}
 {"level":"error","message":"quidds.js:25: failed to create a quiddity class ","timestamp":"2014-03-11T21:44:17.130Z"}
 {"level":"info","message":"add to rtpdefault client","timestamp":"2014-03-12T14:29:09.742Z"}
+{"level":"error","message":"quidds.js:118: missing arguments for set property value :","timestamp":"2014-03-12T14:52:27.592Z"}
+{"level":"info","message":"add to rtpdefault New York","timestamp":"2014-03-12T14:53:03.393Z"}
+{"level":"info","message":"add to rtpdefault Vancouver","timestamp":"2014-03-12T14:53:09.295Z"}
+{"level":"info","message":"add to rtpdefault Montreal","timestamp":"2014-03-12T14:53:14.383Z"}
+{"level":"info","message":"connect quiddity to receiver video 2 /tmp/switcher_nodeserver_video 2_video New York 4444 ","timestamp":"2014-03-12T14:53:19.524Z"}
+{"level":"info","message":"connect quiddity to receiver video 1 /tmp/switcher_nodeserver_video 1_video Vancouver 4488 ","timestamp":"2014-03-12T14:53:22.044Z"}
+{"level":"info","message":"connect quiddity to receiver audio 2 /tmp/switcher_nodeserver_audio 2_audio Montreal 4422 ","timestamp":"2014-03-12T14:53:24.819Z"}
+{"level":"info","message":"add to rtpdefault New York","timestamp":"2014-03-12T14:53:58.977Z"}
+{"level":"info","message":"add to rtpdefault Vancouver","timestamp":"2014-03-12T14:54:02.200Z"}
+{"level":"info","message":"add to rtpdefault Montreal","timestamp":"2014-03-12T14:54:04.502Z"}
+{"level":"info","message":"connect quiddity to receiver audio 2 /tmp/switcher_nodeserver_audio 2_audio New York 4444 ","timestamp":"2014-03-12T14:54:34.350Z"}
+{"level":"info","message":"connect quiddity to receiver audio 1 /tmp/switcher_nodeserver_audio 1_audio Vancouver 4488 ","timestamp":"2014-03-12T14:54:38.468Z"}
+{"level":"info","message":"connect quiddity to receiver audio 2 /tmp/switcher_nodeserver_audio 2_audio Montreal 66443 ","timestamp":"2014-03-12T14:55:13.219Z"}
+{"level":"info","message":"connect quiddity to receiver video 2 /tmp/switcher_nodeserver_video 2_video Vancouver 4468 ","timestamp":"2014-03-12T14:55:17.900Z"}
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T13:42:34.987Z"}
+{"level":"info","message":"add to rtpdefault apc","timestamp":"2014-03-17T13:42:36.976Z"}
+{"level":"info","message":"add to rtpdefault cap","timestamp":"2014-03-17T13:42:41.643Z"}

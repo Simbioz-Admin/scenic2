@@ -248,6 +248,7 @@ define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
 
         function subscribe_info_quidd(quiddName, socketId) {
             log.debug("socketId (" + socketId + ") subscribe info " + quiddName);
+
             config.subscribe_quidd_info[socketId] = quiddName;
         }
 

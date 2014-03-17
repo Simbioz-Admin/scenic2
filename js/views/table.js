@@ -108,7 +108,7 @@ define(
                     });
 
                     $("#listSources", this.el).remove();
-
+                    console.log(template);
                     $(".table.active [data-type='" + type + "']").after(template);
 
                     /* here we listen select for call views.quidds.defineName */

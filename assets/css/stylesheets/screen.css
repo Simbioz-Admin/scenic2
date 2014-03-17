@@ -322,18 +322,6 @@ header .btn {
   background: green;
 }
 
-/* line 228, ../sass/screen.sass */
-.blur {
-  -webkit-filter: blur(5px);
-  -moz-filter: blur(5px);
-  filter: blur(5px);
-  -webkit-transition: 0.2s;
-  -moz-transition: 0.2s;
-  -ms-transition: 0.2s;
-  -o-transition: 0.2s;
-  transition: 0.2s;
-}
-
 /* line 232, ../sass/screen.sass */
 #overlay_confirmation {
   position: fixed;
@@ -690,7 +678,7 @@ header .btn {
 }
 /* line 485, ../sass/screen.sass */
 #headerDest td {
-  height: 35px;
+  height: 40px;
   background-color: #eeeeee;
   font-size: 1.2em;
 }
@@ -1342,17 +1330,12 @@ td {
 /* line 937, ../sass/screen.sass */
 .sources .source:first-child:before {
   content: "Remote sources";
-  background: #333333;
+  background: #be2620;
   padding: 2px 5px;
   color: white;
   position: relative;
   top: -3px;
-  left: 0px;
-  -webkit-border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -ms-border-radius: 3px 3px 0 0;
-  -o-border-radius: 3px 3px 0 0;
-  border-radius: 3px 3px 0 0;
+  left: -10px;
 }
 
 /* line 948, ../sass/screen.sass */
@@ -1381,7 +1364,7 @@ td {
 }
 /* line 971, ../sass/screen.sass */
 .tableScenic table.source {
-  margin: 0 0 5px 0px;
+  margin: 0 0 3px 0px;
 }
 /* line 977, ../sass/screen.sass */
 .tableScenic table.source .shmdata.inactive, .tableScenic table.source .shmdata.active {
@@ -1460,7 +1443,7 @@ td {
   position: relative;
   width: 80px;
   width: 120px;
-  height: 35px;
+  height: 40px;
 }
 /* line 1041, ../sass/screen.sass */
 .tableScenic th .mapper, .tableScenic td .mapper {

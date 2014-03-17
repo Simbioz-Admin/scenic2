@@ -377,8 +377,8 @@ define(
                     collections.tables.currentTable = table;
                     $(".tabTable").removeClass("active");
                     $(event.target).parent().addClass("active");
-                    $(".table").hide();
-                    $("#" + table).show();
+                    $(".table").removeClass("active");
+                    $("#" + table).addClass("active");
                 }
             });
 

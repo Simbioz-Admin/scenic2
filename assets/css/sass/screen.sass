@@ -232,8 +232,8 @@ header
 #overlay_confirmation
 	position : fixed
 	top : 0
-	left : 0
-	right : 0
+		left : 0
+		right : 0
 	bottom : 0
 	width : 100%
 	height : 100%
@@ -280,7 +280,7 @@ header
 	.get_classes , .channel
 		padding : 5px 10px
 		margin-right : 10px
-		border-left : 1px solid #555
+		//border-left : 1px solid #555
 		display : inline-block
 		color : #ccc
 		height : 20px
@@ -1037,6 +1037,7 @@ td
 		// overflow : hidden
 		height : 40px
 		// padding : 0 9px
+		// border-right : 1px solid #292929
 
 		.mapper
 			background : #888
@@ -1233,13 +1234,15 @@ td
 	// margin-left : -10px
 	position : relative
 	// width : 118%
+	border : none
 
 #port_destination
-	background : #555
+	background : #292929
 	color : white
 	outline : 0
 	font-size : 12px
-
+	border : none
+	height : 100%
 .connection
 	background : #444
 	text-align : center
@@ -1262,6 +1265,7 @@ td.active
 	color : white
 	cursor : pointer
 	position : relative
+	background : #292929
 	&:hover
 		// background : #777!important
 		background : #be2620 url(../../images/bgBox_disconnect.png) no-repeat center center !important 

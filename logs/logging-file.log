@@ -46,3 +46,9 @@
 {"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T13:42:34.987Z"}
 {"level":"info","message":"add to rtpdefault apc","timestamp":"2014-03-17T13:42:36.976Z"}
 {"level":"info","message":"add to rtpdefault cap","timestamp":"2014-03-17T13:42:41.643Z"}
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T15:03:03.832Z"}
+{"level":"info","message":"add to rtpdefault pac3","timestamp":"2014-03-17T15:03:06.807Z"}
+{"level":"info","message":"add to rtpdefault pac2","timestamp":"2014-03-17T15:03:09.150Z"}
+{"level":"info","message":"connect quiddity to receiver video /tmp/switcher_nodeserver_video_video pac 4444 ","timestamp":"2014-03-17T15:04:12.595Z"}
+{"level":"info","message":"connect quiddity to receiver audio1 /tmp/switcher_nodeserver_audio1_audio pac2 4242 ","timestamp":"2014-03-17T15:50:44.916Z"}
+{"level":"info","message":"connect quiddity to receiver video /tmp/switcher_nodeserver_video_video pac 4545 ","timestamp":"2014-03-17T15:55:11.069Z"}

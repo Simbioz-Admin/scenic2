@@ -36,12 +36,8 @@ define(
             {
                 el: 'body',
                 events: {
-                    //"click .createQuidd a, .deviceDetected li": "defineName",
                     "menuselect .createQuidd a": "defineName",
                     "click #create": "create",
-                    //"mouseenter .autoDetect": "autoDetect",
-                    //"mouseleave .autoDetect" : "leaveAutoDetect"
-                    // "click #create-midi" : "createMidi"
                 },
                 delayAutoDetect: false,
 

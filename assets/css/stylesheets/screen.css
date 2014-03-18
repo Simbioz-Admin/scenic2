@@ -1266,7 +1266,7 @@ td {
 
 /* line 889, ../sass/screen.sass */
 .actions {
-  height: 35px;
+  height: 40px;
   left: 0;
   right: 0;
   display: none;
@@ -1373,7 +1373,7 @@ td {
 .tableScenic table.source .shmdata.inactive:after, .tableScenic table.source .shmdata.active:after {
   content: "";
   position: absolute;
-  left: 250px;
+  left: 245px;
   margin-top: 9px;
   z-index: 20;
   width: 5px;
@@ -1392,7 +1392,7 @@ td {
 }
 /* line 995, ../sass/screen.sass */
 .tableScenic table.source .nameInOut {
-  padding: 0 0px 0 20px;
+  padding: 0 15px 0 5px;
   text-align: left;
 }
 /* line 999, ../sass/screen.sass */
@@ -1400,7 +1400,7 @@ td {
   width: 15px;
   height: 18px;
   position: absolute;
-  right: -11px;
+  right: -22px;
   top: 6px;
 }
 /* line 1007, ../sass/screen.sass */

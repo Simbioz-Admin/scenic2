@@ -52,3 +52,27 @@
 {"level":"info","message":"connect quiddity to receiver video /tmp/switcher_nodeserver_video_video pac 4444 ","timestamp":"2014-03-17T15:04:12.595Z"}
 {"level":"info","message":"connect quiddity to receiver audio1 /tmp/switcher_nodeserver_audio1_audio pac2 4242 ","timestamp":"2014-03-17T15:50:44.916Z"}
 {"level":"info","message":"connect quiddity to receiver video /tmp/switcher_nodeserver_video_video pac 4545 ","timestamp":"2014-03-17T15:55:11.069Z"}
+{"level":"info","message":"add to rtpdefault Montreal","timestamp":"2014-03-17T17:12:27.591Z"}
+{"level":"info","message":"add to rtpdefault localhost","timestamp":"2014-03-17T17:20:08.594Z"}
+{"level":"info","message":"connect quiddity to receiver audio 2 /tmp/switcher_nodeserver_audio 2_audio Montreal 4444 ","timestamp":"2014-03-17T17:20:25.758Z"}
+{"level":"info","message":"connect quiddity to receiver video 1 /tmp/switcher_nodeserver_video 1_video localhost 2828 ","timestamp":"2014-03-17T17:20:36.934Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio Montreal 2424 ","timestamp":"2014-03-17T17:20:41.121Z"}
+{"level":"info","message":"connect quiddity to receiver video 2 /tmp/switcher_nodeserver_video 2_video localhost 2626 ","timestamp":"2014-03-17T17:20:43.542Z"}
+{"level":"info","message":"add to rtpdefault Vancouver","timestamp":"2014-03-17T18:07:32.288Z"}
+{"level":"info","message":"add to rtpdefault pacman","timestamp":"2014-03-17T18:36:55.745Z"}
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T18:36:58.543Z"}
+{"level":"info","message":"add to rtpdefault pacpacp","timestamp":"2014-03-17T18:37:05.074Z"}
+{"level":"info","message":"add to rtpdefault acwa","timestamp":"2014-03-17T18:38:54.828Z"}
+{"level":"info","message":"add to rtpdefault test","timestamp":"2014-03-17T18:39:25.485Z"}
+{"level":"info","message":"add to rtpdefault w4","timestamp":"2014-03-17T18:41:37.376Z"}
+{"level":"info","message":"add to rtpdefault awc","timestamp":"2014-03-17T18:42:44.321Z"}
+{"level":"info","message":"add to rtpdefault acawcwa","timestamp":"2014-03-17T18:43:27.897Z"}
+{"level":"info","message":"add to rtpdefault acawc","timestamp":"2014-03-17T18:43:36.902Z"}
+{"level":"info","message":"add to rtpdefault sebew","timestamp":"2014-03-17T18:44:17.405Z"}
+{"level":"info","message":"add to rtpdefault wevqw","timestamp":"2014-03-17T18:44:20.406Z"}
+{"level":"info","message":"connect quiddity to receiver video 1 /tmp/switcher_nodeserver_video 1_video pacman 488 ","timestamp":"2014-03-17T18:48:36.032Z"}
+{"level":"info","message":"connect quiddity to receiver video 1 /tmp/switcher_nodeserver_video 1_video pacman 4488 ","timestamp":"2014-03-17T18:48:40.511Z"}
+{"level":"info","message":"connect quiddity to receiver audio 2 /tmp/switcher_nodeserver_audio 2_audio acawcwa 4466 ","timestamp":"2014-03-17T18:48:43.428Z"}
+{"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio Vancouver 4422 ","timestamp":"2014-03-17T18:48:52.726Z"}
+{"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T18:53:17.956Z"}
+{"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio pac 4848 ","timestamp":"2014-03-17T18:53:29.201Z"}

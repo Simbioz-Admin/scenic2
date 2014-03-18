@@ -1,17 +1,41 @@
 var npm = require("npm");
 var scenicDependenciesPath = process.env.HOME + "/.scenic2";
+var fs = require('fs');
+try {
+    fs.mkdirSync(scenicDependenciesPath);
+} catch (err) {
+    console.log("cannot create directory: ", err);
+}
+
+
 var p = "./package.json";
 var reported = [];
-
 var http = require('http');
+// var tmpBody = '<html><head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><body><center>Verifying installation</p>';
+var tmpBody = '<html><head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/></head><title>Scenic2</title><body><center>Verifying installation</p>';
+// <img src="blacksmiths.gif"/>';
 var tmpServer = http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.end('<html><head><link rel="stylesheet" type="text/css" href="./assets/css/stylesheets/screen.css"></head><title>Scenic2</title><body><center>Veryfying installation<p>Please be patient</p></center></body></html>');
+    fs.readFile('./assets/images/blacksmiths.gif', function(error, file) {
+        var response_content_type= null; 
+        if (req.url.indexOf(".css") != -1
+             && req.headers.accept.indexOf("text/css") != -1) {
+             response_content_type = "text/css";
+         }
+        var imagedata = file.toString('base64');
+        res.writeHead(200, {
+            'Content-Type': 'text/html'//,
+            //'Content-Length': tmpBody.length
+        });
+        //res.write("Boo");
+        //console.log(imagedata);
+        res.write('<head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><br/><center>Installing compononents<br/><img src="data:blacksmiths.gif;base64,'+imagedata+'"/></center>');
+        res.end('</center></body></html>'); 
+    });    
 });
-tmpServer.listen(8095, '127.0.0.1');
+    tmpServer.listen(8096, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:8096/');
 var spawn = require('child_process').spawn
-var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,300"], {
+var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
     detached: true,
     stdio: [ 'ignore', null, null ]
 });

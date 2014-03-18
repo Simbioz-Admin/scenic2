@@ -3,7 +3,7 @@ var	os = require("os");
 
 //-- config.js
 module.exports = {
-	version: "0.4.8",
+	version: "2.0.6",
 	host: "localhost",
 	port: {
 		soap: 8085,

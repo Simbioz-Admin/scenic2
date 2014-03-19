@@ -28,7 +28,7 @@ var tmpServer = http.createServer(function (req, res) {
         });
         //res.write("Boo");
         //console.log(imagedata);
-        res.write('<head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><br/><center>Installing compononents<br/><img src="data:blacksmiths.gif;base64,'+imagedata+'"/></center>');
+        res.write('<head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><br/><center>Installing components<br/><img src="data:blacksmiths.gif;base64,'+imagedata+'"/></center>');
         res.end('</center></body></html>'); 
     });    
 });

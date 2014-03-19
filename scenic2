@@ -1,1 +1,1 @@
-node npm-verify.js
+NODE_PATH=~/.scenic2 node npm-verify.js

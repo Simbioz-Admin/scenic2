@@ -89,7 +89,7 @@ function scenicDependenciesSearch(dependencies, callback) {
                 console.log("Detected: " + installed[i]);
             }
             
-            callback("callback scenicDEpendenciesSearch returns ", installed);
+            callback(installed);
         });
     });
 }

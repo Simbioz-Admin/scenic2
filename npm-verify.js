@@ -88,7 +88,7 @@ function scenicDependenciesSearch(dependencies, callback) {
                 console.log("Detected: " + installed[i]);
             }
             
-            callback("callback scenicDEpendenciesSearch returnsL ", installed);
+            callback("callback scenicDEpendenciesSearch returns ", installed);
         });
     });
 }
@@ -110,7 +110,7 @@ function scenicRequire (deps, installed, callback) {
             npm.config.set("prefix", scenicDependenciesPath);
             npm.load({prefix: scenicDependenciesPath}, function(err) {
                 npm.commands.install(toInstall, function (er, data) {
-                    console.log(data);
+                    console.log("npm.commands.installed data: ", data);
                     chrome.kill('SIGHUP');
                 });
             });

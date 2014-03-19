@@ -69,6 +69,7 @@ function createNpmDependenciesArray (packageFilePath) {
 function returnInstalled(stuff) {
     reported = stuff;
     scenicRequire(createNpmDependenciesArray(p),reported );
+    console.log("returnInstalled returns: ", stuff);
     return stuff;
 }
 

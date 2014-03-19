@@ -15,7 +15,7 @@ var tmpBody = '<html><head><meta http-equiv="Content-Type" content="text/html" c
 // <img src="blacksmiths.gif"/>';
 var tmpServer = http.createServer(function (req, res) {
     try {
-        fs.readFile('./assets/images/blacksmiths.gif', function(error, file) {
+        fs.readFile('assets/images/blacksmiths.gif', function(error, file) {
             var response_content_type= null; 
             if (req.url.indexOf(".css") != -1
                 && req.headers.accept.indexOf("text/css") != -1) {

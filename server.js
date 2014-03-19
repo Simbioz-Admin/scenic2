@@ -1,8 +1,6 @@
-
-
-var express = require("express"),
-	config = require('./scenic/config.js'),
-argv = require('./scenic/arguments.js')(config),
+var config = require('./scenic/config.js'),
+        argv = require('./scenic/arguments.js')(config),
+        express = require("express"),
 	$ = require('jquery'),
 	_ = require('underscore'),
 	app = express(),

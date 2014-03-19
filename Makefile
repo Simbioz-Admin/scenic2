@@ -4,7 +4,9 @@ SRCFILES := package.json \
 	server.js \
 	index.html \
 	login.html \
-	scenic2 
+	scenic2 \
+	npm-verify.js \
+	run
 ALTFILES := COPYING \
 	INSTALL \
 	NEWS \

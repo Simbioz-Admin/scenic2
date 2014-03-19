@@ -21,6 +21,7 @@ var tmpServer = http.createServer(function (req, res) {
                 && req.headers.accept.indexOf("text/css") != -1) {
                 response_content_type = "text/css";
             }
+            console.log("Reading file: ", file);
             var imagedata = file.toString('base64');
             res.writeHead(200, {
                 'Content-Type': 'text/html'//,

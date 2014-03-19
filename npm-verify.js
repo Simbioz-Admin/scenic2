@@ -7,7 +7,6 @@ try {
     console.log("cannot create directory: ", err);
 }
 
-
 var p = "./package.json";
 var reported = [];
 var http = require('http');
@@ -34,18 +33,6 @@ var tmpServer = http.createServer(function (req, res) {
 });
     tmpServer.listen(8096, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:8096/');
-var spawn = require('child_process').spawn
-var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
-    detached: true,
-    stdio: [ 'ignore', null, null ]
-});
-chrome.unref();
-chrome.on('close', function(code){
-    tmpServer.close();
-    spawn("./run");
-    process.exit();
-});
-
 Array.prototype.difference = function(ar) {
     return this.filter(function(i) {
         return !(ar.indexOf(i) > -1);
@@ -106,11 +93,24 @@ function scenicRequire (deps, installed, callback) {
     // it compares package versions!!!
     var toInstall = dependencies.difference(installed)
     console.log("to install : " , toInstall);
+    var spawn = require('child_process').spawn
     if (toInstall.length > 0) {
+        var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
+            detached: true,
+            stdio: [ 'ignore', null, null ]
+        });
+        chrome.unref();
+        chrome.on('close', function(code){
+            tmpServer.close();
+            spawn("./scenic2");
+            process.exit();
+        });
+        
         npm.load({prefix: scenicDependenciesPath}, function(err, npm) {
             npm.config.set("prefix", scenicDependenciesPath);
             npm.load({prefix: scenicDependenciesPath}, function(err) {
                 npm.commands.install(toInstall, function (er, data) {
+
                     console.log("npm.commands.installed data: ", data);
                     chrome.kill('SIGHUP');
                 });
@@ -118,7 +118,9 @@ function scenicRequire (deps, installed, callback) {
         });
     } else {
         console.log("nothing to install");
-        chrome.kill('SIGHUP');
+        //chrome.kill('SIGHUP');
+        tmpServer.close();
+        spawn("./scenic2");
     }
 }
 

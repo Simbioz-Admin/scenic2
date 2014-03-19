@@ -77,18 +77,18 @@ function scenicDependenciesSearch(dependencies, callback) {
     npm.load({prefix: scenicDependenciesPath}, function(err, npm) {
         console.log("npm.load ")
         npm.commands.ls([], true, function(err, data, lite){
-            if (err) console.log(err);
+            if (err) console.log("npm.ls returned this error: ", err);
             console.log("lite's length: ", data);
             for(var key in lite.dependencies){
                 console.log(lite.dependencies[key].from);
                 installed.push(lite.dependencies[key].from);
             }
-            console.log(installed);
+            console.log("These packages are already installed", installed);
             for(var i=0; i < installed.length; i++) {
                 console.log("Detected: " + installed[i]);
             }
             
-            callback(installed);
+            callback("callback scenicDEpendenciesSearch returnsL ", installed);
         });
     });
 }

@@ -14,27 +14,30 @@ var http = require('http');
 var tmpBody = '<html><head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/></head><title>Scenic2</title><body><center>Verifying installation</p>';
 // <img src="blacksmiths.gif"/>';
 var tmpServer = http.createServer(function (req, res) {
-    try {
-        fs.readFile('assets/images/blacksmiths.gif', function(error, file) {
-            var response_content_type= null; 
-            if (req.url.indexOf(".css") != -1
-                && req.headers.accept.indexOf("text/css") != -1) {
-                response_content_type = "text/css";
+    var imgPath = 'assets/images/blacksmiths.gif';
+        fs.exists(imgPath, function(exists){
+            if (exists) {
+                fs.readFile(imgPath, function(error, file) {
+                    var response_content_type= null; 
+                    if (req.url.indexOf(".css") != -1
+                        && req.headers.accept.indexOf("text/css") != -1) {
+                        response_content_type = "text/css";
+                    }
+                    console.log("Reading file: ", file);
+                    var imagedata = file.toString('base64');
+                    res.writeHead(200, {
+                        'Content-Type': 'text/html'//,
+                        //'Content-Length': tmpBody.length
+                    });
+                    //res.write("Boo");
+                    //console.log(imagedata);
+                    res.write('<head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><br/><center>Installing components<br/><img src="data:blacksmiths.gif;base64,'+imagedata+'"/></center>');
+                    res.end('</center></body></html>'); 
+                }); 
+            } else {
+                console.log("Something went wrong so not showing the window but doing the work anyways");
             }
-            console.log("Reading file: ", file);
-            var imagedata = file.toString('base64');
-            res.writeHead(200, {
-                'Content-Type': 'text/html'//,
-                //'Content-Length': tmpBody.length
-            });
-            //res.write("Boo");
-            //console.log(imagedata);
-            res.write('<head><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/><link rel="stylesheet" type="text/css" href="assets/css/stylesheets/screen.css"></head><title>Scenic2</title><br/><center>Installing components<br/><img src="data:blacksmiths.gif;base64,'+imagedata+'"/></center>');
-            res.end('</center></body></html>'); 
-        }); 
-    } catch (e) {
-        console.log("Could not open image file so not showing the window but doing the work anyways", e);
-    }
+        });
 });
     tmpServer.listen(8096, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:8096/');

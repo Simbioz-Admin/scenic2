@@ -2,7 +2,6 @@ var npm = require("npm");
 var scenicDependenciesPath = process.env.HOME + "/.scenic2";
 var fs = require('fs');
 //console.log("currend dir: " + __dirname);
-return;
 try {
     fs.mkdirSync(scenicDependenciesPath);
 } catch (err) {

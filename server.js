@@ -5,8 +5,8 @@ if (!fs.existsSync(process.env.HOME + "/.scenic2")) {
     var installer = scenic(__dirname + "/scenic2-installer")
     installer.on('close', function(){
         scenic("notify-send", ["Scenic2","Components installed. You may now run scenic"])
-        return
-    })
+    });
+    return;
 }
 
 var config = require('./scenic/config.js'),

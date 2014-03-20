@@ -25,7 +25,7 @@ try {
 	try {
 		switcher = require('/usr/lib/nodejs/switcher.node');
 	} catch (e2) {
-		switcher = require('/usr/lib/node-switcher/switcher_addon.node');
+		switcher = require('/usr/local/lib/nodejs/switcher.node');
 	}
 }
 

@@ -37,7 +37,7 @@ install: all
 		done; \
 	install scenic2 $(DESTDIR)/usr/local/bin
 	install scenic2-installer $(DESTDIR)/usr/local/bin
-	install scenic-launcher.desktop $(DESTDIR)/usr/local/share/applications
+	install scenic-launcher.desktop $(DESTDIR)/usr/share/applications
 	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
 
 uninstall:
@@ -45,11 +45,11 @@ uninstall:
 	@echo removed $(DESTDIR)$(TARGETDIR)
 	rm $(DESTDIT)/usr/local/bin/scenic2
 	rm $(DESTDIT)/usr/local/bin/scenic2-installer
-	rm $(DESTDIR)/usr/local/share/applications/scenic-launcher.desktop
+	rm $(DESTDIR)/usr/share/applications/scenic-launcher.desktop
 
 clean:
 	@echo cleaning up
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modubles node server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 	rm -fr node_modules
 

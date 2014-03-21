@@ -49,7 +49,7 @@ uninstall:
 
 clean:
 	@echo cleaning up
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modubles node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 	rm -fr node_modules
 

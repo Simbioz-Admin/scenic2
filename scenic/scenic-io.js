@@ -287,8 +287,9 @@ module.exports = function(config, scenicStart, io, switcher, scenic, receivers, 
 		});
 
 		socket.on("load_file", function(name, callback) {
-			var load = switcher.load_history_from_scratch(name + "/");
-			callback(load);
+                    var filePath = config.scenicSavePath + "/" + name;
+		    var load = switcher.load_history_from_scratch(filePath);
+		    callback(load);
 		});
 
 		socket.on("remove_file", function(name, callback) {

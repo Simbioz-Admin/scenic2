@@ -1,13 +1,26 @@
 var npm = require("npm");
-var scenicDependenciesPath = process.env.HOME + "/.scenic2";
+var config = require("./scenic/config.js");
+var scenicDependenciesPath = config.scenicDependenciesPath;
+var scenicSavePath = config.scenicSavePath;
 var fs = require('fs');
-//console.log("currend dir: " + __dirname);
-try {
-    fs.mkdirSync(scenicDependenciesPath);
-} catch (err) {
-    console.log("cannot create directory: ", err);
-}
 
+console.log(scenicDependenciesPath);
+console.log(scenicSavePath);
+//console.log("currend dir: " + __dirname);
+if (!fs.existsSync(scenicDependenciesPath)) {
+    try {
+        fs.mkdirSync(scenicDependenciesPath);
+    } catch (err) {
+        console.log("cannot create directory: ", err);
+    }
+}
+if (!fs.existsSync(scenicSavePath)) { 
+    try {
+        fs.mkdirSync(scenicSavePath);
+    } catch (err) {
+        console.log("cannot create directory: ", err);
+    }
+}
 var p = "./package.json";
 var reported = [];
 var http = require('http');

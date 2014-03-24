@@ -5,9 +5,23 @@ define(
 
     function(os) {
 
+        //*** Get local address of the host ***//
+        var os = require('os'),
+            interfaces = os.networkInterfaces(),
+            addresses = [];
+
+        for (k in interfaces) {
+            for (k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family == 'IPv4' && !address.internal) {
+                    addresses.push(address.address)
+                }
+            }
+        }
+
         return {
             version: "0.4.5",
-            host: "localhost",
+            host: addresses[0],
             port: {
                 soap: 8085,
                 scenic: 8095

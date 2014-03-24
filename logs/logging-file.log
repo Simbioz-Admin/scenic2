@@ -76,3 +76,39 @@
 {"level":"info","message":"connect quiddity to receiver audio /tmp/switcher_nodeserver_audio_audio Vancouver 4422 ","timestamp":"2014-03-17T18:48:52.726Z"}
 {"level":"info","message":"add to rtpdefault pac","timestamp":"2014-03-17T18:53:17.956Z"}
 {"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio pac 4848 ","timestamp":"2014-03-17T18:53:29.201Z"}
+{"level":"info","message":"add to rtpdefault atlas","timestamp":"2014-03-18T15:21:02.568Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-18T15:21:02.570Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-18T15:21:02.582Z"}
+{"level":"info","message":"add to rtpdefault atlas","timestamp":"2014-03-18T15:25:14.280Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-18T15:25:14.282Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-18T15:25:14.290Z"}
+{"level":"info","message":"add to rtpdefault localhost","timestamp":"2014-03-18T15:52:59.642Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-18T15:52:59.642Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-18T15:52:59.649Z"}
+{"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio localhost 4444 2025","timestamp":"2014-03-18T15:53:07.420Z"}
+{"level":"info","message":"add to rtpdefault atlas","timestamp":"2014-03-18T15:56:13.412Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-18T15:56:13.413Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-18T15:56:13.424Z"}
+{"level":"info","message":"connect quiddity to receiver micro /tmp/switcher_nodeserver_micro_audio atlas 4444 8085","timestamp":"2014-03-18T15:56:24.271Z"}
+{"level":"info","message":"add to rtpdefault zeus","timestamp":"2014-03-18T15:59:07.082Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-18T15:59:07.083Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-18T15:59:07.257Z"}
+{"level":"info","message":"connect quiddity to receiver testaudio /tmp/switcher_nodeserver_testaudio_audio zeus 4444 8085","timestamp":"2014-03-18T15:59:20.985Z"}
+{"level":"info","message":"add to rtpdefault tar","timestamp":"2014-03-24T13:32:49.342Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-24T13:32:49.344Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-24T13:32:49.355Z"}
+{"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio tar 4444 8085","timestamp":"2014-03-24T13:52:57.902Z"}
+{"level":"info","message":"add to rtpdefault tar","timestamp":"2014-03-24T13:54:45.150Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-24T13:54:45.152Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-24T13:54:45.164Z"}
+{"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio tar 4444 8085","timestamp":"2014-03-24T13:54:54.349Z"}
+{"level":"info","message":"add to rtpdefault tart","timestamp":"2014-03-24T14:03:53.327Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-24T14:03:53.329Z"}
+{"level":"info","message":"Quidds httpsdpdec created? false","timestamp":"2014-03-24T14:04:08.338Z"}
+{"level":"info","message":"add to rtpdefault tar","timestamp":"2014-03-24T14:04:08.340Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-24T14:04:08.340Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-24T14:04:08.350Z"}
+{"level":"info","message":"add to rtpdefault tar","timestamp":"2014-03-24T14:04:33.073Z"}
+{"level":"info","message":"Soap Define, we create quiddity for ","timestamp":"2014-03-24T14:04:33.075Z"}
+{"level":"info","message":"Quidds httpsdpdec created? true","timestamp":"2014-03-24T14:04:33.080Z"}
+{"level":"info","message":"connect quiddity to receiver test /tmp/switcher_nodeserver_test_audio tar 4444 8085","timestamp":"2014-03-24T14:04:43.934Z"}

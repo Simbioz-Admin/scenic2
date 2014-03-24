@@ -18,8 +18,9 @@ requirejs({
 
 });
 
-requirejs(['./scenic/app', 'scenicIo'],
-    function(app, scenicIo) {
+requirejs(['./scenic/app', 'scenicIo', 'node-memwatch'],
+    function(app, scenicIo, memwatch) {
+
 
         // require('socket.io').listen(server); // Your app passed to socket.io
     }

@@ -1,9 +1,9 @@
 define(
 
     /** 
-     *	View Mapper
-     *	Map view manages the control connection between the elments of mid-type osc and properties quiddities
-     *	@exports Views/Mapper
+     *  View Mapper
+     *  Map view manages the control connection between the elments of mid-type osc and properties quiddities
+     *  @exports Views/Mapper
      */
 
     [
@@ -15,17 +15,17 @@ define(
     function(_, Backbone, TemplateMapper) {
 
         /** 
-         *	@constructor
+         *  @constructor
          *  @requires Underscore
          *  @requires Backbone
-         *	@requires TemplateMapper
+         *  @requires TemplateMapper
          *  @augments module:Backbone.View
          */
 
         var MapperView = Backbone.View.extend(
 
             /**
-             *	@lends module: Views/Mapper~MapperView.prototype
+             *  @lends module: Views/Mapper~MapperView.prototype
              */
 
             {
@@ -53,18 +53,20 @@ define(
                     $(this.el).html(template);
                     //find the connection
 
+                    console.log("ADD");
                     /* sometimes shmdata is not generate and we dont find box */
                     var IntervalAdd = setInterval(function() {
                         var box = $("[data-quiddname='" + info[1] + "'][data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
                         if (box.length > 0) {
-                            box.html($(that.el));
                             window.clearInterval(IntervalAdd);
+                            box.html($(that.el));
                         }
                     }, 10);
 
 
                 },
                 edit: function() {
+                    console.log("edit mapper");
                     this.model.edit();
                 },
                 removeClick: function() {

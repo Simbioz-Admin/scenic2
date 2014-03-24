@@ -89,7 +89,6 @@ define(
                 get_classes: function(e) {
                     $("#subMenu").remove();
                     var type = e.target ? $(e.target).data("type") : e;
-                    console.log("get_classes!", type);
 
                     /* get the quiddity classes authorized on this table */
                     var classes = this.model.classes_authorized(type);
@@ -108,7 +107,6 @@ define(
                     });
 
                     $("#listSources", this.el).remove();
-                    console.log(template);
                     $(".table.active [data-type='" + type + "']").after(template);
 
                     /* here we listen select for call views.quidds.defineName */
@@ -124,7 +122,6 @@ define(
                 },
 
                 leaveSubMenu: function(e) {
-                    console.log("leave...");
                     $("#subMenu").remove();
                 },
 
@@ -145,16 +142,10 @@ define(
 
                     if (this.model.get("type") == "audio") {
                         if (box.hasClass("active")) {
-                            console.log("disconnect audio");
-                            socket.emit("invoke", destination, "disconnect", [], function(data) {
-                                console.log(data);
-                            })
+                            socket.emit("invoke", destination, "disconnect", [], function(data) {})
                         } else {
-                            console.log("connect audio together");
 
-                            socket.emit("invoke", destination, "connect", [path], function(data) {
-                                console.log(data);
-                            });
+                            socket.emit("invoke", destination, "connect", [path], function(data) {});
                         }
                     }
 

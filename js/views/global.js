@@ -285,7 +285,6 @@ define(
 
                 /*
                  *	Called for loading the state saved of scenic without the current state
-                 *	@TODO make this work !
                  */
 
                 load_file: function(e) {
@@ -304,7 +303,6 @@ define(
                                         }
                                     });
 
-
                                 }
                             });
                             views.global.notification("info", $(e.target).html() + " is loaded");
@@ -315,7 +313,6 @@ define(
 
                 remove_save: function(e) {
                     var name = $(e.target).data("name");
-                    console.log("REMOVE!", name);
                     socket.emit("remove_save", name, function(ok) {
                         if (ok) {
                             $(e.target).parent().remove();

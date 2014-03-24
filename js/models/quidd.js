@@ -96,10 +96,12 @@ define(
                         /* ViewMapper it's the connection between the source and destination in table control */
 
                         if (that.get("category") == "mapper") {
+                            console.log("model mapper");
                             that.set("view", new ViewMapper({
                                 model: that,
                                 table: "control"
                             }));
+                            // that.get("view").render();
                         }
 
                     });

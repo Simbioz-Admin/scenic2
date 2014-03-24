@@ -93,7 +93,6 @@ define(
 
                 socket.on("returnRefresh", function(oldSocketId, newSocketId) {
                     if (oldSocketId == config.masterSocketId) {
-                        console.log("hey the master refresh the page !");
                         clearTimeout(refreshTimeout);
                         config.masterSocketId = newSocketId;
                     }

@@ -298,11 +298,12 @@ define(
 
                                     //regenerate source transfer
                                     $("#sources").html("");
-                                    collections.quidds.fetch();
+                                    collections.quidds.fetch({
+                                        success: function() {
+                                            collections.destinationProperties.fetch();
+                                        }
+                                    });
 
-                                    //generate destinations
-                                    $(".destinations").html("");
-                                    collections.receivers.fetch();
 
                                 }
                             });

@@ -81,11 +81,14 @@ define(
                             table.get("collectionDestinations").each(function(destination) {
                                 console.log("table.destination in souce", destination.get("data_streams"));
                                 /* check if the connexion existing between source and destination */
-                                var active = "";
-
+                                var active = '';
+                                var port = '';
                                 if (that.table == "transfer") {
                                     _.each(destination.get("data_streams"), function(stream) {
-                                        if (stream.path == shmdata.path) active = "active";
+                                        if (stream.path == shmdata.path) {
+                                            active = "active";
+                                            port = stream.port;
+                                        }
                                     });
                                 }
 
@@ -101,8 +104,8 @@ define(
                                     });
 
                                 }
-
-                                var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '"></td>';
+                                console.log(destination.toJSON());
+                                var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '">' + port + '</td>';
                                 connexions = connexions + connexion;
                             });
 

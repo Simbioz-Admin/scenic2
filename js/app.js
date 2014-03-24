@@ -11,8 +11,8 @@ define(
         'underscore',
         'backbone',
         'jquery',
-        'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
-        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/ircs'
+        'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs'
 
     ],
 
@@ -20,8 +20,8 @@ define(
         _,
         Backbone,
         $,
-        CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionIrcs,
-        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewIrcs
+        CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs
     ) {
 
         /** 
@@ -79,6 +79,19 @@ define(
 
                             views.destinationProperties = new ViewDestinationProperties({
                                 collection: collections.destinationProperties
+                            });
+
+
+                            /* generate view for manage users */
+
+                            collections.users = new CollectionUsers();
+
+                            collections.users.fetch({
+                                success: function() {
+                                    views.users = new ViewUsers({
+                                        collection: collections.users
+                                    });
+                                }
                             });
                         }
                     });

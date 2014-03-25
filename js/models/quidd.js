@@ -59,10 +59,6 @@ define(
                 initialize: function() {
                     var that = this;
 
-                    var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-                    if (!PreviewQuidd.test(this.get("name"))) {
-                        views.quidds.addPreviewIcon(this.get("name"));
-                    }
 
                     socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
 
@@ -102,6 +98,13 @@ define(
                                 table: "control"
                             }));
                             // that.get("view").render();
+                        }
+
+
+                        var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
+
+                        if (!PreviewQuidd.test(that.get("name"))) {
+                            views.quidds.addPreviewIcon(that.get("name"));
                         }
 
                     });

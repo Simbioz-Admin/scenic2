@@ -53,14 +53,21 @@ define(
                 /* Called for render the view */
                 render: function() {
 
+
                     /* add information about user connected */
                     console.log(config);
                     var tpl = _.template(this.template, {
                         name: config.nameComputer
                     });
-                    $(this.el).append(tpl);
-                    $("body").append($(this.el));
 
+                    $(this.el).append(tpl);
+
+                    /* generate a btn for the table */
+                    this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
+                    //this.toggleList(0);
+                    console.log("close", this.listOpen)
+                    $("body").append($(this.el));
+                    this.toggleList(0);
                     /* generate the view for each user */
                     this.collection.each(function(user) {
                         new ViewUser({
@@ -70,19 +77,34 @@ define(
 
 
                 },
-                toggleList: function() {
+                toggleList: function(speed) {
                     var that = this;
-
+                    var speed = (typeof speed == "number") ? speed : 300;
+                    console.log("TOGGLE", this.listOpen);
                     if (this.listOpen) {
+                        localStorage["usersPanelClose"] = true;
+                        console.log("ACTION CLOSE");
+                        /* action of close users list */
+                        $(".actions_global").animate({
+                            "right": 110
+                        }, speed);
                         $(this.el).animate({
                             "right": -300
-                        }, 300, function() {
+                        }, speed, function() {
+
                             that.listOpen = false;
                         });
                         $("h2", this.el).animate({
                             "left": -120
-                        }, 300);
+                        }, speed);
                     } else {
+                        console.log("ACTION OPEN");
+                        localStorage["usersPanelClose"] = false;
+
+                        /* action of open users list */
+                        $(".actions_global").animate({
+                            "right": 290
+                        }, speed);
                         $(this.el).animate({
                             "right": 0
                         }, function() {
@@ -90,7 +112,7 @@ define(
                         });
                         $("h2", this.el).animate({
                             "left": 0
-                        }, 300);
+                        }, speed);
                     }
                 }
 

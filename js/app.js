@@ -46,14 +46,21 @@ define(
 
         var initialize = function() {
             "use strict";
-
             //loading the different collections
             collections.classesDoc = new CollectionClassesDoc();
             collections.classesDoc.fetch({
                 success: function(response) {
 
+                    //loading views
+                    views.quidds = new ViewQuidds({
+                        collection: collections.quidds
+                    });
+
                     collections.quidds = new CollectionQuidds();
                     collections.quidds.fetch({
+                        error: function(err) {
+                            console.log("error", err);
+                        },
                         success: function() {
                             console.log("quidds Loaded");
 
@@ -72,10 +79,6 @@ define(
 
                             views.global = new ViewGlobal();
 
-                            //loading views
-                            views.quidds = new ViewQuidds({
-                                collection: collections.quidds
-                            });
 
                             views.destinationProperties = new ViewDestinationProperties({
                                 collection: collections.destinationProperties

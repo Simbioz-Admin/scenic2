@@ -163,10 +163,17 @@ define(
                     $("[data-path='" + shmdata + "'] .preview").removeClass("active");
                 },
                 addPreviewIcon: function(quidd) {
+                    var that = this
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
-                    console.log(shmdata);
-                    $("[data-path='" + shmdata + "'] .preview").addClass("active");
+                    console.log($("[data-path='" + shmdata + "'] .preview").length);
+
+                    var IntervalPreviewExisting = setInterval(function() {
+                        if ($("[data-path='" + shmdata + "'] .preview").length > 0) {
+                            window.clearInterval(IntervalPreviewExisting);
+                            $("[data-path='" + shmdata + "'] .preview").addClass("active");
+                        }
+                    }, 500);
                 }
 
             });

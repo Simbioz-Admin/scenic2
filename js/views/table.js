@@ -9,8 +9,8 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/table/table.html',
-        'text!/templates/table/sub_menu.html',
+        'text!../../templates/table/table.html',
+        'text!../../templates/table/sub_menu.html',
     ],
 
     function(_, Backbone, TemplateTable, TemplateSubMenu) {

@@ -10,7 +10,7 @@ define(
         'underscore',
         'backbone',
         'views/users/user',
-        'text!/templates/users/users.html'
+        'text!../../../templates/users/users.html'
     ],
 
     function(_, Backbone, ViewUser, TemplateUsers) {

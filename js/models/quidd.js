@@ -9,7 +9,7 @@ define(
         'underscore',
         'backbone',
         'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
-        'text!/templates/panelInfoSource.html'
+        'text!../../templates/panelInfoSource.html'
     ],
 
     function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {

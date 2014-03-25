@@ -7,6 +7,7 @@ require.config({
         underscore: 'libs/underscore-min',
         backbone: 'libs/backbone-min',
         util: 'libs/util',
+        jquery: 'libs/jquery-min',
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',

@@ -9,7 +9,7 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/mapper.html'
+        'text!../../templates/mapper.html'
     ],
 
     function(_, Backbone, TemplateMapper) {

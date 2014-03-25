@@ -10,7 +10,7 @@ define(
         'underscore',
         'backbone',
         'views/connexion',
-        'text!/templates/source.html'
+        'text!../../templates/source.html'
     ],
 
     function(_, Backbone, ConnexionView, TemplateSource) {

@@ -9,9 +9,9 @@ define(
     [
         'underscore',
         'backbone',
-        'models	/quidd',
-        'text!/templates/createQuidd.html',
-        'text!/templates/quidd.html',
+        'models/quidd',
+        'text!../../templates/createQuidd.html',
+        'text!../../templates/quidd.html',
 
     ],
 

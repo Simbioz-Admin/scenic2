@@ -9,7 +9,7 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/users/user.html'
+        'text!../../../templates/users/user.html'
     ],
 
     function(_, Backbone, TemplateUser) {

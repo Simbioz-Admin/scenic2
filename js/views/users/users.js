@@ -80,13 +80,11 @@ define(
                 toggleList: function(speed) {
                     var that = this;
                     var speed = (typeof speed == "number") ? speed : 300;
-                    console.log("TOGGLE", this.listOpen);
                     if (this.listOpen) {
                         localStorage["usersPanelClose"] = true;
-                        console.log("ACTION CLOSE");
                         /* action of close users list */
                         $(".actions_global").animate({
-                            "right": 110
+                            "right": 90
                         }, speed);
                         $(this.el).animate({
                             "right": -300
@@ -95,10 +93,9 @@ define(
                             that.listOpen = false;
                         });
                         $("h2", this.el).animate({
-                            "left": -120
+                            "left": -100
                         }, speed);
                     } else {
-                        console.log("ACTION OPEN");
                         localStorage["usersPanelClose"] = false;
 
                         /* action of open users list */

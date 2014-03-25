@@ -1,7 +1,7 @@
 
 div.users
 	width : 300px
-	background : #333
+	//background : #333
 	position : absolute
 	top : 50px
 	bottom : 0
@@ -19,6 +19,7 @@ div.users
 	.search
 		border-bottom : 1px solid #444
 		padding : 4px 10px 0 5px
+		background : #333
 		input[type=text]
 			background : none
 			border : none
@@ -26,14 +27,18 @@ div.users
 			height : 25px
 	h2
 		color : #eee
-		font-size : 15px
+		font-size : 12px
 		font-family : "Irma Light"
 		background : #222
 		height : 40px
 		line-height: 40px
 		padding : 0 0 0 10px
 		cursor : pointer
+		display : inline-block
+		padding : 0 15px
 		position : relative
+		&:hover
+			background : #333
 
 
 	.user

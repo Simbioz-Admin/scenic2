@@ -46,7 +46,9 @@ define(
 
         var initialize = function() {
             "use strict";
-            // $('a[rel]').tooltip();
+
+            $("#currentUser").html(config.nameComputer);
+
             //loading the different collections
             collections.classesDoc = new CollectionClassesDoc();
             collections.classesDoc.fetch({

@@ -18,7 +18,7 @@ requirejs({
 
 });
 
-requirejs(['./scenic/app', 'scenicIo', 'node-memwatch'],
+requirejs(['./scenic/app', 'scenicIo'],
     function(app, scenicIo, memwatch) {
 
 

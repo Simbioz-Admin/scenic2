@@ -1,18 +1,22 @@
 Scenic2 release notes
 ===================
-Scenic2 0.?.? (2013-??-??)
+Scenic2 2.0.8 (2014-04-01)
 -------------------------
-This release is a developer snapshot in the stable ?.? series.
+This release is a developer snapshot in the stable 2.0 series.
 
 New features:
 
-*
+* Save and load scenes
+* Connect audio sources and sinks to jack server
+* Check and install missing dependencies automatically
+* Install nodejs modules locally for each user
+
 
 Known bugs: 
 
-* 
+* Sometimes the engine crashes when rapidly creating and distroying quiddities, including when loading from saved file
 
-Scenic2 0.4.4 (2013-10-15)
+Scenic2 0.2.0 (2013-10-15)
 -------------------------
 This release is a developer snapshot in the stable 0.4 series.
 

@@ -23,29 +23,29 @@ all:
 
 install: all
 	@echo Making all
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic2-installer
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(TARGETDIR)/npm-verify.js" > scenic2-installer
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
 	@echo building directories for version $(VERSION)
-	mkdir -p $(DESTDIR)$(TARGETDIR)
+	mkdir -p $(TARGETDIR)
 	@echo installing files 
-	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
+	install $(SRCFILES) $(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
-		cp -r $$f $(DESTDIR)$(TARGETDIR); \
+		cp -r $$f $(TARGETDIR); \
 		done; \
-	install scenic2 $(DESTDIR)/usr/local/bin
-	install scenic2-installer $(DESTDIR)/usr/local/bin
-	install scenic-launcher.desktop $(DESTDIR)/usr/share/applications
-	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
+	install scenic2 $(DESTDIR)/bin
+	install scenic2-installer $(DESTDIR)/bin
+	install scenic-launcher.desktop $(DESTDIR)/share/applications
+	install scenic-launcher.desktop $(TARGETDIR)
 
 uninstall:
-	rm -rf $(DESTDIR)$(TARGETDIR)
-	@echo removed $(DESTDIR)$(TARGETDIR)
-	rm $(DESTDIT)/usr/local/bin/scenic2
-	rm $(DESTDIT)/usr/local/bin/scenic2-installer
-	rm $(DESTDIR)/usr/share/applications/scenic-launcher.desktop
+	rm -rf $(TARGETDIR)
+	@echo removed $(TARGETDIR)
+	rm $(DESTDIR)/bin/scenic2
+	rm $(DESTDIR)/bin/scenic2-installer
+	rm $(DESTDIR)/share/applications/scenic-launcher.desktop
 
 clean:
 	@echo cleaning up

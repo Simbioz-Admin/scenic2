@@ -2,6 +2,7 @@ define(
     [
         'config',
         'node-switcher',
+        './scenic/switcher/sip'
         './scenic/switcher/quidds',
         './scenic/switcher/receivers',
         'log',
@@ -9,7 +10,7 @@ define(
         'jquery'
     ],
 
-    function(config, switcher, quidds, receivers, log, _, $) {
+    function(config, switcher, sip, quidds, receivers, log, _, $) {
 
 
         function initialize(io) {
@@ -17,6 +18,7 @@ define(
             log.debug("Init Switcher");
 
             /*Init Receiver */
+            sip.initialize(io);
             receivers.initialize(io);
             quidds.initialize(io);
 
@@ -272,6 +274,7 @@ define(
         return {
             test: "testSwitcher ",
             initialize: initialize,
+            sip: sip,
             quidds: quidds,
             receivers: receivers,
             save: save,

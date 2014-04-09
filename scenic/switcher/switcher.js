@@ -1,7 +1,7 @@
 define(
     [
         'config',
-        'node-switcher',
+        'switcher',
         './scenic/switcher/quidds',
         './scenic/switcher/receivers',
         'log',

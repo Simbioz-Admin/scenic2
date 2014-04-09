@@ -3,7 +3,7 @@ define(
         'config',
         'express',
         'path',
-        'node-switcher',
+        'switcher',
         'switcher',
         'underscore',
         'jquery'

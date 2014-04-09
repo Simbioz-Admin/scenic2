@@ -1,10 +1,9 @@
 var npm = require("npm");
-var config = require("./scenic/settings/config.js");
+var config = require("./scenic/settings/config.js")('npm-verify');
 var scenicDependenciesPath = config.scenicDependenciesPath;
 var scenicSavePath = config.scenicSavePath;
 var fs = require('fs');
 
-console.log(scenicDependenciesPath);
 //console.log(scenicSavePath);
 ////console.log("currend dir: " + __dirname);
 if (!fs.existsSync(scenicDependenciesPath)) {

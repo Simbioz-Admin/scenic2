@@ -1,7 +1,8 @@
 //*** Get local address of the host ***//
 var os = require('os'),
     interfaces = os.networkInterfaces(),
-    addresses = [];
+    addresses = [],
+    scenicHomePath = process.env.HOME + "/.scenic2";
 
 for (k in interfaces) {
     for (k2 in interfaces[k]) {
@@ -33,5 +34,7 @@ return {
     deviceAutoDetect: ["v4l2src", "pulsesrc", "midisrc"],
     defaultPanelTable: "transfer",
     listQuiddsAndSocketId: {},
-    subscribe_quidd_info: {}
+    subscribe_quidd_info: {},
+    scenicDependenciesPath: process.env.HOME + "/.scenic2",
+    scenicSavePath: scenicHomePath + "/save_files"
 }

@@ -4,7 +4,7 @@ define(
         'log',
         'config',
         'portastic',
-        'switcher',
+        'node_switcher',
         'http-auth'
     ],
 

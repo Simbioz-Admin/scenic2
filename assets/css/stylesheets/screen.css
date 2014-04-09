@@ -84,7 +84,6 @@ div.users .current_user {
 /* line 19, ../sass/_users.sass */
 div.users .search {
   border-bottom: 1px solid #444444;
-  padding: 4px 10px 0 5px;
   background: #333333;
 }
 /* line 23, ../sass/_users.sass */
@@ -133,18 +132,6 @@ div.users .user .information h3 {
   margin: 0 0 5px 0;
   color: #fefefe;
   font-size: 16px;
-}
-/* line 60, ../sass/_users.sass */
-div.users .user .information.status-0 {
-  border-color: #01b101;
-}
-/* line 62, ../sass/_users.sass */
-div.users .user .information.status-1 {
-  border-color: orange;
-}
-/* line 64, ../sass/_users.sass */
-div.users .user .information.status-2 {
-  border-color: #555555;
 }
 /* line 66, ../sass/_users.sass */
 div.users .user .information .last_message {
@@ -197,6 +184,14 @@ div.users .user .actionsOnUser .add_table {
 /* line 100, ../sass/_users.sass */
 div.users .user .actionsOnUser .chat {
   background: url(../../images/icon_chat.png) center center no-repeat;
+}
+/* line 102, ../sass/_users.sass */
+div.users .user[data-status='0'] .information {
+  border-color: #01b101;
+}
+/* line 104, ../sass/_users.sass */
+div.users .user[data-status='2'] .information {
+  border-color: #555555;
 }
 
 /* line 47, ../sass/screen.sass */

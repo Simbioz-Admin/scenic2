@@ -1,4 +1,16 @@
+var fs = require('fs')
+if (!fs.existsSync(process.env.HOME + "/.scenic2")) {
+    console.log("~/.scenic2 does not exist, running the installer")
+    var scenic = require('child_process').spawn
+    var installer = scenic(__dirname + "/scenic2-installer")
+    installer.on('close', function() {
+        scenic("notify-send", ["Scenic2", "Components installed. You may now run scenic"])
+    });
+    return;
+}
+
 var requirejs = require('requirejs');
+
 
 requirejs({
     paths: {
@@ -6,7 +18,8 @@ requirejs({
         config: './scenic/settings/config',
         log: './scenic/settings/log',
         scenicIo: './scenic/settings/scenic-io',
-        switcher: './scenic/switcher/switcher',
+        switcher: 'switcher',
+        node_switcher: './scenic/switcher/switcher',
     },
     config: {
         nodeRequire: require,
@@ -19,9 +32,5 @@ requirejs({
 });
 
 requirejs(['./scenic/app', 'scenicIo'],
-    function(app, scenicIo, memwatch) {
-
-
-        // require('socket.io').listen(server); // Your app passed to socket.io
-    }
+    function(app, scenicIo) {}
 );

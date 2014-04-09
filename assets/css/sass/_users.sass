@@ -18,7 +18,7 @@ div.users
 
 	.search
 		border-bottom : 1px solid #444
-		padding : 4px 10px 0 5px
+		// padding : 4px 10px 0 5px
 		background : #333
 		input[type=text]
 			background : none
@@ -57,12 +57,12 @@ div.users
 				margin : 0 0 5px 0
 				color : #fefefe
 				font-size : 16px
-			&.status-0
-				border-color : #01b101
-			&.status-1
-				border-color : orange
-			&.status-2
-				border-color : #555
+			// &.status-0, &.status-online
+			// 	border-color : #01b101
+			// &.status-1
+			// 	border-color : orange
+			// &.status-2, &.status-offline
+			// 	border-color : #555
 			.last_message
 				color : #999
 				font-size: 12px
@@ -99,3 +99,7 @@ div.users
 				background : url(../../images/bgBox.png) center center no-repeat
 			.chat
 				background : url(../../images/icon_chat.png) center center no-repeat
+		&[data-status='0'] .information
+			border-color : #01b101		
+		&[data-status='2'] .information
+			border-color : #555

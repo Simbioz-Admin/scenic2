@@ -1,4 +1,4 @@
-define(['config', 'node-switcher', 'log', 'underscore', 'jquery'],
+define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     function(config, switcher, log, _, $) {
 
         var io;

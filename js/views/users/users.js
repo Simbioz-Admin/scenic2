@@ -47,12 +47,12 @@ define(
                 initialize: function(options) {
                     var that = this;
                     console.log("init View Users");
+                    this.collection.on('reOrder', this.reOrder);
                     that.render();
                 },
 
                 /* Called for render the view */
                 render: function() {
-
 
                     /* add information about user connected */
                     console.log(config);
@@ -76,6 +76,15 @@ define(
                     });
 
 
+                },
+                reOrder: function() {
+                    console.log("reOrder");
+                    var users = $(".content_users .user", this.el);
+                    users = _.sortBy(users.detach(), function(user) {
+                        console.log($(user).data("status"));
+                        return $(user).data("status");
+                    });
+                    $(".content_users", this.el).html(users);
                 },
                 toggleList: function(speed) {
                     var that = this;

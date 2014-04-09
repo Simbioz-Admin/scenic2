@@ -1,8 +1,8 @@
 define(
     [
         'config',
-        'node-switcher',
-        './scenic/switcher/sip'
+        'switcher',
+        './scenic/switcher/sip',
         './scenic/switcher/quidds',
         './scenic/switcher/receivers',
         'log',
@@ -58,6 +58,7 @@ define(
             switcher.register_prop_callback(function(qname, qprop, pvalue) {
 
                 /* here we define action when a property of quidd is modified */
+
 
                 //we exclude byte-reate because its call every second (almost a spam...)
                 if (qprop != "byte-rate") {
@@ -135,12 +136,23 @@ define(
 
             });
 
-            switcher.register_signal_callback(function(qname, qprop, pvalue) {
+            switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
-                log.switcher('signal : ', qname, ' ', qprop, ' ', pvalue);
+                log.switcher('signal : ', qname, ' ', qsignal, ' ', pvalue);
+
+                /* show information about  */
+
+                if (qname == "sipquid" && qsignal == "on-tree-grafted") {
+                    sip.updateInfoUser(switcher.get_info(qname, pvalue[0]));
+                }
+                if (qname == "sipquid" && qsignal == "on-tree-pruned") {
+                    sip.removeFromList(switcher.get_info(qname, pvalue[0]));
+
+                }
+
 
                 var quiddClass = JSON.parse(switcher.get_quiddity_description(pvalue[0]));
-                if (!_.contains(config.quiddExclude, quiddClass.class) && qprop == "on-quiddity-created") {
+                if (!_.contains(config.quiddExclude, quiddClass.class) && qsignal == "on-quiddity-created") {
 
 
                     //subscribe signal for properties add/remove and methods add/remove
@@ -171,31 +183,31 @@ define(
                     }
                 }
                 //Emits to users a quiddity is removed
-                if (qprop == "on-quiddity-removed") {
+                if (qsignal == "on-quiddity-removed") {
                     io.sockets.emit("remove", pvalue);
                     log.debug("the quiddity " + pvalue + "is removed");
                 }
 
-                if (qprop == "on-property-added" || qprop == "on-property-removed" || qprop == "on-method-added" || qprop == "on-method-removed") {
+                if (qsignal == "on-property-added" || qsignal == "on-property-removed" || qsignal == "on-method-added" || qsignal == "on-method-removed") {
                     //console.log("New property for ",qname, pvalue);
                     log.debug("subscribe List", config.subscribe_quidd_info);
                     _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
                         if (quiddName == qname) {
-                            log.switcher("send to sId (" + socketId + ") " + qprop + " : " + pvalue);
+                            log.switcher("send to sId (" + socketId + ") " + qsignal + " : " + pvalue);
                             //log.debug(io);
                             var socket = io.sockets.sockets[socketId];
-                            if (socket) socket.emit('signals_properties_info', qprop, qname, pvalue);
+                            if (socket) socket.emit('signals_properties_info', qsignal, qname, pvalue);
                         }
                     });
 
                 }
                 //subscribe to the property added
-                if (qprop == "on-property-added") {
+                if (qsignal == "on-property-added") {
                     log.switcher("Subscribe ", qname, pvalue[0]);
                     switcher.subscribe_to_property(qname, pvalue[0]);
                 }
                 //unsubscribe to the property removed
-                if (qprop == "on-property-removed") {
+                if (qsignal == "on-property-removed") {
                     log.switcher("Unsubscribe ", qname, pvalue[0]);
                     switcher.unsubscribe_to_property(qname, pvalue[0]);
                 }
@@ -272,7 +284,6 @@ define(
         }
 
         return {
-            test: "testSwitcher ",
             initialize: initialize,
             sip: sip,
             quidds: quidds,

@@ -3,8 +3,8 @@ define(
         'config',
         'express',
         'path',
-        'node-switcher',
         'switcher',
+        'node_switcher',
         'underscore',
         'jquery'
     ],
@@ -85,32 +85,12 @@ define(
         });
 
         /* temporary create fake values for users */
+
         app.get('/users', function(req, res) {
             res.contentType('application/json');
-            res.send([{
-                id: 1,
-                name: "Pacman",
-                status: 2,
-                lastMessage: "Pas de soucis on en reparle plus tard."
-            }, {
-                id: 2,
-                name: "Nicolas",
-                status: 0,
-                lastMessage: "La connexion que tu viens de me faire parvenir n'a pas de flux je ne peux pas le lire"
-
-            }, {
-                id: 3,
-                name: "Manu",
-                status: 1,
-                lastMessage: "On ce fixe un rendez-vous pour discuter en vidéo?"
-            }, {
-                id: 4,
-                name: "Michal",
-                status: 0
-            }]);
-        });
-
-
+            var listUsers = switcher.sip.getListUsers();
+            res.send(listUsers);
+        })
 
         return app;
 

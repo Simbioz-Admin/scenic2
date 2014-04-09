@@ -28,11 +28,12 @@ define(
              */
 
             {
+                idAttribute: "sip_url",
                 defaults: {
-                    id: null,
-                    name: null,
+                    sip_url: null,
                     status: null,
-                    lastMessage: "Aucun message"
+                    status_text: "Aucun message",
+                    subscription_state: "Aucun message"
                 },
                 initialize: function() {
 

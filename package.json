@@ -9,7 +9,7 @@
     "underscore": "~1.5.1",
     "backbone": "~1.0.0",
     "irc": "~0.3.6",
-    "requirejs": "~2.1.7",
+    "requirejs": "~2.1.11",
     "passport-http": "~0.2.2",
     "passport": "~0.1.17",
     "jsdom": "~0.7.0",

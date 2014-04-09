@@ -8,7 +8,7 @@ define(
         'config',
         'http',
         'portastic',
-        'switcher',
+        'node_switcher',
         'socket.io',
         'scenicIo',
         './settings/irc'

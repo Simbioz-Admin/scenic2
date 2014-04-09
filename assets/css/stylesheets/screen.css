@@ -63,7 +63,24 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
+/* scrollbar Custom */
 /* line 2, ../sass/_users.sass */
+::-webkit-scrollbar {
+  width: 8px;
+  cursor: scrollbar;
+}
+
+/* line 6, ../sass/_users.sass */
+::-webkit-scrollbar-track {
+  background: #dddddd;
+}
+
+/* line 9, ../sass/_users.sass */
+::-webkit-scrollbar-thumb {
+  background: #999999;
+}
+
+/* line 12, ../sass/_users.sass */
 div.users {
   width: 300px;
   position: absolute;
@@ -72,7 +89,17 @@ div.users {
   right: 0;
   z-index: 2000;
 }
-/* line 11, ../sass/_users.sass */
+/* line 20, ../sass/_users.sass */
+div.users .content_users {
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 41px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* line 28, ../sass/_users.sass */
 div.users .current_user {
   color: #eeeeee;
   background: none;
@@ -81,19 +108,19 @@ div.users .current_user {
   font-size: 18px;
   text-align: right;
 }
-/* line 19, ../sass/_users.sass */
+/* line 36, ../sass/_users.sass */
 div.users .search {
   border-bottom: 1px solid #444444;
   background: #333333;
 }
-/* line 23, ../sass/_users.sass */
+/* line 40, ../sass/_users.sass */
 div.users .search input[type=text] {
   background: none;
   border: none;
   color: white;
   height: 25px;
 }
-/* line 28, ../sass/_users.sass */
+/* line 45, ../sass/_users.sass */
 div.users h2 {
   color: #eeeeee;
   font-size: 12px;
@@ -107,16 +134,16 @@ div.users h2 {
   padding: 0 15px;
   position: relative;
 }
-/* line 40, ../sass/_users.sass */
+/* line 57, ../sass/_users.sass */
 div.users h2:hover {
   background: #333333;
 }
-/* line 44, ../sass/_users.sass */
+/* line 61, ../sass/_users.sass */
 div.users .user {
   position: relative;
   z-index: 0;
 }
-/* line 47, ../sass/_users.sass */
+/* line 64, ../sass/_users.sass */
 div.users .user .information {
   padding: 15px 10px 15px;
   border-left: 2px solid grey;
@@ -124,7 +151,7 @@ div.users .user .information {
   position: relative;
   z-index: 2;
 }
-/* line 53, ../sass/_users.sass */
+/* line 70, ../sass/_users.sass */
 div.users .user .information h3 {
   padding: 0px;
   border: none;
@@ -133,22 +160,22 @@ div.users .user .information h3 {
   color: #fefefe;
   font-size: 16px;
 }
-/* line 66, ../sass/_users.sass */
+/* line 83, ../sass/_users.sass */
 div.users .user .information .last_message {
   color: #999999;
   font-size: 12px;
   height: 13px;
   overflow: hidden;
 }
-/* line 72, ../sass/_users.sass */
+/* line 89, ../sass/_users.sass */
 div.users .user:nth-child(odd) .information {
   background: #333333;
 }
-/* line 74, ../sass/_users.sass */
+/* line 91, ../sass/_users.sass */
 div.users .user:nth-child(even) .information {
   background: #393939;
 }
-/* line 77, ../sass/_users.sass */
+/* line 94, ../sass/_users.sass */
 div.users .user .actionsOnUser {
   height: 100%;
   position: absolute;
@@ -157,7 +184,7 @@ div.users .user .actionsOnUser {
   color: white;
   z-index: 1;
 }
-/* line 84, ../sass/_users.sass */
+/* line 101, ../sass/_users.sass */
 div.users .user .actionsOnUser .action {
   width: 70px;
   height: 100%;
@@ -167,29 +194,29 @@ div.users .user .actionsOnUser .action {
   opacity: 0.5;
   border-right: 1px #444444 solid;
 }
-/* line 92, ../sass/_users.sass */
+/* line 109, ../sass/_users.sass */
 div.users .user .actionsOnUser .action:last-child {
   border-right: none;
 }
-/* line 94, ../sass/_users.sass */
+/* line 111, ../sass/_users.sass */
 div.users .user .actionsOnUser .action:hover {
   opacity: 1;
   background-color: #111111;
   cursor: pointer;
 }
-/* line 98, ../sass/_users.sass */
+/* line 115, ../sass/_users.sass */
 div.users .user .actionsOnUser .add_table {
   background: url(../../images/bgBox.png) center center no-repeat;
 }
-/* line 100, ../sass/_users.sass */
+/* line 117, ../sass/_users.sass */
 div.users .user .actionsOnUser .chat {
   background: url(../../images/icon_chat.png) center center no-repeat;
 }
-/* line 102, ../sass/_users.sass */
+/* line 119, ../sass/_users.sass */
 div.users .user[data-status='0'] .information {
   border-color: #01b101;
 }
-/* line 104, ../sass/_users.sass */
+/* line 121, ../sass/_users.sass */
 div.users .user[data-status='2'] .information {
   border-color: #555555;
 }

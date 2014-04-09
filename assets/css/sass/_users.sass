@@ -1,3 +1,13 @@
+/* scrollbar Custom */
+::-webkit-scrollbar
+	width: 8px
+	cursor : scrollbar
+
+::-webkit-scrollbar-track
+	background : #ddd
+ 
+::-webkit-scrollbar-thumb
+	background : #999
 
 div.users
 	width : 300px
@@ -7,7 +17,14 @@ div.users
 	bottom : 0
 	right : 0
 	z-index : 2000
-
+	.content_users
+		position : absolute
+		right : 0
+		left : 0
+		bottom : 0
+		top : 41px
+		overflow-y : auto
+		overflow-x : hidden
 	.current_user
 		color : #eee
 		background : none

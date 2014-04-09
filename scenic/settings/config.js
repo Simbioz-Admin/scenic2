@@ -13,7 +13,7 @@ for (k in interfaces) {
     }
 }
 
-return {
+module.exports = {
     version: "0.4.5",
     host: addresses[0],
     port: {
@@ -35,6 +35,6 @@ return {
     defaultPanelTable: "transfer",
     listQuiddsAndSocketId: {},
     subscribe_quidd_info: {},
-    scenicDependenciesPath: process.env.HOME + "/.scenic2",
+    scenicDependenciesPath: scenicHomePath,
     scenicSavePath: scenicHomePath + "/save_files"
 }

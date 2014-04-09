@@ -128,11 +128,10 @@ function scenicRequire(deps, installed, callback) {
         npm.load({
             prefix: scenicDependenciesPath
         }, function(err) {
-            //console.log(toInstall, scenicDependenciesPath);
-            // npm.commands.install(toInstall, function(er, data) {
-            //     console.log("npm.commands.installed data: ", data);
-            //     chrome.kill('SIGHUP');
-            // });
+            npm.commands.install(toInstall, function(er, data) {
+                console.log("npm.commands.installed data: ", data);
+                chrome.kill('SIGHUP');
+            });
 
         });
     } else {

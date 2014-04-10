@@ -4,7 +4,7 @@ define(
         'express',
         'path',
         'switcher',
-        'switcher',
+        'node_switcher',
         'underscore',
         'jquery'
     ],
@@ -84,7 +84,13 @@ define(
 
         });
 
+        /* temporary create fake values for users */
 
+        app.get('/users', function(req, res) {
+            res.contentType('application/json');
+            var listUsers = switcher.sip.getListUsers();
+            res.send(listUsers);
+        })
 
         return app;
 

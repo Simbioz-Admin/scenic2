@@ -10,7 +10,7 @@ define(
         'underscore',
         'backbone',
         'views/connexion',
-        'text!/templates/source.html'
+        'text!../../templates/source.html'
     ],
 
     function(_, Backbone, ConnexionView, TemplateSource) {
@@ -46,6 +46,7 @@ define(
                     /* Subscribe for remove and change shmdatas on quiddity source */
                     this.model.on('remove', this.removeView, this);
                     this.model.on('change:shmdatas', this.render, this);
+                    this.model.on('updateByteRate', this.updateByteRateAndPreview);
                     this.table = options.table;
 
                     //here we define were go the source (local or remote)
@@ -60,7 +61,7 @@ define(
 
 
                 render: function() {
-                    //console.log("render source !", this.model.get("name"));
+                    console.log("render source !", this.model.get("name"));
                     var that = this,
                         shmdatas = this.model.get("shmdatas"),
                         table = collections.tables.findWhere({
@@ -119,10 +120,10 @@ define(
                             });
 
                             $(that.el).append(template);
-                            /* wait 1sec for show status shmdata (flux actif or not) */
-                            setTimeout(function() {
-                                that.setPreview(shmdata);
-                            }, 1000);
+                            // /* wait 1sec for show status shmdata (flux actif or not) */
+                            // setTimeout(function() {
+                            //     that.setPreview(shmdata);
+                            // }, 1000);
                         });
 
                         //if there is not a record is made shmdata anyway
@@ -133,6 +134,31 @@ define(
                         });
 
                         $(that.el).append($(template));
+                    }
+                },
+
+                updateByteRateAndPreview: function(quiddFakeSink, shmdata, value) {
+                    console.log("update Byte and Preview", quiddFakeSink);
+
+                    /* refresh status active or note shmdata */
+                    if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
+                    else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
+
+                    /* Get quiddity FakeSink for have Caps info */
+                    var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties"),
+                        infoCaps = _.findWhere(propertiesFakeSink, {
+                            name: 'caps'
+                        }).value.split(",");
+
+                    /* With caps info we chekc if its video or audio preview */
+                    if (infoCaps[0] == "audio/x-raw-int" || infoCaps[0] == "audio/x-raw-float" || infoCaps[0] == "video/x-raw-yuv" || infoCaps[0] == "video/x-raw-rgb") {
+
+                        var type = (infoCaps[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink"),
+                            QuiddSink = collections.quidds.get(type + "_" + shmdata),
+                            previewActive = QuiddSink ? "active" : "";
+
+                        $("[data-path='" + shmdata + "'] .nameInOut .short").append("<div class='preview " + previewActive + "'></div>");
+
                     }
                 },
 

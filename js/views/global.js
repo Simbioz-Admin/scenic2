@@ -9,12 +9,12 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/quidd.html',
-        'text!/templates/panelInfo.html',
-        'text!/templates/panelLoadFiles.html',
-        'text!/templates/panelSaveFile.html',
-        'text!/templates/confirmation.html',
-        'text!/templates/createReceiver.html',
+        'text!../../templates/quidd.html',
+        'text!../../templates/panelInfo.html',
+        'text!../../templates/panelLoadFiles.html',
+        'text!../../templates/panelSaveFile.html',
+        'text!../../templates/confirmation.html',
+        'text!../../templates/createReceiver.html',
         'app'
     ],
 
@@ -55,14 +55,9 @@ define(
                     'click .remove_save': 'remove_save',
                     "click .tabTable": 'showTable',
                     "touchstart .tabTable": 'showTable',
-
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
-
-
                 },
-
-
 
 
                 /* Called when the view is initialized */
@@ -289,7 +284,7 @@ define(
 
                 load_file: function(e) {
 
-                    socket.emit("load", "save_files/" + $(e.target).html(), function(ok) {
+                    socket.emit("load", $(e.target).html(), function(ok) {
                         if (ok) {
 
                             collections.receivers.fetch({

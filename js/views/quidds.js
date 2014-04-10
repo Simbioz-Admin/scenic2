@@ -9,9 +9,9 @@ define(
     [
         'underscore',
         'backbone',
-        'models	/quidd',
-        'text!/templates/createQuidd.html',
-        'text!/templates/quidd.html',
+        'models/quidd',
+        'text!../../templates/createQuidd.html',
+        'text!../../templates/quidd.html',
 
     ],
 
@@ -148,11 +148,11 @@ define(
 
                 /* Called each time we receive signal for vumter */
 
-                updateVuMeter: function(quiddName, value) {
-                    var shmdata = quiddName.replace("vumeter_", "");
-                    if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
-                    else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
-                },
+                // updateVuMeter: function(quiddName, value) {
+                //     var shmdata = quiddName.replace("vumeter_", "");
+                //     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
+                //     else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
+                // },
 
                 /* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
 
@@ -163,10 +163,17 @@ define(
                     $("[data-path='" + shmdata + "'] .preview").removeClass("active");
                 },
                 addPreviewIcon: function(quidd) {
+                    var that = this
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
-                    console.log(shmdata);
-                    $("[data-path='" + shmdata + "'] .preview").addClass("active");
+                    console.log($("[data-path='" + shmdata + "'] .preview").length);
+
+                    var IntervalPreviewExisting = setInterval(function() {
+                        if ($("[data-path='" + shmdata + "'] .preview").length > 0) {
+                            window.clearInterval(IntervalPreviewExisting);
+                            $("[data-path='" + shmdata + "'] .preview").addClass("active");
+                        }
+                    }, 500);
                 }
 
             });

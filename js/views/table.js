@@ -9,8 +9,8 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/table/table.html',
-        'text!/templates/table/sub_menu.html',
+        'text!../../templates/table/table.html',
+        'text!../../templates/table/sub_menu.html',
     ],
 
     function(_, Backbone, TemplateTable, TemplateSubMenu) {
@@ -111,7 +111,10 @@ define(
 
                     /* here we listen select for call views.quidds.defineName */
                     $("#subMenu").menu({
-                        delay: 0
+                        delay: 0,
+                        position: {
+                            at: "right-2 top-2"
+                        }
                     }, {
                         select: function(event, ui) {
                             event.preventDefault();

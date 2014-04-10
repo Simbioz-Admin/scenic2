@@ -7,38 +7,38 @@ define(
      */
 
     [
-	'underscore',
-	'backbone',
-	'text!/templates/connexion.html'
+        'underscore',
+        'backbone',
+        'text!../../templates/connexion.html'
     ],
 
     function(_, Backbone, ConnexionTemplate) {
 
-	/** 
-	 *	@constructor
-	 *  @requires Underscore
-	 *  @requires Backbone
-	 *  @augments module:Backbone.Model
-	 */
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *  @augments module:Backbone.Model
+         */
 
-	var ConnexionView = Backbone.View.extend(
+        var ConnexionView = Backbone.View.extend(
 
-	    /**
-	     *	@lends module: Views/connexion~ConnexionView.prototype
-	     */
-
-
-	    {
-		template : ConnexionTemplate,
-		events: {},
+            /**
+             *	@lends module: Views/connexion~ConnexionView.prototype
+             */
 
 
-		/* Called when the view ConnexionView is initialized */
+            {
+                template: ConnexionTemplate,
+                events: {},
 
-		initialize: function() {},
+
+                /* Called when the view ConnexionView is initialized */
+
+                initialize: function() {},
 
 
-	    });
+            });
 
-	return ConnexionView;
+        return ConnexionView;
     });

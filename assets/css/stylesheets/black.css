@@ -76,7 +76,7 @@ input[type=submit] {
 
 /* line 64, ../sass/black.sass */
 .actions .action {
-  background: #444444;
+  background: #333333;
 }
 /* line 66, ../sass/black.sass */
 .actions .action .edit {
@@ -88,12 +88,12 @@ input[type=submit] {
 }
 /* line 70, ../sass/black.sass */
 .actions .action .remove {
-  background: #333333;
+  background: #aaaaaa;
   color: #444444;
 }
 /* line 74, ../sass/black.sass */
 .actions .action:first-child {
-  border-color: #333333;
+  border-color: #444444;
 }
 
 /* line 82, ../sass/black.sass */

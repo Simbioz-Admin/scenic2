@@ -10,7 +10,7 @@ define(
     [
         'underscore',
         'backbone',
-        'text!/templates/quidd.html', 'text!/templates/quiddProperty.html', 'text!/templates/quiddMethod.html'
+        'text!../../templates/quidd.html', 'text!../../templates/quiddProperty.html', 'text!../../templates/quiddMethod.html'
     ],
 
     function(_, Backbone, TemplateQuidd, TemplateQuiddProperty, TemplateQuiddMethod) {

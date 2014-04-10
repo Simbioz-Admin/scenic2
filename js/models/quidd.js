@@ -9,7 +9,7 @@ define(
         'underscore',
         'backbone',
         'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
-        'text!/templates/panelInfoSource.html'
+        'text!../../templates/panelInfoSource.html'
     ],
 
     function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
@@ -59,10 +59,6 @@ define(
                 initialize: function() {
                     var that = this;
 
-                    var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-                    if (!PreviewQuidd.test(this.get("name"))) {
-                        views.quidds.addPreviewIcon(this.get("name"));
-                    }
 
                     socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
 
@@ -102,6 +98,13 @@ define(
                                 table: "control"
                             }));
                             // that.get("view").render();
+                        }
+
+
+                        var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
+
+                        if (!PreviewQuidd.test(that.get("name"))) {
+                            views.quidds.addPreviewIcon(that.get("name"));
                         }
 
                     });
@@ -154,6 +157,16 @@ define(
                     });
                 },
 
+                updateByteRate: function(quiddFakeSink, shmdata, value) {
+                    var that = this;
+                    var shmdatas = this.get("shmdatas");
+                    _.each(shmdatas, function(shm) {
+                        if (shm.path == shmdata && shm["byte-rate"] != value) {
+                            shm['byte-rate'] = value;
+                            that.trigger("updateByteRate", quiddFakeSink, shmdata, value);
+                        }
+                    });
+                },
 
                 /**
                  *	Allows viewing of video quiddities type and audio

@@ -37,6 +37,7 @@ define(
                     console.log("initialize collection users");
 
                     /* receive update info user from server side */
+                    /* @TODO remove duplicate code change value status */
                     socket.on("updateInfoUser", function(infoUser) {
                         var model = that.get(infoUser.sip_url);
                         if (infoUser.status == "online") infoUser.status = 0;

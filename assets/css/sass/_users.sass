@@ -17,12 +17,32 @@ div.users
 	bottom : 0
 	right : 0
 	z-index : 2000
+	.itsMe.user
+		.status
+			width : 15px
+			height : 15px
+			background : green
+			position : absolute
+			left : 5px
+		.information
+			// border : none
+			background : #222
+			border-top : 1px solid #1a1a1a
+			border-left-color : #01b101
+		.logout
+			position : absolute
+			right : 20px
+			top : 20px
+			color : white
+			text-decoration: none
+			&:hover
+				color : #be2620
 	.content_users
 		position : absolute
 		right : 0
 		left : 0
 		bottom : 0
-		top : 41px
+		top : 94px
 		overflow-y : auto
 		overflow-x : hidden
 	.current_user
@@ -61,19 +81,21 @@ div.users
 	.user
 		position : relative
 		z-index: 0
+		border-bottom : 1px solid #2c2c2c
 		.information
-			padding : 15px 10px 15px
+			padding : 10px
 			border-left : 2px solid grey
 			cursor : pointer
 			position : relative
 			z-index: 2
+			background : #333
 			h3
 				padding : 0px
 				border  : none
 				cursor : default
 				margin : 0 0 5px 0
 				color : #fefefe
-				font-size : 16px
+				font-size : 14px
 			// &.status-0, &.status-online
 			// 	border-color : #01b101
 			// &.status-1
@@ -86,10 +108,10 @@ div.users
 				height : 13px
 				overflow: hidden
 
-		&:nth-child(odd) .information
-			background : #333
-		&:nth-child(even) .information
-			background : #393939
+		// &:nth-child(odd) .information
+		// 	background : #333
+		// &:nth-child(even) .information
+		// 	background : #393939
 
 		.actionsOnUser
 			height : 100%
@@ -117,7 +139,7 @@ div.users
 			.chat
 				background : url(../../images/icon_chat.png) center center no-repeat
 
-		&[data-status='0'] .information
+		&[data-status='0'] .information, &[data-status='0'] .status
 			border-color : #01b101
 		&[data-status='1'] .information
 			border-color : #be2620
@@ -125,3 +147,41 @@ div.users
 			border-color : orange
 		&[data-status='3'] .information
 			border-color : #555	
+
+
+	/* LOGIN FORM */
+	#login_sip
+		background : #222
+		padding : 20px
+		color : white
+		position : relative
+		z-index : 2
+		h1
+			font-size : 18px
+			margin-bottom : 20px
+		label
+			font-size : 14px
+		input
+			background : #111
+			color : white
+			border-color : #222
+		.half
+			width : 47%
+			float : left
+			position : relative
+			margin-right : 10px
+			input
+				width : 95%
+			&:last-child
+				margin-right : 0
+		input[type=submit]
+			background: #111
+			width : inherit
+			margin : 5px 0
+			line-height: 30px
+			height : 30px
+			font-size : 14px
+			padding : 0 10px
+			cursor : pointer
+			&:hover
+				background : #333

@@ -52,6 +52,7 @@ define(
 
                 /* Called for render the view */
                 render: function() {
+
                     $(".users .content_users .status-" + this.model.get("status")).append(this.el);
                     var tpl = _.template(TemplateUser, this.model.toJSON());
                     $(this.el).html(tpl);

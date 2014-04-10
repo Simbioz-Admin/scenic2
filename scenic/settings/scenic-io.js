@@ -136,6 +136,12 @@ define(
                 socket.on("connect_destination", switcher.receivers.connect_destination);
                 socket.on("remove_connection", switcher.receivers.remove_connection);
 
+                //************************* SIP ****************************//
+
+                socket.on("sip_logout", switcher.sip.logout);
+                socket.on("sip_login", switcher.sip.login);
+
+
                 //************************* SAVE ****************************//
 
                 socket.on("save", switcher.save);

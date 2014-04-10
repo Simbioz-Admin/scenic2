@@ -10,10 +10,11 @@ define(
         'underscore',
         'backbone',
         'views/users/user',
-        'text!../../../templates/users/users.html'
+        'text!../../../templates/users/users.html',
+        'text!../../../templates/users/form_login.html'
     ],
 
-    function(_, Backbone, ViewUser, TemplateUsers) {
+    function(_, Backbone, ViewUser, TemplateUsers, TemplateLoginForm) {
 
         /** 
          *  @constructor
@@ -35,7 +36,9 @@ define(
                 template: TemplateUsers,
                 listOpen: true,
                 events: {
-                    'click h2': 'toggleList'
+                    'click h2': 'toggleList',
+                    'click .logout': 'logoutSip',
+                    'submit #login_sip': 'loginSip'
                 },
 
 
@@ -51,11 +54,15 @@ define(
                     that.render();
                 },
 
-                /* Called for render the view */
-                render: function() {
 
+                /*
+                 * @function Render
+                 * @description Add the global list users sip and information about current user connected
+                 */
+
+                render: function() {
+                    $(this.el).html("");
                     /* add information about user connected */
-                    console.log(config);
                     var tpl = _.template(this.template, {
                         name: config.nameComputer
                     });
@@ -70,22 +77,26 @@ define(
                     this.toggleList(0);
                     /* generate the view for each user */
                     this.collection.each(function(user) {
-                        new ViewUser({
-                            model: user
-                        });
+
+                        /* check if user model is of current user scenic */
+                        if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("sip_url")) {
+                            new ViewUser({
+                                model: user
+                            });
+                        } else {
+                            $(".itsMe h3", this.el).html(user.get("sip_url"));
+                            $(".itsMe .last_message", this.el).html(user.get("status_text"));
+                        }
                     });
 
 
                 },
-                reOrder: function() {
-                    console.log("reOrder");
-                    var users = $(".content_users .user", this.el);
-                    users = _.sortBy(users.detach(), function(user) {
-                        console.log($(user).data("status"));
-                        return $(user).data("status");
-                    });
-                    $(".content_users", this.el).html(users);
-                },
+
+                /*
+                 * @function toggleList
+                 * @description Show or Hide list of contact. Information state is saved in localStorage
+                 */
+
                 toggleList: function(speed) {
                     var that = this;
                     var speed = (typeof speed == "number") ? speed : 300;
@@ -120,6 +131,66 @@ define(
                             "left": 0
                         }, speed);
                     }
+                },
+
+
+                /*
+                 * @function loginSip
+                 * @description Ask to the server logout to the server SIP
+                 */
+
+                loginSip: function(e) {
+                    var that = this;
+                    e.preventDefault();
+                    var dataFormConfig = $('#login_sip', this.el).serializeObject();
+                    console.log("try login SIP", dataFormConfig);
+
+                    socket.emit("sip_login", dataFormConfig, function(err, configSip) {
+                        if (err) return views.global.notification("error", err);
+                        /* update info contact sip */
+                        config.sip = configSip;
+                        console.log(config.sip, configSip);
+                        collections.users.fetch({
+                            success: function() {
+                                that.render();
+                            }
+                        });
+                        views.global.notification("valid", "success login server sip");
+                        $("#login_sip", this.el).remove();
+                    });
+                },
+
+                /*
+                 * @function logoutSip
+                 * @description Ask to the server logout to the server SIP
+                 */
+
+                logoutSip: function(e) {
+                    var that = this;
+                    e.preventDefault();
+                    console.log("ask for logout");
+
+
+                    socket.emit("sip_logout", function(err, confirm) {
+                        if (err) return views.global.notification("error", err);
+
+                        /* if successfully logout we remove all information about users for showing form login */
+                        $(".list", this.el).html("");
+                        $(".itsMe ", this.el).remove();
+                        collections.users.reset();
+                        var loginTpl = _.template(TemplateLoginForm, config);
+                        $(that.el).append(loginTpl);
+
+                        views.global.notification("valid", "success logout server sip");
+
+                        /* if successfully logout we remove all information about users for showing form login */
+                        // $(".list", this.el).html("");
+                        // $(".itsMe h3", this.el).html("");
+                        // $(".itsMe .last_message", this.el).html("");
+                        // var loginTpl = _.template(TemplateLoginForm, config);
+                        // $(".itsMe", this.el).before(loginTpl);
+                        // views.global.notification("valid", "success logout server sip");
+                    });
                 }
 
             });

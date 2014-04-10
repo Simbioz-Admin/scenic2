@@ -65,5 +65,8 @@ define(
                 log.debug("scenic2 is going to open in your default browser: http://" + config.host + ":" + config.port.scenic);
             }
         });
+
+
+
         return app;
     });

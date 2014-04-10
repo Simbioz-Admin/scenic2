@@ -20,15 +20,15 @@ define(
             var message = "\n\nCommand helper for scenic2 \n";
             message += "----------------------------------------------------------\n"
             message += leftColumn('-v, --version  ') + "port for GUI scenic2 (actual version " + config.version + ")\n";
-            message += leftColumn('-d, --debug') + 'Start the server on mode debug\n';
+            message += leftColumn('-d, --debug') + 'start the server on mode debug\n';
             message += leftColumn('-f, --file') + 'load a file scenic (ex : -f my_save.scenic)\n';
-            message += leftColumn('-n, -nogui     ') + "Launch scenic2 without app interface\n";
-            message += leftColumn('-w, --withoutconf') + 'Launch scenic2 without the interface for pre-configuration\n';
+            message += leftColumn('-n, -nogui     ') + "launch scenic2 without app interface\n";
+            message += leftColumn('-w, --withoutconf') + 'launch scenic2 without the interface for pre-configuration\n';
             message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
             message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.port.soap + ")\n";
             message += leftColumn('-i, --identification ') + "name of identification (default is " + config.nameComputer + ")\n";
             message += leftColumn('-r, --rtpsession ') + "name of rtpsession (default is " + config.rtpsession + ")\n";
-            message += leftColumn('--sip') + "Parameters for server sip (ex : --sip name=1010 port=" + config.sip.port + " address=" + config.sip.address + "\n";
+            message += leftColumn('--sip') + "parameters for server sip (ex : --sip name=1010 port=" + config.sip.port + " address=" + config.sip.address + "\n";
             console.log(message);
             process.exit();
         }

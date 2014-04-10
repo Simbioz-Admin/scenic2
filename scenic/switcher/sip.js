@@ -6,7 +6,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         var io;
 
         function addListUser(userInfo) {
-            log.debug("User sip connected", userInfo.sip_url);
+            log.switcher("User sip connected", userInfo.sip_url);
             listUsers.push(userInfo);
         }
 
@@ -18,12 +18,15 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
                 /* create quiddity sip */
                 var sipQuid = switcher.create("sip", "sipquid");
 
+                /* set port for sipquid */
+                switcher.set_property_value(sipQuid, "port", String(config.sip.port));
+
                 /* * subscribe to the modification on this quiddity */
                 switcher.subscribe_to_signal(sipQuid, "on-tree-grafted");
                 switcher.subscribe_to_signal(sipQuid, "on-tree-pruned");
 
-                switcher.invoke(sipQuid, "register", ["1010",
-                    "10.10.30.115",
+                switcher.invoke(sipQuid, "register", [config.sip.name,
+                    config.sip.address,
                     "1234"
                 ]);
 

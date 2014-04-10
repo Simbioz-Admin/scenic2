@@ -42,7 +42,8 @@ define(
                 render: function() {
                     var template = _.template(templateLaunch, {
                         username: config.nameComputer,
-                        soap: config.port.soap
+                        soap: config.port.soap,
+                        sip: config.sip
                     });
                     this.el = template;
                     $("body").append(template);
@@ -55,23 +56,27 @@ define(
                     var dataFormConfig = $('#form-config').serializeObject(),
                         verificationOk = true,
                         that = this;
-
+                    console.log(dataFormConfig);
                     //check if port soap is available
-                    socket.emit("checkPort", dataFormConfig.portSoap, function(ok) {
-                        if (!ok) {
-                            alert("The port " + dataFormConfig.portSoap + " is already used");
-                            verificationOk = false;
-                        }
-                        /* Check the password */
-                        if (dataFormConfig.pass != dataFormConfig.confirmPass) {
-                            alert("the password are not the same");
-                            verificationOk = false;
-                        }
+                    socket.emit("checkPort", dataFormConfig.portSoap, dataFormConfig.sipPort,
+                        function(SoapOk, SipOk) {
+                            if (!SoapOk) {
+                                alert("The port " + dataFormConfig.portSoap + " is already used. Please change value of port Soap");
+                                verificationOk = false;
+                            }
+                            if (!SipOk) {
+                                alert("The port " + dataFormConfig.sipPort + " is already used. Please change value of port sip");
+                                verificationOk = false;
+                            }
+                            /* Check the password */
+                            if (dataFormConfig.pass != dataFormConfig.confirmPass) {
+                                alert("the password are not the same");
+                                verificationOk = false;
+                            }
 
-                        if (verificationOk) that.launchScenic(dataFormConfig);
+                            if (verificationOk) that.launchScenic(dataFormConfig);
 
-
-                    });
+                        });
 
                     return false;
                 },

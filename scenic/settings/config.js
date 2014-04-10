@@ -20,6 +20,11 @@ var config = {
         soap: 8085,
         scenic: 8095
     },
+    sip: {
+        port: 5060,
+        address: "10.10.30.115",
+        name: '1010'
+    },
     rtpsession: "defaultrtp",
     logLevel: "warn",
     logSocketIo: false,

@@ -38,11 +38,10 @@ define(
 
                     /* receive update info user from server side */
                     socket.on("updateInfoUser", function(infoUser) {
-                        console.log("infoUser", infoUser);
                         var model = that.get(infoUser.sip_url);
                         if (infoUser.status == "online") infoUser.status = 0;
                         if (infoUser.status == "offline") infoUser.status = 2;
-                        model.set(infoUser);
+                        if (model) model.set(infoUser);
                         // that.trigger("reOrder");
                     });
 

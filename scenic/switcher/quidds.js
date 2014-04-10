@@ -9,16 +9,29 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             io = socketIo;
         }
 
+        /**
+         *  @function create
+         *  @description call when a user ask to creating a quiddity
+         *  @param {string} className The class of the quiddity
+         *  @param {string} quiddName The name (id) of the quiddity
+         *  @param {string} socketId Id Socket (socket.io) of the user ask to create the quiddity
+         */
+
         function create(className, quiddName, socketId, cb) {
 
-            //its not always a user ask for create a quidd
-            if (!cb) cb = socketId;
+
+            if (!cb) cb = socketId; //its not always a user ask for create a quidd
 
             quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
             if (quiddName) {
+
+                /* we stock id of socket and name of quidd because we want to alert the user 
+                client side when the quiddity is created for show the properties */
+
+                log.debug("quiddity " + quiddName + " (" + className + ") created.");
+
                 config.listQuiddsAndSocketId[quiddName] = socketId;
                 var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
-                log.debug("quiddity " + quiddName + " (" + className + ") created.");
                 cb(null, quiddInfo);
 
             } else {
@@ -30,7 +43,8 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
 
         /**
-         *  removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
+         *  @function remove
+         *  @description removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
          *  @param {string} quiddName The name (id) of the quiddity
          */
 

@@ -157,6 +157,16 @@ define(
                     });
                 },
 
+                updateByteRate: function(quiddFakeSink, shmdata, value) {
+                    var that = this;
+                    var shmdatas = this.get("shmdatas");
+                    _.each(shmdatas, function(shm) {
+                        if (shm.path == shmdata && shm["byte-rate"] != value) {
+                            shm['byte-rate'] = value;
+                            that.trigger("updateByteRate", quiddFakeSink, shmdata, value);
+                        }
+                    });
+                },
 
                 /**
                  *	Allows viewing of video quiddities type and audio

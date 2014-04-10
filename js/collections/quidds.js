@@ -152,17 +152,27 @@ define(
                  *	@param {string} prop The type of event on property or method
                  *	@param {string} quiddName The name of the quiddity
                  *	@param {string}	name The name of the property or method
+                 *  @TODO Manage State shmdata and preview in specific QUiditty for fakeSink
                  */
 
-                signalsPropertiesUpdate: function(quiddName, prop, name) {
+                signalsPropertiesUpdate: function(quiddName, prop, value) {
+
                     /** if it's byte-rate we update directly the status of viewmeter */
                     if (prop == "byte-rate") {
-                        views.quidds.updateVuMeter(quiddName, name);
+
+                        var quiddNameArray = quiddName.split("_"),
+                            quiddNameFakeSink = quiddName,
+                            shmdata = quiddName.replace("vumeter_", "");
+
+                        quiddName = quiddNameArray[quiddNameArray.length - 2];
+
+                        collections.quidds.get(quiddName).updateByteRate(quiddNameFakeSink, shmdata, value);
+                        // views.quidds.updateVuMeter(quiddName, name);
 
                     } else {
                         var model = collections.quidds.get(quiddName);
                         if (model) {
-                            model.get("properties")[prop]["default value"] = name;
+                            model.get("properties")[prop]["default value"] = value;
                             model.trigger("update:value", prop);
                         }
                     }

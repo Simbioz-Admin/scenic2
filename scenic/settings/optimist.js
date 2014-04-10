@@ -54,7 +54,7 @@ define(
 
         //argument for loading a save file scenic
         if (argv.f || argv.file) {
-            config.loadFile = (argv.l ? argv.l : argv.load);
+            config.loadFile = (argv.f ? argv.f : argv.file);
         }
 
         //argument for define the port of gui scenic

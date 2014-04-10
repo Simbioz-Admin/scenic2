@@ -29,14 +29,14 @@ var config = {
     passSet: null,
     loadFile: false,
     nameComputer: os.hostname(),
-    quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer', 'fakesink', 'videosink'],
+    quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer'],
     propertiesExclude: ["shmdata-readers", "shmdata-writers"],
     deviceAutoDetect: ["v4l2src", "pulsesrc", "midisrc"],
     defaultPanelTable: "transfer",
     listQuiddsAndSocketId: {},
     subscribe_quidd_info: {},
     scenicDependenciesPath: scenicHomePath,
-    scenicSavePath: scenicHomePath + "/save_files"
+    scenicSavePath: scenicHomePath + "/save_files/"
 }
 
 /* this part export config for requirejs */

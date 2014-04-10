@@ -52,7 +52,6 @@ define(
                 },
 
                 parse: function(results, xhr) {
-                    console.log(results);
                     _.each(results, function(user) {
                         if (user.status == "online") user.status = 0;
                         if (user.status == "offline") user.status = 2;

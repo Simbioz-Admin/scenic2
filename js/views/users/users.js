@@ -51,7 +51,13 @@ define(
                     var that = this;
                     console.log("init View Users");
                     this.collection.on('reOrder', this.reOrder);
-                    that.render();
+                    $("body").append($(this.el));
+
+                    if (this.collection.length == 0) {
+                        that.renderLogin();
+                    } else {
+                        that.render();
+                    }
                 },
 
 
@@ -64,16 +70,13 @@ define(
                     $(this.el).html("");
                     /* add information about user connected */
                     var tpl = _.template(this.template, {
-                        name: config.nameComputer
+                        loginForm: false
                     });
-
                     $(this.el).append(tpl);
 
                     /* generate a btn for the table */
                     this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
                     //this.toggleList(0);
-                    console.log("close", this.listOpen)
-                    $("body").append($(this.el));
                     this.toggleList(0);
                     /* generate the view for each user */
                     this.collection.each(function(user) {
@@ -90,6 +93,19 @@ define(
                     });
 
 
+                },
+
+                /*
+                 * @function renderLogin
+                 * @description Render in list user login form for connection sip server
+                 */
+                renderLogin: function() {
+                    var tpl = _.template(this.template, {
+                        loginForm: true
+                    });
+                    $(this.el).append(tpl);
+                    var loginTpl = _.template(TemplateLoginForm, config);
+                    $(this.el).append(loginTpl);
                 },
 
                 /*
@@ -168,28 +184,17 @@ define(
                 logoutSip: function(e) {
                     var that = this;
                     e.preventDefault();
-                    console.log("ask for logout");
-
 
                     socket.emit("sip_logout", function(err, confirm) {
                         if (err) return views.global.notification("error", err);
 
                         /* if successfully logout we remove all information about users for showing form login */
-                        $(".list", this.el).html("");
-                        $(".itsMe ", this.el).remove();
+                        $(that.el).html("");
                         collections.users.reset();
-                        var loginTpl = _.template(TemplateLoginForm, config);
-                        $(that.el).append(loginTpl);
+                        that.renderLogin();
 
                         views.global.notification("valid", "success logout server sip");
 
-                        /* if successfully logout we remove all information about users for showing form login */
-                        // $(".list", this.el).html("");
-                        // $(".itsMe h3", this.el).html("");
-                        // $(".itsMe .last_message", this.el).html("");
-                        // var loginTpl = _.template(TemplateLoginForm, config);
-                        // $(".itsMe", this.el).before(loginTpl);
-                        // views.global.notification("valid", "success logout server sip");
                     });
                 }
 

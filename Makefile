@@ -38,7 +38,7 @@ install: all
 	install scenic2 $(DESTDIR)/bin
 	install scenic2-installer $(DESTDIR)/bin
 	install scenic-launcher.desktop $(DESTDIR)/share/applications
-	install scenic-launcher.desktop $(TARGETDIR)
+	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
 
 uninstall:
 	rm -rf $(DESTDIR)$(TARGETDIR)

@@ -66,7 +66,16 @@ define(
             }
         });
 
+        //process for exit server
 
+        process.on('exit', function() {
+            switcher.close();
+        });
+
+        process.on('SIGINT', function() {
+            // switcher.close();
+            process.exit(0);
+        });
 
         return app;
     });

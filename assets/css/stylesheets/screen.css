@@ -212,12 +212,20 @@ div.users .user .actionsOnUser .add_table {
 div.users .user .actionsOnUser .chat {
   background: url(../../images/icon_chat.png) center center no-repeat;
 }
-/* line 119, ../sass/_users.sass */
+/* line 120, ../sass/_users.sass */
 div.users .user[data-status='0'] .information {
   border-color: #01b101;
 }
-/* line 121, ../sass/_users.sass */
+/* line 122, ../sass/_users.sass */
+div.users .user[data-status='1'] .information {
+  border-color: #be2620;
+}
+/* line 124, ../sass/_users.sass */
 div.users .user[data-status='2'] .information {
+  border-color: orange;
+}
+/* line 126, ../sass/_users.sass */
+div.users .user[data-status='3'] .information {
   border-color: #555555;
 }
 

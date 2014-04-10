@@ -73,6 +73,7 @@ require([
 
     /* When the server is closed or crash a message global is send for all user */
     socket.on("shutdown", function() {
+        console.log("SHUTDOWN");
         $("body").html("<div id='shutdown'>the server has been shutdown...</div>");
     });
 

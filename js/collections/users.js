@@ -40,7 +40,9 @@ define(
                     socket.on("updateInfoUser", function(infoUser) {
                         var model = that.get(infoUser.sip_url);
                         if (infoUser.status == "online") infoUser.status = 0;
-                        if (infoUser.status == "offline") infoUser.status = 2;
+                        if (infoUser.status == "busy") infoUser.status = 1;
+                        if (infoUser.status == "away") infoUser.status = 2;
+                        if (infoUser.status == "offline") infoUser.status = 3;
                         if (model) model.set(infoUser);
                         // that.trigger("reOrder");
                     });
@@ -54,7 +56,9 @@ define(
                 parse: function(results, xhr) {
                     _.each(results, function(user) {
                         if (user.status == "online") user.status = 0;
-                        if (user.status == "offline") user.status = 2;
+                        if (user.status == "busy") user.status = 1;
+                        if (user.status == "away") user.status = 2;
+                        if (user.status == "offline") user.status = 3;
                     })
                     return results;
                 },

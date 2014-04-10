@@ -12,11 +12,12 @@ define(
 
     function(config, switcher, sip, quidds, receivers, log, _, $) {
 
+        var io;
 
-        function initialize(io) {
+        function initialize(socketIo) {
 
             log.debug("Init Switcher");
-
+            io = socketIo;
             /* Init Receiver */
             sip.initialize(io);
             receivers.initialize(io);
@@ -299,11 +300,19 @@ define(
 
         }
 
+
+        function close() {
+            log.info("Server scenic is now closed");
+            io.sockets.emit("shutdown", true);
+            switcher.close();
+        }
+
         return {
             initialize: initialize,
             sip: sip,
             quidds: quidds,
             receivers: receivers,
+            close: close,
             save: save,
             load: load,
             remove_save: remove_save,

@@ -47,12 +47,12 @@ define(
                 initialize: function(options) {
                     this.listenTo(this.model, 'change:status', this.refreshStatus);
                     this.listenTo(this.model, 'change:status_text', this.changeText);
-                    $(".users .content_users").append(this.el);
                     this.render();
                 },
 
                 /* Called for render the view */
                 render: function() {
+                    $(".users .content_users .status-" + this.model.get("status")).append(this.el);
                     var tpl = _.template(TemplateUser, this.model.toJSON());
                     $(this.el).html(tpl);
                     var status = this.model.get("status");
@@ -63,13 +63,11 @@ define(
                 },
                 refreshStatus: function() {
                     /* 0 : online   1 : absent   2 : offline */
-                    console.log("refresh status");
-                    console.log($(".users .user[data-status='0']:last")[0]);
-                    var lastConnected = $(".users .user[data-status='0']:last");
+                    var currentStatus = this.model.get("status");
+                    console.log(currentStatus);
                     var user = $(this.el).detach();
-                    lastConnected.after(user);
-                    var status = this.model.get("status");
-                    $(this.el).attr("data-status", status);
+                    $(".users .content_users .status-" + currentStatus).append(user);
+                    $(this.el).attr("data-status", currentStatus);
                 },
                 changeText: function() {
                     console.log(this.model.get("status_text"));

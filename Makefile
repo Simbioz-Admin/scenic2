@@ -14,7 +14,7 @@ ALTFILES := COPYING \
 	Makefile
 
 ALLFILES := $(PROJDIRS) $(SRCFILES)
-TARGETDIR := /opt/scenic2
+TARGETDIR := /share/scenic2
 ARCHIVE := scenic2_$(VERSION)
 
 all:
@@ -23,17 +23,17 @@ all:
 
 install: all
 	@echo Making all
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(TARGETDIR)/server.js \$$@" > scenic2
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(TARGETDIR)/npm-verify.js" > scenic2-installer
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic2-installer
 #	@echo installing chromium browser
 #	apt-get install chromium-browser
 	@echo building directories for version $(VERSION)
-	mkdir -p $(TARGETDIR)
+	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files 
-	install $(SRCFILES) $(TARGETDIR)
+	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
-		cp -r $$f $(TARGETDIR); \
+		cp -r $$f $(DESTDIR)$(TARGETDIR); \
 		done; \
 	install scenic2 $(DESTDIR)/bin
 	install scenic2-installer $(DESTDIR)/bin
@@ -41,8 +41,8 @@ install: all
 	install scenic-launcher.desktop $(TARGETDIR)
 
 uninstall:
-	rm -rf $(TARGETDIR)
-	@echo removed $(TARGETDIR)
+	rm -rf $(DESTDIR)$(TARGETDIR)
+	@echo removed $(DESTDIR)$(TARGETDIR)
 	rm $(DESTDIR)/bin/scenic2
 	rm $(DESTDIR)/bin/scenic2-installer
 	rm $(DESTDIR)/share/applications/scenic-launcher.desktop

@@ -142,7 +142,7 @@ define(
 
             switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
-                log.switcher('signal : ', qname, ' ', qsignal, ' ', pvalue);
+                log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
 
                 /* show information about  */
 

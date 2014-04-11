@@ -29,7 +29,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 "1234"
             ]);
 
-            if (register == "false") return cb("Error login sip server", null);
+            if (register == "false") {
+                log.error("Error register quid sip");
+            }
             if (cb) cb(null);
         }
 

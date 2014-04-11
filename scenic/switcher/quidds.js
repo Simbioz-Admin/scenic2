@@ -50,32 +50,32 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
         function remove(quiddName) {
 
-            var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+            // var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
 
-            if (!quidds) return log.error("failed remove quiddity " + quiddName);
+            // if (!quidds) return log.error("failed remove quiddity " + quiddName);
 
-            removeConrolByQuiddParent(quiddName);
+            // removeConrolByQuiddParent(quiddName);
 
-            /* Remove quiddity sink base on quidd removed */
-            _.each(quidds, function(quidd) {
+            // /* Remove quiddity sink base on quidd removed */
+            // _.each(quidds, function(quidd) {
 
-                if (quidd.name.indexOf(quiddName + "-sink") != -1) {
-                    switcher.remove(quidd.name);
-                }
+            //     if (quidd.name.indexOf(quiddName + "-sink") != -1) {
+            //         switcher.remove(quidd.name);
+            //     }
 
 
-            });
+            // });
 
-            /* remove vumeters */
-            var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
+            // /* remove vumeters */
+            // var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
 
-            if (shmdatas && !shmdatas.error) {
-                shmdatas = shmdatas.shmdata_writers;
-                $.each(shmdatas, function(index, shmdata) {
-                    log.debug("remove vumeter : vumeter_" + shmdata.path);
-                    switcher.remove('vumeter_' + shmdata.path);
-                });
-            }
+            // if (shmdatas && !shmdatas.error) {
+            //     shmdatas = shmdatas.shmdata_writers;
+            //     $.each(shmdatas, function(index, shmdata) {
+            //         log.debug("remove vumeter : vumeter_" + shmdata.path);
+            //         switcher.remove('vumeter_' + shmdata.path);
+            //     });
+            // }
 
             if (switcher.remove(quiddName)) {
                 log.debug("quiddity " + quiddName + " is removed.");
@@ -84,6 +84,23 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             }
         }
 
+
+        function removeElementsAssociateToQuiddRemoved(quiddName) {
+            log.debug("remove quidds associate to quidd removed", quiddName);
+            var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+
+            if (!quidds) return log.error("failed remove quiddity " + quiddName);
+
+            removeConrolByQuiddParent(quiddName);
+
+            /* Remove quiddity sink base on quidd removed  or vumeter */
+            _.each(quidds, function(quidd) {
+                if (quidd.name.indexOf(quiddName + "-sink") != -1) switcher.remove(quidd.name);
+                if (quidd.name.indexOf("vumeter_") >= 0 && quidd.name.indexOf(quiddName) >= 0) switcher.remove(quidd.name);
+            });
+
+
+        }
 
 
         function get_description(quiddName, cb) {
@@ -294,9 +311,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         function removeConrolByQuiddParent(quiddParent) {
             var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", 'controlProperties'));
             _.each(currentValuesDicoProperty, function(control) {
-                log.info(control.quiddName, quiddParent);
                 if (control.quiddName == quiddParent) {
-
                     remove_property_value_of_dico("controlProperties", control.name);
                 }
             })
@@ -306,7 +321,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
             var newValuesDico = [];
             _.each(currentValuesDicoProperty, function(value) {
-                log.info(value.name, name);
                 if (value.name != name)
                     newValuesDico.push(value);
             });
@@ -335,6 +349,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             initialize: initialize,
             create: create,
             remove: remove,
+            removeElementsAssociateToQuiddRemoved: removeElementsAssociateToQuiddRemoved,
             get_description: get_description,
             get_properties_description: get_properties_description,
             get_methods_description: get_methods_description,

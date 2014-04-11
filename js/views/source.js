@@ -144,22 +144,25 @@ define(
                     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
                     else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
 
-                    /* Get quiddity FakeSink for have Caps info */
-                    var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties");
 
-                    var infoCaps = _.findWhere(propertiesFakeSink, {
-                        name: 'caps'
-                    })['value'].split(",");
+                    /* Get quiddity FakeSink for have Caps info if not existing */
+                    if ($("[data-path='" + shmdata + "'] .nameInOut .short .preview").length == 0) {
+                        var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties");
 
-                    /* With caps info we chekc if its video or audio preview */
-                    if (infoCaps[0] == "audio/x-raw-int" || infoCaps[0] == "audio/x-raw-float" || infoCaps[0] == "video/x-raw-yuv" || infoCaps[0] == "video/x-raw-rgb") {
+                        var infoCaps = _.findWhere(propertiesFakeSink, {
+                            name: 'caps'
+                        })['value'].split(",");
 
-                        var type = (infoCaps[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink"),
-                            QuiddSink = collections.quidds.get(type + "_" + shmdata),
-                            previewActive = QuiddSink ? "active" : "";
+                        /* With caps info we chekc if its video or audio preview */
+                        if (infoCaps[0] == "audio/x-raw-int" || infoCaps[0] == "audio/x-raw-float" || infoCaps[0] == "video/x-raw-yuv" || infoCaps[0] == "video/x-raw-rgb") {
 
-                        $("[data-path='" + shmdata + "'] .nameInOut .short").append("<div class='preview " + previewActive + "'></div>");
+                            var type = (infoCaps[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink"),
+                                QuiddSink = collections.quidds.get(type + "_" + shmdata),
+                                previewActive = QuiddSink ? "active" : "";
 
+                            $("[data-path='" + shmdata + "'] .nameInOut .short").append("<div class='preview " + previewActive + "'></div>");
+
+                        }
                     }
                 },
 

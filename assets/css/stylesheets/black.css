@@ -98,15 +98,19 @@ input[type=submit] {
 
 /* line 82, ../sass/black.sass */
 #panelTables .tabTable {
+  background: #222222;
+}
+/* line 84, ../sass/black.sass */
+#panelTables .tabTable.active {
   background: #444444;
 }
 
-/* line 85, ../sass/black.sass */
+/* line 87, ../sass/black.sass */
 #panelTables #btn-irc {
   background: #444444;
 }
 
-/* line 88, ../sass/black.sass */
+/* line 90, ../sass/black.sass */
 .close {
   background: #333333;
 }

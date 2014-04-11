@@ -71,7 +71,7 @@ define(
 
                 //we exclude byte-reate because its call every second (almost a spam...)
                 if (qprop != "byte-rate" && qprop != "caps") {
-                    log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+                    //log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
                 } else {
                     io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
                 }
@@ -160,7 +160,6 @@ define(
                 var quiddClass = JSON.parse(switcher.get_quiddity_description(pvalue[0]));
                 if (!_.contains(config.quiddExclude, quiddClass.class) && qsignal == "on-quiddity-created") {
 
-
                     /* subscribe signal for properties add/remove and methods add/remove */
                     switcher.subscribe_to_signal(pvalue[0], "on-property-added");
                     switcher.subscribe_to_signal(pvalue[0], "on-property-removed");
@@ -189,13 +188,17 @@ define(
                     }
                 }
 
+                if (qsignal == "on-quiddity-created") {
+                    log.info("--------C----", pvalue[0], "-----------------");
+                }
 
                 /* ************ SIGNAL - ON QUIDDITY REMOVED ************ */
 
                 /* Emits to users a quiddity is removed */
                 if (qsignal == "on-quiddity-removed") {
                     io.sockets.emit("remove", pvalue);
-                    log.debug("the quiddity " + pvalue + "is removed");
+                    log.debug("the quiddity " + pvalue + " is removed");
+                    quidds.removeElementsAssociateToQuiddRemoved(pvalue[0]);
                 }
 
                 if (qsignal == "on-property-added" || qsignal == "on-property-removed" || qsignal == "on-method-added" || qsignal == "on-method-removed") {

@@ -74,7 +74,9 @@ define(
                 /* Called when the click event is on the button remove of property */
 
                 removeClick: function() {
-                    this.model.delete();
+                    var that = this;
+                    console.log("model", this.model.get("name"));
+                    this.model.askDelete();
                 },
 
 

@@ -54,12 +54,16 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
             if (!quidds) return log.error("failed remove quiddity " + quiddName);
 
+            removeConrolByQuiddParent(quiddName);
 
             /* Remove quiddity sink base on quidd removed */
             _.each(quidds, function(quidd) {
+
                 if (quidd.name.indexOf(quiddName + "-sink") != -1) {
                     switcher.remove(quidd.name);
                 }
+
+
             });
 
             /* remove vumeters */
@@ -287,13 +291,41 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
         }
 
+        function removeConrolByQuiddParent(quiddParent) {
+            var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", 'controlProperties'));
+            _.each(currentValuesDicoProperty, function(control) {
+                log.info(control.quiddName, quiddParent);
+                if (control.quiddName == quiddParent) {
+
+                    remove_property_value_of_dico("controlProperties", control.name);
+                }
+            })
+        }
+
         function remove_property_value_of_dico(property, name) {
             var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
             var newValuesDico = [];
             _.each(currentValuesDicoProperty, function(value) {
+                log.info(value.name, name);
                 if (value.name != name)
                     newValuesDico.push(value);
             });
+
+
+            if (property == "controlProperties") {
+                /* parse all quidds for remove mapper associate */
+                var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+
+                /* Remove quiddity sink base on quidd removed */
+                _.each(quidds, function(quidd) {
+                    if (quidd.name.indexOf("mapper") >= 0 && quidd.name.indexOf(name) >= 0) {
+                        switcher.remove(quidd.name);
+                    }
+                });
+            }
+
+            log.debug("Remove property", property, name);
+
             switcher.set_property_value("dico", property, JSON.stringify(newValuesDico));
             io.sockets.emit("removeValueOfPropertyDico", property, name);
         }

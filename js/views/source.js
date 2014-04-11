@@ -195,7 +195,7 @@ define(
                     this.model.edit();
                 },
                 removeClick: function() {
-                    this.model.delete();
+                    this.model.askDelete();
                 },
                 removeView: function() {
                     this.remove();

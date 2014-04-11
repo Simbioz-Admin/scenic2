@@ -135,7 +135,7 @@ define(
                  *	Allows to remove a specific quiddity. We also check if there are quiddity of control associated with the quiddity to also remove
                  */
 
-                delete: function() {
+                askDelete: function() {
                     var that = this;
 
                     views.global.confirmation(function(ok) {
@@ -149,10 +149,6 @@ define(
                             if (that.get("name") == $("#panelRight").data('quiddName')) {
                                 views.global.closePanel();
                             }
-                            //check if propertiesControl is created with the quidd deleted
-                            collections.destinationProperties.each(function(controlProperty) {
-                                if (controlProperty.get("quiddName") == that.get("name")) controlProperty.delete();
-                            });
                         }
                     });
                 },

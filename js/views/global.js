@@ -182,7 +182,7 @@ define(
 
                 keyboardAction: function(event) {
                     var that = this;
-                    console.log("id Key", event.which);
+                    //console.log("id Key", event.which);
 
                     /* started or stopped quidd */
                     if (event.which == 115 && event.shiftKey) {

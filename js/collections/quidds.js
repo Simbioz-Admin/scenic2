@@ -104,7 +104,9 @@ define(
                     var model = this.get(quiddName);
                     if (model) {
                         model.trigger('destroy', model);
-                        views.global.notification("info", quiddName + "  has deleted");
+                        if (quiddInfo.class != "sip") {
+                            views.global.notification("info", quiddName + "  has deleted");
+                        }
                     }
                 },
 
@@ -118,7 +120,9 @@ define(
                 create: function(quiddInfo) {
                     var model = new QuiddModel(quiddInfo);
                     this.add(model);
-                    views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
+                    if (quiddInfo.class != "sip") {
+                        views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
+                    }
                     return model;
                 },
 

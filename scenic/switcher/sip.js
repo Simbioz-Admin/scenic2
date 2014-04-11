@@ -4,7 +4,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
         var listUsers = [];
         var io;
-        var quiddSipName;
+        var quiddSipName = "sipquid";
 
         function addListUser(userInfo) {
             log.switcher("User sip connected", userInfo.sip_url);
@@ -13,13 +13,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
         function createSip(cb) {
             /* create quiddity sip */
-            quiddSipName = switcher.create("sip", "sipquid");
+            quiddSipName = switcher.create("sip", quiddSipName);
             if (!quiddSipName) return cb("Error login sip server");
 
             /* set port for sipquid */
             console.log("PORT SIP", String(config.sip.port));
-            switcher.set_property_value(quiddSipName, "port", String(config.sip.port));
-
+            var setPortSip = switcher.set_property_value(quiddSipName, "port", String(config.sip.port));
+            log.debug("setPortSip", setPortSip);
             /* * subscribe to the modification on this quiddity */
             switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
             switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
@@ -31,6 +31,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
             if (register == "false") {
                 log.error("Error register quid sip");
+                return cb("Error register quid sip", null);
             }
             if (cb) cb(null);
         }
@@ -39,7 +40,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             initialize: function(socketIo) {
                 log.info("initialize sip");
                 io = socketIo;
-                createSip();
+                // createSip();
             },
             updateInfoUser: function(userInfo) {
                 try {
@@ -72,6 +73,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             login: function(sip, cb) {
                 log.debug("Ask for login Sip Server", parseInt(sip.port));
                 /* set information config */
+                switcher.remove(quiddSipName)
                 config.sip = {
                     port: sip.port,
                     address: sip.address,

@@ -162,6 +162,7 @@ define(
                     console.log("try login SIP", dataFormConfig);
 
                     socket.emit("sip_login", dataFormConfig, function(err, configSip) {
+                        console.log(err);
                         if (err) return views.global.notification("error", err);
                         /* update info contact sip */
                         config.sip = configSip;

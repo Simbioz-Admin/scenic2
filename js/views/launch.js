@@ -58,16 +58,13 @@ define(
                         that = this;
                     console.log(dataFormConfig);
                     //check if port soap is available
-                    socket.emit("checkPort", dataFormConfig.portSoap, dataFormConfig.sipPort,
-                        function(SoapOk, SipOk) {
+                    socket.emit("checkPort", dataFormConfig.portSoap,
+                        function(SoapOk) {
                             if (!SoapOk) {
                                 alert("The port " + dataFormConfig.portSoap + " is already used. Please change value of port Soap");
                                 verificationOk = false;
                             }
-                            if (!SipOk) {
-                                alert("The port " + dataFormConfig.sipPort + " is already used. Please change value of port sip");
-                                verificationOk = false;
-                            }
+
                             /* Check the password */
                             if (dataFormConfig.pass != dataFormConfig.confirmPass) {
                                 alert("the password are not the same");

@@ -42,13 +42,10 @@ define(
                 });
 
                 /* Before launch scenic server we check validity of the port selected */
-                socket.on("checkPort", function(portSoap, sipPort, callback) {
+                socket.on("checkPort", function(portSoap, callback) {
                     portastic.test(parseInt(portSoap), function(err, dataSoap) {
-                        if (err) throw err;
-                        portastic.test(parseInt(sipPort), function(err, dataSip) {
-                            if (err) throw err;
-                            else callback(dataSoap, dataSip);
-                        });
+                        if (err) return log.error(err);
+                        else callback(dataSoap);
                     });
                 });
 
@@ -61,9 +58,9 @@ define(
                         config.nameComputer = params.username;
                         config.port.soap = parseInt(params.portSoap);
 
-                        config.sip.address = params.sipAddress;
-                        config.sip.port = params.sipPort;
-                        config.sip.name = params.sipUsername;
+                        // config.sip.address = params.sipAddress;
+                        // config.sip.port = params.sipPort;
+                        // config.sip.name = params.sipUsername;
 
                         if (params.pass != "" && params.pass == params.confirmPass) {
                             config.passSet = auth({

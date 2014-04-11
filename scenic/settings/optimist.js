@@ -20,9 +20,10 @@ define(
             var message = "\n\nCommand helper for scenic2 \n";
             message += "----------------------------------------------------------\n"
             message += leftColumn('-v, --version  ') + "port for GUI scenic2 (actual version " + config.version + ")\n";
-            message += leftColumn('-d, --debug') + 'start the server on mode debug\n';
+            // message += leftColumn('-d, --debug') + 'start the server on mode debug\n';
             message += leftColumn('-f, --file') + 'load a file scenic (ex : -f my_save.scenic)\n';
             message += leftColumn('-n, -nogui     ') + "launch scenic2 without app interface\n";
+            message += leftColumn('-l, --level     ') + "Set the level of log (default : info)\n";
             message += leftColumn('-w, --withoutconf') + 'launch scenic2 without the interface for pre-configuration\n';
             message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
             message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.port.soap + ")\n";
@@ -58,10 +59,10 @@ define(
         }
 
         //argument for set mode debug
-        if (argv.d || argv.debug) {
-            config.logLevel = 'debug';
-            console.log("mode debug actif");
-        }
+        // if (argv.d || argv.debug) {
+        //     config.logLevel = 'debug';
+        //     console.log("mode debug actif");
+        // }
 
 
         //argument for loading a save file scenic

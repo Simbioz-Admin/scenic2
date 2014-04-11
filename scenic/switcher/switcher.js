@@ -70,7 +70,7 @@ define(
             switcher.register_prop_callback(function(qname, qprop, pvalue) {
 
                 //we exclude byte-reate because its call every second (almost a spam...)
-                if (qprop != "byte-rate") {
+                if (qprop != "byte-rate" && qprop != "caps") {
                     log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
                 } else {
                     io.sockets.emit("signals_properties_value", qname, qprop, pvalue);

@@ -45,6 +45,7 @@ define(
 
                     /** Event called when the server has created a quiddity */
                     socket.on("create", function(quiddInfo, socketId) {
+                        console.log("CREATE", quiddInfo);
                         that.create(quiddInfo);
                     });
 
@@ -172,7 +173,21 @@ define(
                     } else {
                         var model = collections.quidds.get(quiddName);
                         if (model) {
-                            model.get("properties")[prop]["default value"] = value;
+                            var properties = model.get("properties");
+                            console.log("PROPS", properties);
+                            if (properties.length == 0) {
+                                model.set({
+                                    properties: []
+                                });
+                                model.get('properties').push({
+                                    name: prop,
+                                    value: value
+                                });
+
+                            } else {
+                                model.get("properties")[prop]["default value"] = value;
+                            }
+
                             model.trigger("update:value", prop);
                         }
                     }

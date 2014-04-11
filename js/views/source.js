@@ -138,17 +138,18 @@ define(
                 },
 
                 updateByteRateAndPreview: function(quiddFakeSink, shmdata, value) {
-                    console.log("update Byte and Preview", quiddFakeSink);
+                    //console.log("update Byte and Preview", quiddFakeSink);
 
                     /* refresh status active or note shmdata */
                     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
                     else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
 
                     /* Get quiddity FakeSink for have Caps info */
-                    var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties"),
-                        infoCaps = _.findWhere(propertiesFakeSink, {
-                            name: 'caps'
-                        }).value.split(",");
+                    var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties");
+
+                    var infoCaps = _.findWhere(propertiesFakeSink, {
+                        name: 'caps'
+                    })['value'].split(",");
 
                     /* With caps info we chekc if its video or audio preview */
                     if (infoCaps[0] == "audio/x-raw-int" || infoCaps[0] == "audio/x-raw-float" || infoCaps[0] == "video/x-raw-yuv" || infoCaps[0] == "video/x-raw-rgb") {

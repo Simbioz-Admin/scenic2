@@ -33,6 +33,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 log.error("Error register quid sip");
                 return cb("Error register quid sip", null);
             }
+
             if (cb) cb(null);
         }
 

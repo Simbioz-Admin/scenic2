@@ -14,8 +14,8 @@ for (k in interfaces) {
 }
 
 var config = {
-    version: "0.4.5",
-    host: addresses[0],
+    version: "0.4.8",
+    host: addresses[0]
     port: {
         soap: 8085,
         scenic: 8095

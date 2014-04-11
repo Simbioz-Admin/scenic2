@@ -1,64 +1,97 @@
-define([
-	'app',
-	'underscore',
-	'backbone',
-	'text!/templates/launch.html'
-], function(App, _, Backbone, templateLaunch) {
+define(
 
-	var DestinationsView = Backbone.View.extend({
-		tagName: 'div',
-		el: 'body',
-		events: {
-			"click #submitParam": "verification"
-		},
-		initialize: function() {
-			this.render();
-		},
-		render: function() {
-			var template = _.template(templateLaunch, {
-				username: config.nameComputer,
-				soap: config.port.soap
-			});
-			this.el = template;
-			$("body").append(template);
-			$("#bgLightBox, #lightBox").fadeIn(200);
-		},
-		verification: function() {
-			var dataFormConfig = $('#form-config').serializeObject(),
-				verificationOk = true,
-				that = this;
+    /** 
+     *	View Launch
+     *	The Launch View to manage the interface scenic pre-configuration  when launched
+     *	@exports Views/Launch
+     */
 
-			//check if port soap is available
-			socket.emit("checkPort", dataFormConfig.portSoap, function(ok) {
-				if (!ok) {
-					alert("The port " + dataFormConfig.portSoap + " is already used");
-					verificationOk = false;
-				}
+    [
+        'app',
+        'underscore',
+        'backbone',
+        'text!../../templates/launch.html'
+    ],
 
-				if (dataFormConfig.pass != dataFormConfig.confirmPass) {
-					alert("the password are not the same");
-					verificationOk = false;
-				}
+    function(App, _, Backbone, templateLaunch) {
 
-				if (verificationOk) that.launchScenic(dataFormConfig);
+        /** 
+         *	@constructor
+         *	@requires app
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires TemplateLaunch
+         *  @augments module:Backbone.View
+         */
 
+        var LaunchView = Backbone.View.extend(
 
-			});
+            /**
+             *	@lends module: Views/launch~LaunchView.prototype
+             */
 
-			return false;
-		},
-		launchScenic: function(dataFormConfig) {
-			socket.emit("startScenic", dataFormConfig, function(configUpdated) {
-				config = configUpdated;
-				$("#bgLightBox, #lightBox").fadeOut(200, function() {
-					$("#bgLightBox, #lightBox").remove();
+            {
+                tagName: 'div',
+                el: 'body',
+                events: {
+                    "click #submitParam": "verification"
+                },
+                initialize: function() {
+                    this.render();
+                },
+                render: function() {
+                    var template = _.template(templateLaunch, {
+                        username: config.nameComputer,
+                        soap: config.port.soap,
+                        sip: config.sip
+                    });
+                    this.el = template;
+                    $("body").append(template);
+                    $("#bgLightBox, #lightBox").fadeIn(200);
+                },
 
-				});
-				App.initialize();
-			});
-		}
+                /* On click #submitParam we check parameters */
 
-	});
+                verification: function() {
+                    var dataFormConfig = $('#form-config').serializeObject(),
+                        verificationOk = true,
+                        that = this;
+                    console.log(dataFormConfig);
+                    //check if port soap is available
+                    socket.emit("checkPort", dataFormConfig.portSoap,
+                        function(SoapOk) {
+                            if (!SoapOk) {
+                                alert("The port " + dataFormConfig.portSoap + " is already used. Please change value of port Soap");
+                                verificationOk = false;
+                            }
 
-	return DestinationsView;
-})
+                            /* Check the password */
+                            if (dataFormConfig.pass != dataFormConfig.confirmPass) {
+                                alert("the password are not the same");
+                                verificationOk = false;
+                            }
+
+                            if (verificationOk) that.launchScenic(dataFormConfig);
+
+                        });
+
+                    return false;
+                },
+
+                /* Called when the parameters are ok */
+
+                launchScenic: function(dataFormConfig) {
+                    socket.emit("startScenic", dataFormConfig, function(configUpdated) {
+                        config = configUpdated;
+                        $("#bgLightBox, #lightBox").fadeOut(200, function() {
+                            $("#bgLightBox, #lightBox").remove();
+
+                        });
+                        App.initialize();
+                    });
+                }
+
+            });
+
+        return LaunchView;
+    })

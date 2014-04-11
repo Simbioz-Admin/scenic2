@@ -1,44 +1,91 @@
-define([
-	'underscore',
-	'backbone',
-	'text!/templates/destination.html',
-], function(_, Backbone, TemplateDestination) {
+define(
 
-	var ViewDestination = Backbone.View.extend({
-		tagName: 'td',
-		className: 'nameInOut',
-		table: null,
-		events: {
-			"click .edit": "edit",
-			"click .remove": "removeClick"
-		},
-		initialize: function() {
-			this.model.on('remove', this.removeView, this);
-			this.table = this.options.table;
+    /** 
+     *	View ControlProperty
+     *	Manage interaction for the properties controlable on the table control (destination)
+     *	@exports Models/ControlProperty
+     */
 
-			var that = this,
-				template = _.template(TemplateDestination, {
-					name: this.model.get("name")
-				});
+    [
+        'underscore',
+        'backbone',
+        'text!../../templates/destination.html',
+    ],
 
-			$(this.el).append(template);
-			$("#" + this.table + " .destinations").append($(this.el));
+    function(_, Backbone, TemplateDestination) {
 
-			$("#control .property").each(function(index, source) {
-				$(this).append("<td class='box connect-properties' data-nameandproperty='" + that.model.get("name") + "'></td>");
-			});
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires TemplateDestination
+         *  @augments module:Backbone.View
+         */
 
-		},
-		edit: function() {
-			this.model.edit();
-		},
-		removeClick: function() {
-			this.model.delete();
-		},
-		removeView: function() {
-			this.remove();
-		}
-	});
+        var ControlPorpertyView = Backbone.View.extend(
 
-	return ViewDestination;
-})
+            /**
+             *	@lends module: Views/ControlPorpertyView~TableModel.prototype
+             */
+
+
+            {
+                tagName: 'td',
+                className: 'nameInOut',
+                table: null,
+                events: {
+                    "click .edit": "edit",
+                    "click .remove": "removeClick"
+                },
+
+                /* Called when the view is initialized */
+
+                initialize: function(options) {
+
+                    /* subscribe to suppression of the model */
+                    this.model.on('remove', this.removeView, this);
+                    this.table = options.table;
+
+                    var that = this,
+                        template = _.template(TemplateDestination, {
+                            name: this.model.get("name")
+                        });
+
+                    $(this.el).append(template);
+
+                    //add the template to the destination table control
+                    $("#" + this.table + " .destinations").append($(this.el));
+
+                    /* add for each property of source control a new box for the connection */
+                    $("#control .property").each(function(index, source) {
+                        $(this).append("<td class='box connect-properties' data-nameandproperty='" + that.model.get("name") + "'></td>");
+                    });
+
+                },
+
+
+                /* Called when the click event is on the button edit of property */
+
+                edit: function() {
+                    this.model.edit();
+                },
+
+
+                /* Called when the click event is on the button remove of property */
+
+                removeClick: function() {
+                    var that = this;
+                    console.log("model", this.model.get("name"));
+                    this.model.askDelete();
+                },
+
+
+                /* Called when the model is removed */
+
+                removeView: function() {
+                    this.remove();
+                }
+            });
+
+        return ControlPorpertyView;
+    })

@@ -17,6 +17,7 @@ ARCHIVE := scenic2_$(VERSION)
 
 all:
 	npm cache clean node-switcher && npm install
+	cd node_modules/node-switcher; node-gyp clean; node-gyp rebuild; cd -
 	@echo Now run sudo make install
 	@echo $(VERSION)
 
@@ -52,7 +53,7 @@ test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
-	npm cache clean node-switcher && npm install
+	npm install
 	mkdir -p $(ARCHIVE)
 	install $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)

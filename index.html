@@ -5,9 +5,10 @@
     <!-- Load the script "js/main.js" as our entry point -->
 
     <!-- /**** CSS ****/ -->
-
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/assets/css/stylesheets/black.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/nouislider.fox.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	
 	<link href="/assets/css/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
@@ -23,41 +24,43 @@
 </head>
 <body class="scenic2">
 
-		<!-- <div id="errorMsg">Test de message d'erreur</div> -->
-		<header id="header">
-			<div id="logoSat"></div>
-			<div id="logoScenic">SCENIC 2</div>
-			<div class="btn" id="btn-info" style="float:right">?</div>
-			<div class="btn" id="btn-log" style="float:right">LOG</div>
-			<div class="btn" id="btnSave" style="float:right" >SAVE</div>
-			<div class="btn" id="btnLoadScratch" style="float:right" >LOAD</div>
-			
-		</header>
-		<div id="panelTables"></div>
-		<div id="panelLeft"></div>
-		<div id="panelRight">
-			<class class="content clearfix ui-widget-content"></class>
-		</div>
-	    
+		<div id="container">
+			<!-- <div id="errorMsg">Test de message d'erreur</div> -->
+			<header id="header">
+				<div id="logoSat"></div>
+				<div id="logoScenic">SCENIC 2</div>
+				<div class="btn" id="btn-info" style="float:right">?</div>
+				<!-- <div class="btn" id="btn-log" style="float:right">LOG</div> -->
+				<div class="btn" id="btnSave" style="float:right" >SAVE</div>
+				<div class="btn" id="btnGetFiles" style="float:right" >LOAD</div>
 
-	    <div id="chat">
-	    	<div class="close close-irc">X</div>
-	    	<div class="title"></div>
-	    	<ul class="headerMenu"></ul>
+			</header>
 
-	    	<div id="login">
-	    		<form >
-	    			<div class="info">You need to discuss about scenic? Connect you on IRC public just here!</div>
-	    			<input type="text" placeholder="username" id="username-chat"><br>
-	    			<input type="text" placeholder="channel" id="channel-chat">
-	    			<input type="submit" value="go to chat !" id="submit-chat">
-	    		</form>
-	    	</div>
+			<div id="panelTables"></div>
+			<div id="panelLeft"></div>
+			<div id="panelRight">
+				<class class="content clearfix ui-widget-content"></class>
+			</div>
+		    
 
-	    	<div id="channels" ></div>
+		    <div id="chat">
+		    	<div class="close close-irc">X</div>
+		    	<div class="title"></div>
+		    	<ul class="headerMenu"></ul>
 
+		    	<div id="login">
+		    		<form >
+		    			<div class="info">You need to discuss about scenic? Connect you on IRC public just here!</div>
+		    			<input type="text" placeholder="username" id="username-chat"><br>
+		    			<input type="text" placeholder="channel" id="channel-chat">
+		    			<input type="submit" value="go to chat !" id="submit-chat">
+		    		</form>
+		    	</div>
+
+		    	<div id="channels" ></div>
+
+		    </div>
 	    </div>
-
 
 	</body>
 </html>

@@ -1,0 +1,91 @@
+@import compass/css3
+
+
+$colorText : #aaa
+$colorBg1 : #333
+$colorBg2 : #444
+$colorBg3 : #222
+
+
+body
+	background : $colorBg2
+
+
+h3
+	color : $colorText
+	border-bottom-color : black
+
+.table #headerTable
+	border-bottom-color : black
+	+box-shadow(rgba(255, 255, 255, 0.1) 0px -7px 0px -6px inset)
+
+.table #headerTable .headerMenu > li div, .tableScenic tr .groupSource, td.active
+	background : $colorBg1
+	color : $colorText
+	&:hover
+		background : $colorBg3
+
+.tableScenic tr .groupSource
+	border : 1px solid $colorBg1
+
+
+#panelRight .content
+	background : $colorBg1
+	color : $colorText
+
+
+
+.tableScenic .nameInOut, .scenic2 .destinations .nameInOut
+	background : #3a3a3a
+	border-color : $colorBg1
+	color : $colorText
+	a
+		color : $colorText
+
+td.active
+	border : 1px solid $colorBg1
+	background : #292929
+	//box-shadow : #111 0px 0px 11px inset
+
+.box
+	background	 : $colorBg1
+	border-color : $colorBg1
+
+#panelRight input[type=text], .panelInfoSource input[type=text]
+	background : $colorBg2
+	border-color : $colorBg2
+	outline-color : #ddd
+	color : white
+
+input[type=submit]
+	background : $colorBg3
+
+
+.actions .action
+	background : $colorBg1
+	.edit
+		opacity : 0.3
+		&:hover
+			opacity : 1
+	.remove
+		background : $colorText
+		color : $colorBg2
+
+	&:first-child
+		border-color : $colorBg2
+
+
+
+.sources .source:first-child:before
+	//color : $colorText
+
+#panelTables .tabTable
+	background : $colorBg3
+	&.active
+		background : $colorBg2
+		
+#panelTables #btn-irc
+	background : $colorBg2
+
+.close
+	background : $colorBg1

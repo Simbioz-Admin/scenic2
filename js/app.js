@@ -1,58 +1,119 @@
 // Filename: app.js
-define([
-  'underscore',
-  'backbone',
-  'jquery',
-  'collections/tables', 'collections/classes_doc', 'collections/clients', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/channels-irc',
-  'views/clients', 'views/global', 'views/quidds', 'views/control_properties', 'views/loggers', 'views/ircs'
+define(
 
-], function(_,
-  Backbone,
-  $,
-  CollectionTables, CollectionClassesDoc, CollectionClients, CollectionQuidds, CollectionsControlProperties, CollectionLoggers, CollectionIrcs,
-  ViewClients, ViewGlobal, ViewQuidds, ViewControlProperties, ViewLoggers, ViewIrcs
-) {
-  var initialize = function() {
-	"use strict";
+    /** 
+     *	View Source
+     *	The source view is for each source type quiddity create whatsoever to control or transfer table
+     *	@exports Views/Launch
+     */
 
-	//loading the different collections
-	collections.classesDoc = new CollectionClassesDoc();
-	collections.classesDoc.fetch({
-	  success: function(response) {
-		collections.tables = new CollectionTables();
-		collections.clients = new CollectionClients();
-		collections.clients.fetch();
+    [
+        'underscore',
+        'backbone',
+        'jquery',
+        'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs'
 
-		collections.quidds = new CollectionQuidds();
-		collections.quidds.fetch();
+    ],
 
-		collections.controlProperties = new CollectionsControlProperties();
-		collections.controlProperties.fetch();
+    function(
+        _,
+        Backbone,
+        $,
+        CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs
+    ) {
 
-		collections.loggers = new CollectionLoggers();
-		views.logger = new ViewLoggers({collection : collections.loggers});
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Jquery
+         *	@requires CollectionTables
+         *	@requires CollectionClassesDoc
+         *	@requires CollectionReceivers
+         *	@requires CollectionQuidds
+         *	@requires CollectionDestinationProperties
+         *	@requires CollectionLoggers
+         *	@requires CollectionIrcs
+         *	@requires ViewDestinations
+         *	@requires ViewGlobal
+         *	@requires ViewQuidds
+         *	@requires ViewDestinationProperties
+         *	@requires ViewLoggers
+         *	@requires ViewIrcs
+         *  @augments module:Backbone.View
+         */
 
-		//loading views
-		views.clients = new ViewClients({
-		  collection: collections.clients
-		});
-		views.global = new ViewGlobal();
-		views.quidds = new ViewQuidds({
-		  collection: collections.quidds
-		});
-		views.controlProperties = new ViewControlProperties({
-		  collection: collections.controlProperties
-		});
-	  }
-	});
+        var initialize = function() {
+            "use strict";
 
-	collections.irc = new CollectionIrcs();
-	views.ircs = new ViewIrcs();
-  }
+            $("#currentUser").html(config.nameComputer);
+
+            //loading the different collections
+            collections.classesDoc = new CollectionClassesDoc();
+            collections.classesDoc.fetch({
+                success: function(response) {
+
+                    //loading views
+                    views.quidds = new ViewQuidds({
+                        collection: collections.quidds
+                    });
+
+                    collections.quidds = new CollectionQuidds();
+                    collections.quidds.fetch({
+                        error: function(err) {
+                            console.log("error", err);
+                        },
+                        success: function() {
+                            console.log("quidds Loaded");
+
+                            collections.receivers = new CollectionReceivers();
+                            collections.receivers.fetch();
+
+                            collections.tables = new CollectionTables();
+
+                            collections.destinationProperties = new CollectionDestinationProperties();
+                            collections.destinationProperties.fetch();
+
+                            collections.loggers = new CollectionLoggers();
+                            views.logger = new ViewLoggers({
+                                collection: collections.loggers
+                            });
+
+                            views.global = new ViewGlobal();
 
 
-  return {
-	initialize: initialize
-  };
+                            views.destinationProperties = new ViewDestinationProperties({
+                                collection: collections.destinationProperties
+                            });
 
-});
+
+                            /* generate view for manage users */
+
+                            collections.users = new CollectionUsers();
+
+                            collections.users.fetch({
+                                success: function() {
+                                    views.users = new ViewUsers({
+                                        collection: collections.users
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+
+
+                }
+            });
+
+            collections.irc = new CollectionIrcs();
+            views.ircs = new ViewIrcs();
+        }
+
+
+        return {
+            initialize: initialize
+        };
+
+    });

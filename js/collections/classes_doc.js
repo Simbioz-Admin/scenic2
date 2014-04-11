@@ -1,51 +1,73 @@
-define([
-	'underscore',
-	'backbone',
-	'models/class_doc'
-], function(_, Backbone, ClassDocModel) {
+define(
 
-	var ClassesDocCollection = Backbone.Collection.extend({
-		model: ClassDocModel,
-		url: '/classes_doc/',
-		parse: function(results, xhr) {
-			return results.classes;
-		},
-		initialize: function() {
-			//console.log("init collection classesDoc");
-		},
-		getProperties: function(className, callback) {
-			socket.emit("getPropertiesOfClass", className, function(propertiesOfClass) {
-				callback(propertiesOfClass);
-			});
-		},
-		getPropertiesWithout: function(className, excludes, callback) {
+    /** 
+     *	Module for get information about the documentation of quiddities
+     *	@exports collections/classesDoc
+     */
 
-			var propertiesFiltered = {};
-			this.getProperties(className, function(propertiesOfClass) {
-				_.filter(propertiesOfClass, function(property, index) {
-					var exclude = $.inArray(property.name, excludes);
-					if (exclude < 0) propertiesFiltered[index] = property;
-				});
+    [
+        'underscore',
+        'backbone',
+        'models/class_doc'
+    ],
 
-				callback(propertiesFiltered);
-			});
-		},
+    function(_, Backbone, ClassDocModel) {
 
-		getPropertyByClass: function(className, propertyName, callback) {
-			socket.emit("getPropertyByClass", className, propertyName, function(propertyByClass) {
-				callback(propertyByClass);
-			});
-		},
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires ClassDocModel
+         *  @augments module:Backbone.Collection
+         */
 
-		getByCategory: function(category) {
+        var ClassesDocCollection = Backbone.Collection.extend(
 
-			filtered = this.filter(function(classDoc) {
-				if (classDoc.get("category").indexOf(category) >= 0) return classDoc;
-			});
+            /**
+             *	@lends module:collections/classesDoc~ClassesDocCollection.prototype
+             */
 
-			return new ClassesDocCollection(filtered);
-		}
-	});
+            {
+                model: ClassDocModel,
+                url: '/classes_doc/',
+                parse: function(results, xhr) {
+                    return results.classes;
+                },
 
-	return ClassesDocCollection;
-})
+
+                /** 
+                 *	Return information about the properties of specific quiddity
+                 *	@param {string} ClassName Name of the class
+                 *	@param {string} Name of the property
+                 *	@param {object} Callback for return the information
+                 */
+
+                getPropertyByClass: function(className, propertyName, callback) {
+                    socket.emit("get_property_by_class", className, propertyName, function(propertyByClass) {
+                        callback(propertyByClass);
+                    });
+                },
+
+
+                /** 
+                 *	Returns the type of classes available for a defined category
+                 *	@param {string} Name of the category
+                 */
+
+                getByCategory: function(categories) {
+                    filtered = _.filter(this.toJSON(), function(classDoc) {
+                        var sameCat = false;
+                        _.each(categories, function(cat) {
+                            if (classDoc.category.indexOf(cat) >= 0) sameCat = true;
+                            if (classDoc["class name"].indexOf(cat) >= 0) sameCat = true;
+                        });
+                        if (sameCat) return classDoc;
+                        // if(_.contains(categories, classDoc.category)) return classDoc 
+                    });
+
+                    return filtered;
+                }
+            });
+
+        return ClassesDocCollection;
+    })

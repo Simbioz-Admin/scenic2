@@ -1,26 +1,50 @@
-define([
-	'underscore',
-	'backbone',
-	'models/logger'
-], function(_, Backbone, ModelLogger) {
+define(
 
-	var CollectionLoggers = Backbone.Collection.extend({
-		model: ModelLogger,
-		url: '/log/',
-		parse: function(results, xhr) {
-			return results;
-		},
-		initialize: function() {
-			console.log("init CollectionTable");
+	/** 
+	 *	Collections for manage the logs
+	 *	@exports collections/loggers
+	 */
 
-			    this.bind("add", function (note) {
-		         	console.log(note);
-		        });
+	[
+		'underscore',
+		'backbone',
+		'models/logger'
+	],
 
-			//create default tables 
-			//create the first table for manage transfert
-		}
-	});
+	function(_, Backbone, ModelLogger) {
 
-	return CollectionLoggers;
-})
+		/** 
+		 *	@constructor
+		 *  @requires Underscore
+		 *  @requires Backbone
+		 *	@requires ModelLogger
+		 *  @augments module:Backbone.Collection
+		 */
+
+		var CollectionLoggers = Backbone.Collection.extend(
+
+			/**
+			 *	@lends module:collections/loggers~CollectionLoggers.prototype
+			 */
+
+			{
+				model: ModelLogger,
+				url: '/log/',
+				parse: function(results, xhr) {
+					return results;
+				},
+
+
+				/** Initialization of the Logger Collection */
+
+				initialize: function() {
+					console.log("init CollectionTable");
+
+					// this.bind("add", function(note) {
+					// 	console.log(note);
+					// });
+				}
+			});
+
+		return CollectionLoggers;
+	})

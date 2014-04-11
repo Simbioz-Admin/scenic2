@@ -3,7 +3,7 @@
 		<td rowspan="<%=nbShmdata%>" class="group groupSource" >
 			<div style="position:relative">
 				<div class="edit"></div>
-				<div class="vertical short"><%=sourceName%></div>
+				<div class="vertical short nameSource"><%=sourceName%></div>
 				<div class="actions">
 					<div class="action"><div class="edit"></div></div>
 					<div class="action"><div class="remove">x</div></div>
@@ -18,22 +18,15 @@
 		</div>
 
 	</th>
-	<% _.each(destinations, function(destination){
-		var active = false;
-		_.each(destination.data_streams, function(path){
-			if(path.path == shmdata.path){
-				active = true;
-			}
-			})
-	 %>
-		<td class="box connect-client<% if(active){ %> active <% } %>" data-hostname="<%=destination.name%>"></td>
-	<% }); %>
+
+	<%=connexions%>
+
 </tr>
 <% }else{ %><tr data-quiddName="<%=sourceName%>">
 		<td rowspan="" class="group groupSource" >
 			<div style="position:relative">
 				<div class="edit"></div>
-				<div class="vertical short"><%=sourceName%></div>
+				<div class="vertical short nameSource"><%=sourceName%></div>
 				<div class="actions">
 					<div class="action"><div class="edit"></div></div>
 					<div class="action"><div class="remove">x</div></div>

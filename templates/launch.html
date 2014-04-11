@@ -1,7 +1,7 @@
 <div id="lightBox">
     <div id="launch">
         <br>
-            <h1>Basic configuration</h1>
+            <h1>Scenic2 Server configuration</h1>
             <br>
             <form id="form-config" >
 
@@ -10,20 +10,35 @@
                     <input type="text" name="username" value="<%=username%>" autofocus="autofocus" >
                     <input type="password" name="pass" placeholder="password" >
                     <input type="password" name="confirmPass" placeholder="confirm password">
-                    <div class="info">* if password is empty the page will not be secured</div>
+                    <div class="info">* server access is unsecured without password</div>
                 </div>
 
-                <div class="ports">
-                    <div class="port">
+                <div class="parameters">
+                    <div class="half">
                         <label>Port Soap</label>
                         <input type="text" name="portSoap" value="<%=soap%>">
                     </div>
-                    <div class="port">
-
-                    </div>
+                    <div class="half"></div>
                 </div>
 
-                <input type="submit" value="Valid" id="submitParam">
+              <!--   <div class="parameters">
+                    <h1>Server sip</h1>
+      
+                    <label>Address</label>
+                    <input type="text" width="100%" name="sipAddress" value="<%=sip.address%>">
+ 
+                    <div class="half">
+                        <label>Username</label>
+                        <input type="text" name="sipUsername" value="<%=sip.name%>">
+
+                    </div>
+                    <div class="half">
+                        <label>Port </label>
+                        <input type="text" name="sipPort" value="<%=sip.port%>">
+                    </div>
+                </div>
+ -->
+                <input type="submit" value="Launch" id="submitParam">
             </form>
         
 

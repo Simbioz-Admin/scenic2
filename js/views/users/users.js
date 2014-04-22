@@ -49,12 +49,16 @@ define(
 
                 initialize: function(options) {
                     var that = this;
-                    console.log("init View Users");
+
+                    /* generate a btn for the table */
+                    this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
+
                     this.collection.on('reOrder', this.reOrder);
                     $("body").append($(this.el));
 
                     if (this.collection.length == 0) {
                         that.renderLogin();
+                        that.toggleList(0);
                     } else {
                         that.render();
                     }
@@ -74,8 +78,7 @@ define(
                     });
                     $(this.el).append(tpl);
 
-                    /* generate a btn for the table */
-                    this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
+
                     //this.toggleList(0);
                     this.toggleList(0);
                     /* generate the view for each user */
@@ -159,10 +162,8 @@ define(
                     var that = this;
                     e.preventDefault();
                     var dataFormConfig = $('#login_sip', this.el).serializeObject();
-                    console.log("try login SIP", dataFormConfig);
 
                     socket.emit("sip_login", dataFormConfig, function(err, configSip) {
-                        console.log(err);
                         if (err) return views.global.notification("error", err);
                         /* update info contact sip */
                         config.sip = configSip;

@@ -20,6 +20,8 @@ define(
             }
         };
 
+        /* check if file logging-file.log exist */
+
         winston.addColors(customLevels.colors);
         var log = new(winston.Logger)({
             levels: customLevels.levels,
@@ -40,6 +42,7 @@ define(
             var fileAndLine = traceCaller(1);
             return logger_info_old.call(this, fileAndLine + ": " + msg);
         }
+
         log.debug("Init log.js");
         /**
          * examines the call stack and returns a string indicating

@@ -84,7 +84,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 div.users {
   width: 300px;
   position: absolute;
-  top: 50px;
+  top: 51px;
   bottom: 0;
   right: 0;
   z-index: 2000;
@@ -153,8 +153,8 @@ div.users h2 {
   font-size: 12px;
   font-family: "Irma Light";
   background: #222222;
-  height: 40px;
-  line-height: 40px;
+  height: 39px;
+  line-height: 39px;
   padding: 0 0 0 10px;
   cursor: pointer;
   display: inline-block;

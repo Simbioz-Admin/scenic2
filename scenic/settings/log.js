@@ -20,7 +20,16 @@ define(
             }
         };
 
-        /* check if file logging-file.log exist */
+        /* check if folder logs exist */
+        var fs = require('fs');
+
+        if (!fs.existsSync(config.pathLogs)) {
+            // create folder
+            fs.mkdir(config.pathLogs, function(e) {
+                if (e) return console.log(e);
+            })
+        }
+
 
         winston.addColors(customLevels.colors);
         var log = new(winston.Logger)({

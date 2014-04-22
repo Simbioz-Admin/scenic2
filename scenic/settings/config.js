@@ -41,7 +41,8 @@ var config = {
     listQuiddsAndSocketId: {},
     subscribe_quidd_info: {},
     scenicDependenciesPath: scenicHomePath,
-    scenicSavePath: scenicHomePath + "/save_files/"
+    scenicSavePath: scenicHomePath + "/save_files/",
+    pathLogs: 'logs/'
 }
 
 /* this part export config for requirejs */

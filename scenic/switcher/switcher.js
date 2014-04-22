@@ -28,6 +28,17 @@ define(
             switcher.create("rtpsession", config.rtpsession);
             switcher.create("SOAPcontrolServer", "soap");
 
+
+            /* ************ SYSTEM USAGE ************ */
+
+            /* create quiddity systemusage for get information about the CPU usage */
+            switcher.create("systemusage", 'systemusage');
+
+            /*subscribe to the modification on this quiddity systemusage*/
+            switcher.subscribe_to_signal('systemusage', "on-tree-grafted");
+            switcher.subscribe_to_signal('systemusage', "on-tree-pruned");
+
+
             /* check if when the server is started the launcher define a save file */
             if (config.loadFile) {
                 var load = switcher.load_history_from_scratch(config.loadFile);
@@ -140,11 +151,13 @@ define(
 
 
 
+            /* ************ SIGNAL - CALLBACK ************ */
+
             switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
                 log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
 
-                /* show information about  */
+                /* manage callback fro SIP quidd  */
 
                 if (qname == "sipquid" && qsignal == "on-tree-grafted") {
                     sip.updateInfoUser(switcher.get_info(qname, pvalue[0]));
@@ -152,6 +165,14 @@ define(
                 if (qname == "sipquid" && qsignal == "on-tree-pruned") {
                     sip.removeFromList(switcher.get_info(qname, pvalue[0]));
 
+                }
+
+                /* manage callback fro systemusage quidd  */
+
+                if (qname == "systemusage" && qsignal == "on-tree-grafted") {
+                    var info = switcher.get_info(qname, pvalue[0]);
+                    // log.debug("systemusage info", switcher.get_info(qname, pvalue[0]));
+                    io.sockets.emit("systemusage", info)
                 }
 
 
@@ -188,9 +209,9 @@ define(
                     }
                 }
 
-                if (qsignal == "on-quiddity-created") {
-                    log.info("--------C----", pvalue[0], "-----------------");
-                }
+                // if (qsignal == "on-quiddity-created") {
+                //     log.info("--------C----", pvalue[0], "-----------------");
+                // }
 
                 /* ************ SIGNAL - ON QUIDDITY REMOVED ************ */
 

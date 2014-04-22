@@ -12,7 +12,7 @@ define(
         'backbone',
         'jquery',
         'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
-        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs'
+        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/Systemusage'
 
     ],
 
@@ -21,7 +21,7 @@ define(
         Backbone,
         $,
         CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
-        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs
+        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSystemUsage
     ) {
 
         /** 
@@ -81,7 +81,7 @@ define(
                             });
 
                             views.global = new ViewGlobal();
-
+                            views.systemusage = new ViewSystemUsage();
 
                             views.destinationProperties = new ViewDestinationProperties({
                                 collection: collections.destinationProperties

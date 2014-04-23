@@ -83,6 +83,9 @@ define(
                             views.global = new ViewGlobal();
                             views.systemusage = new ViewSystemUsage();
 
+                            collections.irc = new CollectionIrcs();
+                            views.ircs = new ViewIrcs();
+
                             views.destinationProperties = new ViewDestinationProperties({
                                 collection: collections.destinationProperties
                             });
@@ -107,8 +110,7 @@ define(
                 }
             });
 
-            collections.irc = new CollectionIrcs();
-            views.ircs = new ViewIrcs();
+
         }
 
 

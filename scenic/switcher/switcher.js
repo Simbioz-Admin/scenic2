@@ -155,7 +155,7 @@ define(
 
             switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
-                log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
+                // log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
 
                 /* manage callback fro SIP quidd  */
 

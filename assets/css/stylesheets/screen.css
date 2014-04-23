@@ -305,30 +305,39 @@ div.users #login_sip input[type=submit]:hover {
 
 /* line 4, ../sass/_systemusage.sass */
 #preview_usagesystem {
-  width: 390px;
-  height: 30px;
-  background: #444444;
+  color: white;
+  position: relative;
+}
+/* line 7, ../sass/_systemusage.sass */
+#preview_usagesystem .cpus {
+  margin: 4px auto;
+  height: 32px;
+  position: relative;
+}
+/* line 11, ../sass/_systemusage.sass */
+#preview_usagesystem .bar {
+  width: 3px;
+  height: 2%;
+  background: #555555;
   position: absolute;
-  top: 5px;
-  left: 50%;
-  margin: 0 0 0 -200px;
+  bottom: 0;
+}
+/* line 17, ../sass/_systemusage.sass */
+#preview_usagesystem .bar.alert {
+  background: #be2620;
+}
+/* line 19, ../sass/_systemusage.sass */
+#preview_usagesystem .cpu_info {
+  text-align: center;
   padding: 5px;
 }
-/* line 13, ../sass/_systemusage.sass */
-#preview_usagesystem li {
-  float: left;
-  color: white;
-  width: 50%;
+/* line 22, ../sass/_systemusage.sass */
+#preview_usagesystem .total {
+  font-size: 14px;
 }
-/* line 18, ../sass/_systemusage.sass */
-#preview_usagesystem li .name {
-  width: 50px;
-  float: left;
-}
-/* line 21, ../sass/_systemusage.sass */
-#preview_usagesystem li .total {
-  float: left;
-  width: 50px;
+/* line 24, ../sass/_systemusage.sass */
+#preview_usagesystem .text {
+  font-size: 10px;
 }
 
 /* line 48, ../sass/screen.sass */

@@ -6,12 +6,24 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         var io;
         var quiddSipName = "sipquid";
 
+        /*
+         *  @function addListUser
+         *  @description add to the array listUsers a new users
+         */
+
         function addListUser(userInfo) {
             log.switcher("User sip connected", userInfo.sip_url);
             listUsers.push(userInfo);
         }
 
+
+        /*
+         *  @function createSip
+         *  @description set the connection with the server sip. This function is called a initialization of switcher
+         */
+
         function createSip(cb) {
+
             /* create quiddity sip */
             quiddSipName = switcher.create("sip", quiddSipName);
             if (!quiddSipName) return cb("Error login sip server");
@@ -20,6 +32,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             console.log("PORT SIP", String(config.sip.port));
             var setPortSip = switcher.set_property_value(quiddSipName, "port", String(config.sip.port));
             log.debug("setPortSip", setPortSip);
+
             /* * subscribe to the modification on this quiddity */
             switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
             switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
@@ -38,11 +51,23 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         }
 
         return {
+
+            /*
+             *  @function initialize
+             *  @description initialize for get socket.io accessible
+             */
+
             initialize: function(socketIo) {
                 log.info("initialize sip");
                 io = socketIo;
-                // createSip();
             },
+
+
+            /*
+             *  @function updateInfoUser
+             *  @description Update information whebn
+             */
+
             updateInfoUser: function(userInfo) {
                 try {
                     userInfo = $.parseJSON(userInfo);
@@ -65,16 +90,37 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 /* send information to the client slide */
                 io.sockets.emit("updateInfoUser", userInfo);
             },
+
+
+            /*
+             *  @function removeFromList
+             *  @description Remove from the list user a user (currently disable)
+             */
+
             removeFromList: function(userInfo) {
                 log.debug("Remove from list", userInfo);
             },
+
+
+            /*
+             *  @function getListUsers
+             *  @description Return the list of users Sip (for create collection client side)
+             */
+
             getListUsers: function() {
                 return listUsers;
             },
+
+
+            /*
+             *  @function login
+             *  @description Log user to the server sip
+             */
+
             login: function(sip, cb) {
                 log.debug("Ask for login Sip Server", parseInt(sip.port));
                 /* set information config */
-                switcher.remove(quiddSipName)
+                switcher.remove(quiddSipName);
                 config.sip = {
                     port: sip.port,
                     address: sip.address,
@@ -84,12 +130,14 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                     if (err) return cb(err);
                     return cb(null, config.sip);
                 });
-                // portastic.test(parseInt(sip.sipPort), function(err, data) {
-                //     log.debug("Check port", err, data);
-                //     if (err || !data) return cb(err, null);
-
-                // })
             },
+
+
+            /*
+             *  @function logout
+             *  @description logout from the server SIP
+             */
+
             logout: function(cb) {
                 log.debug("ask for logout to the server sip");
                 if (switcher.remove(quiddSipName)) {

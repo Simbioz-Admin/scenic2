@@ -91,7 +91,6 @@ define(
                 /* ************ PROP - SHMDATA-WRITERS ************ */
 
                 if (qprop == "shmdata-writers") {
-
                     /* if the quidd have shmdata we create view meter */
                     if (JSON.parse(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
 
@@ -155,7 +154,9 @@ define(
 
             switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
-                // log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
+                if (qname != "systemusage") {
+                    log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
+                }
 
                 /* manage callback fro SIP quidd  */
 
@@ -189,11 +190,17 @@ define(
                     switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
 
                     /* we subscribe all properties of quidd created */
-                    var properties = JSON.parse(switcher.get_properties_description(pvalue[0])).properties;
-                    _.each(properties, function(property) {
-                        switcher.subscribe_to_property(pvalue[0], property.name);
-                        log.switcher("subscribe to ", pvalue[0], property.name);
-                    });
+                    try {
+                        var propDecription = switcher.get_properties_description(pvalue[0]);
+                        var properties = JSON.parse(switcher.get_properties_description(pvalue[0])).properties;
+                        _.each(properties, function(property) {
+                            switcher.subscribe_to_property(pvalue[0], property.name);
+                            log.switcher("subscribe to ", pvalue[0], property.name);
+                        });
+                    } catch (e) {
+                        log.error("error get properties", e);
+                    }
+
 
                     /* cehck if the quiddity is created by interface and send all except user created this */
                     var socketIdCreatedThisQuidd = false;
@@ -209,14 +216,11 @@ define(
                     }
                 }
 
-                // if (qsignal == "on-quiddity-created") {
-                //     log.info("--------C----", pvalue[0], "-----------------");
-                // }
-
                 /* ************ SIGNAL - ON QUIDDITY REMOVED ************ */
 
                 /* Emits to users a quiddity is removed */
                 if (qsignal == "on-quiddity-removed") {
+
                     io.sockets.emit("remove", pvalue);
                     log.debug("the quiddity " + pvalue + " is removed");
                     quidds.removeElementsAssociateToQuiddRemoved(pvalue[0]);
@@ -271,18 +275,16 @@ define(
 
             $.each(shmdatas, function(index, shmdata) {
                 //remove the old vumeter just in case
-                switcher.remove("vumeter_" + shmdata.path);
+                //console.log("Remove vumeter for recreating", shmdata.path);
+                //switcher.remove("vumeter_" + shmdata.path);
                 var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
 
-                if (!vumeter) {
-                    log.error("failed to create fakesink quiddity : ", "vumeter_" + shmdata.path);
-                    return false;
-                } else {
+                if (vumeter) {
                     log.debug("fakesink quiddity created : ", "vumeter_" + shmdata.path);
+                    switcher.invoke(vumeter, "connect", [shmdata.path]);
+                    switcher.subscribe_to_property(vumeter, "byte-rate");
                 }
 
-                switcher.invoke(vumeter, "connect", [shmdata.path]);
-                switcher.subscribe_to_property(vumeter, "byte-rate");
             });
         }
 

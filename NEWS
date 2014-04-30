@@ -1,5 +1,18 @@
 Scenic2 release notes
 ===================
+Scenic2 2.0.12 (2014-04-10)
+-------------------------
+This a bug-fix release developer snapshot in the stable 2.0 series.
+
+Fixe bugs:
+
+* Fix installation paths
+* Handle version lookup with -v or --version even if optimist not present
+
+Known bugs: 
+
+* If install script was triggered due to missing node modules, the automatic launch of Scenic2 following the modules installation fails. Quitting the chrome application and relaunching scenic2 works
+
 Scenic2 2.0.8 (2014-04-01)
 -------------------------
 This release is a developer snapshot in the stable 2.0 series.

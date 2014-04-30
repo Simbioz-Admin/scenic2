@@ -1,3 +1,19 @@
+/*
+* We need to handle one special case apart. In a fresh install optimist module
+* is very likely not available yet. The version lookup with -v or --version fails. 
+* So we catch here. As of 2014-04-10 the version of node-optimist in Saucy
+* is too old (however, no verification was made whether our code is compatible
+* with opmist 0.3.*)
+*/
+process.argv.forEach(function(val, ind, arr) {
+    // check if -v or --version argument is given and if so print the version
+    // and exit gracefully
+    if (val == '-v' || val == '--version'){
+	console.log(require('./scenic/config.js').version);
+	process.exit();
+    }
+});
+
 var fs = require('fs')
 if (!fs.existsSync(process.env.HOME + "/.scenic2")) {
     console.log("~/.scenic2 does not exist, running the installer")

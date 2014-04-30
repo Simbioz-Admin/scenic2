@@ -3,7 +3,7 @@ var os = require("os");
 var scenicHomePath = process.env.HOME + "/.scenic2";
 //-- config.js
 module.exports = {
-    version: "2.0.11",
+    version: "2.0.14",
     host: "localhost",
     port: {
 	soap: 8085,

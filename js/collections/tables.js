@@ -44,10 +44,10 @@ define(
                         type: 'audio',
                         description: "Manage audio device and connexion audio",
                         menus: [{
-                            name: "source audio",
+                            name: "audio source",
                             type: "sources"
                         }, {
-                            name: "destination audio",
+                            name: "audio destination",
                             type: "destinations"
                         }],
                         sources: {
@@ -89,7 +89,7 @@ define(
                         type: "control",
                         description: "Control properties of quiddities with device",
                         menus: [{
-                            name: "control midi",
+                            name: "midi control",
                             type: "sources"
                         }, {
                             name: "properties",

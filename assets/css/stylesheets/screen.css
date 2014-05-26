@@ -309,33 +309,56 @@ div.users #login_sip input[type=submit]:hover {
   position: relative;
 }
 /* line 7, ../sass/_systemusage.sass */
-#preview_usagesystem .cpus {
-  margin: 4px auto;
-  height: 32px;
+#preview_usagesystem .info {
+  height: 12px;
+  margin: 2px auto;
   position: relative;
+  width: 100%;
 }
-/* line 11, ../sass/_systemusage.sass */
-#preview_usagesystem .bar {
+/* line 12, ../sass/_systemusage.sass */
+#preview_usagesystem .cpus {
+  height: 10px;
+}
+/* line 15, ../sass/_systemusage.sass */
+#preview_usagesystem .cpus .bar {
   width: 3px;
   height: 2%;
   background: #555555;
   position: absolute;
   bottom: 0;
 }
-/* line 17, ../sass/_systemusage.sass */
-#preview_usagesystem .bar.alert {
-  background: #be2620;
+/* line 21, ../sass/_systemusage.sass */
+#preview_usagesystem .alert {
+  background: #be2620 !important;
 }
-/* line 19, ../sass/_systemusage.sass */
+/* line 23, ../sass/_systemusage.sass */
+#preview_usagesystem .memory {
+  height: 4px;
+}
+/* line 26, ../sass/_systemusage.sass */
+#preview_usagesystem .memory .bar {
+  height: 3px;
+  background: #555555;
+  width: 100%;
+  margin: 3px 0 0;
+}
+/* line 31, ../sass/_systemusage.sass */
+#preview_usagesystem .network {
+  height: 20px;
+  font-size: 9px;
+  text-align: left;
+  color: #cccccc;
+}
+/* line 38, ../sass/_systemusage.sass */
 #preview_usagesystem .cpu_info {
   text-align: center;
-  padding: 5px;
+  padding: 2px 5px;
 }
-/* line 22, ../sass/_systemusage.sass */
+/* line 41, ../sass/_systemusage.sass */
 #preview_usagesystem .total {
   font-size: 14px;
 }
-/* line 24, ../sass/_systemusage.sass */
+/* line 43, ../sass/_systemusage.sass */
 #preview_usagesystem .text {
   font-size: 10px;
 }

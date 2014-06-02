@@ -30,7 +30,7 @@ install: all
 	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files 
-	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
+	install -d $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
 		cp -r $$f $(DESTDIR)$(TARGETDIR); \

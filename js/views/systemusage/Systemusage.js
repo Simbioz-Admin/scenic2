@@ -9,10 +9,11 @@ define(
     [
         'underscore',
         'backbone',
-        'text!../../../templates/systemusage/preview_systemusage.html'
+        'text!../../../templates/systemusage/preview_systemusage.html',
+        'd3'
     ],
 
-    function(_, Backbone, previewUsageTemplate, circleiful) {
+    function(_, Backbone, previewUsageTemplate, d3) {
 
         /** 
          *	@constructor
@@ -30,7 +31,9 @@ define(
 
             {
                 template: previewUsageTemplate,
-                events: {},
+                events: {
+                    "click": "d3"
+                },
                 className: 'tabTable',
                 id: "preview_usagesystem",
                 cpuRender: false,
@@ -47,12 +50,64 @@ define(
                         that.render(info);
                     });
 
-
                     $("#panelTables").append(this.el);
                     var template = _.template(previewUsageTemplate);
                     $(this.el).html(template);
 
                 },
+
+                d3: function() {
+                    var random = d3.random.normal(0, 0.2);
+                    var n = 40;
+                    var data = d3.range(n).map(random);
+                    console.log(data);
+                    var width = $(this.el).width();
+                    var height = $(this.el).height();
+                    console.log("inside d3 function, element", this.el);
+                    $("#panelLeft").append('<div class="table active" id="system_usage"></div');
+                    console.log(d3);
+
+                    var margin = {top: 10, right: 10, bottom: 20, left: 40},
+                    width = 960 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom;
+	            
+                    var x = d3.scale.linear()
+                        .domain([0, n - 1])
+                        .range([0, width]);
+	            
+                    var y = d3.scale.linear()
+                        .domain([0, 20])
+                        .range([height, 0]);
+
+                    var line = d3.svg.line()
+                        .interpolate("linear")
+                        .x(function (d, i) {
+                            return x(i);
+                        })
+                        .y(function (d, i) {
+                            return y(d);
+                        });
+                    var svg = d3.select("#panelLeft").append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+                    svg.append("defs").append("clipPath")
+                        .attr("id", "clip")
+                        .append("rect")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    svg.append("g")
+                        .attr("class", "y axis")
+                        .call(d3.svg.axis().scale(y).ticks(5).orient("left"));
+
+                    var path = svg.append("g")
+                        .attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .data([data])
+                        .attr("class", "line")
+                        .attr("d", line);
+                    //tick(path, line, data);
+                }, 
                 render: function(info) {
                     var that = this;
                     if (!this.cpuRender) {

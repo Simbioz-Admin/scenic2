@@ -102,7 +102,7 @@ define(
 
                 /* Called when the click event is on the button remove destination */
                 removeClick: function() {
-                    this.model.delete();
+                    this.model.askDelete();
                 },
 
 

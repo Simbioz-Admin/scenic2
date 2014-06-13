@@ -100,8 +100,8 @@ define(
                  *	@param {string} quiddName The name of the quiddity (id) to remove
                  */
 
-                delete: function(quiddName) {
-                    var model = this.get(quiddName);
+                delete: function(quiddInfo) {
+                    var model = this.get(quiddInfo);
                     if (model) {
                         model.trigger('destroy', model);
                         if (quiddInfo.class != "sip") {

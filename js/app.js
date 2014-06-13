@@ -80,7 +80,7 @@ define(
                                 collection: collections.loggers
                             });
 
-                            // views.global = new ViewGlobal();
+                            views.global = new ViewGlobal();
                             // views.systemusage = new ViewSystemUsage();
 
                             collections.irc = new CollectionIrcs();

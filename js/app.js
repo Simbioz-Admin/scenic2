@@ -80,8 +80,8 @@ define(
                                 collection: collections.loggers
                             });
 
-                            views.global = new ViewGlobal();
-                            views.systemusage = new ViewSystemUsage();
+                            // views.global = new ViewGlobal();
+                            // views.systemusage = new ViewSystemUsage();
 
                             collections.irc = new CollectionIrcs();
                             views.ircs = new ViewIrcs();
@@ -93,15 +93,15 @@ define(
 
                             /* generate view for manage users */
 
-                            collections.users = new CollectionUsers();
+                            // collections.users = new CollectionUsers();
 
-                            collections.users.fetch({
-                                success: function() {
-                                    views.users = new ViewUsers({
-                                        collection: collections.users
-                                    });
-                                }
-                            });
+                            // collections.users.fetch({
+                            //     success: function() {
+                            //         views.users = new ViewUsers({
+                            //             collection: collections.users
+                            //         });
+                            //     }
+                            // });
                         }
                     });
 

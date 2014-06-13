@@ -44,17 +44,17 @@ define(
                         type: 'audio',
                         description: "Manage audio device and connexion audio",
                         menus: [{
-                            name: "audio source",
+                            name: "source",
                             type: "sources"
                         }, {
-                            name: "audio destination",
+                            name: "sink",
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["audio source", "httpsdpdec"]
+                            select: ["source", "httpsdpdec"]
                         },
                         destinations: {
-                            select: ["audio sink"]
+                            select: ["sink"]
                         }
                     }
 
@@ -103,8 +103,8 @@ define(
                     }
 
 
-                    this.add(audioTable);
                     this.add(controlTable);
+                    this.add(audioTable);
                     this.add(transferTable);
 
                 }

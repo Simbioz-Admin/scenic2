@@ -35,7 +35,7 @@
 		+border-radius(3px)
 
 
-$heightHeader : 50px
+$heightHeader : 40px
 $grey1 : #f1f1f1
 $grey2 : #333
 $colorSat : #be2620
@@ -147,7 +147,7 @@ header
 	top : 0
 	z-index: 20000
 	.btn
-		margin-top : 10px
+		margin-top : 3px
 
 
 #currentUser
@@ -163,16 +163,16 @@ header
 
 #logoSat
 	width : 50px
-	height : 50px
+	height : 40px
 	float : left
 	//padding : 10px 0 0 50px
 	//margin-left : 3px
-	background : #be2620 url(../../images/logo_sat.png) no-repeat 8px 12px
+	background : #be2620 url(../../images/logo_sat.png) no-repeat 8px 7px
 #logoScenic
 	color : white
-	font-size : 2em
+	font-size : 18px
 	letter-spacing : 0.09em
-	margin : 16px 0 0 15px
+	margin : 13px 0 0 15px
 	float : left
 	font-family : "Irma Light"
 
@@ -185,20 +185,20 @@ header
 		background : url(../../images/logoTempiSnake.png) no-repeat center center
 
 .btn
-	color : white
-	padding : 5px 20px 6px
-	cursor : pointer
-	font-size : 1.2em
-	float : left
-	//+border-radius(3px)
-	//margin : 5px 5px 0 10px
-	//border : 1px solid #333
-	//+background-image(linear-gradient(#444 10%, #333 90%))
-	+transition(.1s linear all)
-	text-decoration : none
-	position : relative
-	font-family : "Irma Light"
-	line-height : 28px
+	// color : white
+	// padding : 0px 20px 6px
+	// cursor : pointer
+	// font-size : 1.2em
+	// float : left
+	// +border-radius(3px)
+	// margin : 5px 5px 0 10px
+	// border : 1px solid #222
+	// // +background-image(linear-gradient(#444 10%, #333 90%))
+	// // +transition(.1s linear all)
+	// text-decoration : none
+	// position : relative
+	// font-family : "Irma Light"
+	// line-height : 28px
 	&:hover
 		//background-image: (linear-gradient(#e52a22 40%, #be2620 90%))
 		background : #333
@@ -233,6 +233,32 @@ header
 .btn-group
 	display : inline-block
 
+
+.menu_list
+	color : #999
+	+box-shadow(0px 2px -2px 2px black)
+
+	li
+		display : inline-block
+		padding : 7px
+		+background-image(linear-gradient(#444 10%, #333 90%))
+		border : 1px #222 solid
+		border-right : none
+		float : left
+		margin : 0
+		&:first-child
+			+border-radius(3px 0 0  3px)
+		&:last-child
+			+border-radius(0 3px 3px 0)
+		&:hover
+			cursor : pointer
+			+background-image(linear-gradient(#333 10%, #2c2c2c 90%))
+			+box-shadow(0px 2px -2px 2px black inset)
+
+
+#menu_header
+	float : right
+	margin : 8px
 
 #msgHighLight
 	width : 310px
@@ -311,35 +337,44 @@ header
 		display : block!important
 
 	.get_classes , .channel
-		padding : 5px 15px
+		padding : 5px 15px 5px 25px
 		margin-right : 10px
 		//border-left : 1px solid #555
 		display : inline-block
 		color : #ccc
-		line-height : 30px
+		line-height : 25px
 		font-family: "Irma Light"
 		//+background-image(linear-gradient(#363636 1%, #303030 99%))
 		cursor : pointer
-		font-size : 13px
+		font-size : 12px
 		letter-spacing: 0.08em
 		&:hover
 			+background-image(linear-gradient(#262626 0%, #333 49%))
-
+		&:before
+			content : ""
+			width: 0
+			height: 0
+			border-left: 4px solid transparent
+			border-right: 4px solid transparent
+			border-top: 4px solid white
+			position : absolute
+			left : 10px
+			top : 16px
 	a
 		text-decoration: none
 	.ui-menu a
 		color : #ccc
 		text-decoration: none
-		padding : 10px
+		padding : 5px 10px
 		margin : 0
 		line-height: 13px
 		&.ui-state-focus
 			background : #be2620
-			padding : 10px
+			padding : 5px 10px
 			line-height: 13px
 			margin : 0
 		&.ui-state-active
-			padding : 10px
+			padding : 5px 10px
 			margin : 0
 
 	.newMsg
@@ -363,7 +398,7 @@ header
 			position : absolute
 			//display : none
 			color : white
-			top : 30px
+			top : 25px
 			left : -2px
 			//background : #333
 			font-size : 14px
@@ -373,7 +408,7 @@ header
 			li
 				min-width : 150px
 				line-height : 15px
-				padding : 10px 15px
+				padding : 5px 15px
 				background : #333
 				border-bottom : 1px #3a3a3a solid
 				position : relative
@@ -447,7 +482,7 @@ header
 	background : #333
 	width : 50px
 	height : 100%
-	padding-top : 86px
+	padding-top : 71px
 	overflow : hidden
 	border : none
 	//background : url(../../images/bgTable.png)
@@ -854,7 +889,7 @@ td
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	padding : 0
 	float : left
-	margin : 46px 0 0 5px
+	margin : 36px 0 0 5px
 	//+boxShadow
 	position : fixed
 	display : none
@@ -865,7 +900,7 @@ td
 		z-index : 100
 		left : 0
 		right : 0
-		height : 40px
+		height : 35px
 		margin : 0 0 10px
 		background : #222
 		padding : 0

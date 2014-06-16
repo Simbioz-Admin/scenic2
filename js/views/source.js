@@ -61,7 +61,6 @@ define(
 
 
                 render: function() {
-                    console.log("render source !", this.model.get("name"));
                     var that = this,
                         shmdatas = this.model.get("shmdatas"),
                         table = collections.tables.findWhere({
@@ -80,7 +79,6 @@ define(
                             var connexions = "";
 
                             table.get("collectionDestinations").each(function(destination) {
-                                console.log("table.destination in souce", destination.get("data_streams"));
                                 /* check if the connexion existing between source and destination */
                                 var active = '';
                                 var port = '';
@@ -105,7 +103,6 @@ define(
                                     });
 
                                 }
-                                console.log(destination.toJSON());
                                 var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '">' + port + '</td>';
                                 connexions = connexions + connexion;
                             });
@@ -138,7 +135,6 @@ define(
                 },
 
                 updateByteRateAndPreview: function(quiddFakeSink, shmdata, value) {
-                    //console.log("update Byte and Preview", quiddFakeSink);
 
                     /* refresh status active or note shmdata */
                     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");

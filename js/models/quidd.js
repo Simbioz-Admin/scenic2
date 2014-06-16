@@ -8,11 +8,11 @@ define(
     [
         'underscore',
         'backbone',
-        'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
+        'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
         'text!../../templates/panelInfoSource.html'
     ],
 
-    function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
+    function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata, infoTemplate) {
 
         /** 
          *	@constructor
@@ -46,6 +46,7 @@ define(
                     "methods": [],
                     "encoder_category": null,
                     "shmdatas": null,
+                    "shmdatasCollection": null,
                     "view": null,
                 },
 
@@ -59,8 +60,24 @@ define(
                 initialize: function() {
                     var that = this;
 
+                    var ShmdataCollection = Backbone.Collection.extend({
+                        model: ModelShmdata
+                    });
+                    this.shmdatasCollection = new ShmdataCollection();
+
 
                     socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
+
+                        /* create model for each shmdata of the quiddity */
+                        if (!shmdatas.err) {
+                            console.log(shmdatas.shmdata_writers);
+                            _.each(shmdatas.shmdata_writers, function(shm) {
+                                that.shmdatasCollection.add({
+                                    path: shm.path,
+                                    quidd: that.get("name")
+                                });
+                            });
+                        }
 
                         if (err) return views.global.notification("error", err);
                         if (shmdatas) {

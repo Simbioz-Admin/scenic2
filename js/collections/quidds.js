@@ -75,6 +75,7 @@ define(
 
                     /** Event called when the shmdatas of specific quidd is created */
                     socket.on("updateShmdatas", function(qname, shmdatas) {
+                        console.log("update shm", qname, shmdatas);
                         that.updateShmdatas(qname, shmdatas);
                     });
 
@@ -178,7 +179,6 @@ define(
                         var model = collections.quidds.get(quiddName);
                         if (model) {
                             var properties = model.get("properties");
-                            console.log("PROPS", properties);
                             if (properties.length == 0) {
                                 model.set({
                                     properties: []

@@ -65,7 +65,6 @@ define(
                             console.log("error", err);
                         },
                         success: function() {
-                            console.log("quidds Loaded");
 
                             collections.receivers = new CollectionReceivers();
                             collections.receivers.fetch();

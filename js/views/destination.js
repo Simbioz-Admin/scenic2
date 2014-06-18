@@ -30,7 +30,7 @@ define(
 
             {
                 tagName: 'td',
-                className: 'nameInOut',
+                className: 'destination',
                 table: null,
                 events: {
                     "click .edit": "edit",
@@ -54,7 +54,6 @@ define(
 
                     //add the template to the destination table transfer
                     $("#" + this.table + " .destinations").append($(this.el));
-                    console.log($("#" + this.table + " .shmdata").length);
                     _.each($("#" + this.table + " .shmdata"), function(shmdata) {
                         // declare variabble for this scope
                         var active = "";
@@ -83,6 +82,7 @@ define(
 
                         if (that.table == "audio") {
                             _.each(that.model.get("properties"), function(prop) {
+
                                 if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
                             });
 
@@ -102,7 +102,7 @@ define(
 
                 /* Called when the click event is on the button remove destination */
                 removeClick: function() {
-                    this.model.askDelete();
+                    this.model.delete();
                 },
 
 

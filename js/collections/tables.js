@@ -54,7 +54,8 @@ define(
                             select: ["source", "httpsdpdec"]
                         },
                         destinations: {
-                            select: ["sink"]
+                            select: ["sink"],
+                            exclude: ["monitor"]
                         }
                     }
 

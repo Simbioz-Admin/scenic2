@@ -147,7 +147,6 @@ define(
                         if (box.hasClass("active")) {
                             socket.emit("invoke", destination, "disconnect", [], function(data) {})
                         } else {
-
                             socket.emit("invoke", destination, "connect", [path], function(data) {});
                         }
                     }

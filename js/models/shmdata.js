@@ -2,15 +2,16 @@ define(
 
     /** 
      *	Manage all interaction between the server/views with a specific quiddity
-     *	@exports Models/quidd
+     *	@exports Models/Shmdata
      */
 
     [
         'underscore',
         'backbone',
+        'views/shmdata'
     ],
 
-    function(_, Backbone) {
+    function(_, Backbone, ViewShmdata) {
 
         /** 
          *	@constructor
@@ -28,7 +29,8 @@ define(
                 idAttribute: "path",
                 defaults: {
                     path: null,
-                    quidd: null
+                    quidd: null,
+                    byteRate: 0,
                 },
 
 
@@ -38,8 +40,17 @@ define(
                  *	This view need to know if it's in table controler or transfer and if it's a source or destination
                  */
 
-                initialize: function() {}
+                initialize: function() {
 
+                    // this.on('destroy', this.remove);
+
+                },
+                createViewForTable: function(table) {
+                    new ViewShmdata({
+                        model: this,
+                        table: table
+                    })
+                }
             }
         );
         return ShmdataModel;

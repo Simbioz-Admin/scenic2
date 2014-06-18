@@ -45,7 +45,6 @@ define(
 
                     /** Event called when the server has created a quiddity */
                     socket.on("create", function(quiddInfo, socketId) {
-                        console.log("CREATE", quiddInfo);
                         that.create(quiddInfo);
                     });
 
@@ -75,7 +74,6 @@ define(
 
                     /** Event called when the shmdatas of specific quidd is created */
                     socket.on("updateShmdatas", function(qname, shmdatas) {
-                        console.log("update shm", qname, shmdatas);
                         that.updateShmdatas(qname, shmdatas);
                     });
 
@@ -171,9 +169,12 @@ define(
                             shmdata = quiddName.replace("vumeter_", "");
 
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
-
-                        collections.quidds.get(quiddName).updateByteRate(quiddNameFakeSink, shmdata, value);
-                        // views.quidds.updateVuMeter(quiddName, name);
+                        var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
+                        var shmdataModel = shmdatasCollection.get(shmdata);
+                        shmdataModel.set({
+                            "byteRate": value
+                        });
+                        // // views.quidds.updateVuMeter(quiddName, name);
 
                     } else {
                         var model = collections.quidds.get(quiddName);
@@ -200,9 +201,7 @@ define(
                 updateShmdatas: function(quiddName, shmdatas) {
                     var quidd = this.get(quiddName);
                     //sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
-                    if (quidd) {
-                        quidd.set("shmdatas", shmdatas);
-                    }
+                    if (quidd) quidd.updateShmdatas(shmdatas);
                 },
 
                 /**

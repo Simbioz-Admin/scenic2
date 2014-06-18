@@ -63,20 +63,14 @@ define(
                     var ShmdataCollection = Backbone.Collection.extend({
                         model: ModelShmdata
                     });
-                    this.shmdatasCollection = new ShmdataCollection();
+                    this.set("shmdatasCollection", new ShmdataCollection());
 
 
                     socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
 
                         /* create model for each shmdata of the quiddity */
                         if (!shmdatas.err) {
-                            console.log(shmdatas.shmdata_writers);
-                            _.each(shmdatas.shmdata_writers, function(shm) {
-                                that.shmdatasCollection.add({
-                                    path: shm.path,
-                                    quidd: that.get("name")
-                                });
-                            });
+                            that.updateShmdatas(shmdatas.shmdata_writers);
                         }
 
                         if (err) return views.global.notification("error", err);
@@ -127,6 +121,24 @@ define(
                     });
                 },
 
+                updateShmdatas: function(shmdatas) {
+                    var that = this;
+                    var collShmdatas = that.get("shmdatasCollection");
+                    // collShmdatas.reset();
+                    collShmdatas.each(function(shm) {
+                        shm.trigger("destroy", shm);
+                    });
+                    if (shmdatas && shmdatas.length > 0) {
+                        _.each(shmdatas, function(shm) {
+                            collShmdatas.add({
+                                path: shm.path,
+                                quidd: that.get("name")
+                            });
+                        });
+                    }
+                    this.trigger("updateShmdatas", this);
+                },
+
                 /**
                  *	Allows you to create a view that contains all the information to edit the quiddity
                  *	also allows to register the change in the quiddity
@@ -170,16 +182,6 @@ define(
                     });
                 },
 
-                updateByteRate: function(quiddFakeSink, shmdata, value) {
-                    var that = this;
-                    var shmdatas = this.get("shmdatas");
-                    _.each(shmdatas, function(shm) {
-                        if (shm.path == shmdata && shm["byte-rate"] != value) {
-                            shm['byte-rate'] = value;
-                            that.trigger("updateByteRate", quiddFakeSink, shmdata, value);
-                        }
-                    });
-                },
 
                 /**
                  *	Allows viewing of video quiddities type and audio
@@ -217,27 +219,27 @@ define(
                  *	the information is present in vumeter quiddity created with each quiddity soruce
                  */
 
-                info: function(element) {
-                    var shmdata = $(element.target).closest('tr').data("path");
-                    var that = this;
-                    collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-                        val = val.replace(/,/g, "<br>");
-                        var template = _.template(infoTemplate, {
-                            info: val,
-                            shmdata: shmdata
-                        });
-                        $("#info").remove();
-                        $("body").prepend(template);
-                        $("#info").css({
-                            top: element.pageY,
-                            left: element.pageX
-                        }).show();
-                        $(".panelInfo").draggable({
-                            cursor: "move",
-                            handle: "#title"
-                        });
-                    });
-                },
+                // info: function(element) {
+                //     var shmdata = $(element.target).closest('tr').data("path");
+                //     var that = this;
+                //     collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
+                //         val = val.replace(/,/g, "<br>");
+                //         var template = _.template(infoTemplate, {
+                //             info: val,
+                //             shmdata: shmdata
+                //         });
+                //         $("#info").remove();
+                //         $("body").prepend(template);
+                //         $("#info").css({
+                //             top: element.pageY,
+                //             left: element.pageX
+                //         }).show();
+                //         $(".panelInfo").draggable({
+                //             cursor: "move",
+                //             handle: "#title"
+                //         });
+                //     });
+                // },
 
                 /*
                  *	Set the property value of the quiddity

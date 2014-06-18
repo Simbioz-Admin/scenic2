@@ -157,7 +157,6 @@ define(
                 /* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
 
                 removePreviewIcon: function(quidd) {
-                    console.log(quidd);
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
                     $("[data-path='" + shmdata + "'] .preview").removeClass("active");
@@ -166,7 +165,6 @@ define(
                     var that = this
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
-                    console.log($("[data-path='" + shmdata + "'] .preview").length);
 
                     var IntervalPreviewExisting = setInterval(function() {
                         if ($("[data-path='" + shmdata + "'] .preview").length > 0) {

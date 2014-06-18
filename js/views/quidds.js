@@ -7,167 +7,176 @@ define(
      */
 
     [
-	'underscore',
-	'backbone',
-	'models	/quidd',
-	'text!/templates/createQuidd.html',
-	'text!/templates/quidd.html',
+        'underscore',
+        'backbone',
+        'models/quidd',
+        'text!../../templates/createQuidd.html',
+        'text!../../templates/quidd.html',
 
     ],
 
     function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate) {
 
-	/** 
-	 *	@constructor
-	 *  @requires Underscore
-	 *  @requires Backbone
-	 *	@requires QuiddModel
-	 *	@requires quiddCreateTemplate
-	 *	@requires quiddTemplate
-	 *  @augments module:Backbone.View
-	 */
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires QuiddModel
+         *	@requires quiddCreateTemplate
+         *	@requires quiddTemplate
+         *  @augments module:Backbone.View
+         */
 
-	var QuiddView = Backbone.View.extend(
+        var QuiddView = Backbone.View.extend(
 
-	    /**
-	     *	@lends module: Views/launch~LaunchView.prototype
-	     */
+            /**
+             *	@lends module: Views/launch~LaunchView.prototype
+             */
 
-	    {
-		el: 'body',
-		events: {
-		    "click .createQuidd, .deviceDetected li": "defineName",
-		    "click #create": "create",
-		    //"mouseenter .autoDetect": "autoDetect",
-		    //"mouseleave .autoDetect" : "leaveAutoDetect"
-		    // "click #create-midi" : "createMidi"
-		},
-		delayAutoDetect : false,
+            {
+                el: 'body',
+                events: {
+                    "menuselect .createQuidd a": "defineName",
+                    "click #create": "create",
+                },
+                delayAutoDetect: false,
 
-		initialize: function() {},
+                initialize: function() {},
 
-		/* open the lightbox and show the properties to define for create the quidd Source */
 
-		defineName: function(element) {
 
-		    var className = $(element.target).data("name");
-		    var getDevices = $(element.target).hasClass("autoDetect");
-		    /* get  the information about the device in property value of quiddity */
-		    if(getDevices){
-			socket.emit("getPropertyByClass", className, "device", function(property) {
-			    if (property) {
-				console.log("Property", property.values);
-				openPanelDefineName(property.values);
-			    } else {
-				views.global.notification("error", "no video device");
-			    }
-			});
-		    } else {
-			openPanelDefineName(false);
-		    }
+                /* open the lightbox and show the properties to define for create the quidd Source 
+                 * ALERT : This function is call in views/table.js Because we use jqueryui and we cant access events in view declaration
+                 */
 
-		    function openPanelDefineName(devices){
+                defineName: function(element) {
+                    console.log(element);
+                    var className = $(element).data("name");
+                    var getDevices = $(element).hasClass("autoDetect");
+                    /* get  the information about the device in property value of quiddity */
+                    if (getDevices) {
+                        socket.emit("get_property_by_class", className, "device", function(property) {
+                            if (property) {
+                                console.log("Property", property.values);
+                                openPanelDefineName(property.values);
+                            } else {
+                                views.global.notification("error", "no video device");
+                            }
+                        });
+                    } else {
+                        openPanelDefineName(false);
+                    }
 
-			var	template = _.template(quiddCreateTemplate, {
-			    title: "Define name for " + className,
-			    className: className,
-			    devices: devices
-			});
+                    function openPanelDefineName(devices) {
 
-			$("#panelRight .content").html(template);
-			views.global.openPanel();
-			
-		    }
-		},
-		
+                        var template = _.template(quiddCreateTemplate, {
+                            title: "Define name for " + className,
+                            className: className,
+                            devices: devices
+                        });
 
-		/* Called after the user define a name for create a quiddity */
+                        $("#panelRight .content").html(template);
+                        views.global.openPanel();
 
-		create: function(element) {
+                    }
+                },
 
-		    var that = this
-		    ,	className = $("#className").val()
-		    ,	quiddName = $("#quiddName").val()
-		    ,	deviceDetected = $("#device").val();
-		    /* Ask to the server create a new quiddity with className and name quiddity*/
-		    socket.emit("create", className, quiddName, function(quiddInfo) {
 
-			var model = collections.quidds.create(quiddInfo);
-			//check if autoDetect it's true if yes we set the value device with device selected
-			if (deviceDetected) {
-			    model.setPropertyValue("device", deviceDetected, function(ok) {
-				model.edit();
-			    });
-			} else model.edit();
-		    });
+                /* Called after the user define a name for create a quiddity */
 
-		},
+                create: function(element) {
 
-		/* called when we can know if there are any device connected to the quiddity */
+                    var that = this,
+                        className = $("#className").val(),
+                        quiddName = $("#quiddName").val(),
+                        deviceDetected = $("#device").val();
+                    /* Ask to the server create a new quiddity with className and name quiddity*/
+                    console.log(socket.socket.sessionid);
+                    socket.emit("create", className, quiddName, socket.socket.sessionid, function(err, quiddInfo) {
+                        if (err) return views.global.notification('error', err);
+                        var model = collections.quidds.create(quiddInfo);
+                        //check if autoDetect it's true if yes we set the value device with device selected
+                        if (deviceDetected) {
+                            model.setPropertyValue("device", deviceDetected, function(ok) {
+                                model.edit();
+                            });
+                        } else model.edit();
+                    });
 
-		autoDetect: function(element) {
-		    /* we need to put the autodetect in timeout for not trigg directly when the mouse hover the menu */
-		    this.delayAutoDetect = setTimeout(function(){
+                },
 
-			//create temporary v4l2 quiddity for listing device available
-			var className = $(element.target).data("name");
+                /* called when we can know if there are any device connected to the quiddity */
 
-			/* get  the information about the device in property value of quiddity */
-			socket.emit("getPropertyByClass", className, "device", function(property) {
-			    if (property) {
-				var deviceDetected = property["values"];
-				//clean list existing and add the new
-				$("#deviceDetected").remove();
-				$("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");
-				_.each(deviceDetected, function(device) {
-				    var li = $("<li></li>", {
-					text: device["name"] + " " + device["nick"],
-					class: 'source',
-					data: {
-					    name: className,
-					    devicedetected: device["value"]
-					},
-				    });
-				    $("#deviceDetected").append(li);
-				});
-			    } else {
-				views.global.notification("error", "no video device");
-			    }
-			});
+                autoDetect: function(element) {
+                    /* we need to put the autodetect in timeout for not trigg directly when the mouse hover the menu */
+                    this.delayAutoDetect = setTimeout(function() {
 
-		    }, 500);
-		},
+                        //create temporary v4l2 quiddity for listing device available
+                        var className = $(element.target).data("name");
 
-		/* Called when user leave a class Quiddity with device autodetect */
+                        /* get  the information about the device in property value of quiddity */
+                        socket.emit("get_property_by_class", className, "device", function(property) {
+                            if (property) {
+                                var deviceDetected = property["values"];
+                                //clean list existing and add the new
+                                $("#deviceDetected").remove();
+                                $("[data-name='" + className + "']").append("<ul id='deviceDetected'></ul>");
+                                _.each(deviceDetected, function(device) {
+                                    var li = $("<li></li>", {
+                                        text: device["name"] + " " + device["nick"],
+                                        class: 'source',
+                                        data: {
+                                            name: className,
+                                            devicedetected: device["value"]
+                                        },
+                                    });
+                                    $("#deviceDetected").append(li);
+                                });
+                            } else {
+                                views.global.notification("error", "no video device");
+                            }
+                        });
 
-		leaveAutoDetect : function(){
-		    clearTimeout(this.delayAutoDetect);
-		},
+                    }, 500);
+                },
 
-		/* Called each time we receive signal for vumter */
+                /* Called when user leave a class Quiddity with device autodetect */
 
-		updateVuMeter: function(quiddName, value) {
-		    var shmdata = quiddName.replace("vumeter_", "");
-		    if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
-		    else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
-		},
+                leaveAutoDetect: function() {
+                    clearTimeout(this.delayAutoDetect);
+                },
 
-		/* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
+                /* Called each time we receive signal for vumter */
 
-		removePreviewIcon: function(quidd) {
-		    console.log(quidd);
-		    var shmdata = quidd.split('_');
-		    shmdata = shmdata[1]+"_"+shmdata[2]+"_"+shmdata[3]+"_"+shmdata[4];
-		    $("[data-path='" + shmdata + "'] .preview").removeClass("active");
-		},
-		addPreviewIcon: function(quidd) {
-		    var shmdata = quidd.split('_');
-		    shmdata = shmdata[1]+"_"+shmdata[2]+"_"+shmdata[3]+"_"+shmdata[4];
-		    console.log(shmdata);
-		    $("[data-path='" + shmdata + "'] .preview").addClass("active");
-		}
+                // updateVuMeter: function(quiddName, value) {
+                //     var shmdata = quiddName.replace("vumeter_", "");
+                //     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
+                //     else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
+                // },
 
-	    });
+                /* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
 
-	return QuiddView;
+                removePreviewIcon: function(quidd) {
+                    console.log(quidd);
+                    var shmdata = quidd.split('_');
+                    shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
+                    $("[data-path='" + shmdata + "'] .preview").removeClass("active");
+                },
+                addPreviewIcon: function(quidd) {
+                    var that = this
+                    var shmdata = quidd.split('_');
+                    shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
+                    console.log($("[data-path='" + shmdata + "'] .preview").length);
+
+                    var IntervalPreviewExisting = setInterval(function() {
+                        if ($("[data-path='" + shmdata + "'] .preview").length > 0) {
+                            window.clearInterval(IntervalPreviewExisting);
+                            $("[data-path='" + shmdata + "'] .preview").addClass("active");
+                        }
+                    }, 500);
+                }
+
+            });
+
+        return QuiddView;
     })

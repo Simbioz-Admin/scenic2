@@ -44,7 +44,8 @@ h3
 
 td.active
 	border : 1px solid $colorBg1
-	background : #555
+	background : #292929
+	//box-shadow : #111 0px 0px 11px inset
 
 .box
 	background	 : $colorBg1
@@ -61,26 +62,28 @@ input[type=submit]
 
 
 .actions .action
-	background : $colorBg2
+	background : $colorBg1
 	.edit
 		opacity : 0.3
 		&:hover
 			opacity : 1
 	.remove
-		background : $colorBg1
+		background : $colorText
 		color : $colorBg2
 
 	&:first-child
-		border-color : $colorBg1
+		border-color : $colorBg2
 
 
 
 .sources .source:first-child:before
-	color : $colorText
+	//color : $colorText
 
 #panelTables .tabTable
-	background : $colorBg2
-
+	background : $colorBg3
+	&.active
+		background : $colorBg2
+		
 #panelTables #btn-irc
 	background : $colorBg2
 

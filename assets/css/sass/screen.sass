@@ -1,6 +1,9 @@
 @import compass/reset
 @import compass/css3
 
+
+
+
 // Transition shortcut
 =transition($transition)
 	-webkit-transition : $transition
@@ -36,6 +39,11 @@ $heightHeader : 50px
 $grey1 : #f1f1f1
 $grey2 : #333
 $colorSat : #be2620
+
+
+@import "users"
+
+
 html
 	height : 100%
 body
@@ -48,6 +56,7 @@ body
 	//background : url(../../images/bgPanel_90.png)
 	background : url(../../images/bgTable.png)
 	//background : url(../../images/bg/meteorshower.jpg)
+	overflow-x : hidden
 
 h3
 	font-size : 1.4em
@@ -118,17 +127,38 @@ input[type=submit]
 
 //------------------------- = HEADER BAR = ------------------------------------//
 
+.actions_global
+	margin-right : 15px
+	position : relative
+	right: 290px
+	z-index: 2000
+	top: 51px
+
+
 header
 	width : 100%
 	height : $heightHeader
+	background : #333
 	//background : url(../../images/bgHeader.png) left center repeat-x
-	+background-image(linear-gradient(#333 1%, #444 10%, #222 90%))
+	// +background-image(linear-gradient(#333 1%, #444 10%, #222 90%))
 	+box-shadow(rgba(black, 1) 0 0 7px)
 	position : fixed
 	top : 0
-	z-index: 2000
+	z-index: 20000
 	.btn
 		margin-top : 10px
+
+
+#currentUser
+	color : white
+	opacity : 0.7
+	font-size : 18px
+	font-family : "Irma Light"
+	float: right
+	margin : 15px
+	cursor : pointer
+	&:hover
+		opacity : 1
 
 #logoSat
 	width : 50px
@@ -141,7 +171,7 @@ header
 	color : white
 	font-size : 2em
 	letter-spacing : 0.09em
-	margin : 15px 0 0 15px
+	margin : 16px 0 0 15px
 	float : left
 	font-family : "Irma Light"
 
@@ -155,20 +185,22 @@ header
 
 .btn
 	color : white
-	padding : 5px 10px 6px
+	padding : 5px 20px 6px
 	cursor : pointer
 	font-size : 1.2em
 	float : left
-	+border-radius(3px)
-	margin : 5px 5px 0 10px
-	border : 1px solid #333
-	+background-image(linear-gradient(#444 10%, #333 90%))
+	//+border-radius(3px)
+	//margin : 5px 5px 0 10px
+	//border : 1px solid #333
+	//+background-image(linear-gradient(#444 10%, #333 90%))
 	+transition(.1s linear all)
 	text-decoration : none
 	position : relative
+	font-family : "Irma Light"
+	line-height : 28px
 	&:hover
 		//background-image: (linear-gradient(#e52a22 40%, #be2620 90%))
-		background : #be2620
+		background : #333
 	&:active
 		+box-shadow(rgba(black, 1) 0 0 3px inset)
 
@@ -202,21 +234,22 @@ header
 
 
 #msgHighLight
-	width : 250px
+	width : 310px
 	position : absolute
 	left : 50%
 	right : 50%
 	top : -50px
 	margin-left : -125px
 	z-index : 1
-	+border-radius(0 0 3px 3px)
+	//+border-radius(0 0 3px 3px)
 	color : white
 	font-size : 1.6em
 	text-align : center
-	padding : 7px 20px
+	padding : 12px 20px
 	+box-shadow(rgba(black, 0.3) 0px 3px 12px)
 	cursor : pointer
 	//display : none
+	word-wrap: break-word
 	&.error
 		background : #be2620
 	&.valid, &.info
@@ -225,14 +258,14 @@ header
 
 
 .blur
-	+filter(blur(5px))
-	+transition(0.2s)
+	//+filter(blur(5px))
+	//+transition(0.2s)
 
 #overlay_confirmation
 	position : fixed
 	top : 0
-	left : 0
-	right : 0
+		left : 0
+		right : 0
 	bottom : 0
 	width : 100%
 	height : 100%
@@ -272,21 +305,41 @@ header
 				border : 1px solid #999
 
 .headerMenu
+	
+	.active
+		display : block!important
 
-	div, .channel
-		padding : 5px 10px
-		border-left : 1px solid #555
+	.get_classes , .channel
+		padding : 5px 15px
+		margin-right : 10px
+		//border-left : 1px solid #555
 		display : inline-block
 		color : #ccc
-		height : 20px
-		line-height : 20px
-		+background-image(linear-gradient(#363636 1%, #303030 99%))
+		line-height : 30px
+		font-family: "Irma Light"
+		//+background-image(linear-gradient(#363636 1%, #303030 99%))
 		cursor : pointer
+		font-size : 13px
+		letter-spacing: 0.08em
 		&:hover
 			+background-image(linear-gradient(#262626 0%, #333 49%))
+
 	a
+		text-decoration: none
+	.ui-menu a
 		color : #ccc
 		text-decoration: none
+		padding : 10px
+		margin : 0
+		line-height: 13px
+		&.ui-state-focus
+			background : #be2620
+			padding : 10px
+			line-height: 13px
+			margin : 0
+		&.ui-state-active
+			padding : 10px
+			margin : 0
 
 	.newMsg
 		background: #be2520
@@ -307,24 +360,24 @@ header
 		>ul
 			//first level
 			position : absolute
-			display : none
+			//display : none
 			color : white
 			top : 30px
-			left : 1px
+			left : -2px
 			//background : #333
-			font-size : 1.2em
+			font-size : 14px
 			z-index : 1000
 			padding-top : 10px
 			//+box-shadow(rgba(black, 0.3) 0px 7px 11px)
 			li
-				min-width : 115px
+				min-width : 150px
 				line-height : 15px
-				padding : 5px 10px
+				padding : 10px 15px
 				background : #333
 				border-bottom : 1px #3a3a3a solid
 				position : relative
 				&:hover
-					background : #be2620
+					//background : #be2620
 					cursor : pointer
 				&:hover > ul
 					display : block
@@ -333,7 +386,8 @@ header
 					+border-radius(3px 3px 0 0)
 				>&:last-child
 					+border-radius(0 0 3px 3px)
-
+				a
+					margin-left : -2px
 				>ul
 					//second level
 					display : none
@@ -353,16 +407,16 @@ header
 						li
 							+border-radius(0px)
 
-			&:before
-				content : ""
-				width : 0 
-				height : 0
-				border-left : 8px solid transparent
-				border-right : 8px solid transparent
-				border-bottom : 7px solid #333
-				position : absolute
-				top : 3px
-				left : 14px
+			// &:before
+			// 	content : ""
+			// 	width : 0 
+			// 	height : 0
+			// 	border-left : 8px solid transparent
+			// 	border-right : 8px solid transparent
+			// 	border-bottom : 7px solid #333
+			// 	position : absolute
+			// 	top : 3px
+			// 	left : 14px
 
 
 
@@ -392,7 +446,7 @@ header
 	background : #333
 	width : 50px
 	height : 100%
-	padding-top : 52px
+	padding-top : 86px
 	overflow : hidden
 	border : none
 	//background : url(../../images/bgTable.png)
@@ -463,7 +517,7 @@ header
 		&:last-child
 			border-right : 1px solid #ddd
 	td
-		height : 35px
+		height : 40px
 		background-color : #eee
 		font-size : 1.2em
 	tr
@@ -532,7 +586,7 @@ header
 		cursor : pointer
 		background : #be2620
 		position : relative
-		+border-radius(5px)
+		//+border-radius(5px)
 		color : white
 		+box-shadow(inset 0 0 20px rgba(0,0,0,.1),0 0 10px rgba(146,196,245,.4))
 		width : 35px
@@ -551,7 +605,7 @@ header
 			width: 15px
 			color: #FFF
 			height: 22px
-			border-radius: 2px
+			//border-radius: 2px
 			+transition(0.2s)
 			box-shadow: 0 0 1px rgba(0,0,0,.6)
 
@@ -673,15 +727,15 @@ header
 
 
 .panelBox
-	width : 200px
+	width : 250px
 	padding : 15px 20px 10px
 	background : #333
 	position : absolute
 
-	top : 60px
+	top : 50px
 	color : white
 	font-size : 1.3em
-	+border-radius(3px)
+	//+border-radius(3px)
 	&:before
 		content: ""
 		width : 0
@@ -707,25 +761,33 @@ header
 
 #panelSave
 	right : 60px
+	padding : 5px 10px 2px
 	input[type=text]
-		height : 27px
+		height : 35px
+		background : none
+		+border-radius(0)
+		border : 1px solid #444
+		color : white
 
 #panelFiles
 	right : 130px
+	
 	.file
 		cursor: pointer
 		display: inline-block
 		border-bottom: 1px solid #444
 		margin: 0 0 2px 0
-		width: 170px
+		width: 220px
 		padding: 4px
 		position : relative
+		font-size : 16px
 		&:hover
 			background : $colorSat
 	.remove_save
 		display : inline-block
 		border-bottom: 1px solid #444
 		padding : 4px
+		font-size : 18px
 		&:hover
 			background : $colorSat
 			cursor : pointer
@@ -734,8 +796,8 @@ header
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	.content
 		position : absolute
-		right : 10px
-		top : 20px
+		right : 310px
+		top : 60px
 		z-index : 1000
 		overflow-x : hidden
 		width: 300px
@@ -746,7 +808,7 @@ header
 		display : block
 		+box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
 		+background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
-		+border-radius(3px)
+		//+border-radius(3px)
 		//+borderStyle		
 
 .panelInfoSource
@@ -789,23 +851,25 @@ td
 	//background : #fcfcfc
 	//background : url(../../images/bgTable.png)
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
-	padding : 10px
+	padding : 0
 	float : left
-	margin : 50px 10px
+	margin : 46px 0 0 5px
 	//+boxShadow
 	position : fixed
 	display : none
+	width : 100%
 	+border-radius(2px)
 	#headerTable
 		position : relative
 		z-index : 100
 		left : 0
 		right : 0
-		height : 30px
+		height : 40px
 		margin : 0 0 10px
-		padding : 0 0 10px
-		border-bottom : 1px solid #d3d3d3
-		+box-shadow(rgba(white, 0.4)  0px -7px 0px -6px inset)
+		background : #222
+		padding : 0
+		// border-bottom : 1px solid #d3d3d3
+		// +box-shadow(rgba(white, 0.4)  0px -7px 0px -6px inset)
 		cursor : move
 		.headerMenu > li div
 			margin-right : 10px
@@ -869,7 +933,7 @@ td
 .actions
 	//height : 32px
 	//position : absolute
-	height : 35px
+	height : 40px
 	// top : -10px
 	left : 0
 	right : 0
@@ -877,15 +941,15 @@ td
 	opacity : 0
 	background : #f1f1f1
 	.action
-		background : #f1f1f1
+		background : #333
 		width : 60px
 		display: table-cell
 		vertical-align: middle
 		&:first-child
 			border-right : 1px solid #ccc
 		.remove
-			background : #ddd
-			color : white
+			background : #aaa
+			color : #333
 			width : 20px
 			line-height: 20px
 			+border-radius(20px)
@@ -893,6 +957,7 @@ td
 			padding : 0 1px 1px 1px
 			&:hover
 				background : #be2620
+				color : white
 				cursor : pointer
 
 		.edit
@@ -902,7 +967,7 @@ td
 			color : #bbb
 			z-index : 100
 			&:hover
-				opacity : 0.6
+				opacity : 0.8
 				border : none
 				cursor : pointer
 
@@ -917,19 +982,20 @@ td
 		&:before
 			content : "Remote sources"
 			//font-family: "Irma Light"
-			background : #333
+			background : #555
 			padding : 2px 5px
 			color : white
 			position : relative
-			top : -3px
-			left : 0px
-			+border-radius(3px 3px 0 0 )
+			top : -7px
+			left : -16px
+			//+border-radius(3px 3px 0 0 )
 
 #remote-sources .source:first-child:before
 	content : "Remote sources"
+	left : -9px
 
 #local-sources .source:first-child
-	margin-top : 15px
+	margin-top : -7px
 	&:before
 		// top : 0px
 		content : "Local sources"
@@ -938,7 +1004,7 @@ td
 .tableScenic
 	float : left
 	display : block
-	padding-top : 31px
+	padding : 10px 0 0 20px
 	font-size : 1.2em
 	table-layout : fixed
 	//background : rgba(255,255,255, 0.3)
@@ -949,31 +1015,36 @@ td
 	min-width : 420px
 
 	table.source
-		margin: 0 0 5px 0px
+		margin: 0 0 3px 0px
 		// &:nth-child(odd) 
 		// 	background : #eee
 		// &:nth-child(even)
 		// 	background : #fafafa
 		.shmdata.inactive, .shmdata.active
 			position : relative
-			&:after
-				content : ""
-				position : absolute
-				left : 250px
-				margin-top : 9px
-				// top : 5px
-				z-index : 20
-				width : 5px
-				height : 5px
-				background-color : #690
-				border-radius : 50%
-				+box-shadow(#555 0 -1px 3px 0px, inset #ddd 0 -1px 9px, #ddd 0 2px 12px)
-		.shmdata.active:after
-			+box-shadow(#555 0 -1px 3px 0px, inset #7D0 0 -1px 9px, #7D0 0 2px 12px)
+			// &:after
+			// 	content : ""
+			// 	position : absolute
+			// 	left : 245px
+			// 	margin-top : 9px
+			// 	// top : 5px
+			// 	z-index : 20
+			// 	width : 5px
+			// 	height : 5px
+			// 	background-color : #690
+			// 	border-radius : 50%
 
+		.shmdata.active:after
+			//+box-shadow(#555 0 -1px 3px 0px, inset #7D0 0 -1px 9px, #7D0 0 2px 12px)
+
+		.shmdata th
+			border-right : 2px solid #be2620
+
+		.shmdata.active th
+			border-right : 2px solid #01b101
 
 		.nameInOut
-			padding : 0 0px 0 20px
+			padding : 0 15px 0 5px
 			text-align : left
 
 		.preview, .status
@@ -982,8 +1053,8 @@ td
 			position : absolute
 			//background : #ddd
 			//border-left : 1px solid #ccc
-			right : -11px
-			top : 6px
+			right : -22px
+			top : 0
 		.preview
 			background : url(../../images/icon-preview.png) no-repeat top center
 			opacity : 1
@@ -1015,8 +1086,9 @@ td
 		//max-width : 110px
 		width : 120px
 		// overflow : hidden
-		height : 35px
+		height : 40px
 		// padding : 0 9px
+		// border-right : 1px solid #292929
 
 		.mapper
 			background : #888
@@ -1099,6 +1171,7 @@ td
 .scenic2 .destinations
 	//display : block
 	margin-bottom : 5px
+	height : 41px
 	.nameInOut
 		background : rgba(white, 0.4)
 		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
@@ -1213,13 +1286,15 @@ td
 	// margin-left : -10px
 	position : relative
 	// width : 118%
+	border : none
 
 #port_destination
-	background : #555
+	background : #292929
 	color : white
 	outline : 0
 	font-size : 12px
-
+	border : none
+	height : 100%
 .connection
 	background : #444
 	text-align : center
@@ -1242,6 +1317,7 @@ td.active
 	color : white
 	cursor : pointer
 	position : relative
+	background : #292929
 	&:hover
 		// background : #777!important
 		background : #be2620 url(../../images/bgBox_disconnect.png) no-repeat center center !important 
@@ -1956,19 +2032,22 @@ html[xmlns] .clearfix
 	input[type=text]
 		width : 270px
 
-	.ports
+	.parameters
 		float : left
 		border-top : 1px dotted #ddd
 		padding-top : 10px
-		.port
+		margin : 10px 0 0
+		.half
 			float : left
-			width : 142px
+			width : 150px
+			input
+				width : 120px
 			&:first-child
 				margin-right : 10px
 		label
-			width : 120px
+			// width : 120px
 		input
-			width : 120px
+			// width : 120px
 
 	#btnServer
 		//display : none
@@ -2157,3 +2236,4 @@ html[xmlns] .clearfix
 	table
 		border-collapse : inherit!important
 		//border-spacing : 2px!important
+

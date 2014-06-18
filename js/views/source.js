@@ -1,184 +1,216 @@
 define(
 
-	/** 
-	 *	View Source
-	 *	The source view is for each source type quiddity create whatsoever to control or transfer table
-	 *	@exports Views/Launch
-	 */
+    /** 
+     *	View Source
+     *	The source view is for each source type quiddity create whatsoever to control or transfer table
+     *	@exports Views/Launch
+     */
 
-	[
-		'underscore',
-		'backbone',
-		'views/connexion',
-		'text!/templates/source.html'
-	],
+    [
+        'underscore',
+        'backbone',
+        'views/connexion',
+        'text!../../templates/source.html'
+    ],
 
-	function(_, Backbone, ConnexionView, TemplateSource) {
+    function(_, Backbone, ConnexionView, TemplateSource) {
 
-		/** 
-		 *	@constructor
-		 *  @requires Underscore
-		 *  @requires Backbone
-		 *	@requires TemplateSource
-		 *  @augments module:Backbone.View
-		 */
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires TemplateSource
+         *  @augments module:Backbone.View
+         */
 
-		var SourceView = Backbone.View.extend(
+        var SourceView = Backbone.View.extend(
 
-			/**
-			 *	@lends module: Views/source~SourceView.prototype
-			 */
+            /**
+             *	@lends module: Views/source~SourceView.prototype
+             */
 
-			{
-				tagName: 'table',
-				className: 'source',
-				table: null,
-				events: {
-					"click .edit": "edit",
-					"click .remove": "removeClick",
-					"click .preview": "preview",
-					'click .info': 'info'
-				},
+            {
+                tagName: 'table',
+                className: 'source',
+                table: null,
+                events: {
+                    "click .edit": "edit",
+                    "click .remove": "removeClick",
+                    "click .preview": "preview",
+                    'click .info': 'info'
+                },
 
-				/* Called when en new source quiddity is created */
+                /* Called when en new source quiddity is created */
 
-				initialize: function(options) {
+                initialize: function(options) {
+                    /* Subscribe for remove and change shmdatas on quiddity source */
+                    this.model.on('remove', this.removeView, this);
+                    this.model.on('change:shmdatas', this.render, this);
+                    this.model.on('updateByteRate', this.updateByteRateAndPreview);
+                    this.table = options.table;
 
-					/* Subscribe for remove and change shmdatas on quiddity source */
-					this.model.on('remove', this.removeView, this);
-					this.model.on('change:shmdatas', this.render, this);
-					this.table = options.table;
+                    //here we define were go the source (local or remote)
+                    if (this.model.get("class") == "httpsdpdec") {
+                        $("#" + this.table + " #remote-sources").prepend($(this.el));
+                    } else {
+                        $("#" + this.table + " #local-sources").prepend($(this.el));
+                    }
 
-					//here we define were go the source (local or remote)
-					if (this.model.get("class") == "httpsdpdec") {
-						$("#" + this.table + " #remote-sources").prepend($(this.el));
-					} else {
-						$("#" + this.table + " #local-sources").prepend($(this.el));
-					}
-
-					this.render();
-				},
+                    this.render();
+                },
 
 
-				render: function() {
-					//console.log("render source !", this.model.get("name"));
-					var that = this,
-						shmdatas = this.model.get("shmdatas"),
-						table = collections.tables.findWhere({
-							type: this.table
-						});
+                render: function() {
+                    console.log("render source !", this.model.get("name"));
+                    var that = this,
+                        shmdatas = this.model.get("shmdatas"),
+                        table = collections.tables.findWhere({
+                            type: this.table
+                        });
 
-					$(this.el).html("");
+                    $(this.el).html("");
 
-					//render the shmdatas of the source
-					if (typeof shmdatas == "object" && shmdatas.length != 0) {
+                    //render the shmdatas of the source
+                    if (typeof shmdatas == "object" && shmdatas.length != 0) {
 
-						/* for each shmdata wer create a source, this source can be connect with destination */
-						_.each(shmdatas, function(shmdata, index) {
+                        /* for each shmdata wer create a source, this source can be connect with destination */
+                        _.each(shmdatas, function(shmdata, index) {
 
-							/* Parsing destination for generate connexion */
-							var connexions = "";
+                            /* Parsing destination for generate connexion */
+                            var connexions = "";
 
-							table.get("collectionDestinations").each(function(destination) {
-								console.log("table.destination in souce", destination.get("data_streams"));
-								/* check if the connexion existing between source and destination */
-								var active = "";
+                            table.get("collectionDestinations").each(function(destination) {
+                                console.log("table.destination in souce", destination.get("data_streams"));
+                                /* check if the connexion existing between source and destination */
+                                var active = '';
+                                var port = '';
+                                if (that.table == "transfer") {
+                                    _.each(destination.get("data_streams"), function(stream) {
+                                        if (stream.path == shmdata.path) {
+                                            active = "active";
+                                            port = stream.port;
+                                        }
+                                    });
+                                }
 
-								if (that.table == "transfer") {
-									_.each(destination.get("data_streams"), function(stream) {
-										if (stream.path == shmdata.path) active = "active";
-									});
-								}
+                                if (that.table == "audio") {
+                                    var shmdata_readers;
 
-								if (that.table == "audio") {
-									var shmdata_readers;
+                                    _.each(destination.get("properties"), function(prop) {
+                                        if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+                                    });
 
-									_.each(destination.get("properties"), function(prop) {
-										if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-									});
+                                    _.each(shmdata_readers, function(shm) {
+                                        if (shm.path == shmdata.path) active = "active";
+                                    });
 
-									_.each(shmdata_readers, function(shm) {
-										if (shm.path == shmdata.path) active = "active";
-									});
+                                }
+                                console.log(destination.toJSON());
+                                var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '">' + port + '</td>';
+                                connexions = connexions + connexion;
+                            });
 
-								}
+                            /* add template shmdata to the source view  */
+                            var template = _.template(TemplateSource, {
+                                shmdata: shmdata,
+                                index: index,
+                                nbShmdata: shmdatas.length,
+                                sourceName: that.model.get("name"),
+                                connexions: connexions
+                            });
 
-								var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '"></td>';
-								connexions = connexions + connexion;
-							});
+                            $(that.el).append(template);
+                            // /* wait 1sec for show status shmdata (flux actif or not) */
+                            // setTimeout(function() {
+                            //     that.setPreview(shmdata);
+                            // }, 1000);
+                        });
 
-							/* add template shmdata to the source view  */
-							var template = _.template(TemplateSource, {
-								shmdata: shmdata,
-								index: index,
-								nbShmdata: shmdatas.length,
-								sourceName: that.model.get("name"),
-								connexions: connexions
-							});
+                        //if there is not a record is made shmdata anyway
+                    } else {
+                        var template = _.template(TemplateSource, {
+                            sourceName: that.model.get("name"),
+                            shmdata: null
+                        });
 
-							$(that.el).append(template);
-							/* wait 1sec for show status shmdata (flux actif or not) */
-							setTimeout(function() {
-								that.setPreview(shmdata);
-							}, 1000);
-						});
+                        $(that.el).append($(template));
+                    }
+                },
 
-						//if there is not a record is made shmdata anyway
-					} else {
-						var template = _.template(TemplateSource, {
-							sourceName: that.model.get("name"),
-							shmdata: null
-						});
+                updateByteRateAndPreview: function(quiddFakeSink, shmdata, value) {
+                    //console.log("update Byte and Preview", quiddFakeSink);
 
-						$(that.el).append($(template));
-					}
-				},
+                    /* refresh status active or note shmdata */
+                    if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
+                    else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
 
-				/* it's a specific function for showing shmdata and update the possible connexion  */
 
-				renderConnexions: function() {
+                    /* Get quiddity FakeSink for have Caps info if not existing */
+                    if ($("[data-path='" + shmdata + "'] .nameInOut .short .preview").length == 0) {
+                        var propertiesFakeSink = collections.quidds.get(quiddFakeSink).get("properties");
 
-				},
+                        var infoCaps = _.findWhere(propertiesFakeSink, {
+                            name: 'caps'
+                        })['value'].split(",");
 
-				/* called when we want to have a preview of the quiddity (audio or video) */
+                        /* With caps info we chekc if its video or audio preview */
+                        if (infoCaps[0] == "audio/x-raw-int" || infoCaps[0] == "audio/x-raw-float" || infoCaps[0] == "video/x-raw-yuv" || infoCaps[0] == "video/x-raw-rgb") {
 
-				setPreview: function(shmdata) {
+                            var type = (infoCaps[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink"),
+                                QuiddSink = collections.quidds.get(type + "_" + shmdata),
+                                previewActive = QuiddSink ? "active" : "";
 
-					var that = this;
+                            $("[data-path='" + shmdata + "'] .nameInOut .short").append("<div class='preview " + previewActive + "'></div>");
 
-					//get info about vumeter for know if we can create a preview
-					collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
-						info = info.split(",");
+                        }
+                    }
+                },
 
-						if (info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv" || info[0] == "video/x-raw-rgb") {
+                /* it's a specific function for showing shmdata and update the possible connexion  */
 
-							var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
-							//check if the quiddity have already a preview active
-							socket.emit("get_quiddity_description", that.model.get("name") + type, function(quiddInfo) {
-								var active = (quiddInfo.name ? "active" : "");
-								$("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview " + active + "'></div>");
-							});
-						}
-					});
+                renderConnexions: function() {
 
-				},
-				edit: function() {
-					this.model.edit();
-				},
-				removeClick: function() {
-					this.model.delete();
-				},
-				removeView: function() {
-					this.remove();
-				},
-				preview: function(element) {
-					this.model.preview(element);
-					$(element.target).toggleClass("active");
-				},
-				info: function(element) {
-					this.model.info(element);
-				}
-			});
+                },
 
-		return SourceView;
-	})
+                /* called when we want to have a preview of the quiddity (audio or video) */
+
+                setPreview: function(shmdata) {
+
+                    var that = this;
+
+                    //get info about vumeter for know if we can create a preview
+                    collections.quidds.getPropertyValue("vumeter_" + shmdata.path, "caps", function(info) {
+                        info = info.split(",");
+
+                        if (info[0] == "audio/x-raw-int" || info[0] == "audio/x-raw-float" || info[0] == "video/x-raw-yuv" || info[0] == "video/x-raw-rgb") {
+
+                            var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
+                            //check if the quiddity have already a preview active
+                            socket.emit("get_quiddity_description", that.model.get("name") + type, function(quiddInfo) {
+                                var active = (quiddInfo.name ? "active" : "");
+                                $("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview " + active + "'></div>");
+                            });
+                        }
+                    });
+
+                },
+                edit: function() {
+                    this.model.edit();
+                },
+                removeClick: function() {
+                    this.model.askDelete();
+                },
+                removeView: function() {
+                    this.remove();
+                },
+                preview: function(element) {
+                    this.model.preview(element);
+                    $(element.target).toggleClass("active");
+                },
+                info: function(element) {
+                    this.model.info(element);
+                }
+            });
+
+        return SourceView;
+    })

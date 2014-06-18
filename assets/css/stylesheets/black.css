@@ -52,16 +52,16 @@ h3 {
 /* line 45, ../sass/black.sass */
 td.active {
   border: 1px solid #333333;
-  background: #555555;
+  background: #292929;
 }
 
-/* line 49, ../sass/black.sass */
+/* line 50, ../sass/black.sass */
 .box {
   background: #333333;
   border-color: #333333;
 }
 
-/* line 53, ../sass/black.sass */
+/* line 54, ../sass/black.sass */
 #panelRight input[type=text], .panelInfoSource input[type=text] {
   background: #444444;
   border-color: #444444;
@@ -69,49 +69,48 @@ td.active {
   color: white;
 }
 
-/* line 59, ../sass/black.sass */
+/* line 60, ../sass/black.sass */
 input[type=submit] {
   background: #222222;
 }
 
-/* line 63, ../sass/black.sass */
+/* line 64, ../sass/black.sass */
 .actions .action {
-  background: #444444;
+  background: #333333;
 }
-/* line 65, ../sass/black.sass */
+/* line 66, ../sass/black.sass */
 .actions .action .edit {
   opacity: 0.3;
 }
-/* line 67, ../sass/black.sass */
+/* line 68, ../sass/black.sass */
 .actions .action .edit:hover {
   opacity: 1;
 }
-/* line 69, ../sass/black.sass */
+/* line 70, ../sass/black.sass */
 .actions .action .remove {
-  background: #333333;
+  background: #aaaaaa;
   color: #444444;
 }
-/* line 73, ../sass/black.sass */
+/* line 74, ../sass/black.sass */
 .actions .action:first-child {
-  border-color: #333333;
+  border-color: #444444;
 }
 
-/* line 78, ../sass/black.sass */
-.sources .source:first-child:before {
-  color: #aaaaaa;
-}
-
-/* line 81, ../sass/black.sass */
+/* line 82, ../sass/black.sass */
 #panelTables .tabTable {
-  background: #444444;
+  background: #222222;
 }
-
 /* line 84, ../sass/black.sass */
-#panelTables #btn-irc {
+#panelTables .tabTable.active {
   background: #444444;
 }
 
 /* line 87, ../sass/black.sass */
+#panelTables #btn-irc {
+  background: #444444;
+}
+
+/* line 90, ../sass/black.sass */
 .close {
   background: #333333;
 }

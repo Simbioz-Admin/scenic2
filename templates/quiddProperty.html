@@ -32,7 +32,7 @@
 	<!-- Radion button for boolean -->
 	<% if(property.type == "boolean"){ %>
 	<div class="property-content">
-		<input class="property checkbox" type="checkbox" id="check-<%=property.name%>" name="<%=property.name%>"  value="<%=property["default value"]%>" <% if(property["default value"] == "true"){ %> checked="checked" <% } %> >
+		<input class="property checkbox" type="checkbox" id="check-<%=property.name%>" name="<%=property.name%>" autofocus="autofocus" value="<%=property["default value"]%>" <% if(property["default value"] == "true"){ %> checked="checked" <% } %> >
 		<label class="checkbox" for="check-<%=property.name%>"></label>
 	</div>
 	<% } %>

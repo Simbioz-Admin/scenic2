@@ -107,41 +107,48 @@ define(
                     return classes;
 
                 },
-                is_authorize: function(orientation, quiddClass) {
-                    var authorized = _.find(this.classes_authorized(orientation), function(clas) {
+                is_authorize: function(quiddClass) {
+                    var authorized_source = _.find(this.classes_authorized("sources"), function(clas) {
                         return clas["class name"] == quiddClass;
                     });
 
-                    return (authorized ? true : false);
+                    var authorized_destination = _.find(this.classes_authorized("destinations"), function(clas) {
+                        return clas["class name"] == quiddClass;
+                    });
+
+                    return {
+                        source: authorized_source ? true : false,
+                        destination: authorized_destination ? true : false
+                    }
                 },
 
                 /* determine if we add the quidd to the table and create view for */
 
-                add_to_table: function(quidd) {
+                // add_to_table: function(quidd) {
 
-                    /* if we found class in authorized we add to the collection et create view */
+                //     /* if we found class in authorized we add to the collection et create view */
 
-                    if (this.is_authorize("sources", quidd.get("class"))) {
-                        /* insert in collection */
-                        this.get("collectionSources").add(quidd);
-                        /* Create a view */
-                        new ViewSource({
-                            model: quidd,
-                            table: this.get("type")
-                        });
-                    }
+                //     if (this.is_authorize("sources", quidd.get("class"))) {
+                //         /* insert in collection */
+                //         this.get("collectionSources").add(quidd);
+                //         /* Create a view */
+                //         new ViewSource({
+                //             model: quidd,
+                //             table: this.get("type")
+                //         });
+                //     }
 
-                    if (this.is_authorize("destinations", quidd.get("class"))) {
-                        /* insert in collection destination of this table */
-                        this.get("collectionDestinations").add(quidd);
-                        /* Create a view */
-                        new ViewDestination({
-                            model: quidd,
-                            table: this.get("type")
-                        });
-                    }
+                //     if (this.is_authorize("destinations", quidd.get("class"))) {
+                //         /* insert in collection destination of this table */
+                //         this.get("collectionDestinations").add(quidd);
+                //         /* Create a view */
+                //         new ViewDestination({
+                //             model: quidd,
+                //             table: this.get("type")
+                //         });
+                //     }
 
-                },
+                // },
 
                 /* Called for know if the quiddity can be added to the table */
 

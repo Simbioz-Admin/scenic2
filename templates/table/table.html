@@ -13,17 +13,59 @@
 	</ul>
 </div><!-- headerTable -->
 
-<table class="tableScenic">
-	<thead>
-		<tr>
-			<th rowspan="2"  class="infoTable">
-			</th>
-		</tr>
-		<tr class="destinations"></tr>
-	</thead>
-	<tbody >
-		<!-- <tr > <td rowspan="2">test</td> </tr> -->
-		<tr><td colspan="7" class="sources" id="local-sources"></td></tr>
-		<tr><td colspan="7" class="sources" id="remote-sources" ></td></tr>
-	</tbody>
-</table>
+<% if(type == "transfer"){ %>
+	<table class="tableScenic">
+		<thead>
+			<tr>
+				<th rowspan="2"  class="infoTable">
+				</th>
+			</tr>
+			<tr class="destinations"></tr>
+		</thead>
+		<tbody >
+			<!-- <tr > <td rowspan="2">test</td> </tr> -->
+			<tr><td colspan="7" class="sources" id="local-sources">
+				<div class="vignette">Local sources</div>
+			</td></tr>
+			<tr><td colspan="7" class="sources" id="remote-sources" >
+				<div class="vignette">Remote sources</div>
+
+			</td></tr>
+		</tbody>
+	</table>
+<% } %>
+
+<% if(type == "sink"){ %>
+<div class="tableSink" data-type="audio">
+	<div class="vignette">Audio</div>
+	<table class="tableScenic">
+		<thead>
+			<tr>
+				<th rowspan="2"  class="infoTable">
+				</th>
+			</tr>
+			<tr class="destinations"></tr>
+		</thead>
+		<tbody class="shmdatas" >
+
+		</tbody>
+	</table>
+</div>
+
+<div class="tableSink" data-type="video">
+	<div class="vignette">Video</div>
+	<table class="tableScenic">
+		<thead>
+			<tr>
+				<th rowspan="2"  class="infoTable">
+				</th>
+			</tr>
+			<tr class="destinations"></tr>
+		</thead>
+		<tbody class="shmdatas" >
+
+		</tbody>
+	</table>
+</div>
+
+<% } %>

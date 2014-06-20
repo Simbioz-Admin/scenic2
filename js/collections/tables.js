@@ -40,8 +40,8 @@ define(
 
                     /* Create a table for manage Audio device and connexion */
                     var audioTable = {
-                        name: 'audio',
-                        type: 'audio',
+                        name: 'Sink',
+                        type: 'sink',
                         description: "Manage audio device and connexion audio",
                         menus: [{
                             name: "source",

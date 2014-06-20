@@ -73,19 +73,57 @@ define(
                             that.updateShmdatas(shmdatas.shmdata_writers);
                         }
 
-                        if (err) return views.global.notification("error", err);
-                        if (shmdatas) {
-                            that.set({
-                                shmdatas: shmdatas.shmdata_writers
-                            });
-                        }
+                        // if (err) return views.global.notification("error", err);
+                        // if (shmdatas) {
+                        //     that.set({
+                        //         shmdatas: shmdatas.shmdata_writers
+                        //     });
+                        // }
 
 
                         /* ViewSource it's a view for create a entry source to the table transfer */
 
                         if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
                             _.each(collections.tables.models, function(tableModel) {
-                                tableModel.add_to_table(that);
+
+                                /* 1. Check autorization (sources / destinations) for create view for each table */
+                                var authorization = tableModel.is_authorize(that.get("class"));
+
+                                if (authorization.source) {
+
+                                    /* insert in collection */
+                                    tableModel.get("collectionSources").add(that);
+
+                                    /* we create a view source for table transfer and after that we create view for shmdata */
+                                    // if (tableModel.get("type") == "transfer") {
+                                    new ViewSource({
+                                        model: that,
+                                        table: tableModel
+                                    });
+                                    // }
+
+                                    // if (tableModel.get("type") == "sink") {
+                                    //     console.log("create view shmdata standalone!");
+
+                                    // }
+                                }
+
+                                if (authorization.destination) {
+                                    /* insert in collection destination of this table */
+                                    tableModel.get("collectionDestinations").add(that);
+                                    /* Create a view */
+                                    new ViewDestination({
+                                        model: that,
+                                        table: tableModel
+                                    });
+                                }
+
+                                /* 2. Create View appropriate for type of table */
+
+
+                                // tableModel.add_to_table(that);
+
+
                             });
                         }
 

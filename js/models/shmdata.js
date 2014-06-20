@@ -31,6 +31,7 @@ define(
                     path: null,
                     quidd: null,
                     byteRate: 0,
+                    type: null
                 },
 
 
@@ -43,7 +44,7 @@ define(
                 initialize: function() {
 
                     // this.on('destroy', this.remove);
-
+                    this.set("type", this.get("path").split("_")[3].split("-")[0]);
                 },
                 createViewForTable: function(table) {
                     new ViewShmdata({

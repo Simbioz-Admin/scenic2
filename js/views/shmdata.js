@@ -31,8 +31,8 @@ define(
 
             {
                 tagName: 'tr',
-                className: 'shmdata',
                 table: null,
+                className: "shmdata",
                 events: {
                     "click th": "infoShmdata"
                 },
@@ -52,34 +52,48 @@ define(
                 render: function() {
                     var nameShm = this.model.get("path").split('_')[3];
                     templateShmdata = _.template(TemplateShmdata, {
-                        name: nameShm
+                        name: nameShm,
+                        nameQuidd: this.model.get("quidd"),
+                        tableType: this.table.get("type")
                     });
+
                     $(this.el).append(templateShmdata);
                     $(this.el).attr("data-path", this.model.get("path"));
-                    $("#" + this.table + " #quidd_" + this.model.get("quidd") + " .shmdatas").append(this.el);
+
+
+                    /* insert view in the quidd associate to */
+                    if (this.table.get("type") == "transfer") {
+                        $("#" + this.table.get("type") + " #quidd_" + this.model.get("quidd") + " .shmdatas").append(this.el);
+                    }
+
+                    if (this.table.get("type") == "sink") {
+                        console.log("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .shmdatas");
+                        // $("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .sources").append(this.el);
+                        $("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .shmdatas").append(this.el);
+                    }
+
+
                     this.renderConnexions();
                 },
                 renderConnexions: function() {
                     var that = this;
-                    var table = collections.tables.findWhere({
-                        type: this.table
-                    });
 
-                    table.get("collectionDestinations").each(function(destination) {
+                    this.table.get("collectionDestinations").each(function(destination) {
 
                         /* check if the connexion existing between source and destination */
                         var active = '';
                         var port = '';
-                        if (table.get("type") == "transfer") {
+                        if (that.table.get("type") == "transfer") {
                             _.each(destination.get("data_streams"), function(stream) {
                                 if (stream.path == that.model.get("path")) {
                                     active = "active";
                                     port = stream.port;
                                 }
                             });
+
                         }
 
-                        if (table.get("type") == "audio") {
+                        if (that.table.get("type") == "sink") {
                             var shmdata_readers;
                             _.each(destination.get("properties"), function(prop) {
                                 if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
@@ -88,9 +102,10 @@ define(
                             _.each(shmdata_readers, function(shm) {
                                 if (shm.path == that.model.get("path")) active = "active";
                             });
-
+                            // $(".shmdata tr", that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                         }
-                        $(that.el).append('<td class="box  ' + active + " " + table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>')
+                        $(that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+
 
                     });
 

@@ -104,7 +104,7 @@ define(
                     if (model) {
                         model.trigger('destroy', model);
                         if (quiddInfo.class != "sip") {
-                            views.global.notification("info", quiddName + "  has deleted");
+                            views.global.notification("info", quiddInfo + "  has deleted");
                         }
                     }
                 },
@@ -171,9 +171,11 @@ define(
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
                         var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
                         var shmdataModel = shmdatasCollection.get(shmdata);
-                        shmdataModel.set({
-                            "byteRate": value
-                        });
+                        if (shmdataModel) {
+                            shmdataModel.set({
+                                "byteRate": value
+                            });
+                        }
                         // // views.quidds.updateVuMeter(quiddName, name);
 
                     } else {

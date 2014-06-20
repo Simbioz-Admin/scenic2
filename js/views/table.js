@@ -143,7 +143,7 @@ define(
                         box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
                     }
 
-                    if (this.model.get("type") == "audio") {
+                    if (this.model.get("type") == "sink") {
                         if (box.hasClass("active")) {
                             socket.emit("invoke", destination, "disconnect", [], function(data) {})
                         } else {

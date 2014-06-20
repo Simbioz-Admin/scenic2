@@ -34,7 +34,9 @@ define(
                 table: null,
                 className: "shmdata",
                 events: {
-                    "click th": "infoShmdata"
+                    "click th": "infoShmdata",
+                    'click .edit': "editQuidd",
+                    'click .remove': "removeQuidd"
                 },
 
                 /* called for each new mapper */
@@ -144,7 +146,13 @@ define(
                 },
                 removeView: function() {
                     this.remove();
-                }
+                },
+                editQuidd: function() {
+                    collections.quidds.get(this.model.get("quidd")).edit();
+                },
+                removeQuidd: function() {
+                    collections.quidds.get(this.model.get("quidd")).askDelete();
+                },
             });
 
         return ShmdataView;

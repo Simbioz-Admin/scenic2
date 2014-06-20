@@ -45,12 +45,18 @@ define(
 
                     // this.on('destroy', this.remove);
                     this.set("type", this.get("path").split("_")[3].split("-")[0]);
+
+                    /* listen if the quidd is removed */
+                    collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);
                 },
                 createViewForTable: function(table) {
                     new ViewShmdata({
                         model: this,
                         table: table
                     })
+                },
+                removeModel: function() {
+                    this.trigger("destroy", this);
                 }
             }
         );

@@ -67,8 +67,6 @@ define(
                     }
 
                     if (this.table.get("type") == "sink") {
-                        console.log("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .shmdatas");
-                        // $("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .sources").append(this.el);
                         $("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .shmdatas").append(this.el);
                     }
 
@@ -90,22 +88,25 @@ define(
                                     port = stream.port;
                                 }
                             });
-
+                            $(that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                         }
 
                         if (that.table.get("type") == "sink") {
-                            var shmdata_readers;
-                            _.each(destination.get("properties"), function(prop) {
-                                if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-                            });
+                            var destinationType = destination.get("category").replace(" sink", "");
+                            /* check for the table type sink if the connexion is same type  */
+                            if (destinationType == that.model.get("type")) {
+                                var shmdata_readers;
+                                _.each(destination.get("properties"), function(prop) {
+                                    if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+                                });
 
-                            _.each(shmdata_readers, function(shm) {
-                                if (shm.path == that.model.get("path")) active = "active";
-                            });
-                            // $(".shmdata tr", that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                                _.each(shmdata_readers, function(shm) {
+                                    if (shm.path == that.model.get("path")) active = "active";
+                                });
+                                // $(".shmdata tr", that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                                $(that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                            }
                         }
-                        $(that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
-
 
                     });
 

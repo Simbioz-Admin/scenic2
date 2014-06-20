@@ -52,8 +52,11 @@ define(
 
                     $(this.el).append(template);
                     //add the template to the destination table transfer
-                    $("#" + this.table.get("type") + " .destinations").append($(this.el));
-                    _.each($("#" + this.table.get("type") + " .shmdata"), function(shmdata) {
+                    var category = this.model.get("category") ? " [data-type='" + this.model.get("category").replace(" sink", "") + "']" : "";
+                    $("#" + this.table.get("type") + category + " .destinations").append($(this.el));
+
+
+                    _.each($("#" + this.table.get("type") + category + " .shmdata"), function(shmdata) {
                         // declare variabble for this scope
                         var active = "";
                         var port = 0;
@@ -71,7 +74,7 @@ define(
 
 
                         /* look up the port of this connection */
-                        if (active.length > 0 && $('#' + this.table.get("type") + " .active")) {
+                        if (active.length > 0 && $('#' + that.table.get("type") + " .active")) {
                             port = _.findWhere(that.model.get("data_streams"), {
                                 path: $(shmdata).data("path")
                             }).port;

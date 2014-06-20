@@ -79,16 +79,19 @@ define(
 
                 renderSink: function() {
                     var that = this;
+                    console.log("a");
                     /* 1. parse all shmdata of the quidd for create view in table sink */
                     this.model.get("shmdatasCollection").each(function(shm) {
+                        /* 2. in first time we need to check if the table of the type of shmdata exist */
+                        that.table.trigger("newCategoryTable", shm.get("type"));
+                        console.log("ASH FOR NEW TABLE", shm.get("type"));
+                        /* 3. we create a view shmdata for each */
                         new ViewShmdata({
                             model: shm,
                             modelQuidd: that.model,
                             table: that.table
                         });
 
-                        /* 2. in first time we need to check if the table of the type of shmdata exist */
-                        /* 3. we create a view shmdata for each */
 
                     });
                 },
@@ -102,7 +105,9 @@ define(
 
                     //console.log("render Quiddity Source " + this.model.get("name") + " for the table " + this.table);
                     // console.log(this.model.get("shmdatasCollection").toJSON());
+
                     this.model.get("shmdatasCollection").each(function(shm) {
+                        that.table.trigger("newCategoryTable", shm.get("type"));
                         shm.createViewForTable(that.table);
                     });
 

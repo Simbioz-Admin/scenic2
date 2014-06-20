@@ -44,7 +44,11 @@ define(
                 initialize: function() {
 
                     // this.on('destroy', this.remove);
-                    this.set("type", this.get("path").split("_")[3].split("-")[0]);
+                    var type = this.get("path").split("_")[3];
+                    console.log(type);
+                    if (type.indexOf("video") >= 0) this.set("type", "video");
+                    if (type.indexOf("audio") >= 0) this.set("type", "audio");
+                    if (type.indexOf("osc") >= 0) this.set("type", "osc");
 
                     /* listen if the quidd is removed */
                     collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);

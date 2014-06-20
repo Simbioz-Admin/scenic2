@@ -10,10 +10,11 @@ define(
         'underscore',
         'backbone',
         'text!../../templates/table/table.html',
+        'text!../../templates/table/category.html',
         'text!../../templates/table/sub_menu.html',
     ],
 
-    function(_, Backbone, TemplateTable, TemplateSubMenu) {
+    function(_, Backbone, TemplateTable, TemplateCategory, TemplateSubMenu) {
 
         /** 
          *	@constructor
@@ -48,7 +49,7 @@ define(
 
 
                     this.model.on("trigger:menu", this.get_classes, this);
-
+                    this.model.on('newCategoryTable', this.newCategoryTable, this);
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
@@ -233,7 +234,21 @@ define(
                         });
                         $(element.target).after(template);
                     });
+                },
+
+                /* add a new table for category */
+
+                newCategoryTable: function(type) {
+                    console.log("ask to create category table", type);
+                    /* check if already exist */
+                    if ($("[data-type='" + type + "']", this.el).length == 0) {
+                        var templateCatTable = _.template(TemplateCategory, {
+                            type: type
+                        });
+                        $(this.el).append(templateCatTable);
+                    }
                 }
+
             });
 
         return TableView;

@@ -31,7 +31,7 @@ define(
 
             {
                 tagName: 'td',
-                className: 'nameInOut',
+                className: 'destination',
                 table: null,
                 events: {
                     "click .edit": "edit",
@@ -45,7 +45,7 @@ define(
                     /* subscribe to suppression of the model */
                     this.model.on('remove', this.removeView, this);
                     this.table = options.table;
-
+                    var name = this.model.get("name").replace("_", "<br>");
                     var that = this,
                         template = _.template(TemplateDestination, {
                             name: this.model.get("name")
@@ -57,7 +57,7 @@ define(
                     $("#" + this.table + " .destinations").append($(this.el));
 
                     /* add for each property of source control a new box for the connection */
-                    $("#control .property").each(function(index, source) {
+                    $("#control .shmdata").each(function(index, source) {
                         $(this).append("<td class='box connect-properties' data-nameandproperty='" + that.model.get("name") + "'></td>");
                     });
 

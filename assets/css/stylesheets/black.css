@@ -52,7 +52,7 @@ h3 {
 /* line 45, ../sass/black.sass */
 td.active {
   border: 1px solid #333333;
-  background: #292929;
+  background: #222222;
 }
 
 /* line 50, ../sass/black.sass */
@@ -76,7 +76,7 @@ input[type=submit] {
 
 /* line 64, ../sass/black.sass */
 .actions .action {
-  background: #333333;
+  background: #222222;
 }
 /* line 66, ../sass/black.sass */
 .actions .action .edit {

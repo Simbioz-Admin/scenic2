@@ -39,9 +39,9 @@ define(
 
 
                     /* Create a table for manage Audio device and connexion */
-                    var audioTable = {
-                        name: 'audio',
-                        type: 'audio',
+                    var sinkTable = {
+                        name: 'Sink',
+                        type: 'sink',
                         description: "Manage audio device and connexion audio",
                         menus: [{
                             name: "source",
@@ -54,7 +54,8 @@ define(
                             select: ["source", "httpsdpdec"]
                         },
                         destinations: {
-                            select: ["sink"]
+                            select: ["sink"],
+                            exclude: ["monitor"]
                         }
                     }
 
@@ -104,7 +105,7 @@ define(
 
 
                     this.add(controlTable);
-                    this.add(audioTable);
+                    this.add(sinkTable);
                     this.add(transferTable);
 
                 }

@@ -30,7 +30,7 @@ define(
 
             {
                 tagName: 'td',
-                className: 'nameInOut',
+                className: 'destination',
                 table: null,
                 events: {
                     "click .edit": "edit",
@@ -47,15 +47,18 @@ define(
 
                     var that = this,
                         template = _.template(TemplateDestination, {
-                            name: this.model.get("name")
+                            name: this.model.get("name"),
                         });
 
                     $(this.el).append(template);
-
                     //add the template to the destination table transfer
-                    $("#" + this.table + " .destinations").append($(this.el));
-                    console.log($("#" + this.table + " .shmdata").length);
-                    _.each($("#" + this.table + " .shmdata"), function(shmdata) {
+                    if (this.model.get("category")) this.table.trigger("newCategoryTable", this.table.get("type"), this.model.get("category").replace(" sink", ""));
+
+                    var category = this.model.get("category") ? " [data-type='" + this.model.get("category").replace(" sink", "") + "']" : "";
+                    $("#" + this.table.get("type") + category + " .destinations").append($(this.el));
+
+
+                    _.each($("#" + this.table.get("type") + category + " .shmdata"), function(shmdata) {
                         // declare variabble for this scope
                         var active = "";
                         var port = 0;
@@ -65,7 +68,7 @@ define(
                         if ($("[data-id='" + that.model.get('name') + "']", shmdata).length > 0) return;
 
                         /* check if connection is active */
-                        if (that.table == "transfer") {
+                        if (that.table.get("type") == "transfer") {
                             active = _.where(that.model.get("data_streams"), {
                                 path: $(shmdata).data("path")
                             }).length > 0 ? 'active' : "";
@@ -73,7 +76,7 @@ define(
 
 
                         /* look up the port of this connection */
-                        if (active.length > 0 && $('#' + this.table + " .active")) {
+                        if (active.length > 0 && $('#' + that.table.get("type") + " .active")) {
                             port = _.findWhere(that.model.get("data_streams"), {
                                 path: $(shmdata).data("path")
                             }).port;
@@ -81,8 +84,9 @@ define(
                             port = "";
                         }
 
-                        if (that.table == "audio") {
+                        if (that.table.get("type") == "sink") {
                             _.each(that.model.get("properties"), function(prop) {
+
                                 if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
                             });
 
@@ -90,7 +94,7 @@ define(
                                 if (shm.path == shmdata.path) active = "active";
                             });
                         }
-                        connection = "<td class='box " + active + " " + that.table + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('name') + "'>" + port + "</td>";
+                        connection = "<td class='box " + active + " " + that.table.get("type") + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('name') + "'>" + port + "</td>";
                         $(shmdata).append(connection);
                     });
                 },

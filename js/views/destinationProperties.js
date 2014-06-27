@@ -45,6 +45,7 @@ define(
                 /*  Called when a property is selected on the dropdown menu in table controler (add destination) */
 
                 createControlProperty: function(element) {
+                    console.log("Properties!");
                     var property = $(element.target).data("property"),
                         that = this,
                         quiddName = $(element.target).closest("ul").data("quiddname");
@@ -83,6 +84,17 @@ define(
                         });
 
                         $(e.target).after(template);
+                        $("#subMenu").menu({
+                            delay: 0,
+                            position: {
+                                at: "right-2 top-2"
+                            }
+                        }, {
+                            select: function(event, ui) {
+                                event.preventDefault();
+                                views.quidds.defineName(ui.item);
+                            }
+                        }).focus();
                     } else {
                         views.global.notification("error", "you need to create source before adding a property");
                     }
@@ -94,13 +106,15 @@ define(
 
                     if ($(element.target).attr("class").indexOf("connect-properties") == -1) return false;
 
-                    var quiddSource = $(element.target).parent().data("quiddname"),
+                    var quiddSource = $(element.target).closest(".quiddity").data("quiddname"),
                         propertySource = $(element.target).parent().data("propertyname"),
                         destination = $(element.target).data("nameandproperty").split("_"),
                         sinkSource = destination[0],
                         sinkProperty = destination[1],
                         nameQuidd = "mapper_" + quiddSource + "_" + propertySource + "_" + $(element.target).data("nameandproperty");
 
+
+                    if (!quiddSource || !propertySource || !destination || !nameQuidd) return views.global.notification("error", "missing info !");
                     socket.emit("create", "property-mapper", nameQuidd, function(err, infoQuidd) {
                         // var model = collections.quidds.create(infoQuidd);
                         socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok) {});

@@ -45,7 +45,6 @@ define(
 
                     /** Event called when the server has created a quiddity */
                     socket.on("create", function(quiddInfo, socketId) {
-                        console.log("CREATE", quiddInfo);
                         that.create(quiddInfo);
                     });
 
@@ -105,7 +104,7 @@ define(
                     if (model) {
                         model.trigger('destroy', model);
                         if (quiddInfo.class != "sip") {
-                            views.global.notification("info", quiddName + "  has deleted");
+                            views.global.notification("info", quiddInfo + "  has deleted");
                         }
                     }
                 },
@@ -170,15 +169,19 @@ define(
                             shmdata = quiddName.replace("vumeter_", "");
 
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
-
-                        collections.quidds.get(quiddName).updateByteRate(quiddNameFakeSink, shmdata, value);
-                        // views.quidds.updateVuMeter(quiddName, name);
+                        var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
+                        var shmdataModel = shmdatasCollection.get(shmdata);
+                        if (shmdataModel) {
+                            shmdataModel.set({
+                                "byteRate": value
+                            });
+                        }
+                        // // views.quidds.updateVuMeter(quiddName, name);
 
                     } else {
                         var model = collections.quidds.get(quiddName);
                         if (model) {
                             var properties = model.get("properties");
-                            console.log("PROPS", properties);
                             if (properties.length == 0) {
                                 model.set({
                                     properties: []
@@ -200,9 +203,7 @@ define(
                 updateShmdatas: function(quiddName, shmdatas) {
                     var quidd = this.get(quiddName);
                     //sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
-                    if (quidd) {
-                        quidd.set("shmdatas", shmdatas);
-                    }
+                    if (quidd) quidd.updateShmdatas(shmdatas);
                 },
 
                 /**

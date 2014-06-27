@@ -49,7 +49,9 @@ define(
 
 
                     this.model.on("trigger:menu", this.get_classes, this);
-                    this.model.on('newCategoryTable', this.newCategoryTable, this);
+                    if (this.model.get("type") == "sink") {
+                        this.model.on('newCategoryTable', this.newCategoryTable, this);
+                    }
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
@@ -238,14 +240,16 @@ define(
 
                 /* add a new table for category */
 
-                newCategoryTable: function(type) {
-                    console.log("ask to create category table", type);
-                    /* check if already exist */
-                    if ($("[data-type='" + type + "']", this.el).length == 0) {
-                        var templateCatTable = _.template(TemplateCategory, {
-                            type: type
-                        });
-                        $(this.el).append(templateCatTable);
+                newCategoryTable: function(tableType, type) {
+                    console.log("ask to create category table", tableType, type);
+                    if (tableType == this.model.get("type")) {
+                        /* check if already exist */
+                        if ($("[data-type='" + type + "']", this.el).length == 0) {
+                            var templateCatTable = _.template(TemplateCategory, {
+                                type: type
+                            });
+                            $(this.el).append(templateCatTable);
+                        }
                     }
                 }
 

@@ -25,7 +25,7 @@
 		<tbody >
 			<!-- <tr > <td rowspan="2">test</td> </tr> -->
 			<tr><td colspan="7" class="sources" id="local-sources">
-				<div class="vignette">Local sources</div>
+				<div class="vignette local-sources">Local sources</div>
 			</td></tr>
 			<tr><td colspan="7" class="sources" id="remote-sources" >
 				<div class="vignette">Remote sources</div>
@@ -34,3 +34,27 @@
 		</tbody>
 	</table>
 <% } %>
+
+
+
+<% if(type == "control"){ %>
+	<table class="tableScenic">
+		<thead>
+			<tr>
+				<th rowspan="2"  class="infoTable">
+				</th>
+			</tr>
+			<tr class="destinations"></tr>
+		</thead>
+		<tbody >
+			<!-- <tr > <td rowspan="2">test</td> </tr> -->
+			<tr><td colspan="7" class="sources" id="local-sources">
+			</td></tr>
+			<tr><td colspan="7" class="sources" id="remote-sources" >
+			</td></tr>
+		</tbody>
+	</table>
+<% } %>
+
+
+

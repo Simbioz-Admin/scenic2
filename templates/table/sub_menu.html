@@ -19,10 +19,12 @@
 
 		<% _.each(menus, function(menu, name){ %>
 			<li>
-				<%=name%>
+				<a href="#"><%=name%></a>
 				<ul  data-quiddname="<%=name%>">
 					<% _.each(menu, function(property){ %>
-							<li class="create-ControlProperty" data-property="<%=property%>" ><%=property%></li>
+							<li >
+								<a class="create-ControlProperty" data-property="<%=property%>" href="#"><%=property%></a>
+							</li>
 					<% }); %>
 				</ul>
 			</li>

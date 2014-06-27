@@ -50,9 +50,9 @@ define(
                  */
 
                 defineName: function(element) {
-                    console.log(element);
                     var className = $(element).data("name");
                     var getDevices = $(element).hasClass("autoDetect");
+
                     /* get  the information about the device in property value of quiddity */
                     if (getDevices) {
                         socket.emit("get_property_by_class", className, "device", function(property) {
@@ -63,7 +63,7 @@ define(
                                 views.global.notification("error", "no video device");
                             }
                         });
-                    } else {
+                    } else if (className) {
                         openPanelDefineName(false);
                     }
 

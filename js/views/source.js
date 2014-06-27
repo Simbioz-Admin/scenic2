@@ -35,8 +35,8 @@ define(
                 className: 'source',
                 table: null,
                 events: {
-                    "click .edit": "edit",
-                    "click .remove": "removeClick",
+                    "click .edit-source": "edit",
+                    "click .remove-source": "removeClick",
                     "click .preview": "preview",
                     'click .info': 'info'
                 },
@@ -82,9 +82,10 @@ define(
                     console.log("a");
                     /* 1. parse all shmdata of the quidd for create view in table sink */
                     this.model.get("shmdatasCollection").each(function(shm) {
+
                         /* 2. in first time we need to check if the table of the type of shmdata exist */
-                        that.table.trigger("newCategoryTable", shm.get("type"));
-                        console.log("ASH FOR NEW TABLE", shm.get("type"));
+                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
+
                         /* 3. we create a view shmdata for each */
                         new ViewShmdata({
                             model: shm,
@@ -107,77 +108,11 @@ define(
                     // console.log(this.model.get("shmdatasCollection").toJSON());
 
                     this.model.get("shmdatasCollection").each(function(shm) {
-                        that.table.trigger("newCategoryTable", shm.get("type"));
+                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
                         shm.createViewForTable(that.table);
                     });
 
 
-                    //render the shmdatas of the source
-                    //if (typeof shmdatas == "object" && shmdatas.length != 0) {
-
-                    /* for each shmdata model we create a view for the current table  */
-
-
-                    /* for each shmdata wer create a source, this source can be connect with destination */
-                    // _.each(shmdatas, function(shmdata, index) {
-
-                    //     /* Parsing destination for generate connexion */
-                    //     var connexions = "";
-
-                    //     table.get("collectionDestinations").each(function(destination) {
-                    //         /* check if the connexion existing between source and destination */
-                    //         var active = '';
-                    //         var port = '';
-                    //         if (that.table == "transfer") {
-                    //             _.each(destination.get("data_streams"), function(stream) {
-                    //                 if (stream.path == shmdata.path) {
-                    //                     active = "active";
-                    //                     port = stream.port;
-                    //                 }
-                    //             });
-                    //         }
-
-                    //         if (that.table == "audio") {
-                    //             var shmdata_readers;
-
-                    //             _.each(destination.get("properties"), function(prop) {
-                    //                 if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-                    //             });
-
-                    //             _.each(shmdata_readers, function(shm) {
-                    //                 if (shm.path == shmdata.path) active = "active";
-                    //             });
-
-                    //         }
-                    //         var connexion = '<td class="box ' + active + ' ' + that.table + ' " data-destination="' + destination.get("name") + '" data-id="' + destination.get("id") + '">' + port + '</td>';
-                    //         connexions = connexions + connexion;
-                    //     });
-
-                    //     /* add template shmdata to the source view  */
-                    //     var template = _.template(TemplateSource, {
-                    //         shmdata: shmdata,
-                    //         index: index,
-                    //         nbShmdata: shmdatas.length,
-                    //         sourceName: that.model.get("name"),
-                    //         connexions: connexions
-                    //     });
-
-                    //     $(that.el).append(template);
-                    //     // /* wait 1sec for show status shmdata (flux actif or not) */
-                    //     // setTimeout(function() {
-                    //     //     that.setPreview(shmdata);
-                    //     // }, 1000);
-                    // });
-
-                    //if there is not a record is made shmdata anyway
-                    // } else {
-                    //     var template = _.template(TemplateSource, {
-                    //         sourceName: that.model.get("name"),
-                    //         shmdata: null
-                    //     });
-
-                    //     $(that.el).append($(template));
-                    // }
                 },
 
 

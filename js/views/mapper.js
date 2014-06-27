@@ -39,6 +39,7 @@ define(
 
                 /* called for each new mapper */
                 initialize: function(options) {
+                    console.log("MAPPER!", this.model.get("name"));
                     /* Subscribe to the remove of a specific mapper */
                     this.model.on('remove', this.removeView, this);
                     this.table = options.table;
@@ -56,7 +57,7 @@ define(
                     console.log("ADD");
                     /* sometimes shmdata is not generate and we dont find box */
                     var IntervalAdd = setInterval(function() {
-                        var box = $("[data-quiddname='" + info[1] + "'][data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
+                        var box = $("[data-quiddname='" + info[1] + "'] [data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
                         if (box.length > 0) {
                             window.clearInterval(IntervalAdd);
                             box.html($(that.el));

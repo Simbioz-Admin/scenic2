@@ -45,7 +45,6 @@ define(
 
                     // this.on('destroy', this.remove);
                     var type = this.get("path").split("_")[3];
-                    console.log(type);
                     if (type.indexOf("video") >= 0) this.set("type", "video");
                     if (type.indexOf("audio") >= 0) this.set("type", "audio");
                     if (type.indexOf("osc") >= 0) this.set("type", "osc");

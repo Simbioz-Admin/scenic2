@@ -10,9 +10,10 @@ define(
         'underscore',
         'backbone',
         'text!../../templates/sourceProperty.html',
+        'text!../../templates/source.html',
     ],
 
-    function(_, Backbone, TemplateSourceProperty) {
+    function(_, Backbone, TemplateSourceProperty, TemplateSource) {
 
         /** 
          *	@constructor
@@ -47,7 +48,6 @@ define(
                     this.model.on('remove:property', this.render, this);
 
                     this.table = options.table;
-                    this.render();
 
                     //here we define were go the source (local or remote)
                     if (this.model.get("class") == "httpsdpdec") {
@@ -56,45 +56,67 @@ define(
                         $("#" + this.table + " #local-sources").prepend($(this.el));
                     }
 
+                    var quiddTpl = _.template(TemplateSource, {
+                        name: this.model.get("name")
+                    });
+                    $(this.el).append(quiddTpl);
+
+                    this.render();
+
                 },
 
                 /* called when a new source in table control is created or when existing is updated (add or remove property) */
 
                 render: function() {
 
+
+                    /* remove all properties */
+                    $(".shmdatas", this.el).html("");
+
                     var that = this,
                         properties = this.model.get("properties"),
                         destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
                         countProperty = 0;
 
-                    $(this.el).html("");
 
-                    //parse the properties of source for show on interface
+                    console.log("render properties of source table control", collections.destinationProperties.toJSON());
                     _.each(properties, function(property, index) {
                         if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
-                            var template = _.template(TemplateSourceProperty, {
+                            var propertyTpl = _.template(TemplateSourceProperty, {
                                 property: property,
-                                index: countProperty,
-                                nbProperties: Object.keys(properties).length,
-                                sourceName: that.model.get("name"),
                                 destinations: destinations
                             });
-
-                            $(that.el).append($(template));
-                            countProperty++;
+                            // $(propertyTpl).attr("data-propertyname", property.name);
+                            $(".shmdatas", that.el).append(propertyTpl);
                         }
                     });
+                    // $(this.el).html("");
+
+                    //parse the properties of source for show on interface
+                    // _.each(properties, function(property, index) {
+                    //     if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
+                    //         var template = _.template(TemplateSourceProperty, {
+                    //             property: property,
+                    //             index: countProperty,
+                    //             nbProperties: Object.keys(properties).length,
+                    //             sourceName: that.model.get("name"),
+                    //             destinations: destinations
+                    //         });
+
+                    //         $(that.el).append($(template));
+                    //         countProperty++;
+                    //     }
+                    // });
 
                     //if no properties we show the source anyway
-                    if ($(that.el).html() == "") {
-                        var template = _.template(TemplateSourceProperty, {
-                            sourceName: that.model.get("name"),
-                            property: null
-                        });
+                    // if ($(that.el).html() == "") {
+                    //     var template = _.template(TemplateSourceProperty, {
+                    //         sourceName: that.model.get("name"),
+                    //         property: null
+                    //     });
 
-                        $(that.el).append($(template));
-                    }
-
+                    //     $(that.el).append($(template));
+                    // }
 
                     //check if mapper exist for the 
                     collections.quidds.each(function(quidd) {

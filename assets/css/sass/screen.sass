@@ -837,7 +837,7 @@ header
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	.content
 		position : absolute
-		right : 310px
+		right : 20px
 		top : 60px
 		z-index : 1000
 		overflow-x : hidden
@@ -1028,14 +1028,14 @@ td
 		position : relative
 		width : 80px
 		//max-width : 110px
-		width : 120px
+		width : 119px
 		// overflow : hidden
 		height : 40px
 		// padding : 0 9px
 		// border-right : 1px solid #292929
 
 		.mapper
-			background : #888
+			background : #222
 			width : 100%
 			height : 100%
 			// padding : 0 10px
@@ -1257,11 +1257,9 @@ td
 		background : #444
 
 td.active
-	background : #777
 	color : white
 	cursor : pointer
 	position : relative
-	background : #292929
 	&:hover
 		// background : #777!important
 		background : #be2620 url(../../images/bgBox_disconnect.png) no-repeat center center !important 
@@ -2176,7 +2174,7 @@ html[xmlns] .clearfix
 	float : left
 	width : 100%
 .quiddity
-	min-height : 50px
+	min-height : 45px
 	position : relative
 	background : #222
 	float : left
@@ -2188,17 +2186,19 @@ html[xmlns] .clearfix
 		padding : 0 10px
 		text-align: center
 		float : left
-		line-height: 50px
+		background : #222
+		line-height: 45px
 .shmdatas
 	float : left
-	background: #2b2b2b
-	min-height: 50px
+	// min-height: 50px
 	margin-left : 120px
 	.shmdata td, .shmdata th, tr.shmdata
 		border : 1px solid #333
 		color : #eee
+		height : 45px
 	.shmdata th
 		cursor : help
+		background : #222
 	th:after
 		content : ""
 		position: absolute
@@ -2214,6 +2214,12 @@ html[xmlns] .clearfix
 	td.box
 		border-color : #444
 
+
+#control
+	.source
+		margin : 10px 0 0 
+	.property
+		background : #222
 
 .destinations
 	td.destination
@@ -2253,6 +2259,7 @@ html[xmlns] .clearfix
 	.vignette
 		position : absolute
 		left : 20px
+		top : 20px
 	.shmdatas
 		margin-left : 0
 
@@ -2268,15 +2275,16 @@ html[xmlns] .clearfix
 	top : 0
 	bottom : 0
 	//display : none
+	background : #222222
 	opacity : 0
 	.action
 		background : #222222
 		width : 70px
-		height : 50px
+		height : 45px
 		display: table-cell
 		vertical-align: middle
-		&:first-child
-			border-right : 1px solid #ccc
+		// &:first-child
+		// 	border-right : 1px solid #ccc
 		.remove
 			background : #aaa
 			color : #333
@@ -2306,8 +2314,17 @@ html[xmlns] .clearfix
 	// display : table
 	opacity : 1
 
-
-
+/* Table Sink */
+#sink
+	.quiddity .name
+		line-height : 50px
+	.infoTable
+		height : 60px
+.destinations
+	height : 50px
+#transfer
+	.vignette.local-sources
+		margin-top : -35px
 
 #audio .shmdata .preview
 	display : none

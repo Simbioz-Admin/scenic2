@@ -71,7 +71,7 @@
                   *	Allows to ask for remove a specific destination (destination)
                   */
 
-                 delete: function() {
+                 askDelete: function() {
                      var that = this;
 
                      var result = views.global.confirmation("Are you sure?", function(ok) {

@@ -101,10 +101,11 @@ define(
                                 _.each(destination.get("properties"), function(prop) {
                                     if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
                                 });
-
                                 _.each(shmdata_readers, function(shm) {
+                                    console.log(shm.path, that.model.get("path"));
                                     if (shm.path == that.model.get("path")) active = "active";
                                 });
+                                console.log("shmdata readers", shmdata_readers, active);
                                 // $(".shmdata tr", that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                                 $(that.el).append('<td class="box  ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                             }

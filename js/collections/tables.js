@@ -39,7 +39,7 @@ define(
 
 
                     /* Create a table for manage Audio device and connexion */
-                    var audioTable = {
+                    var sinkTable = {
                         name: 'Sink',
                         type: 'sink',
                         description: "Manage audio device and connexion audio",
@@ -105,7 +105,7 @@ define(
 
 
                     this.add(controlTable);
-                    this.add(audioTable);
+                    this.add(sinkTable);
                     this.add(transferTable);
 
                 }

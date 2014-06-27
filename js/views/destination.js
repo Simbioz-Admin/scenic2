@@ -52,7 +52,7 @@ define(
 
                     $(this.el).append(template);
                     //add the template to the destination table transfer
-                    if (this.model.get("category")) this.table.trigger("newCategoryTable", this.model.get("category").replace(" sink", ""));
+                    if (this.model.get("category")) this.table.trigger("newCategoryTable", this.table.get("type"), this.model.get("category").replace(" sink", ""));
 
                     var category = this.model.get("category") ? " [data-type='" + this.model.get("category").replace(" sink", "") + "']" : "";
                     $("#" + this.table.get("type") + category + " .destinations").append($(this.el));
@@ -106,7 +106,7 @@ define(
 
                 /* Called when the click event is on the button remove destination */
                 removeClick: function() {
-                    this.model.delete();
+                    this.model.askDelete();
                 },
 
 

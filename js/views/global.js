@@ -91,7 +91,7 @@ define(
                     $("#msgHighLight").remove();
                     $("body").append("<div id='msgHighLight' class='" + type + "'>" + msg + "</div>");
                     $("#msgHighLight").animate({
-                        top: "50"
+                        top: "40"
                     }, speed, function() {
                         $(this).delay(4000).animate({
                             top: "-50"

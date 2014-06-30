@@ -69,7 +69,6 @@ define(
 
                 render: function() {
 
-
                     /* remove all properties */
                     $(".shmdatas", this.el).html("");
 
@@ -79,7 +78,6 @@ define(
                         countProperty = 0;
 
 
-                    console.log("render properties of source table control", collections.destinationProperties.toJSON());
                     _.each(properties, function(property, index) {
                         if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
                             var propertyTpl = _.template(TemplateSourceProperty, {

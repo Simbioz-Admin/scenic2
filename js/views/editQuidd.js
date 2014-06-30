@@ -129,7 +129,7 @@ define(
                 /*Called when a property is removed to the quiddity */
 
                 removeProperty: function(property) {
-                    $("#" + property, this.el).remove();
+                    $("#prop_" + property, this.el).remove();
                 },
 
 

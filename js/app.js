@@ -82,6 +82,7 @@ define(
 
                             views.global = new ViewGlobal();
                             views.systemusage = new ViewSystemUsage();
+                            //views.htop = new ViewHtop();
 
                             collections.irc = new CollectionIrcs();
                             views.ircs = new ViewIrcs();

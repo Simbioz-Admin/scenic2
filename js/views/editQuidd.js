@@ -37,7 +37,8 @@ define(
 
                 events: {
                     "change input.property, select.property": "setProperty",
-                    "click .setMethod": "setMethod"
+                    "click .setMethod": "setMethod",
+                    "click input": "selectFocus"
                 },
 
                 /* Called when the view is initialized */
@@ -76,7 +77,10 @@ define(
                     views.global.openPanel();
 
                 },
-
+                
+                selectFocus: function selectFocus() {
+                    event.target.select();
+                },
 
                 /* Called when a new method is added to the quiddity */
 

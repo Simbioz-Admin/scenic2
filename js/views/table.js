@@ -121,6 +121,7 @@ define(
                     }, {
                         select: function(event, ui) {
                             event.preventDefault();
+                            event.stopPropagation();
                             views.quidds.defineName(ui.item);
                         }
                     }).focus();

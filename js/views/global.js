@@ -57,13 +57,14 @@ define(
                     "touchstart .tabTable": 'showTable',
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
+                    "click #panelInfo, #panelFiles, #btnSave, #panelSave, #btnGetFiles, .content": "preventPropagation"
                 },
-
 
                 /* Called when the view is initialized */
 
                 initialize: function() {
-
+                    $('body').bind('click', this.closePanel);
+                    $('body').bind('click', this.panelBoxRemove);
                     var that = this;
                     /** Event called when the server has a message for you */
                     socket.on("msg", function(type, msg) {
@@ -81,8 +82,14 @@ define(
                     });
 
                 },
-
-
+                
+                /* 
+                 * DOn't propagate events through visible elements
+                 */
+                preventPropagation: function preventPropagation (element) {
+                    element.stopPropagation();
+                },
+                
                 /* Function called for show a specific message in the interface */
 
                 notification: function(type, msg) {
@@ -151,7 +158,8 @@ define(
                 },
 
 
-                create_receiver: function(e) {
+                create_receiver: function(element) {
+                    element.stopPropagation();
                     var template = _.template(TemplateReceiver);
                     $("#panelRight .content").html(template);
                     views.global.openPanel();
@@ -160,7 +168,7 @@ define(
 
                 add_receiver: function(e) {
                     e.preventDefault();
-
+                    e.stopPropagation();
                     var destination = {
                         name: $("#clientName").val(),
                         hostName: $("#clientHost").val(),
@@ -341,7 +349,8 @@ define(
 
                 /* Called for showing panel Info  */
 
-                panelInfo: function() {
+                panelInfo: function(element) {
+                    element.stopPropagation();
                     if ($("#panelInfo").length == 0) {
                         $(".panelBox").remove();
                         var template = _.template(panelInfoTemplate, {
@@ -349,7 +358,7 @@ define(
                             host: config.host,
                             soap: config.port.soap
                         });
-                        $("#btn-info").after(template);;
+                        $("#btn-info").after(template);
                     } else {
                         $("#panelInfo").remove();
                     }
@@ -360,6 +369,9 @@ define(
 
                 closePanelInfoSource: function() {
                     $(".panelInfoSource").remove();
+                },
+                panelBoxRemove: function panelInfoRemove() {
+                    $(".panelBox").remove();
                 },
 
                 /* Called for switcher between the different table (control and tranfer) */

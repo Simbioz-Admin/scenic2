@@ -38,7 +38,8 @@ define(
                 events: {
                     "change input.property, select.property": "setProperty",
                     "click .setMethod": "setMethod",
-                    "click input": "selectFocus"
+                    "click input": "selectFocus",
+                    "click #form-quidd, #title" : "handlePropagation"
                 },
 
                 /* Called when the view is initialized */
@@ -76,6 +77,10 @@ define(
                     $("#panelRight .content").html($(this.el));
                     views.global.openPanel();
 
+                },
+                handlePropagation: function handlePropagation(element) {
+                    console.log("modal clicked");
+                    element.stopPropagation();
                 },
                 
                 selectFocus: function selectFocus() {
@@ -219,7 +224,6 @@ define(
                 /* Called for set a method  */
 
                 setMethod: function(element) {
-
                     var that = this,
                         method = $(element.target).attr("id"),
                         valueMethod = $("[name='" + method + "']").val();

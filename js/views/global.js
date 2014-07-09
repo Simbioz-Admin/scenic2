@@ -58,7 +58,7 @@ define(
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
                     "click  #panelInfo, #panelFiles, #btnSave, #quiddName,\
-                     #panelSave, #btnGetFiles": "preventPropagation"
+                     #panelSave, #btnGetFiles, #device, .edit": "preventPropagation"
                 },
 
                 /* Called when the view is initialized */

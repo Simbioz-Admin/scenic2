@@ -57,7 +57,8 @@ define(
                     "touchstart .tabTable": 'showTable',
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
-                    "click #panelInfo, #panelFiles, #btnSave, #panelSave, #btnGetFiles, .content": "preventPropagation"
+                    "click  #panelInfo, #panelFiles, #btnSave, #quiddName,\
+                     #panelSave, #btnGetFiles": "preventPropagation"
                 },
 
                 /* Called when the view is initialized */
@@ -254,7 +255,7 @@ define(
                 save: function(e) {
                     e.preventDefault();
                     var nameFile = $("#name_file").val(),
-                        that = this;
+                    that = this;
 
                     if (nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
                         that.notification("error", "the name is not correct (ex : save_202) ");
@@ -330,11 +331,11 @@ define(
                     var that = this;
                     if (!this.statePanelLog) {
                         $("#log").animate({
-                                "right": 0
-                            },
-                            function() {
-                                that.statePanelLog = true;
-                            });
+                            "right": 0
+                        },
+                                          function() {
+                                              that.statePanelLog = true;
+                                          });
                     } else {
                         $("#log").animate({
                             "right": -$("#log").width() - 61

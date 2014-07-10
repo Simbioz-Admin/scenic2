@@ -10,10 +10,11 @@ define(
         'underscore',
         'backbone',
         'text!../../templates/shmdata.html',
-        'text!../../templates/panelInfoSource.html'
+        'text!../../templates/panelInfoSource.html',
+        'libs/StringTricks'
     ],
 
-    function(_, Backbone, TemplateShmdata, infoTemplate) {
+    function(_, Backbone, TemplateShmdata, infoTemplate, ST) {
 
         /** 
          *  @constructor
@@ -52,7 +53,11 @@ define(
 
                 /* Called for render the view */
                 render: function() {
-                    var nameShm = this.model.get("path").split('_')[3];
+                    // var nameShm = this.model.get("path").split('_')[3];
+                    // var nameShm = this.model.get("path");
+                    var pathShm = this.model.get("path").split("/");
+                    var fullNameShm = pathShm[pathShm.length -1];
+                    nameShm = ST.mask(fullNameShm);
                     templateShmdata = _.template(TemplateShmdata, {
                         name: nameShm,
                         nameQuidd: this.model.get("quidd"),

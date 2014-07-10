@@ -23,12 +23,9 @@ define (function () {
             } else {
                 // get the opening characters
                 var opening = str.substring(0, beginning);
-                console.log("opening " + opening)
                 // get the closing characters
                 var closing = str.substring(str.length - end, str.length);
-                console.log("closing " + closing);
                 var ret = opening + "..." + closing;
-                console.log("returns " + ret);
                 return ret
             }
         }

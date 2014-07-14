@@ -57,8 +57,9 @@ define(
                     "touchstart .tabTable": 'showTable',
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
-                    "click  #form-destination, #panelInfo, #panelFiles, #btnSave, #quiddName,\
-                     #panelSave, #btnGetFiles, #device, .edit": "preventPropagation"
+                    "click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
+                     #btnSave, #quiddName, #panelSave, #btnGetFiles,\
+                     #device, .edit": "preventPropagation"
                 },
 
                 /* Called when the view is initialized */
@@ -88,6 +89,7 @@ define(
                  * DOn't propagate events through visible elements
                  */
                 preventPropagation: function preventPropagation (element) {
+                    console.log("Stopping propagation on: ", element);
                     element.stopPropagation();
                 },
                 

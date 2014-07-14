@@ -57,7 +57,7 @@ define(
                     "touchstart .tabTable": 'showTable',
                     "click #create_receiver": "create_receiver",
                     "click #add-receiver": "add_receiver",
-                    "click  #panelInfo, #panelFiles, #btnSave, #quiddName,\
+                    "click  #form-destination, #panelInfo, #panelFiles, #btnSave, #quiddName,\
                      #panelSave, #btnGetFiles, #device, .edit": "preventPropagation"
                 },
 

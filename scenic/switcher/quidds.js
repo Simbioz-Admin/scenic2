@@ -270,7 +270,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             var invoke = switcher.invoke(quiddName, method, parameters);
             log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
             if (!invoke) {
-                log.error("failed to invoke " + quiddname + " method " + method);
+                log.error("failed to invoke " + quiddName + " method " + method);
                 return;
             }
             if (callback) callback(invoke);

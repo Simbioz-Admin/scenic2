@@ -65,10 +65,10 @@ define(
                     var quidds = {};
                     collections.quidds.each(function(quidd) {
                         var quiddCategory = quidd.get("category");
-                        if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
+                        if (quiddCategory.indexOf("System") == -1 && quiddCategory.indexOf("mapper") == -1 && quidd.get("class") != "midisrc") {
                             var listProperties = [];
                             _.each(quidd.get("properties"), function(property) {
-                                if (!collections.destinationProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
+                                if (!collections.destinationProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started" && property.type != "string") {
                                     listProperties.push(property.name);
                                     quidds[quidd.get("name")] = listProperties;
                                 }

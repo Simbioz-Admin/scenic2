@@ -84,15 +84,14 @@ define(
                     });
 
                 },
-                
+
                 /* 
                  * DOn't propagate events through visible elements
                  */
-                preventPropagation: function preventPropagation (element) {
-                    console.log("Stopping propagation on: ", element);
+                preventPropagation: function preventPropagation(element) {
                     element.stopPropagation();
                 },
-                
+
                 /* Function called for show a specific message in the interface */
 
                 notification: function(type, msg) {
@@ -257,7 +256,7 @@ define(
                 save: function(e) {
                     e.preventDefault();
                     var nameFile = $("#name_file").val(),
-                    that = this;
+                        that = this;
 
                     if (nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
                         that.notification("error", "the name is not correct (ex : save_202) ");
@@ -333,11 +332,11 @@ define(
                     var that = this;
                     if (!this.statePanelLog) {
                         $("#log").animate({
-                            "right": 0
-                        },
-                                          function() {
-                                              that.statePanelLog = true;
-                                          });
+                                "right": 0
+                            },
+                            function() {
+                                that.statePanelLog = true;
+                            });
                     } else {
                         $("#log").animate({
                             "right": -$("#log").width() - 61

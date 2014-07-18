@@ -105,7 +105,7 @@ define(
                         .attr("height", 400);
                     
                     var vumeter = vis.append("path")
-                        .data(this.info.cpu)
+                        .datum(this.info.cpu)
                         .enter().append("path")
                         .attr("d", this.arc)
                         .style("fill", "blue")

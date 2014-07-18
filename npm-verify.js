@@ -113,16 +113,20 @@ function scenicRequire(deps, installed, callback) {
     console.log("to install : ", toInstall);
     var spawn = require('child_process').spawn
     if (toInstall.length) {
-        var notify = spawn("notify-send", [
-            "--icon=" + cwd + "/assets/images/logo_sat.png",
-            "Scenic2", 
-            "Downloading and installing dependencies. Scenic2 will start automatically"]);
-        notify.on("close", function notifyExit(code) {
-            console.log("Notify exited with code: ", code);
-        });
-        notify.stderr.on('data', function notifyData(data){
-            console.log("notify error: ", data.toString());
-        });
+        try {
+            var notify = spawn("notify-send", [
+                "--icon=" + cwd + "/assets/images/logo_sat.png",
+                "Scenic2", 
+                "Downloading and installing dependencies. Scenic2 will start automatically"]);
+            notify.on("close", function notifyExit(code) {
+                console.log("Notify exited with code: ", code);
+            });
+            notify.stderr.on('data', function notifyData(data){
+                console.log("notify error: ", data.toString());
+            });
+        } catch (e) {
+            console.log("An ", e, "occured. Not displying a notify message");
+        }
         // var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
         //     detached: true,
         //     stdio: ['ignore', null, null]

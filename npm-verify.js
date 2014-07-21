@@ -124,6 +124,10 @@ function scenicRequire(deps, installed, callback) {
             notify.stderr.on('data', function notifyData(data){
                 console.log("notify error: ", data.toString());
             });
+            notify.on('error', function onError(error) {
+                console.log("There was an error", error);
+                console.log("message was not displayed to the user");
+            });
         } catch (e) {
             console.log("An ", e, "occured. Not displying a notify message");
         }

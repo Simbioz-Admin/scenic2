@@ -4,21 +4,40 @@
 #preview_usagesystem
 	color : white
 	position : relative
-	.cpus
-		margin : 4px auto
-		height : 32px
+	.info
+		height : 12px
+		margin : 2px auto
 		position : relative
-	.bar
-		width : 3px
-		height : 2%
-		background : #555
-		position : absolute
-		bottom : 0
-		&.alert
-			background : #be2620
+		width : 100%
+	.cpus
+		//background : blue
+		height : 10px
+		.bar
+			width : 3px
+			height : 2%
+			background : #555
+			position : absolute
+			bottom : 0
+	.alert
+		background : #be2620!important
+	.memory
+		height : 4px
+		// background : green
+		.bar
+			height : 3px
+			background : #555
+			width : 100%
+			margin : 0 0 3px 0
+	.network
+		//background : orange
+		height : 20px
+		font-size : 9px
+		text-align : left
+		color : #ccc
+
 	.cpu_info
 		text-align: center
-		padding : 5px
+		padding : 2px 5px
 	.total
 		font-size : 14px
 	.text

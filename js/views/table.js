@@ -10,10 +10,11 @@ define(
         'underscore',
         'backbone',
         'text!../../templates/table/table.html',
+        'text!../../templates/table/category.html',
         'text!../../templates/table/sub_menu.html',
     ],
 
-    function(_, Backbone, TemplateTable, TemplateSubMenu) {
+    function(_, Backbone, TemplateTable, TemplateCategory, TemplateSubMenu) {
 
         /** 
          *	@constructor
@@ -48,7 +49,9 @@ define(
 
 
                     this.model.on("trigger:menu", this.get_classes, this);
-
+                    if (this.model.get("type") == "sink") {
+                        this.model.on('newCategoryTable', this.newCategoryTable, this);
+                    }
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
@@ -118,6 +121,7 @@ define(
                     }, {
                         select: function(event, ui) {
                             event.preventDefault();
+                            event.stopPropagation();
                             views.quidds.defineName(ui.item);
                         }
                     }).focus();
@@ -143,11 +147,10 @@ define(
                         box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
                     }
 
-                    if (this.model.get("type") == "audio") {
+                    if (this.model.get("type") == "sink") {
                         if (box.hasClass("active")) {
                             socket.emit("invoke", destination, "disconnect", [], function(data) {})
                         } else {
-
                             socket.emit("invoke", destination, "connect", [path], function(data) {});
                         }
                     }
@@ -234,7 +237,23 @@ define(
                         });
                         $(element.target).after(template);
                     });
+                },
+
+                /* add a new table for category */
+
+                newCategoryTable: function(tableType, type) {
+                    console.log("ask to create category table", tableType, type);
+                    if (tableType == this.model.get("type")) {
+                        /* check if already exist */
+                        if ($("[data-type='" + type + "']", this.el).length == 0) {
+                            var templateCatTable = _.template(TemplateCategory, {
+                                type: type
+                            });
+                            $(this.el).append(templateCatTable);
+                        }
+                    }
                 }
+
             });
 
         return TableView;

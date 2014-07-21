@@ -50,9 +50,9 @@ define(
                  */
 
                 defineName: function(element) {
-                    console.log(element);
                     var className = $(element).data("name");
                     var getDevices = $(element).hasClass("autoDetect");
+
                     /* get  the information about the device in property value of quiddity */
                     if (getDevices) {
                         socket.emit("get_property_by_class", className, "device", function(property) {
@@ -63,7 +63,7 @@ define(
                                 views.global.notification("error", "no video device");
                             }
                         });
-                    } else {
+                    } else if (className) {
                         openPanelDefineName(false);
                     }
 
@@ -157,7 +157,6 @@ define(
                 /* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
 
                 removePreviewIcon: function(quidd) {
-                    console.log(quidd);
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
                     $("[data-path='" + shmdata + "'] .preview").removeClass("active");
@@ -166,7 +165,6 @@ define(
                     var that = this
                     var shmdata = quidd.split('_');
                     shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
-                    console.log($("[data-path='" + shmdata + "'] .preview").length);
 
                     var IntervalPreviewExisting = setInterval(function() {
                         if ($("[data-path='" + shmdata + "'] .preview").length > 0) {

@@ -37,7 +37,9 @@ define(
 
                 events: {
                     "change input.property, select.property": "setProperty",
-                    "click .setMethod": "setMethod"
+                    "click .setMethod": "setMethod",
+                    "click input": "selectFocus",
+                    "click #form-quidd, #title" : "handlePropagation"
                 },
 
                 /* Called when the view is initialized */
@@ -76,7 +78,14 @@ define(
                     views.global.openPanel();
 
                 },
-
+                handlePropagation: function handlePropagation(element) {
+                    console.log("modal clicked");
+                    element.stopPropagation();
+                },
+                
+                selectFocus: function selectFocus() {
+                    event.target.select();
+                },
 
                 /* Called when a new method is added to the quiddity */
 
@@ -129,7 +138,7 @@ define(
                 /*Called when a property is removed to the quiddity */
 
                 removeProperty: function(property) {
-                    $("#" + property, this.el).remove();
+                    $("#prop_" + property, this.el).remove();
                 },
 
 
@@ -215,7 +224,6 @@ define(
                 /* Called for set a method  */
 
                 setMethod: function(element) {
-
                     var that = this,
                         method = $(element.target).attr("id"),
                         valueMethod = $("[name='" + method + "']").val();

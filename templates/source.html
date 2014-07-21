@@ -1,37 +1,10 @@
-<%  if(shmdata){ %><tr class="shmdata inactive" data-path="<%=shmdata.path%>" data-quiddName="<%=sourceName%>">
-	<% if(index == 0){ %>
-		<td rowspan="<%=nbShmdata%>" class="group groupSource" >
-			<div style="position:relative">
-				<div class="edit"></div>
-				<div class="vertical short nameSource"><%=sourceName%></div>
-				<div class="actions">
-					<div class="action"><div class="edit"></div></div>
-					<div class="action"><div class="remove">x</div></div>
-				</div>
-			</div>
-			
-		</td>
-	<% } %>
-	<th scope="row" class="nameInOut" >
-		<div class="short">
-			<a href="#" class='info'><% var nameShm = shmdata.path.split("_")  %><%=nameShm[nameShm.length-1]%></a>
+<div class="quiddity" id="quidd_<%=name%>" data-quiddname="<%=name%>">
+	<div class="name"><%=name%>
+		<div class="actions">
+			<div class="action"><div class="edit edit-source"></div></div>
+			<div class="action"><div class="remove remove-source">x</div></div>
 		</div>
-
-	</th>
-
-	<%=connexions%>
-
-</tr>
-<% }else{ %><tr data-quiddName="<%=sourceName%>">
-		<td rowspan="" class="group groupSource" >
-			<div style="position:relative">
-				<div class="edit"></div>
-				<div class="vertical short nameSource"><%=sourceName%></div>
-				<div class="actions">
-					<div class="action"><div class="edit"></div></div>
-					<div class="action"><div class="remove">x</div></div>
-				</div>
-			</div>
-		</td>
-	</tr>
-<% } %>
+	</div>
+	<table class="shmdatas">
+	</table>
+</div>

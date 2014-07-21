@@ -3,6 +3,7 @@ var config = require("./scenic/settings/config.js")('npm-verify');
 var scenicDependenciesPath = config.scenicDependenciesPath;
 var scenicSavePath = config.scenicSavePath;
 var fs = require('fs');
+var cwd = __dirname;
 
 //console.log(scenicSavePath);
 ////console.log("currend dir: " + __dirname);
@@ -71,8 +72,8 @@ function createNpmDependenciesArray(packageFilePath) {
 function returnInstalled(stuff) {
     reported = stuff;
     scenicRequire(createNpmDependenciesArray(p), reported);
-    //console.log("returnInstalled returns: ", stuff);
-    return stuff;
+    console.log("returnInstalled returns: ", stuff);
+    return reported;
 }
 
 function scenicDependenciesSearch(dependencies, callback) {
@@ -80,17 +81,17 @@ function scenicDependenciesSearch(dependencies, callback) {
     npm.load({
         prefix: scenicDependenciesPath
     }, function(err, npm) {
-        //console.log("npm.load ")
+        console.log("npm.load ")
         npm.commands.ls([], true, function(err, data, lite) {
-            if (err) //console.log("npm.ls returned this error: ", err);
+            if (err) console.log("npm.ls returned this error: ", err);
             //console.log("lite's length: ", data);
                 for (var key in lite.dependencies) {
-                    //console.log(lite.dependencies[key].from);
+                    console.log(lite.dependencies[key].from);
                     installed.push(lite.dependencies[key].from);
                 }
                 //console.log("These packages are already installed", installed);
             for (var i = 0; i < installed.length; i++) {
-                //console.log("Detected: " + installed[i]);
+                console.log("Detected: " + installed[i]);
             }
 
             callback(installed);
@@ -101,40 +102,64 @@ function scenicDependenciesSearch(dependencies, callback) {
 var done = scenicDependenciesSearch(createNpmDependenciesArray(p), returnInstalled);
 
 function scenicRequire(deps, installed, callback) {
-    //console.log("scenicRequire fired");
+    console.log("scenicRequire fired");
     var dependencies = deps;
     var installed = installed;
-    //console.log("dependencies : ", dependencies);
-    //console.log("installed : ", installed);
+    console.log("dependencies : ", dependencies);
+    console.log("installed : ", installed);
     // find the difference between the dependency list and installed packages.
     // it compares package versions!!!
     var toInstall = dependencies.difference(installed)
-    //console.log("to install : ", toInstall);
+    console.log("to install : ", toInstall);
     var spawn = require('child_process').spawn
-    if (toInstall.length > 0) {
-        var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
-            detached: true,
-            stdio: ['ignore', null, null]
-        });
-        chrome.unref();
-        chrome.on('close', function(code) {
-            tmpServer.close();
-            spawn("./scenic2");
-            process.exit();
-        });
-
-
+    if (toInstall.length) {
+        try {
+            var notify = spawn("notify-send", [
+                "--icon=" + cwd + "/assets/images/logo_sat.png",
+                "Scenic2", 
+                "Downloading and installing dependencies. Scenic2 will start automatically"]);
+            notify.on("close", function notifyExit(code) {
+                console.log("Notify exited with code: ", code);
+            });
+            notify.stderr.on('data', function notifyData(data){
+                console.log("notify error: ", data.toString());
+            });
+            notify.on('error', function onError(error) {
+                console.log("There was an error", error);
+                console.log("message was not displayed to the user");
+            });
+        } catch (e) {
+            console.log("An ", e, "occured. Not displying a notify message");
+        }
+        // var chrome = spawn("chromium-browser", [" --app=http://localhost:8096", "--window-size=300,400"], {
+        //     detached: true,
+        //     stdio: ['ignore', null, null]
+        // });
+        // chrome.unref();
+        // chrome.on('close', function(code) {
+        //     tmpServer.close();
+        //     spawn("./scenic2");
+        //     process.exit();
+        // });
         npm.load({
             prefix: scenicDependenciesPath
         }, function(err) {
+            if (err) {
+                console.log("npm.load reported an error: ", err);
+                
+            }
             npm.commands.install(toInstall, function(er, data) {
-                console.log("npm.commands.installed data: ", data);
-                chrome.kill('SIGHUP');
+                if (er) console.log("npm.commands.install error:", er);
+                if (data) console.log("npm.commands.installed data: ", data);
+                //         chrome.kill('SIGHUP');
+                tmpServer.close();
+                spawn("./scenic2");
+                //process.exit();
             });
 
         });
     } else {
-        //console.log("nothing to install");
+        console.log("nothing to install");
         //chrome.kill('SIGHUP');
         tmpServer.close();
         spawn("./scenic2");

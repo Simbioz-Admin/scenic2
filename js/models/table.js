@@ -1,163 +1,176 @@
 define(
 
-	/** 
-	 *	Model of Table
-	 *	Table is for organise in different table the source and destination
-	 *	@exports Models/table
-	 */
+    /** 
+     *	Model of Table
+     *	Table is for organise in different table the source and destination
+     *	@exports Models/table
+     */
 
-	[
-		'underscore',
-		'backbone',
-		'views/table',
-		'views/source', 'views/destination',
-	],
+    [
+        'underscore',
+        'backbone',
+        'views/table',
+        'views/source', 'views/destination',
+    ],
 
-	function(_, Backbone, ViewTable, ViewSource, ViewDestination) {
+    function(_, Backbone, ViewTable, ViewSource, ViewDestination) {
 
-		/** 
-		 *	@constructor
-		 *  @requires Underscore
-		 *  @requires Backbone
-		 *	@requires ViewTable
-		 *  @augments module:Backbone.Model
-		 */
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires ViewTable
+         *  @augments module:Backbone.Model
+         */
 
-		var TableModel = Backbone.Model.extend(
+        var TableModel = Backbone.Model.extend(
 
-			/**
-			 *	@lends module: Models/table~TableModel.prototype
-			 */
+            /**
+             *	@lends module: Models/table~TableModel.prototype
+             */
 
-			{
-				idAttribute: "name",
-				defaults: {
-					"name": null,
-					"type": null,
-					"description": null,
-					"menus": [],
-					"collectionSources": null,
-					"collectionDestinations": null
-				},
+            {
+                idAttribute: "name",
+                defaults: {
+                    "name": null,
+                    "type": null,
+                    "description": null,
+                    "menus": [],
+                    "collectionSources": null,
+                    "collectionDestinations": null
+                },
 
-				/* Called when the table is initialized and create a view */
+                /* Called when the table is initialized and create a view */
 
-				initialize: function() {
+                initialize: function() {
 
-					/* Create collection source and destination */
-					/* we check if it's already a collection */
-					if(this.get("sources").models){
-						this.set("collectionSources", this.get("sources"));
-					} else {
-						var quiddsSources = this.get_quidds("sources");
-						this.set("collectionSources", new Backbone.Collection);
-						this.get("collectionSources").add(quiddsSources);
-					}
+                    /* Create collection source and destination */
+                    /* we check if it's already a collection */
+                    if (this.get("sources").models) {
+                        this.set("collectionSources", this.get("sources"));
+                    } else {
+                        var quiddsSources = this.get_quidds("sources");
+                        this.set("collectionSources", new Backbone.Collection);
+                        this.get("collectionSources").add(quiddsSources);
+                    }
 
-					if(this.get("destinations").models){
-						this.set("collectionDestinations", this.get("destinations"));
-					} else {
-						var quiddsDestinations = this.get_quidds("destinations");
-						this.set("collectionDestinations", new Backbone.Collection);
-						this.get("collectionDestinations").add(quiddsDestinations);
+                    if (this.get("destinations").models) {
+                        this.set("collectionDestinations", this.get("destinations"));
+                    } else {
+                        var quiddsDestinations = this.get_quidds("destinations");
+                        this.set("collectionDestinations", new Backbone.Collection);
+                        this.get("collectionDestinations").add(quiddsDestinations);
 
-					}
+                    }
 
-					/* Create view for the table and associate this model */
+                    /* Create view for the table and associate this model */
 
-					var viewTable = new ViewTable({
-						model: this
-					});
+                    var viewTable = new ViewTable({
+                        model: this
+                    });
 
-					// console.log("classes", this.classes_authorized("sources"));
-				},
+                    // console.log("classes", this.classes_authorized("sources"));
+                },
 
-				/* Return the quiddities authorize baded on tyoe (source or destination) */
+                /* Return the quiddities authorize baded on tyoe (source or destination) */
 
-				get_quidds: function(orientation) {
+                get_quidds: function(orientation) {
 
-					/* parse global collection quidds contains all quidds already created for return just what you want */
-					if (this.get(orientation)) {
-						var quiddsSelect = this.get(orientation).select;
-						return collections.quidds.SelectQuidds(quiddsSelect);
-					}
-				},
+                    /* parse global collection quidds contains all quidds already created for return just what you want */
+                    if (this.get(orientation)) {
+                        var quiddsSelect = this.get(orientation).select;
+                        return collections.quidds.SelectQuidds(quiddsSelect);
+                    }
+                },
 
-				/* Return list of quiddity you can created for this table */
+                /* Return list of quiddity you can created for this table */
 
-				classes_authorized: function(orientation) {
+                classes_authorized: function(orientation) {
 
-					var classes, that = this;
+                    var classes, that = this;
 
-					if (!this.get(orientation)) return null;
+                    if (!this.get(orientation)) return null;
 
-					/* if specified category selected */
-					if (this.get(orientation).select) {
-						classes = collections.classesDoc.getByCategory(this.get(orientation).select);
-					} else {
-						classes = collections.classesDoc.toJSON();
-					}
+                    /* if specified category selected */
+                    if (this.get(orientation).select) {
+                        classes = collections.classesDoc.getByCategory(this.get(orientation).select);
+                    } else {
+                        classes = collections.classesDoc.toJSON();
+                    }
 
-					if (this.get(orientation).exclude) {
-						classes = _.filter(classes, function(clas) {
-							if (!_.contains(that.get(orientation).exclude, clas["category"])) return clas
-						});
-					}
+                    if (this.get(orientation).exclude) {
+                        classes = _.filter(classes, function(clas) {
+                            if (!_.contains(that.get(orientation).exclude, clas["category"])) return clas
+                        });
+                    }
 
-					return classes;
+                    return classes;
 
-				},
-				is_authorize: function(orientation, quiddClass) {
-					var authorized = _.find(this.classes_authorized(orientation), function(clas) {
-						return clas["class name"] == quiddClass;
-					});
+                },
+                is_authorize: function(quiddClass) {
+                    var authorized_source = _.find(this.classes_authorized("sources"), function(clas) {
+                        return clas["class name"] == quiddClass;
+                    });
 
-					return (authorized ? true  : false);
-				},
+                    var authorized_destination = _.find(this.classes_authorized("destinations"), function(clas) {
+                        return clas["class name"] == quiddClass;
+                    });
 
-				/* determine if we add the quidd to the table and create view for */
+                    return {
+                        source: authorized_source ? true : false,
+                        destination: authorized_destination ? true : false
+                    }
+                },
 
-				add_to_table: function(quidd) {
+                /* determine if we add the quidd to the table and create view for */
 
-					/* if we found class in authorized we add to the collection et create view */
+                // add_to_table: function(quidd) {
 
-					if (this.is_authorize("sources", quidd.get("class"))) {
-						/* insert in collection */
-						this.get("collectionSources").add(quidd);
-						/* Create a view */
-						new ViewSource({ model: quidd, table : this.get("type") });
-					}
+                //     /* if we found class in authorized we add to the collection et create view */
 
-					if(this.is_authorize("destinations", quidd.get("class"))){
-						/* insert in collection destination of this table */
-						this.get("collectionDestinations").add(quidd);
-						/* Create a view */
-						new ViewDestination({ model : quidd, table : this.get("type") });
-					}
+                //     if (this.is_authorize("sources", quidd.get("class"))) {
+                //         /* insert in collection */
+                //         this.get("collectionSources").add(quidd);
+                //         /* Create a view */
+                //         new ViewSource({
+                //             model: quidd,
+                //             table: this.get("type")
+                //         });
+                //     }
 
-				},
+                //     if (this.is_authorize("destinations", quidd.get("class"))) {
+                //         /* insert in collection destination of this table */
+                //         this.get("collectionDestinations").add(quidd);
+                //         /* Create a view */
+                //         new ViewDestination({
+                //             model: quidd,
+                //             table: this.get("type")
+                //         });
+                //     }
 
-				/* Called for know if the quiddity can be added to the table */
+                // },
 
-				// addToTable: function(type, value) {
+                /* Called for know if the quiddity can be added to the table */
 
-				// 	// var addToTable = false
-				// 	// if(this.get("menus")[type].byCategory){
-				// 	// 	var	select = this.get("menus")[type].byCategory.select
-				// 	// 	,	exclude = this.get("menus")[type].byCategory.excludes;
+                // addToTable: function(type, value) {
 
-				// 	// 	if (select && _.contains(select, value)) addToTable = true;
-				// 	// 	if (exclude && _.contains(exclude, value)) {
-				// 	// 		addToTable = false;
-				// 	// 	} else if (!select) {
-				// 	// 		addToTable = true;
-				// 	// 	}
-				// 	// }
-				// 	// return addToTable;
+                // 	// var addToTable = false
+                // 	// if(this.get("menus")[type].byCategory){
+                // 	// 	var	select = this.get("menus")[type].byCategory.select
+                // 	// 	,	exclude = this.get("menus")[type].byCategory.excludes;
 
-				// },
+                // 	// 	if (select && _.contains(select, value)) addToTable = true;
+                // 	// 	if (exclude && _.contains(exclude, value)) {
+                // 	// 		addToTable = false;
+                // 	// 	} else if (!select) {
+                // 	// 		addToTable = true;
+                // 	// 	}
+                // 	// }
+                // 	// return addToTable;
 
-			});
+                // },
 
-		return TableModel;
-	})
+            });
+
+        return TableModel;
+    })

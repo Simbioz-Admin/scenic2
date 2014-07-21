@@ -33,7 +33,7 @@ define(
                 className: 'mapper',
                 table: null,
                 events: {
-                    "click .edit-mapper": "edit",
+                    "click": "edit",
                     "click .remove-mapper": "removeClick"
                 },
 
@@ -51,12 +51,10 @@ define(
                     var template = _.template(TemplateMapper);
                     var that = this;
                     $(this.el).html(template);
-                    //find the connection
 
-                    console.log("ADD");
                     /* sometimes shmdata is not generate and we dont find box */
                     var IntervalAdd = setInterval(function() {
-                        var box = $("[data-quiddname='" + info[1] + "'][data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
+                        var box = $("[data-quiddname='" + info[1] + "'] [data-propertyname='" + info[2] + "'] [data-nameandproperty='" + info[3] + "_" + info[4] + "']");
                         if (box.length > 0) {
                             window.clearInterval(IntervalAdd);
                             box.html($(that.el));

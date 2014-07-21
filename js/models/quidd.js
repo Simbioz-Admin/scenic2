@@ -8,11 +8,11 @@ define(
     [
         'underscore',
         'backbone',
-        'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd',
+        'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
         'text!../../templates/panelInfoSource.html'
     ],
 
-    function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, infoTemplate) {
+    function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata, infoTemplate) {
 
         /** 
          *	@constructor
@@ -46,6 +46,7 @@ define(
                     "methods": [],
                     "encoder_category": null,
                     "shmdatas": null,
+                    "shmdatasCollection": null,
                     "view": null,
                 },
 
@@ -59,22 +60,70 @@ define(
                 initialize: function() {
                     var that = this;
 
+                    var ShmdataCollection = Backbone.Collection.extend({
+                        model: ModelShmdata
+                    });
+                    this.set("shmdatasCollection", new ShmdataCollection());
+
 
                     socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
 
-                        if (err) return views.global.notification("error", err);
-                        if (shmdatas) {
-                            that.set({
-                                shmdatas: shmdatas.shmdata_writers
-                            });
+                        /* create model for each shmdata of the quiddity */
+                        if (!shmdatas.err) {
+                            that.updateShmdatas(shmdatas.shmdata_writers);
                         }
+
+                        // if (err) return views.global.notification("error", err);
+                        // if (shmdatas) {
+                        //     that.set({
+                        //         shmdatas: shmdatas.shmdata_writers
+                        //     });
+                        // }
 
 
                         /* ViewSource it's a view for create a entry source to the table transfer */
 
                         if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
                             _.each(collections.tables.models, function(tableModel) {
-                                tableModel.add_to_table(that);
+
+                                /* 1. Check autorization (sources / destinations) for create view for each table */
+                                var authorization = tableModel.is_authorize(that.get("class"));
+
+                                if (authorization.source) {
+
+                                    /* insert in collection */
+                                    tableModel.get("collectionSources").add(that);
+
+                                    /* we create a view source for table transfer and after that we create view for shmdata */
+                                    // if (tableModel.get("type") == "transfer") {
+                                    new ViewSource({
+                                        model: that,
+                                        table: tableModel
+                                    });
+                                    // }
+
+                                    // if (tableModel.get("type") == "sink") {
+                                    //     console.log("create view shmdata standalone!");
+
+                                    // }
+                                }
+
+                                if (authorization.destination) {
+                                    /* insert in collection destination of this table */
+                                    tableModel.get("collectionDestinations").add(that);
+                                    /* Create a view */
+                                    new ViewDestination({
+                                        model: that,
+                                        table: tableModel
+                                    });
+                                }
+
+                                /* 2. Create View appropriate for type of table */
+
+
+                                // tableModel.add_to_table(that);
+
+
                             });
                         }
 
@@ -108,6 +157,24 @@ define(
                         }
 
                     });
+                },
+
+                updateShmdatas: function(shmdatas) {
+                    var that = this;
+                    var collShmdatas = that.get("shmdatasCollection");
+                    // collShmdatas.reset();
+                    collShmdatas.each(function(shm) {
+                        shm.trigger("destroy", shm);
+                    });
+                    if (shmdatas && shmdatas.length > 0) {
+                        _.each(shmdatas, function(shm) {
+                            collShmdatas.add({
+                                path: shm.path,
+                                quidd: that.get("name")
+                            });
+                        });
+                    }
+                    this.trigger("updateShmdatas", this);
                 },
 
                 /**
@@ -153,16 +220,6 @@ define(
                     });
                 },
 
-                updateByteRate: function(quiddFakeSink, shmdata, value) {
-                    var that = this;
-                    var shmdatas = this.get("shmdatas");
-                    _.each(shmdatas, function(shm) {
-                        if (shm.path == shmdata && shm["byte-rate"] != value) {
-                            shm['byte-rate'] = value;
-                            that.trigger("updateByteRate", quiddFakeSink, shmdata, value);
-                        }
-                    });
-                },
 
                 /**
                  *	Allows viewing of video quiddities type and audio
@@ -200,27 +257,27 @@ define(
                  *	the information is present in vumeter quiddity created with each quiddity soruce
                  */
 
-                info: function(element) {
-                    var shmdata = $(element.target).closest('tr').data("path");
-                    var that = this;
-                    collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-                        val = val.replace(/,/g, "<br>");
-                        var template = _.template(infoTemplate, {
-                            info: val,
-                            shmdata: shmdata
-                        });
-                        $("#info").remove();
-                        $("body").prepend(template);
-                        $("#info").css({
-                            top: element.pageY,
-                            left: element.pageX
-                        }).show();
-                        $(".panelInfo").draggable({
-                            cursor: "move",
-                            handle: "#title"
-                        });
-                    });
-                },
+                // info: function(element) {
+                //     var shmdata = $(element.target).closest('tr').data("path");
+                //     var that = this;
+                //     collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
+                //         val = val.replace(/,/g, "<br>");
+                //         var template = _.template(infoTemplate, {
+                //             info: val,
+                //             shmdata: shmdata
+                //         });
+                //         $("#info").remove();
+                //         $("body").prepend(template);
+                //         $("#info").css({
+                //             top: element.pageY,
+                //             left: element.pageX
+                //         }).show();
+                //         $(".panelInfo").draggable({
+                //             cursor: "move",
+                //             handle: "#title"
+                //         });
+                //     });
+                // },
 
                 /*
                  *	Set the property value of the quiddity

@@ -12,7 +12,7 @@ define(
         'backbone',
         'jquery',
         'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
-        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/Systemusage'
+        'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon'
 
     ],
 
@@ -21,26 +21,27 @@ define(
         Backbone,
         $,
         CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
-        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSystemUsage
+        ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon
     ) {
 
         /** 
-         *	@constructor
-         *  @requires Underscore
-         *  @requires Jquery
-         *	@requires CollectionTables
-         *	@requires CollectionClassesDoc
-         *	@requires CollectionReceivers
-         *	@requires CollectionQuidds
-         *	@requires CollectionDestinationProperties
-         *	@requires CollectionLoggers
-         *	@requires CollectionIrcs
-         *	@requires ViewDestinations
-         *	@requires ViewGlobal
-         *	@requires ViewQuidds
-         *	@requires ViewDestinationProperties
-         *	@requires ViewLoggers
-         *	@requires ViewIrcs
+         * @constructor
+         * @requires Underscore
+         * @requires Jquery
+         * @requires CollectionTables
+         * @requires CollectionClassesDoc
+         * @requires CollectionReceivers
+         * @requires CollectionQuidds
+         * @requires CollectionDestinationProperties
+         * @requires CollectionLoggers
+         * @requires CollectionIrcs
+         * @requires ViewDestinations
+         * @requires ViewGlobal
+         * @requires ViewQuidds
+         * @requires ViewDestinationProperties
+         * @requires ViewLoggers
+         * @requires ViewIrcs
+         * @requires ViewSysmon 
          *  @augments module:Backbone.View
          */
 
@@ -81,7 +82,7 @@ define(
                             });
 
                             views.global = new ViewGlobal();
-                            views.systemusage = new ViewSystemUsage();
+                            views.sysmon = new ViewSysmon();
                             //views.htop = new ViewHtop();
 
                             collections.irc = new CollectionIrcs();

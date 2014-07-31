@@ -3355,3 +3355,6 @@ html[xmlns] .clearfix {
     border-collapse: inherit !important;
   }
 }
+.chart rect {
+  fill: steelblue;
+ }

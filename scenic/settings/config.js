@@ -8,10 +8,18 @@ for (k in interfaces) {
     for (k2 in interfaces[k]) {
         var address = interfaces[k][k2];
         if (address.family == 'IPv4') {
-            addresses.push(address.address)
+            if (!address.internal){
+                addresses.unshift(address.address);
+            } else {
+                addresses.push(address.address);
+            }
         }
     }
 }
+/*
+* choose IP address
+*/
+var pickAddress
 
 var config = {
     version: "0.4.9",

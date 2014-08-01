@@ -108,7 +108,7 @@ define(
                             for (eth in info[key]) {
                                 net.push(info[key][eth])
                             }
-                            this.netMon(net);
+                            //this.netMon(net);
                         }
                     }
                     

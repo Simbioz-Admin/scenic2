@@ -49,68 +49,83 @@ define(
                     this.model.on('updateShmdatas', this.render, this);
                     this.model.on('updateByteRate', this.updateByteRateAndPreview);
                     this.table = options.table;
-
-                    if (this.table.get("type") == "transfer") this.renderTransfer();
-                    if (this.table.get("type") == "sink") this.renderSink();
+                    $("#" + this.table.get("type") + " .sources").append(this.el);
+                    this.render();
+                    // if (this.table.get("type") == "transfer") this.renderTransfer();
+                    // if (this.table.get("type") == "sink") this.renderSink();
                 },
 
 
-                renderTransfer: function() {
+                // renderTransfer: function() {
+                //     var that = this;
+                //     if (this.model.get("class") == "httpsdpdec") {
+                //         $("#" + this.table.get("type") + " #remote-sources").append($(this.el));
+                //     } else {
+                //         $("#" + this.table.get("type") + " #local-sources").append($(this.el));
+                //     }
+                //     var quiddTpl = _.template(TemplateSource, {
+                //         name: this.model.get("name")
+                //     });
+                //     $(this.el).append(quiddTpl);
+
+                //     /* we create a view for each shmdata existing */
+                //     this.model.get("shmdatasCollection").each(function(shm) {
+                //         new ViewShmdata({
+                //             model: shm,
+                //             modelQuidd: that.model,
+                //             table: that.table
+                //         });
+                //     });
+                // },
+
+                // renderSink: function() {
+                //     var that = this;
+
+                //     /* 1. parse all shmdata of the quidd for create view in table sink */
+                //     this.model.get("shmdatasCollection").each(function(shm) {
+
+                //         /* 2. in first time we need to check if the table of the type of shmdata exist */
+                //         that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
+
+                //         /* 3. we create a view shmdata for each */
+                //         new ViewShmdata({
+                //             model: shm,
+                //             modelQuidd: that.model,
+                //             table: that.table
+                //         });
+
+
+                //     });
+                // },
+
+                render: function() {
                     var that = this;
-                    if (this.model.get("class") == "httpsdpdec") {
-                        $("#" + this.table.get("type") + " #remote-sources").append($(this.el));
-                    } else {
-                        $("#" + this.table.get("type") + " #local-sources").append($(this.el));
-                    }
+
+
                     var quiddTpl = _.template(TemplateSource, {
                         name: this.model.get("name")
                     });
                     $(this.el).append(quiddTpl);
 
-                    /* we create a view for each shmdata existing */
                     this.model.get("shmdatasCollection").each(function(shm) {
-                        new ViewShmdata({
+                        var viewShm = new ViewShmdata({
                             model: shm,
                             modelQuidd: that.model,
                             table: that.table
                         });
+                        console.log(viewShm);
+                        $(".shmdatas", that.el).append(viewShm.el);
+                        viewShm.render();
                     });
-                },
 
-                renderSink: function() {
-                    var that = this;
-                    console.log("a");
-                    /* 1. parse all shmdata of the quidd for create view in table sink */
-                    this.model.get("shmdatasCollection").each(function(shm) {
-
-                        /* 2. in first time we need to check if the table of the type of shmdata exist */
-                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
-
-                        /* 3. we create a view shmdata for each */
-                        new ViewShmdata({
-                            model: shm,
-                            modelQuidd: that.model,
-                            table: that.table
-                        });
-
-
-                    });
-                },
-
-                render: function() {
-                    var that = this,
-                        // shmdatas = this.model.get("shmdatas"),
-                        table = collections.tables.findWhere({
-                            type: this.table
-                        });
 
                     //console.log("render Quiddity Source " + this.model.get("name") + " for the table " + this.table);
                     // console.log(this.model.get("shmdatasCollection").toJSON());
 
-                    this.model.get("shmdatasCollection").each(function(shm) {
-                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
-                        shm.createViewForTable(that.table);
-                    });
+                    // this.model.get("shmdatasCollection").each(function(shm) {
+                    //     that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
+                    //     shm.createViewForTable(that.table);
+                    // });
 
 
                 },

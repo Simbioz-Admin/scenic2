@@ -47,7 +47,7 @@ define(
                     this.model.on("change:byteRate", this.updateByteRate, this);
                     this.table = options.table;
                     //console.log("Create shmdata for the quidd " + this.model.get("quidd") + " for the table " + this.table);
-                    this.render();
+                    // this.render();
 
                 },
 
@@ -56,7 +56,7 @@ define(
                     // var nameShm = this.model.get("path").split('_')[3];
                     // var nameShm = this.model.get("path");
                     var pathShm = this.model.get("path").split("/");
-                    var fullNameShm = pathShm[pathShm.length -1];
+                    var fullNameShm = pathShm[pathShm.length - 1];
                     nameShm = ST.mask(fullNameShm);
                     templateShmdata = _.template(TemplateShmdata, {
                         name: nameShm,
@@ -67,14 +67,14 @@ define(
                     $(this.el).append(templateShmdata);
                     $(this.el).attr("data-path", this.model.get("path"));
 
-
+                    console.log(this.model.get("category"));
                     /* insert view in the quidd associate to */
                     if (this.table.get("type") == "transfer") {
                         $("#" + this.table.get("type") + " #quidd_" + this.model.get("quidd") + " .shmdatas").append(this.el);
                     }
 
                     if (this.table.get("type") == "sink") {
-                        $("#" + this.table.get("type") + " [data-type='" + this.model.get('type') + "']" + " .shmdatas").append(this.el);
+                        $("#" + this.table.get("type") + " [data-type='" + this.model.get('category') + "']" + " .shmdatas").append(this.el);
                     }
 
 

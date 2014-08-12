@@ -65,22 +65,22 @@ define(
                     });
                     this.set("shmdatasCollection", new ShmdataCollection());
 
+                    // var shmdataWriters = _.filter(this.get("properties"), function(prop) {
+                    //     return prop.name == "shmdata-writers";
+                    // });
+                    // if (shmdataWriters[0]) {
+                    //     var shmdatas = JSON.parse(shmdataWriters[0]["default value"])["shmdata_writers"];
+                    //     this.get("shmdatasCollection").add(shmdatas);
 
-                    socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
+                    // }
 
-                        /* create model for each shmdata of the quiddity */
-                        if (!shmdatas.err) {
-                            that.updateShmdatas(shmdatas.shmdata_writers);
-                        }
-
-                        // if (err) return views.global.notification("error", err);
-                        // if (shmdatas) {
-                        //     that.set({
-                        //         shmdatas: shmdatas.shmdata_writers
-                        //     });
-                        // }
-
-
+                    socket.emit("get_info", this.get("name"), ".shmdata.writer", function(shmdatas) {
+                        if (shmdatas.error) return;
+                        _.each(shmdatas, function(shm, path) {
+                            shm["quidd"] = that.get("name");
+                            shm["path"] = path;
+                            that.get("shmdatasCollection").add(shm);
+                        })
                         /* ViewSource it's a view for create a entry source to the table transfer */
 
                         if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
@@ -155,26 +155,29 @@ define(
                         if (!PreviewQuidd.test(that.get("name"))) {
                             views.quidds.addPreviewIcon(that.get("name"));
                         }
-
                     });
                 },
 
                 updateShmdatas: function(shmdatas) {
                     var that = this;
                     var collShmdatas = that.get("shmdatasCollection");
+
+                    console.log("current shmdatas info", collShmdatas);
+                    console.log("server shmdatas", shmdatas);
+                    return;
                     // collShmdatas.reset();
-                    collShmdatas.each(function(shm) {
-                        shm.trigger("destroy", shm);
-                    });
-                    if (shmdatas && shmdatas.length > 0) {
-                        _.each(shmdatas, function(shm) {
-                            collShmdatas.add({
-                                path: shm.path,
-                                quidd: that.get("name")
-                            });
-                        });
-                    }
-                    this.trigger("updateShmdatas", this);
+                    //     collShmdatas.each(function(shm) {
+                    //         shm.trigger("destroy", shm);
+                    //     });
+                    //     if (shmdatas && shmdatas.length > 0) {
+                    //         _.each(shmdatas, function(shm) {
+                    //             collShmdatas.add({
+                    //                 path: shm.path,
+                    //                 quidd: that.get("name")
+                    //             });
+                    //         });
+                    //     }
+                    //     this.trigger("updateShmdatas", this);
                 },
 
                 /**

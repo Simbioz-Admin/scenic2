@@ -77,6 +77,11 @@ define(
                         that.updateShmdatas(qname, shmdatas);
                     });
 
+                    /* Event called when a new shmdata is added */
+                    socket.on('addShmdata', function(qname, shmdata) {
+                        that.addShmdata(qname, shmdata);
+                    });
+
                     /** Event called when the shmdatas readers is updated */
                     socket.on("update_shmdatas_readers", function(name, shmdatas) {
                         /* we parse connection for add or remove */
@@ -197,6 +202,15 @@ define(
 
                             model.trigger("update:value", prop);
                         }
+                    }
+                },
+
+                addShmdata: function(quiddName, shmdata) {
+                    var quidd = this.get(quiddName);
+                    if (quidd) {
+                        var shmdataCollection = quidd.get("shmdatasCollection");
+                        shmdataCollection.add(shmdata);
+                        console.log(shmdataCollection);
                     }
                 },
 

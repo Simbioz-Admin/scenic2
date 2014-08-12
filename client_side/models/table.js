@@ -54,7 +54,7 @@ define(
                         this.get("collectionSources").add(quiddsSources);
                     }
 
-                    if (this.get("destinations").models) {
+                    if (this.get("destinations")) {
                         this.set("collectionDestinations", this.get("destinations"));
                     } else {
                         var quiddsDestinations = this.get_quidds("destinations");

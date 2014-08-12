@@ -60,6 +60,10 @@ define(
                     });
 
                     collections.quidds = new CollectionQuidds();
+
+
+                    collections.tables = new CollectionTables();
+
                     collections.quidds.fetch({
                         error: function(err) {
                             console.log("error", err);
@@ -69,7 +73,6 @@ define(
                             collections.receivers = new CollectionReceivers();
                             collections.receivers.fetch();
 
-                            collections.tables = new CollectionTables();
 
                             collections.destinationProperties = new CollectionDestinationProperties();
                             collections.destinationProperties.fetch();

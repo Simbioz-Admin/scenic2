@@ -82,7 +82,7 @@ define(
 
                 //we exclude byte-reate because its call every second (almost a spam...)
                 if (qprop != "byte-rate" && qprop != "caps") {
-                    //log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
+                    log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
                 } else {
                     io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
                 }
@@ -90,16 +90,16 @@ define(
 
                 /* ************ PROP - SHMDATA-WRITERS ************ */
 
-                if (qprop == "shmdata-writers") {
-                    /* if the quidd have shmdata we create view meter */
-                    if (JSON.parse(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
+                // if (qprop == "shmdata-writers") {
+                //     /* if the quidd have shmdata we create view meter */
+                //     if (JSON.parse(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
 
-                    /*  Send to all users informing the creation of shmdatas for a specific quiddity */
-                    var shmdatas = JSON.parse(pvalue).shmdata_writers;
-                    log.debug("send Shmdatas for ", qname);
-                    io.sockets.emit("updateShmdatas", qname, shmdatas);
+                //       Send to all users informing the creation of shmdatas for a specific quiddity 
+                //     var shmdatas = JSON.parse(pvalue).shmdata_writers;
+                //     log.debug("send Shmdatas for ", qname);
+                //     io.sockets.emit("updateShmdatas", qname, shmdatas);
 
-                }
+                // }
 
 
                 /* ************ PROP - SHMDATA-READERS ************ */
@@ -168,6 +168,25 @@ define(
 
                 }
 
+                /* information about shmdata with tree */
+
+                if (qname != "systemusage" && qsignal == "on-tree-grafted") {
+
+                    /* shmdata writer */
+                    if (pvalue[0].indexOf(".shmdata.writer") >= 0) {
+                        var shmdatasInfo = JSON.parse(switcher.get_info(qname, pvalue[0]));
+                        /* temporary add name in info (request for add by default) */
+                        shmdatasInfo["path"] = pvalue[0].replace(".shmdata.writer.", "");
+                        shmdatasInfo['quidd'] = qname;
+                        io.sockets.emit("addShmdata", qname, shmdatasInfo);
+                    }
+                }
+
+                if (qname != "systemusage" && qsignal == "on-tree-pruned") {
+                    console.log(' : ', qname, ' ', qsignal, ' ', pvalue);
+                }
+
+
                 /* manage callback fro systemusage quidd  */
 
                 if (qname == "systemusage" && qsignal == "on-tree-grafted") {
@@ -188,6 +207,10 @@ define(
                     switcher.subscribe_to_signal(pvalue[0], "on-method-added");
                     switcher.subscribe_to_signal(pvalue[0], "on-method-removed");
                     switcher.subscribe_to_signal(pvalue[0], "on-connection-tried");
+
+                    /*subscribe to the modification on this quiddity systemusage*/
+                    switcher.subscribe_to_signal(pvalue[0], "on-tree-grafted");
+                    switcher.subscribe_to_signal(pvalue[0], "on-tree-pruned");
 
                     /* we subscribe all properties of quidd created */
                     try {

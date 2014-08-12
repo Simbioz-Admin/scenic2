@@ -2,9 +2,9 @@ define(
     [
         'config',
         'switcher',
-        './scenic/switcher/sip',
-        './scenic/switcher/quidds',
-        './scenic/switcher/receivers',
+        './server_side/switcher/sip',
+        './server_side/switcher/quidds',
+        './server_side/switcher/receivers',
         'log',
         'underscore',
         'jquery'

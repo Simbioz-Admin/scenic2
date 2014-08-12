@@ -1,5 +1,5 @@
 var npm = require("npm");
-var config = require("./scenic/settings/config.js")('npm-verify');
+var config = require("./server_side/settings/config.js")('npm-verify');
 var scenicDependenciesPath = config.scenicDependenciesPath;
 var scenicSavePath = config.scenicSavePath;
 var fs = require('fs');
@@ -85,11 +85,11 @@ function scenicDependenciesSearch(dependencies, callback) {
         npm.commands.ls([], true, function(err, data, lite) {
             if (err) console.log("npm.ls returned this error: ", err);
             //console.log("lite's length: ", data);
-                for (var key in lite.dependencies) {
-                    console.log(lite.dependencies[key].from);
-                    installed.push(lite.dependencies[key].from);
-                }
-                //console.log("These packages are already installed", installed);
+            for (var key in lite.dependencies) {
+                console.log(lite.dependencies[key].from);
+                installed.push(lite.dependencies[key].from);
+            }
+            //console.log("These packages are already installed", installed);
             for (var i = 0; i < installed.length; i++) {
                 console.log("Detected: " + installed[i]);
             }
@@ -116,12 +116,13 @@ function scenicRequire(deps, installed, callback) {
         try {
             var notify = spawn("notify-send", [
                 "--icon=" + cwd + "/assets/images/logo_sat.png",
-                "Scenic2", 
-                "Downloading and installing dependencies. Scenic2 will start automatically"]);
+                "Scenic2",
+                "Downloading and installing dependencies. Scenic2 will start automatically"
+            ]);
             notify.on("close", function notifyExit(code) {
                 console.log("Notify exited with code: ", code);
             });
-            notify.stderr.on('data', function notifyData(data){
+            notify.stderr.on('data', function notifyData(data) {
                 console.log("notify error: ", data.toString());
             });
             notify.on('error', function onError(error) {
@@ -146,7 +147,7 @@ function scenicRequire(deps, installed, callback) {
         }, function(err) {
             if (err) {
                 console.log("npm.load reported an error: ", err);
-                
+
             }
             npm.commands.install(toInstall, function(er, data) {
                 if (er) console.log("npm.commands.install error:", er);

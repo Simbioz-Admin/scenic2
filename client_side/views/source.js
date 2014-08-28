@@ -47,12 +47,24 @@ define(
                     /* Subscribe for remove and change shmdatas on quiddity source */
                     this.model.on('remove', this.removeView, this);
                     this.model.on('updateShmdatas', this.render, this);
-                    this.model.on('updateByteRate', this.updateByteRateAndPreview);
+                    // this.model.on('updateByteRate', this.updateByteRateAndPreview);
                     this.table = options.table;
+
                     $("#" + this.table.get("type") + " .sources").append(this.el);
-                    this.render();
+
+
                     // if (this.table.get("type") == "transfer") this.renderTransfer();
                     // if (this.table.get("type") == "sink") this.renderSink();
+
+                    //console.log("create view source for "+ this.model.get("name") + " in table ", this.table);
+
+
+                    var quiddTpl = _.template(TemplateSource, {
+                        name: this.model.get("name")
+                    });
+                    
+                    $(this.el).append(quiddTpl);
+                    this.render();
                 },
 
 
@@ -100,23 +112,18 @@ define(
 
                 render: function() {
                     var that = this;
-
-
-                    var quiddTpl = _.template(TemplateSource, {
-                        name: this.model.get("name")
-                    });
-                    $(this.el).append(quiddTpl);
-
-                    this.model.get("shmdatasCollection").each(function(shm) {
-                        var viewShm = new ViewShmdata({
-                            model: shm,
-                            modelQuidd: that.model,
-                            table: that.table
-                        });
-                        console.log(viewShm);
-                        $(".shmdatas", that.el).append(viewShm.el);
-                        viewShm.render();
-                    });
+                    $(".shmdatas", that.el).html("");
+                    if(this.model.get("shmdatasCollection").size() > 0){
+                        this.model.get("shmdatasCollection").each(function(shm) {
+                            var viewShm = new ViewShmdata({
+                                model: shm,
+                                modelQuidd: that.model,
+                                table: that.table
+                            });
+                            $(".shmdatas", that.el).append(viewShm.el);
+                            viewShm.render();
+                        }); 
+                    }
 
 
                     //console.log("render Quiddity Source " + this.model.get("name") + " for the table " + this.table);

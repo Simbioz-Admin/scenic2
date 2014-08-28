@@ -46,17 +46,13 @@ define(
 
                     /* Create collection source and destination */
                     /* we check if it's already a collection */
-                    if (this.get("sources").models) {
-                        this.set("collectionSources", this.get("sources"));
-                    } else {
-                        var quiddsSources = this.get_quidds("sources");
-                        this.set("collectionSources", new Backbone.Collection);
-                        this.get("collectionSources").add(quiddsSources);
-                    }
 
-                    if (this.get("destinations")) {
-                        this.set("collectionDestinations", this.get("destinations"));
-                    } else {
+                    var quiddsSources = this.get_quidds("sources");
+                    this.set("collectionSources", new Backbone.Collection);
+                    this.get("collectionSources").add(quiddsSources);
+                
+
+                    if (!this.get("collectionDestinations")) {
                         var quiddsDestinations = this.get_quidds("destinations");
                         this.set("collectionDestinations", new Backbone.Collection);
                         this.get("collectionDestinations").add(quiddsDestinations);

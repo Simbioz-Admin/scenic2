@@ -891,7 +891,8 @@ th:last-child
 
 
 td
-	min-width : 100px
+	min-width : 118px
+	position : relative
 
 .table
 	//background : #fcfcfc
@@ -984,6 +985,7 @@ td
 
 .sources
 	position : relative
+	margin-left : 20px
 	.source:first-child
 		margin-top : 30px
 		// &:before
@@ -1145,7 +1147,9 @@ td
 	background : #eee
 
 .box
-	background : rgba(white, 0.2)	
+	background : rgba(white, 0.2)
+	border-bottom : 1px solid #222
+	text-align : center
 	//border : 1px solid #ddd
 	//border-top : none
 	input[type=text]
@@ -1161,7 +1165,9 @@ td
 		padding: 0
 		border: 1px solid #eee
 
-
+.box_disabled
+	background : #333 url(../../images/box_disabled.png)
+	border-bottom : 1px solid #333
 
 .box:hover, .boxSelect
 	cursor : pointer
@@ -1187,11 +1193,11 @@ td
 	padding : 0 10px
 	border : none
 
-#tr-top th
-	border-bottom : none
+// #tr-top th
+// 	border-bottom : none
 
-#tr-top th:first-child
-	border-bottom : none
+// #tr-top th:first-child
+// 	border-bottom : none
 
 .titleNodesource
 	width : 100%
@@ -1233,7 +1239,7 @@ td
 .content-port-destination
 	height : 100%
 	// margin-left : -10px
-	position : relative
+	// position : relative
 	// width : 118%
 	border : none
 
@@ -1243,7 +1249,7 @@ td
 	outline : 0
 	font-size : 12px
 	border : none
-	height : 45px
+	height : 50px
 .connection
 	background : #444
 	text-align : center
@@ -2199,14 +2205,16 @@ html[xmlns] .clearfix
 	.shmdata td, .shmdata th, tr.shmdata
 		border-left : 1px solid #333
 		color : #eee
-		height : 45px
+		// height : 45px
 	.shmdata th
 		cursor : help
 		background : #222
+		.shmdata-name
+			padding : 20px 25px
 	th:after
 		content : ""
 		position: absolute
-		right : 0
+		// right : 0
 		top : 0
 		bottom : 0
 		width : 2px
@@ -2215,10 +2223,6 @@ html[xmlns] .clearfix
 	.active th:after
 		background : #008000
 
-	td.box
-		border-color : #444
-
-
 #control
 	.source
 		margin : 10px 0 0 
@@ -2226,15 +2230,16 @@ html[xmlns] .clearfix
 		background : #222
 
 .destinations
+	margin-left : 235px
 	td.destination
 		width : inherit
 		height : inherit
 		background : none
 		.content
 			width : 120px
-			height : 50px
+			height : 30px
 			position : relative
-			margin-bottom : 15px
+			// margin-bottom : 15px
 		.name
 			width : 100px
 			color : white
@@ -2242,7 +2247,7 @@ html[xmlns] .clearfix
 			padding : 15px 10px 0
 			text-align: center
 			float : left
-			height: 40px
+			height: 30px
 			background : #222
 			border-left : 1px solid #333
 			white-space: normal
@@ -2321,14 +2326,14 @@ html[xmlns] .clearfix
 /* Table Sink */
 #sink
 	.quiddity .name
-		line-height : 50px
+		// line-height : 50px
 	.infoTable
 		height : 60px
 #transfer
 	.vignette.local-sources
 		margin-top : -35px
 	.destinations
-		height : 50px
+		//height : 50px
 
 #audio .shmdata .preview
 	display : none

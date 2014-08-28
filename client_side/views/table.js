@@ -97,7 +97,7 @@ define(
                     var classes = this.model.classes_authorized(type);
 
                     /* we not load classes if nothing is return */
-                    if (classes.length == 0) return;
+                    if (classes && classes.length == 0) return;
 
                     /* GroupBy category the list of classes */
                     var classesByCategory = _.groupBy(classes, function(clas) {

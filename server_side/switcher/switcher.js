@@ -178,9 +178,18 @@ define(
                         /* temporary add name in info (request for add by default) */
                         shmdatasInfo["path"] = pvalue[0].replace(".shmdata.writer.", "");
                         shmdatasInfo['quidd'] = qname;
+                        createVuMeter(qname);
                         io.sockets.emit("addShmdata", qname, shmdatasInfo);
                     }
                 }
+
+                // if (qname != "systemusage" && qsignal == "on-tree-grafted") {
+                //     if (pvalue[0].indexOf(".shmdata.reader") >= 0) {
+                //         var shmdataInfo = JSON.parse(switcher.get_info(qname, ".shmdata.reader"));
+                //         console.log("AA",shmdataInfo);
+                //         io.sockets.emit("update_shmdatas_readers", qname, shmdataInfo);
+                //     }
+                // }
 
                 if (qname != "systemusage" && qsignal == "on-tree-pruned") {
                     console.log(' : ', qname, ' ', qsignal, ' ', pvalue);

@@ -73,14 +73,20 @@ define(
                     //     this.get("shmdatasCollection").add(shmdatas);
 
                     // }
+                    
+                    socket.emit("get_info", this.get("name"), ".shmdata.writer", function(shmdatas) { 
 
-                    socket.emit("get_info", this.get("name"), ".shmdata.writer", function(shmdatas) {
-                        if (shmdatas.error) return;
-                        _.each(shmdatas, function(shm, path) {
-                            shm["quidd"] = that.get("name");
-                            shm["path"] = path;
-                            that.get("shmdatasCollection").add(shm);
-                        })
+
+                        /* When no shmdata error = no path */
+                        if (!shmdatas.error){
+                            _.each(shmdatas, function(shm, path) {
+                                shm["quidd"] = that.get("name");
+                                shm["path"] = path;
+                                that.get("shmdatasCollection").add(shm);
+                            });
+                        }
+
+
                         /* ViewSource it's a view for create a entry source to the table transfer */
 
                         if (that.get("category") != "mapper" && that.get("class") != "midisrc") {

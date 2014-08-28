@@ -50,12 +50,8 @@ define(
 
                     /** Event called when the server has removed a quiddity */
                     socket.on("remove", function(quidd) {
-
                         var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-                        if (!PreviewQuidd.test(quidd[0])) {
-
-                            views.quidds.removePreviewIcon(quidd[0]);
-                        }
+                        if (!PreviewQuidd.test(quidd[0])) views.quidds.removePreviewIcon(quidd[0]);
                         that.delete(quidd);
                     });
 
@@ -69,6 +65,7 @@ define(
 
                     /** Event called when the value of a property changes */
                     socket.on("signals_properties_value", function(quiddName, prop, value) {
+                        if(prop != "byte-rate") console.log(prop);
                         that.signalsPropertiesUpdate(quiddName, prop, value);
                     });
 
@@ -85,13 +82,14 @@ define(
                     /** Event called when the shmdatas readers is updated */
                     socket.on("update_shmdatas_readers", function(name, shmdatas) {
                         /* we parse connection for add or remove */
-                        var shmdatas = $.parseJSON(shmdatas).shmdata_readers;
-
+                        console.log("update Shmdata Readers", shmdatas);
+                        // var shmdatas = $.parseJSON(shmdatas);
                         $("[data-destination='" + name + "']").each(function(index, box) {
                             $(box).removeClass("active");
                             var path = $(box).parent().data("path");
-                            _.each(shmdatas, function(shm) {
-                                if (shm.path == path) $(box).addClass("active");
+                            _.each(shmdatas, function(shm, name) {
+                                console.log(name);
+                                if (name == path) $(box).addClass("active");
                             });
                         });
                     });
@@ -174,12 +172,14 @@ define(
                             shmdata = quiddName.replace("vumeter_", "");
 
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
-                        var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
-                        var shmdataModel = shmdatasCollection.get(shmdata);
-                        if (shmdataModel) {
-                            shmdataModel.set({
-                                "byteRate": value
-                            });
+                        if(quiddName){
+                            var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
+                            var shmdataModel = shmdatasCollection.get(shmdata);
+                            if (shmdataModel) {
+                                shmdataModel.set({
+                                    "byteRate": value
+                                });
+                            }
                         }
                         // // views.quidds.updateVuMeter(quiddName, name);
 
@@ -206,15 +206,17 @@ define(
                 },
 
                 addShmdata: function(quiddName, shmdata) {
+                    console.log("Add shmdata ", quiddName);
                     var quidd = this.get(quiddName);
                     if (quidd) {
                         var shmdataCollection = quidd.get("shmdatasCollection");
                         shmdataCollection.add(shmdata);
-                        console.log(shmdataCollection);
+                        quidd.trigger("updateShmdatas");
                     }
                 },
 
                 updateShmdatas: function(quiddName, shmdatas) {
+                    console.log("Update shmdata ", quiddName, shmdatas);
                     var quidd = this.get(quiddName);
                     //sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
                     if (quidd) quidd.updateShmdatas(shmdatas);

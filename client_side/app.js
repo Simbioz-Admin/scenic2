@@ -60,7 +60,9 @@ define(
                     });
 
                     collections.quidds = new CollectionQuidds();
-
+                    
+                    collections.receivers = new CollectionReceivers();
+                    collections.receivers.fetch();
 
                     collections.tables = new CollectionTables();
 
@@ -70,8 +72,6 @@ define(
                         },
                         success: function() {
 
-                            collections.receivers = new CollectionReceivers();
-                            collections.receivers.fetch();
 
 
                             collections.destinationProperties = new CollectionDestinationProperties();

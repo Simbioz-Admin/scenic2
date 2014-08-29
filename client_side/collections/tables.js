@@ -51,7 +51,7 @@ define(
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["source", "httpsdpdec"]
+                            select: ["source", "httpsdpdec", "posturemerge"]
                         },
                         destinations: {
                             select: ["sink"],

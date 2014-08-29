@@ -45,7 +45,7 @@ define(
                     /* Subscribe to the remove of a specific mapper */
                     this.model.on('remove', this.removeView, this);
                     this.model.on("change:byteRate", this.updateByteRate, this);
-                    this.model.on("renderConnections", this.renderConnections, this);
+                    this.model.on("renderConnection", this.connectionForDestination, this);
                     this.table = options.table;
                     //console.log("Create shmdata for the quidd " + this.model.get("quidd") + " for the table " + this.table);
                     // this.render();
@@ -81,52 +81,59 @@ define(
                     this.renderConnections();
                 },
 
-                renderConnections: function() {
+                renderConnections: function(fromDests) {
                     var that = this;
                     $("td", that.el).remove();
                     _.defer(function(){
                         that.table.get("collectionDestinations").each(function(destination) {
-
-                            /* check if the connexion existing between source and destination */
-                            var active = '';
-                            var port = '';
-                            if (that.table.get("type") == "transfer") {
-                                _.each(destination.get("data_streams"), function(stream) {
-                                    if (stream.path == that.model.get("path")) {
-                                        active = "active";
-                                        port = stream.port;
-                                    }
-                                });
-                                $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
-                            }
-
-                            if (that.table.get("type") == "sink") {
-
-                                /* Check if we can create a connexion between shmdata and sink */
-                                socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink){
-                                    if(canSink == "true"){
-                                        /* Check if already connected */
-                                        var shmdata_readers = null;
-                                        _.each(destination.get("properties"), function(prop) {
-                                            if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-                                        });
-                                        if(shmdata_readers){
-                                            _.each(shmdata_readers, function(shm) {
-                                                console.log(shm.path, that.model.get("path"));
-                                                if (shm.path == that.model.get("path")) active = "active";
-                                            });
-                                        }
-
-                                        $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
-                                    } else {
-                                        $(that.el).append('<td class="box_disabled ' + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '"></td>');
-                                    }
-                                });
-                            }
-
+                            that.connectionForDestination(destination, that.table.get("type"));
                         });
                     });
                 },
+
+                connectionForDestination: function(destination, tableType){
+                    /* check if the connexion existing between source and destination */
+                    var that = this;
+                    var active = '';
+                    var port = '';
+                    console.log("table", tableType);
+                    if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
+                        _.each(destination.get("data_streams"), function(stream) {
+                            if (stream.path == that.model.get("path")) {
+                                active = "active";
+                                port = stream.port;
+                            }
+                        });
+                        $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                    }
+
+                    if (tableType == "sink" && that.table.get("type") == tableType) {
+
+                        /* Check if we can create a connexion between shmdata and sink */
+                        socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink){
+                            if($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0){
+                                if(canSink == "true"){
+                                    /* Check if already connected */
+                                    var shmdata_readers = null;
+                                    _.each(destination.get("properties"), function(prop) {
+                                        if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
+                                    });
+                                    if(shmdata_readers){
+                                        _.each(shmdata_readers, function(shm) {
+                                            if (shm.path == that.model.get("path")) active = "active";
+                                        });
+                                    }
+
+                                    $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                                } else {
+                                    $(that.el).append('<td class="box_disabled ' + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '"></td>');
+                                }
+                            }
+                        });
+
+                    }
+                },
+
                 updateByteRate: function() {
                     if (this.model.get("byteRate") > 0) $(this.el).removeClass("inactive").addClass("active");
                     else $(this.el).removeClass("active").addClass("inactive");

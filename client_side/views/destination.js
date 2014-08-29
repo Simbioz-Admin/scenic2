@@ -62,7 +62,7 @@ define(
                             if(source){
                                 var shmdatas = source.get("shmdatasCollection");
                                 shmdatas.each(function(shm){
-                                    shm.trigger("renderConnections");
+                                    shm.trigger("renderConnection", that.model, that.table.get("type"));
                                 });
                             }
                         });

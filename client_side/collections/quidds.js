@@ -82,13 +82,11 @@ define(
                     /** Event called when the shmdatas readers is updated */
                     socket.on("update_shmdatas_readers", function(name, shmdatas) {
                         /* we parse connection for add or remove */
-                        console.log("update Shmdata Readers", shmdatas);
                         // var shmdatas = $.parseJSON(shmdatas);
                         $("[data-destination='" + name + "']").each(function(index, box) {
                             $(box).removeClass("active");
                             var path = $(box).parent().data("path");
                             _.each(shmdatas, function(shm, name) {
-                                console.log(name);
                                 if (name == path) $(box).addClass("active");
                             });
                         });

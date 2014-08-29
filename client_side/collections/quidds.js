@@ -50,9 +50,8 @@ define(
 
                     /** Event called when the server has removed a quiddity */
                     socket.on("remove", function(quidd) {
-                        var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-                        if (!PreviewQuidd.test(quidd[0])) views.quidds.removePreviewIcon(quidd[0]);
                         that.delete(quidd);
+                        console.log("remove", quidd);
                     });
 
                     /** Event called when a signal is emitted by switcher add/remove a method or property 
@@ -104,6 +103,7 @@ define(
                     var model = this.get(quiddInfo);
                     if (model) {
                         model.trigger('destroy', model);
+                        console.log(model);
                         if (quiddInfo.class != "sip") {
                             views.global.notification("info", quiddInfo + "  has deleted");
                         }
@@ -204,7 +204,6 @@ define(
                 },
 
                 addShmdata: function(quiddName, shmdata) {
-                    console.log("Add shmdata ", quiddName);
                     var quidd = this.get(quiddName);
                     if (quidd) {
                         var shmdataCollection = quidd.get("shmdatasCollection");
@@ -214,7 +213,6 @@ define(
                 },
 
                 updateShmdatas: function(quiddName, shmdatas) {
-                    console.log("Update shmdata ", quiddName, shmdatas);
                     var quidd = this.get(quiddName);
                     //sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
                     if (quidd) quidd.updateShmdatas(shmdatas);

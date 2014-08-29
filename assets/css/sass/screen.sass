@@ -930,9 +930,24 @@ td
 			&:hover
 				+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
 
-
-
-
+		.filter
+			padding : 7px 0 0 10px
+			width : 150px
+			float : left
+			opacity : 0.5
+			&:hover
+				opacity : 1
+				cursor : pointer
+			select
+				width : 100%
+				background : #444
+				border : #444
+				color : white
+				cursor : pointer
+				padding : 2px 0
+				option
+					cursor : pointer
+					border : none
 	#titleOut
 		position: absolute
 		left: 0
@@ -986,8 +1001,9 @@ td
 .sources
 	position : relative
 	margin-left : 20px
+	margin-top : 30px
+
 	.source:first-child
-		margin-top : 30px
 		// &:before
 		// 	content : "Remote sources"
 		// 	//font-family: "Irma Light"
@@ -2198,12 +2214,15 @@ html[xmlns] .clearfix
 		float : left
 		background : #222
 		line-height: 40px
+
+$colorBorder : #3a3a3a
 .shmdatas
 	float : left
 	// min-height: 50px
 	margin-left : 120px
-	.shmdata td, .shmdata th, tr.shmdata
-		border-left : 1px solid #333
+	.shmdata td, .shmdata th
+		border-left : 1px solid $colorBorder
+		border-bottom : 1px solid $colorBorder
 		color : #eee
 		// height : 45px
 	.shmdata th
@@ -2222,6 +2241,13 @@ html[xmlns] .clearfix
 
 	.active th:after
 		background : #008000
+
+	.shmdata:first-child td
+		border-top : 1px solid $colorBorder
+
+	.shmdata td:last-child
+		border-right : 1px solid $colorBorder
+
 
 #control
 	.source

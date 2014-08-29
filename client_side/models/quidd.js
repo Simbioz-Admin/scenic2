@@ -64,15 +64,6 @@ define(
                         model: ModelShmdata
                     });
                     this.set("shmdatasCollection", new ShmdataCollection());
-
-                    // var shmdataWriters = _.filter(this.get("properties"), function(prop) {
-                    //     return prop.name == "shmdata-writers";
-                    // });
-                    // if (shmdataWriters[0]) {
-                    //     var shmdatas = JSON.parse(shmdataWriters[0]["default value"])["shmdata_writers"];
-                    //     this.get("shmdatasCollection").add(shmdatas);
-
-                    // }
                     
                     socket.emit("get_info", this.get("name"), ".shmdata.writer", function(shmdatas) { 
 
@@ -101,17 +92,12 @@ define(
                                     tableModel.get("collectionSources").add(that);
 
                                     /* we create a view source for table transfer and after that we create view for shmdata */
-                                    // if (tableModel.get("type") == "transfer") {
                                     new ViewSource({
                                         model: that,
                                         table: tableModel
                                     });
-                                    // }
+                                    
 
-                                    // if (tableModel.get("type") == "sink") {
-                                    //     console.log("create view shmdata standalone!");
-
-                                    // }
                                 }
 
                                 if (authorization.destination) {
@@ -123,12 +109,6 @@ define(
                                         table: tableModel
                                     });
                                 }
-
-                                /* 2. Create View appropriate for type of table */
-
-
-                                // tableModel.add_to_table(that);
-
 
                             });
                         }
@@ -161,6 +141,8 @@ define(
                         if (!PreviewQuidd.test(that.get("name"))) {
                             views.quidds.addPreviewIcon(that.get("name"));
                         }
+
+
                     });
                 },
 

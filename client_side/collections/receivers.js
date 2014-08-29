@@ -46,7 +46,6 @@ define(
 
                     /** Event called when the server add a new destination (client) */
                     socket.on("create_destination", function(destination) {
-                        console.log("CREATE", destination);
                         that.add(destination);
                         // views.global.notification("info", "the destination " + destination.name + " is added");
                     });

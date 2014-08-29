@@ -41,8 +41,9 @@ define(
                 /* Called when the view is initialized */
 
                 initialize: function(options) {
-                    /* subscribe to suppression of the model */
-                    this.model.on('remove', this.removeView, this);
+                    this.model.on('destroy', this.removeView, this);
+                    this.model.on("toggleShow", this.toggleShow, this);
+
                     this.table = options.table;
 
                     var that = this,
@@ -51,6 +52,13 @@ define(
                         });
 
                     $(this.el).append(template);
+
+                    /* we check if the category of this quidd exist in filter table */
+                    if(this.model.get("category")) this.table.trigger("addCategoryFilter", this.model.get("category"));
+
+                    if(this.model.get("category")){
+                        $(this.el).attr("data-type", this.model.get("category"));
+                    }                    
                     //add the template to the destination table transfer
                     // if (this.model.get("category")) this.table.trigger("newCategoryTable", this.table.get("type"), this.model.get("category").replace(" sink", ""));
 
@@ -67,48 +75,21 @@ define(
                             }
                         });
 
-
-                    // _.each($("#" + this.table.get("type")  + " .shmdata"), function(shmdata) {
-                    //     // declare variabble for this scope
-                    //     var active = "";
-                    //     var port = 0;
-                    //     var shmdata_readers;
-                    //     var connection;
-                    //     /* check if box is already here */
-                    //     if ($("[data-id='" + that.model.get('name') + "']", shmdata).length > 0) return;
-
-                    //     /* check if connection is active */
-                    //     if (that.table.get("type") == "transfer") {
-                    //         active = _.where(that.model.get("data_streams"), {
-                    //             path: $(shmdata).data("path")
-                    //         }).length > 0 ? 'active' : "";
-                    //     }
-
-
-                    //     /* look up the port of this connection */
-                    //     if (active.length > 0 && $('#' + that.table.get("type") + " .active")) {
-                    //         port = _.findWhere(that.model.get("data_streams"), {
-                    //             path: $(shmdata).data("path")
-                    //         }).port;
-                    //     } else {
-                    //         port = "";
-                    //     }
-
-                    //     if (that.table.get("type") == "sink") {
-                    //         _.each(that.model.get("properties"), function(prop) {
-
-                    //             if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-                    //         });
-
-                    //         _.each(shmdata_readers, function(shm) {
-                    //             if (shm.path == shmdata.path) active = "active";
-                    //         });
-                    //     }
-                    //     connection = "<td class='box " + active + " " + that.table.get("type") + "' data-destination='" + that.model.get('name') + "' data-id='" + that.model.get('name') + "'>" + port + "</td>";
-                    //     $(shmdata).append(connection);
-                    // });
                 },
 
+                toggleShow : function(state, tableName){
+
+                    /* trigger is called for all destination, we need to check if its for the good table */
+                    if(this.table.get("name") == tableName){
+                        if(state == "show") {
+                            $(this.el).show();
+                            $("[data-destination='"+this.model.get("name")+"']").show();
+                        } else {
+                            $(this.el).hide();
+                            $("[data-destination='"+this.model.get("name")+"']").hide();
+                        }
+                    }
+                },
                 /* Called when the click event is on the button edit destination */
                 edit: function() {
                     this.model.edit();
@@ -122,7 +103,10 @@ define(
 
                 /* Called when the model is removed */
                 removeView: function() {
+                    /* remove category in filter (check if its the last quidd of this category) */
+                    if(this.model.get("category"))  this.table.trigger('removeCategoryFilter', this.model.get("category"), "destination");
                     this.remove();
+
                     /* remove old box */
                     $("[data-id='" + this.model.get('name') + "']").remove();
                 }

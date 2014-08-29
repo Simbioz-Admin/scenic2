@@ -96,7 +96,6 @@ define(
                     var that = this;
                     var active = '';
                     var port = '';
-                    console.log("table", tableType);
                     if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
                         _.each(destination.get("data_streams"), function(stream) {
                             if (stream.path == that.model.get("path")) {

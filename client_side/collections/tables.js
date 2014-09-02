@@ -51,7 +51,7 @@ define(
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["source", "httpsdpdec"]
+                            select: ["source", "httpsdpdec", "posturemerge"]
                         },
                         destinations: {
                             select: ["sink"],
@@ -80,9 +80,8 @@ define(
                             select: ["source", "httpsdpdec"],
                             exclude: ["midi source"]
                         },
-                        destinations: collections.receivers
+                        collectionDestinations: collections.receivers
                     }
-
 
 
                     var controlTable = {
@@ -100,7 +99,7 @@ define(
                         sources: {
                             select: ["midi source"],
                         },
-                        destinations: collections.receivers
+                        collectionDestinations: collections.receivers
                     }
 
 

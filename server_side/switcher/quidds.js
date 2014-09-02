@@ -50,33 +50,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
         function remove(quiddName) {
 
-            // var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
-
-            // if (!quidds) return log.error("failed remove quiddity " + quiddName);
-
-            // removeConrolByQuiddParent(quiddName);
-
-            // /* Remove quiddity sink base on quidd removed */
-            // _.each(quidds, function(quidd) {
-
-            //     if (quidd.name.indexOf(quiddName + "-sink") != -1) {
-            //         switcher.remove(quidd.name);
-            //     }
-
-
-            // });
-
-            // /* remove vumeters */
-            // var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
-
-            // if (shmdatas && !shmdatas.error) {
-            //     shmdatas = shmdatas.shmdata_writers;
-            //     $.each(shmdatas, function(index, shmdata) {
-            //         log.debug("remove vumeter : vumeter_" + shmdata.path);
-            //         switcher.remove('vumeter_' + shmdata.path);
-            //     });
-            // }
-
             if (switcher.remove(quiddName)) {
                 log.debug("quiddity " + quiddName + " is removed.");
             } else {
@@ -154,6 +127,12 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             }
         }
 
+
+        function get_info(quiddName, path, cb) {
+            log.debug("try get info of " + quiddName);
+            var info = $.parseJSON(switcher.get_info(quiddName, path));
+            return cb(info);
+        }
 
         function get_property_by_class(className, propertyName, callback) {
             log.debug("try get property by class", className, propertyName);
@@ -351,6 +330,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             remove: remove,
             removeElementsAssociateToQuiddRemoved: removeElementsAssociateToQuiddRemoved,
             get_description: get_description,
+            get_info: get_info,
             get_properties_description: get_properties_description,
             get_methods_description: get_methods_description,
             get_methods_description: get_methods_description,

@@ -50,13 +50,8 @@ define(
 
                     /** Event called when the server has removed a quiddity */
                     socket.on("remove", function(quidd) {
-
-                        var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-                        if (!PreviewQuidd.test(quidd[0])) {
-
-                            views.quidds.removePreviewIcon(quidd[0]);
-                        }
                         that.delete(quidd);
+                        console.log("remove", quidd);
                     });
 
                     /** Event called when a signal is emitted by switcher add/remove a method or property 
@@ -69,6 +64,7 @@ define(
 
                     /** Event called when the value of a property changes */
                     socket.on("signals_properties_value", function(quiddName, prop, value) {
+                        if(prop != "byte-rate") console.log(prop);
                         that.signalsPropertiesUpdate(quiddName, prop, value);
                     });
 
@@ -77,16 +73,20 @@ define(
                         that.updateShmdatas(qname, shmdatas);
                     });
 
+                    /* Event called when a new shmdata is added */
+                    socket.on('addShmdata', function(qname, shmdata) {
+                        that.addShmdata(qname, shmdata);
+                    });
+
                     /** Event called when the shmdatas readers is updated */
                     socket.on("update_shmdatas_readers", function(name, shmdatas) {
                         /* we parse connection for add or remove */
-                        var shmdatas = $.parseJSON(shmdatas).shmdata_readers;
-
+                        // var shmdatas = $.parseJSON(shmdatas);
                         $("[data-destination='" + name + "']").each(function(index, box) {
                             $(box).removeClass("active");
                             var path = $(box).parent().data("path");
-                            _.each(shmdatas, function(shm) {
-                                if (shm.path == path) $(box).addClass("active");
+                            _.each(shmdatas, function(shm, name) {
+                                if (name == path) $(box).addClass("active");
                             });
                         });
                     });
@@ -103,6 +103,7 @@ define(
                     var model = this.get(quiddInfo);
                     if (model) {
                         model.trigger('destroy', model);
+                        console.log(model);
                         if (quiddInfo.class != "sip") {
                             views.global.notification("info", quiddInfo + "  has deleted");
                         }
@@ -169,12 +170,14 @@ define(
                             shmdata = quiddName.replace("vumeter_", "");
 
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
-                        var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
-                        var shmdataModel = shmdatasCollection.get(shmdata);
-                        if (shmdataModel) {
-                            shmdataModel.set({
-                                "byteRate": value
-                            });
+                        if(quiddName){
+                            var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
+                            var shmdataModel = shmdatasCollection.get(shmdata);
+                            if (shmdataModel) {
+                                shmdataModel.set({
+                                    "byteRate": value
+                                });
+                            }
                         }
                         // // views.quidds.updateVuMeter(quiddName, name);
 
@@ -197,6 +200,15 @@ define(
 
                             model.trigger("update:value", prop);
                         }
+                    }
+                },
+
+                addShmdata: function(quiddName, shmdata) {
+                    var quidd = this.get(quiddName);
+                    if (quidd) {
+                        var shmdataCollection = quidd.get("shmdatasCollection");
+                        shmdataCollection.add(shmdata);
+                        quidd.trigger("updateShmdatas");
                     }
                 },
 

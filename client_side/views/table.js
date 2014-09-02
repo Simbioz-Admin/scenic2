@@ -42,6 +42,7 @@ define(
                     "click .box": "ask_connection",
                     "keypress #port_destination": "set_connection",
                     "blur #port_destination": "removeInputDestination",
+                    "change .dropdown_filter": "filter_quiddities"
                 },
 
                 /* Called on initialization of the table (control / transfer) */
@@ -49,9 +50,12 @@ define(
 
 
                     this.model.on("trigger:menu", this.get_classes, this);
-                    if (this.model.get("type") == "sink") {
-                        this.model.on('newCategoryTable', this.newCategoryTable, this);
-                    }
+                    this.model.on("addCategoryFilter", this.addCategoryFilter, this);
+                    this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
+
+                    // if (this.model.get("type") == "sink") {
+                    //     this.model.on('newCategoryTable', this.newCategoryTable, this);
+                    // }
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
@@ -97,7 +101,7 @@ define(
                     var classes = this.model.classes_authorized(type);
 
                     /* we not load classes if nothing is return */
-                    if (classes.length == 0) return;
+                    if (classes && classes.length == 0) return;
 
                     /* GroupBy category the list of classes */
                     var classesByCategory = _.groupBy(classes, function(clas) {
@@ -252,7 +256,48 @@ define(
                             $(this.el).append(templateCatTable);
                         }
                     }
+                },
+                addCategoryFilter : function(category){
+                    /* remove terms not needed*/
+                    category = category.replace(" source", "").replace(" sink", "");
+                    if($(".dropdown_filter ."+category, this.el).length == 0){
+                        console.log("add cat ", category);
+                        $(".dropdown_filter", this.el).append("<option class='"+category+"' value='"+category+"'>"+category+"</option>")
+                    }
+                    // console.log("ask for add category filter :", category, "for the table", this.model.get("name"));
+                },
+                removeCategoryFilter : function(category, orientation){
+                    var that = this;
+
+                    if(orientation == "source"){
+                        var sourceSameCat = this.model.get("collectionSources").where({"category": category}).length;
+                        category = category.replace(" source", "").replace(" sink", "");
+                        if(sourceSameCat-1 == 0) $(".dropdown_filter ."+category).remove();
+                    }
+
+                    if(orientation == "destination"){
+                        var sourceSameCat = this.model.get("collectionDestinations").where({"category": category}).length;
+                        category = category.replace(" source", "").replace(" sink", "");
+                        if(sourceSameCat-1 == 0) $(".dropdown_filter ."+category).remove();
+                    }
+
+                },
+                /* Filter Quiddities */
+                filter_quiddities: function(element){
+                    var that = this;
+                    var filterVal = $(element.target).val();
+                    this.model.get("collectionSources").each(function(source){
+                        /* reset showing source */
+                        source.trigger("toggleShow", "show", that.model.get("name"));
+                        if(source.get("category").indexOf(filterVal) < 0) source.trigger("toggleShow", "hide",that.model.get("name"));
+                        
+                    });
+                    this.model.get("collectionDestinations").each(function(destination){
+                        destination.trigger("toggleShow", "show", that.model.get("name"));
+                        if(destination.get("category") && destination.get("category").indexOf(filterVal) < 0) destination.trigger("toggleShow", "hide",that.model.get("name"));
+                    });
                 }
+
 
             });
 

@@ -155,8 +155,10 @@ define(
                     $("#panelRight").hide();
                     $("#panelRight").data("quiddName", "");
                     /* we unsubscribe to the quiddity */
-                    socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.socket.sessionid);
 
+                    if($("#quiddName").val()){
+                        socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.socket.sessionid);
+                    }
                 },
 
 

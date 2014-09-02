@@ -14,12 +14,12 @@ var requirejs = require('requirejs');
 
 requirejs({
     paths: {
-        argv: './scenic/settings/optimist',
-        config: './scenic/settings/config',
-        log: './scenic/settings/log',
-        scenicIo: './scenic/settings/scenic-io',
+        argv: './server_side/settings/optimist',
+        config: './server_side/settings/config',
+        log: './server_side/settings/log',
+        scenicIo: './server_side/settings/scenic-io',
         switcher: 'switcher',
-        node_switcher: './scenic/switcher/switcher',
+        node_switcher: './server_side/switcher/switcher',
     },
     config: {
         nodeRequire: require,
@@ -31,6 +31,6 @@ requirejs({
 
 });
 
-requirejs(['./scenic/app', 'scenicIo'],
+requirejs(['./server_side/app', 'scenicIo'],
     function(app, scenicIo) {}
 );

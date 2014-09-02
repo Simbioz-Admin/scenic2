@@ -107,6 +107,7 @@ define(
 
                 socket.on("create", switcher.quidds.create);
                 socket.on("get_quiddity_description", switcher.quidds.get_description);
+                socket.on("get_info", switcher.quidds.get_info);
                 socket.on("get_properties_description", switcher.quidds.get_properties_description);
                 socket.on("get_methods_description", switcher.quidds.get_methods_description);
                 socket.on("get_property_description", switcher.quidds.get_property_description);

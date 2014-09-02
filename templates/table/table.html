@@ -11,28 +11,16 @@
 			</li>
 		<% }); %>
 	</ul>
+	<div class="filter">
+		<select name="" class="dropdown_filter">
+			<option value="">Show all categories</option>
+		</select>
+	</div>
 </div><!-- headerTable -->
 
-<% if(type == "transfer"){ %>
-	<table class="tableScenic">
-		<thead>
-			<tr>
-				<th rowspan="2"  class="infoTable">
-				</th>
-			</tr>
-			<tr class="destinations"></tr>
-		</thead>
-		<tbody >
-			<!-- <tr > <td rowspan="2">test</td> </tr> -->
-			<tr><td colspan="7" class="sources" id="local-sources">
-				<div class="vignette local-sources">Local sources</div>
-			</td></tr>
-			<tr><td colspan="7" class="sources" id="remote-sources" >
-				<div class="vignette">Remote sources</div>
-
-			</td></tr>
-		</tbody>
-	</table>
+<% if(type == "transfer" || type == "sink"){ %>
+	<div class="destinations"></div>
+	<div class="sources"></div>
 <% } %>
 
 

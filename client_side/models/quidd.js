@@ -64,21 +64,18 @@ define(
                         model: ModelShmdata
                     });
                     this.set("shmdatasCollection", new ShmdataCollection());
+                    
+                    socket.emit("get_info", this.get("name"), ".shmdata.writer", function(shmdatas) { 
 
 
-                    socket.emit("get_property_value", this.get("name"), "shmdata-writers", function(err, shmdatas) {
-
-                        /* create model for each shmdata of the quiddity */
-                        if (!shmdatas.err) {
-                            that.updateShmdatas(shmdatas.shmdata_writers);
+                        /* When no shmdata error = no path */
+                        if (!shmdatas.error){
+                            _.each(shmdatas, function(shm, path) {
+                                shm["quidd"] = that.get("name");
+                                shm["path"] = path;
+                                that.get("shmdatasCollection").add(shm);
+                            });
                         }
-
-                        // if (err) return views.global.notification("error", err);
-                        // if (shmdatas) {
-                        //     that.set({
-                        //         shmdatas: shmdatas.shmdata_writers
-                        //     });
-                        // }
 
 
                         /* ViewSource it's a view for create a entry source to the table transfer */
@@ -95,17 +92,12 @@ define(
                                     tableModel.get("collectionSources").add(that);
 
                                     /* we create a view source for table transfer and after that we create view for shmdata */
-                                    // if (tableModel.get("type") == "transfer") {
                                     new ViewSource({
                                         model: that,
                                         table: tableModel
                                     });
-                                    // }
+                                    
 
-                                    // if (tableModel.get("type") == "sink") {
-                                    //     console.log("create view shmdata standalone!");
-
-                                    // }
                                 }
 
                                 if (authorization.destination) {
@@ -117,12 +109,6 @@ define(
                                         table: tableModel
                                     });
                                 }
-
-                                /* 2. Create View appropriate for type of table */
-
-
-                                // tableModel.add_to_table(that);
-
 
                             });
                         }
@@ -156,25 +142,30 @@ define(
                             views.quidds.addPreviewIcon(that.get("name"));
                         }
 
+
                     });
                 },
 
                 updateShmdatas: function(shmdatas) {
                     var that = this;
                     var collShmdatas = that.get("shmdatasCollection");
+
+                    console.log("current shmdatas info", collShmdatas);
+                    console.log("server shmdatas", shmdatas);
+                    return;
                     // collShmdatas.reset();
-                    collShmdatas.each(function(shm) {
-                        shm.trigger("destroy", shm);
-                    });
-                    if (shmdatas && shmdatas.length > 0) {
-                        _.each(shmdatas, function(shm) {
-                            collShmdatas.add({
-                                path: shm.path,
-                                quidd: that.get("name")
-                            });
-                        });
-                    }
-                    this.trigger("updateShmdatas", this);
+                    //     collShmdatas.each(function(shm) {
+                    //         shm.trigger("destroy", shm);
+                    //     });
+                    //     if (shmdatas && shmdatas.length > 0) {
+                    //         _.each(shmdatas, function(shm) {
+                    //             collShmdatas.add({
+                    //                 path: shm.path,
+                    //                 quidd: that.get("name")
+                    //             });
+                    //         });
+                    //     }
+                    //     this.trigger("updateShmdatas", this);
                 },
 
                 /**

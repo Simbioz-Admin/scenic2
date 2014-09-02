@@ -46,7 +46,6 @@ define(
 
                     /** Event called when the server add a new destination (client) */
                     socket.on("create_destination", function(destination) {
-                        console.log("CREATE", destination);
                         that.add(destination);
                         // views.global.notification("info", "the destination " + destination.name + " is added");
                     });
@@ -61,14 +60,12 @@ define(
 
                     /** Event called when a connection is made between a source and a destination */
                     socket.on("add_connection", function(quiddName, path, port, id) {
-                        console.log(that.toJSON(), id);
                         var model = that.get(id);
                         model.get("data_streams").push({
                             quiddName: quiddName,
                             path: path,
                             port: port
                         });
-                        console.log(model.toJSON());
                         $("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
                         $("[data-path='" + path + "'] [data-id='" + id + "']").html(port);
                     })

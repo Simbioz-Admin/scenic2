@@ -79,7 +79,6 @@ define(
 
                 },
                 handlePropagation: function handlePropagation(element) {
-                    console.log("modal clicked");
                     element.stopPropagation();
                 },
                 

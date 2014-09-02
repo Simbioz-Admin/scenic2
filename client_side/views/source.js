@@ -45,74 +45,40 @@ define(
 
                 initialize: function(options) {
                     /* Subscribe for remove and change shmdatas on quiddity source */
-                    this.model.on('remove', this.removeView, this);
+                    this.model.on('destroy', this.removeView, this);
                     this.model.on('updateShmdatas', this.render, this);
-                    this.model.on('updateByteRate', this.updateByteRateAndPreview);
+                    this.model.on("toggleShow", this.toggleShow, this);
+
+                    // this.model.on('updateByteRate', this.updateByteRateAndPreview);
                     this.table = options.table;
 
-                    if (this.table.get("type") == "transfer") this.renderTransfer();
-                    if (this.table.get("type") == "sink") this.renderSink();
-                },
+                    $("#" + this.table.get("type") + " .sources").append(this.el);
 
+                    /* we check if the category of this quidd exist in filter table */
+                    this.table.trigger("addCategoryFilter", this.model.get("category"));
 
-                renderTransfer: function() {
-                    var that = this;
-                    if (this.model.get("class") == "httpsdpdec") {
-                        $("#" + this.table.get("type") + " #remote-sources").append($(this.el));
-                    } else {
-                        $("#" + this.table.get("type") + " #local-sources").append($(this.el));
-                    }
                     var quiddTpl = _.template(TemplateSource, {
                         name: this.model.get("name")
                     });
+                    
                     $(this.el).append(quiddTpl);
-
-                    /* we create a view for each shmdata existing */
-                    this.model.get("shmdatasCollection").each(function(shm) {
-                        new ViewShmdata({
-                            model: shm,
-                            modelQuidd: that.model,
-                            table: that.table
-                        });
-                    });
-                },
-
-                renderSink: function() {
-                    var that = this;
-                    console.log("a");
-                    /* 1. parse all shmdata of the quidd for create view in table sink */
-                    this.model.get("shmdatasCollection").each(function(shm) {
-
-                        /* 2. in first time we need to check if the table of the type of shmdata exist */
-                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
-
-                        /* 3. we create a view shmdata for each */
-                        new ViewShmdata({
-                            model: shm,
-                            modelQuidd: that.model,
-                            table: that.table
-                        });
-
-
-                    });
+                    this.render();
                 },
 
                 render: function() {
-                    var that = this,
-                        // shmdatas = this.model.get("shmdatas"),
-                        table = collections.tables.findWhere({
-                            type: this.table
-                        });
-
-                    //console.log("render Quiddity Source " + this.model.get("name") + " for the table " + this.table);
-                    // console.log(this.model.get("shmdatasCollection").toJSON());
-
-                    this.model.get("shmdatasCollection").each(function(shm) {
-                        that.table.trigger("newCategoryTable", that.table.get("type"), shm.get("type"));
-                        shm.createViewForTable(that.table);
-                    });
-
-
+                    var that = this;
+                    $(".shmdatas", that.el).html("");
+                    if(this.model.get("shmdatasCollection").size() > 0){
+                        this.model.get("shmdatasCollection").each(function(shm) {
+                            var viewShm = new ViewShmdata({
+                                model: shm,
+                                modelQuidd: that.model,
+                                table: that.table
+                            });
+                            $(".shmdatas", that.el).append(viewShm.el);
+                            viewShm.render();
+                        }); 
+                    }
                 },
 
 
@@ -138,6 +104,16 @@ define(
                     });
 
                 },
+
+                toggleShow : function(state, tableName){
+
+                    /* trigger is called for all destination, we need to check if its for the good table */
+                    if(this.table.get("name") == tableName){
+                        if(state == "show") $(this.el).show();
+                        else $(this.el).hide();
+                    }
+                },
+
                 edit: function() {
                     this.model.edit();
                 },
@@ -145,7 +121,9 @@ define(
                     this.model.askDelete();
                 },
                 removeView: function() {
+                    // remove category in filter (check if its the last quidd of this category) 
                     this.remove();
+                    this.table.trigger('removeCategoryFilter', this.model.get("category"), "source");
                 },
                 preview: function(element) {
                     this.model.preview(element);

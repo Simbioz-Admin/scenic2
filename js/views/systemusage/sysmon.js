@@ -83,9 +83,6 @@ define(
                         .attr("y", 15)
                         //.attr("fill", "grey")
                         .text("NET");
-
-                   
-
                     return this;
                 },
                 /**
@@ -97,56 +94,119 @@ define(
                     var cpus = [];
                     var net = [];
                     for (key in info) {
-                            //console.log("key", sysusage[key])
-                            if (key == "cpu") {
+                        //console.log("key", sysusage[key])
+                        if (key == "cpu") {
                             for (cpu in info[key]) {
                                 //console.log("cpu", cpu, info[key][cpu]);
                                 cpus.push(info[key][cpu]);
                             }
-                                this.cpuMon(cpus);
+                            this.cpuMon(cpus);
                         } else if (key == "net") {
                             for (eth in info[key]) {
                                 net.push(info[key][eth])
                             }
-                            //this.netMon(net);
+                            this.netMon(net[0]);
                         }
                     }
-                    
-                    
-                    
                 },
                 netMon: function netMon(data) {
-                    //console.log("TODO: implement netMonitor")
+                    // console.log(data);
+                    var netdata = [];
+                    for (var key in data) {
+                        if (key == 'rx_rate' || key == 'tx_rate') {
+                            netdata.push(data[key]);
+                        }
+                    }
                     var width = 200;
                     var height = 50;
-                    var barWidth = (width / 4) / data.length;
+                    var barWidth = (width / 4) / netdata.length;
                     var y = d3.scale.linear()
-                            .range([height, 0]);
+                        .range([height, 0]);
                     var chart = d3.select(".chart")
                         .attr("width", width)
                         .attr("height", height);
-
-                    var bar = chart.selectAll(".bar")
-                        .data(data);
+                    y.domain([0, 15])
+                    var bar = chart.selectAll(".Netbar")
+                        .data(netdata);
                     bar.enter()
                         .append("rect")
-                        .attr("class", "bar");
-
+                        .attr("class", "Netbar");
+                    
                     bar.transition(0.1)
-                        .attr("y", function (d) {return y(d.tx_rate)})
+                        .attr("y", function (d) {
+                            ret = (d > 0) ? y(d / 1048576) : y(0.001);
+                            return ret;
+                        })
                         .attr("height", function (d, i) { 
-                            return height - y(d.tx_rate); 
+                            ret = (d > 0) ? y(d / 1048576) : y(0.001);
+                            return height - ret; 
                         })
                         .attr("width", barWidth - 1)
                         .attr("transform", function(d, i){
-                            return "translate(" + 50 + (i * barWidth) + ", 0)";
-                        });
+                            return "translate("+ ( 51 + (i * barWidth)) + ", 0)";
+                        })
 
-                    function type(d) {
-                        d.value = +d.value; // coerce to number
-                        return d;
-                    }
                     
+                },
+
+                netMonPie: function netMonPie(data) {
+                    var netdata = [];
+                    for (var key in data) {
+                        if (key == 'rx_rate' || key == 'tx_rate') {
+                            //console.log("found a rate key ", key)
+                            //console.log("data at ", key, ": ", data[key])
+                            netdata.push(data[key]);
+                        }
+                    }
+                    var width = 200;
+                    var height = 50;
+
+                    var arcTX = d3.svg.arc()
+                        .innerRadius(function (d, i) {
+                            return i * 5 + 10;
+                        })
+                        .outerRadius(function (d, i) {
+                            return i * 5 + 12;
+                        })
+                        .startAngle(function (d, i) {
+                            return 0;
+                        })
+                        .endAngle(function (d, i) {
+                            console.log("data", d);
+                            //return 1;
+                            return d/1024/1024;
+                        });
+                    
+                    var chart = d3.selectAll(".chart")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr("transform", function() {
+                            //console.log("applyiung transform on netMonPie");
+                            return "translate(150, 25)"
+                        });
+                    
+                    function updateData() {
+                        console.log("arcTX", arcTX());
+                        console.log("netdata in updateData: ", netdata);
+                        var pieUp = chart.selectAll("path")
+                            .data(netdata);
+                        
+                        pieUp.exit().remove();
+                        
+                        pieUp.enter().append("path")
+                            .attr("fill", "#aaaff")
+                            .attr("fill-opacity", 0.85)
+                            .attr("transform", "translate(150, 25)")
+                            .attr("d", arcTX);
+                    }
+                    var pie = chart.selectAll("path")
+                        .data(netdata)
+                        .enter().append("path")
+                        .attr("fill", "#aaaff")
+                        .attr("fill-opacity", 0.85)
+                        .attr("transform", "translate(150, 25)")
+                        .attr("d", arcTX);
+                    //updateData();
                 },
                 cpuMon: function (data) {
                     var width = 200;
@@ -156,13 +216,13 @@ define(
                             .range([height, 0]);
                     var chart = d3.select(".chart")
                         .attr("width", width)
-                        .attr("height", height);
+                        .attr("height", height)
 
                     var bar = chart.selectAll(".bar")
                         .data(data);
                     bar.enter()
                         .append("rect")
-                        .attr("class", "bar");
+                        .attr("class", "bar")
 
                     bar.transition(0.1)
                         .attr("y", function (d) {return y(d.total)})

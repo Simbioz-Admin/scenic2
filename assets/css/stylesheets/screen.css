@@ -3371,6 +3371,12 @@ rect {
     stroke-width: 0.1;
 }
 
+.Netbar {
+    fill: grey;
+    fill-opacity: 0.5;
+    stroke-width: 0.1;
+}
+
 .monBg{
     stroke: grey;
     stroke-width: 0.5;

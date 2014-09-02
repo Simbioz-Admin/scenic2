@@ -3379,3 +3379,35 @@ html[xmlns] .clearfix {
     border-collapse: inherit !important;
   }
 }
+svg .chart{
+    position: relative;
+    float:right;
+}
+
+rect {
+    // fill: grey;
+    // fill-opacity: 0.5;
+ }
+
+.bar {
+    fill: grey;
+    fill-opacity: 0.5;
+    stroke-width: 0.1;
+}
+
+.Netbar {
+    fill: grey;
+    fill-opacity: 0.5;
+    stroke-width: 0.1;
+}
+
+.monBg{
+    stroke: grey;
+    stroke-width: 0.5;
+    fill: grey;
+    fill-opacity: 0.1;
+}
+
+.monLabel {
+    fill: grey;
+}

@@ -387,8 +387,13 @@ define(
                     collections.tables.currentTable = table;
                     $(".tabTable").removeClass("active");
                     $(event.target).parent().addClass("active");
+                    var target = $(event.target).attr('class')
+                    if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
+                        $("#htop").remove();
+                    }
                     $(".table").removeClass("active");
                     $("#" + table).addClass("active");
+                    
                 }
             });
 

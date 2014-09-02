@@ -30,7 +30,7 @@ var config = {
     },
     sip: {
         port: 5060,
-        address: "10.10.30.115",
+        address: "10.10.30.179",
         name: '1010'
     },
     rtpsession: "defaultrtp",

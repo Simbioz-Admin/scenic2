@@ -11,7 +11,8 @@ require.config({
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',
-        smartMenu: 'libs/smartmenus/jquery.smartmenus.min'
+        smartMenu: 'libs/smartmenus/jquery.smartmenus.min',
+        d3: 'libs/d3.min'
     },
     shim: {
         underscore: {

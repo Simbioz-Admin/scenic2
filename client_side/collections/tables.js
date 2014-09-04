@@ -36,10 +36,8 @@ define(
                  */
 
                 initialize: function() {
-
-
                     /* Create a table for manage Audio device and connexion */
-                    var sinkTable = {
+                    var shmdataMatrix = {
                         name: 'Sink',
                         type: 'sink',
                         description: "Manage audio device and connexion audio",
@@ -51,7 +49,7 @@ define(
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["source", "httpsdpdec", "posturemerge"]
+                            select: ["src", "source", "httpsdpdec"]
                         },
                         destinations: {
                             select: ["sink"],
@@ -59,12 +57,8 @@ define(
                         }
                     }
 
-
-
-
-                    /* Create a table for manage transfer shmdatas  */
-
-                    var transferTable = {
+                    /* Create a table for managing shmdatas transmission throught RTP/SDP  */
+                    var RTPtransferMatrix = {
                         name: "transfer",
                         type: "transfer",
                         description: "manage connexion with destination type host",
@@ -77,14 +71,12 @@ define(
                             id: "create_receiver"
                         }],
                         sources: {
-                            select: ["source", "httpsdpdec"],
-                            exclude: ["midi source"]
+                            select: ["src", "source", "httpsdpdec"]
                         },
                         collectionDestinations: collections.receivers
                     }
 
-
-                    var controlTable = {
+                    var controlMatrix = {
                         name: "control",
                         type: "control",
                         description: "Control properties of quiddities with device",
@@ -102,13 +94,10 @@ define(
                         collectionDestinations: collections.receivers
                     }
 
-
-                    this.add(controlTable);
-                    this.add(sinkTable);
-                    this.add(transferTable);
-
+                    this.add(controlMatrix);
+                    this.add(shmdataMatrix);
+                    this.add(RTPtransferMatrix);
                 }
             });
-
         return CollectionTables;
     })

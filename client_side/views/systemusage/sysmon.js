@@ -132,8 +132,8 @@ define(
                         .append("rect")
                         .attr("class", "Netbar");
                     
-                    bar.transition(0.1)
-                        .attr("y", function (d) {
+                    //bar.transition(0.1)
+                        bar.attr("y", function (d) {
                             ret = (d > 0) ? y(d / 1048576) : y(0.001);
                             return ret;
                         })
@@ -224,15 +224,16 @@ define(
                         .append("rect")
                         .attr("class", "bar")
 
-                    bar.transition(0.1)
-                        .attr("y", function (d) {return y(d.total)})
+                    //bar.transition(0.1)
+                        bar.attr("y", function (d) {return y(d.total)})
                         .attr("height", function (d, i) { 
                             return height - y(d.total); 
                         })
                         .attr("width", barWidth - 1)
                         .attr("transform", function(d, i){
                             return "translate(" + i * barWidth + ", 0)";
-                        });
+                        })
+
 
                     function type(d) {
                         d.value = +d.value; // coerce to number

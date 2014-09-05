@@ -35,9 +35,6 @@ define(
 
         /* Called when the view ConnexionView is initialized */
         initialize: function() {
-          console.log("d3 version ", d3.version);
-          console.log("sysmon loaded!");
-          console.log("initialize this is ", this);
           var _this = this;
           function parseInfo(info) {
             var cpuinfo = $.parseJSON(info);
@@ -88,15 +85,11 @@ define(
          * @param info - the data we will be operating on
          */
         render: function(info) {
-          //this.renderBars(info);
-          //console.log("info in render: ", info);
           var cpus = [];
           var net = [];
           for (key in info) {
-            //console.log("key", sysusage[key])
             if (key == "cpu") {
               for (cpu in info[key]) {
-                //console.log("cpu", cpu, info[key][cpu]);
                 cpus.push(info[key][cpu]);
               }
               this.cpuMonitor(cpus);
@@ -109,7 +102,6 @@ define(
           }
         },
         networkMonitor: function networkMonitor(data) {
-          // console.log(data);
           var netdata = [];
           for (var key in data) {
             if (key == 'rx_rate' || key == 'tx_rate') {
@@ -152,8 +144,6 @@ define(
           var netdata = [];
           for (var key in data) {
             if (key == 'rx_rate' || key == 'tx_rate') {
-              //console.log("found a rate key ", key)
-              //console.log("data at ", key, ": ", data[key])
               netdata.push(data[key]);
             }
           }
@@ -171,8 +161,6 @@ define(
               return 0;
             })
             .endAngle(function (d, i) {
-              console.log("data", d);
-              //return 1;
               return d/1024/1024;
             });
           

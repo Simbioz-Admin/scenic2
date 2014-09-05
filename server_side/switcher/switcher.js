@@ -33,7 +33,7 @@ define(
 
       /* create quiddity systemusage for get information about the CPU usage */
       switcher.create("systemusage", 'systemusage');
-      switcher.set_property_value("systemusage", "period", "1.0");
+      switcher.set_property_value("systemusage", "period", config.systemusagePeriod);
       /*subscribe to the modification on this quiddity systemusage*/
       switcher.subscribe_to_signal('systemusage', "on-tree-grafted");
       switcher.subscribe_to_signal('systemusage', "on-tree-pruned");

@@ -50,7 +50,7 @@ var config = {
   subscribe_quidd_info: {},
   scenicDependenciesPath: scenicHomePath,
   scenicSavePath: scenicHomePath + "/save_files/",
-  pathLogs: 'logs/',
+  pathLogs: scenicHomePath + '/logs/',
   systemusagePeriod: '1.0'
 }
 

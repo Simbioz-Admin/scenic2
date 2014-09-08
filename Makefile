@@ -1,10 +1,11 @@
 VERSION := $(shell ./scenic2 -v)
-PROJDIRS := js scenic templates assets node_modules
+PROJDIRS := client_side server_side templates assets 
 SRCFILES := package.json \
 	server.js \
 	index.html \
-	login.html \
-	scenic2 
+	scenic2 \
+	npm-verify.js \
+	scenic2-installer
 ALTFILES := COPYING \
 	INSTALL \
 	NEWS \
@@ -12,48 +13,47 @@ ALTFILES := COPYING \
 	Makefile
 
 ALLFILES := $(PROJDIRS) $(SRCFILES)
-TARGETDIR := /opt/scenic2
+TARGETDIR := /share/scenic2
 ARCHIVE := scenic2_$(VERSION)
 
 all:
-	npm cache clean node-switcher && npm install
-	cd node_modules/node-switcher; node-gyp clean; node-gyp rebuild; cd -
 	@echo Now run sudo make install
 	@echo $(VERSION)
 
 install: all
 	@echo Making all
-	@echo "node $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
-#	@echo installing chromium browser
-#	apt-get install chromium-browser
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic2-installer
 	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files 
-	install $(SRCFILES) $(DESTDIR)$(TARGETDIR)
+	install  $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
 		cp -r $$f $(DESTDIR)$(TARGETDIR); \
 		done; \
-	install scenic2 $(DESTDIR)/usr/local/bin
-	install scenic-launcher.desktop $(DESTDIR)/usr/local/share/applications
+	install scenic2 $(DESTDIR)/bin
+	install scenic2-installer $(DESTDIR)/bin
+	install scenic-launcher.desktop $(DESTDIR)/share/applications
 	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
 
 uninstall:
 	rm -rf $(DESTDIR)$(TARGETDIR)
 	@echo removed $(DESTDIR)$(TARGETDIR)
-	rm $(DESTDIT)/usr/local/bin/scenic2
-	rm $(DESTDIR)/usr/local/share/applications/scenic-launcher.desktop
+	rm $(DESTDIR)/bin/scenic2
+	rm $(DESTDIR)/bin/scenic2-installer
+	rm $(DESTDIR)/share/applications/scenic-launcher.desktop
 
 clean:
 	@echo cleaning up
-	@echo "node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 	rm -fr node_modules
 
 test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2
 
 dist:
-	npm install
 	mkdir -p $(ARCHIVE)
 	install $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)

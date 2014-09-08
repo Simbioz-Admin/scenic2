@@ -22,7 +22,7 @@ all:
 
 install: all
 	@echo Making all
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
 	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic2-installer
 	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
@@ -46,7 +46,7 @@ uninstall:
 
 clean:
 	@echo cleaning up
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 	rm -fr node_modules
 

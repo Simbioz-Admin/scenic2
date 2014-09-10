@@ -10,6 +10,9 @@ define(
     'module'
   ],
   function(config, express, path, nodeSwitcher, switcher, _, $, module) {
+    // get the installation root path
+    var pwd = path.dirname(module.uri)
+    var rootPath = pwd.split('/').slice(0, -2).join('/');
 
     var app = express();
 
@@ -17,9 +20,6 @@ define(
     app.use("/assets", express.static("assets"));
     app.use("/client_side", express.static("client_side"));
     app.use("/templates", express.static("templates"));
-    var pwd = path.dirname(module.uri)
-    var rootPath = pwd.split('/').slice(0, -2).join('/');
-    console.log("***** pwd " + rootPath)
     app.get('/', function(req, res) {
       if (!config.passSet) {
         res.sendfile('index.html', {'root': rootPath});

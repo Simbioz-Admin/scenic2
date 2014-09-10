@@ -1,4 +1,4 @@
-VERSION := $(shell ./scenic2 -v)
+VERSION := $(shell ./scenic2 -v | cut -d ' ' -f3)
 PROJDIRS := client_side server_side templates assets 
 SRCFILES := package.json \
 	server.js \
@@ -18,7 +18,7 @@ ARCHIVE := scenic2_$(VERSION)
 
 all:
 	@echo Now run sudo make install
-	@echo $(VERSION)
+	@echo Scenic version $(VERSION)
 
 install: all
 

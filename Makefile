@@ -3,6 +3,7 @@ PROJDIRS := client_side server_side templates assets
 SRCFILES := package.json \
 	server.js \
 	index.html \
+	login.html \
 	scenic2 \
 	npm-verify.js \
 	scenic2-installer

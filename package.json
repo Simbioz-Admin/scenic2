@@ -1,6 +1,6 @@
 {
     "name": "scenic2",
-    "version": "0.4.9",
+    "version": "2.0.18",
     "description": "UI for interaction design with switcher",
     "main": "app.sh",
     "dependencies": {

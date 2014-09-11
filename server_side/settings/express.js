@@ -13,20 +13,22 @@ define(
     // get the installation root path
     var pwd = path.dirname(module.uri)
     var rootPath = pwd.split('/').slice(0, -2).join('/');
+    console.log(rootPath);
 
     var app = express();
 
     //param necessary for access file and use authentification
-    app.use("/assets", express.static("assets"));
-    app.use("/client_side", express.static("client_side"));
-    app.use("/templates", express.static("templates"));
+    app.use('/assets', express.static("assets"));
+    app.use('/client_side', express.static("client_side"));
+    app.use('/templates', express.static("templates"));
     app.get('/', function(req, res) {
       if (!config.passSet) {
-        res.sendfile('index.html', {'root': rootPath});
+        // res.sendfile('index.html', {'root': rootPath});
+        res.sendfile(rootPath + '/index.html');
       } else {
         config.passSet.apply(req, res, function(username) {
-          //res.sendfile(rootPath + '/index.html');
-          res.sendfile('index.html', {'root': rootPath});
+          // res.sendfile('index.html', {'root': rootPath});
+          res.sendfile(rootPath + '/index.html');
         });
       }
 

@@ -1,5 +1,13 @@
 Scenic2 release notes
 ===================
+Scenic2 2.0.22 (2014-09-11)
+-------------------------
+This release is a bugfix release in the stable 2.0 series.
+
+Fixed bugs:
+
+* path issues introduced in previous release
+
 Scenic2 2.0.18 (2014-09-10)
 -------------------------
 This release is a developer snapshot in the stable 2.0 series.

@@ -1,5 +1,5 @@
-VERSION := $(shell ./scenic2 -v)
-PROJDIRS := js scenic templates assets 
+VERSION := $(shell ./scenic2 -v | cut -d ' ' -f3)
+PROJDIRS := client_side server_side templates assets 
 SRCFILES := package.json \
 	server.js \
 	index.html \
@@ -19,26 +19,26 @@ ARCHIVE := scenic2_$(VERSION)
 
 all:
 	@echo Now run sudo make install
-	@echo $(VERSION)
+	@echo Scenic version $(VERSION)
 
 install: all
+
 	@echo Making all
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
+	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic2
 	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic2/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic2-installer
-#	@echo installing chromium browser
-#	apt-get install chromium-browser
 	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files 
-	install -d $(SRCFILES) $(DESTDIR)$(TARGETDIR)
+	install  -m a+r $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
 		cp -r $$f $(DESTDIR)$(TARGETDIR); \
 		done; \
 	install scenic2 $(DESTDIR)/bin
 	install scenic2-installer $(DESTDIR)/bin
-	install scenic-launcher.desktop $(DESTDIR)/share/applications
-	install scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
+	install -D scenic-launcher.desktop $(DESTDIR)/share/applications
+#	install -d scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
+#	rm -fr ./tmp
 
 uninstall:
 	rm -rf $(DESTDIR)$(TARGETDIR)
@@ -48,10 +48,10 @@ uninstall:
 	rm $(DESTDIR)/share/applications/scenic-launcher.desktop
 
 clean:
-	@echo cleaning up
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node server.js \$$@" > scenic2
+	@echo resetting paths in launch scripts
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
-	rm -fr node_modules
+#	rm -fr node_modules
 
 test:
 	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic2

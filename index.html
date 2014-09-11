@@ -6,7 +6,7 @@
 
     <!-- /**** CSS ****/ -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link href="/js/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
+	<link href="/client_side/libs/jqueryui/css/no-theme/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css" >
 	<link href="/assets/css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/black.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<link href="/assets/css/stylesheets/nouislider.fox.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -18,7 +18,7 @@
 	 <!-- /**** JAVSCRIPT ****/ -->
     <script type="text/javascript"> var page = "app";</script>
     <script src="/socket.io/socket.io.js"></script>
-    <script data-main="/js/main.js" src="/js/libs/require-jquery.js"></script>
+    <script data-main="/client_side/main.js" src="/client_side/libs/require-jquery.js"></script>
 
 
 </head>
@@ -29,10 +29,11 @@
 			<header id="header">
 				<div id="logoSat"></div>
 				<div id="logoScenic">SCENIC 2</div>
-				<div class="btn" id="btn-info" style="float:right">?</div>
-				<!-- <div class="btn" id="btn-log" style="float:right">LOG</div> -->
-				<div class="btn" id="btnSave" style="float:right" >SAVE</div>
-				<div class="btn" id="btnGetFiles" style="float:right" >LOAD</div>
+				<ul class="menu_list" id="menu_header">
+					<li class="btn" id="btn-info">?</li>
+					<li class="btn" id="btnSave" >SAVE</li>
+					<li class="btn" id="btnGetFiles" >LOAD</li>
+				</ul>
 
 			</header>
 

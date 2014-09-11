@@ -1,20 +1,17 @@
 /* line 10, ../sass/black.sass */
 body {
-  background: #444444;
+  background: #3b3b3b;
 }
 
 /* line 14, ../sass/black.sass */
 h3 {
   color: #aaaaaa;
-  border-bottom-color: black;
+  border-bottom-color: #333333;
 }
 
 /* line 18, ../sass/black.sass */
 .table #headerTable {
   border-bottom-color: black;
-  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0px -7px 0px -6px inset;
-  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0px -7px 0px -6px inset;
-  box-shadow: rgba(255, 255, 255, 0.1) 0px -7px 0px -6px inset;
 }
 
 /* line 22, ../sass/black.sass */
@@ -29,88 +26,92 @@ h3 {
 
 /* line 28, ../sass/black.sass */
 .tableScenic tr .groupSource {
-  border: 1px solid #333333;
+  border: 1px solid #222222;
 }
 
 /* line 32, ../sass/black.sass */
 #panelRight .content {
-  background: #333333;
+  background: #222222;
   color: #aaaaaa;
 }
 
-/* line 38, ../sass/black.sass */
+/* line 36, ../sass/black.sass */
+#panelRight #title, #panelRight .title, .panelInfoSource #title, .panelInfoSource .title {
+  background: #2a2a2a !important;
+}
+
+/* line 39, ../sass/black.sass */
 .tableScenic .nameInOut, .scenic2 .destinations .nameInOut {
   background: #3a3a3a;
   border-color: #333333;
   color: #aaaaaa;
 }
-/* line 42, ../sass/black.sass */
+/* line 43, ../sass/black.sass */
 .tableScenic .nameInOut a, .scenic2 .destinations .nameInOut a {
   color: #aaaaaa;
 }
 
-/* line 45, ../sass/black.sass */
+/* line 46, ../sass/black.sass */
 td.active {
-  border: 1px solid #333333;
-  background: #292929;
+  background: #222222;
 }
 
-/* line 50, ../sass/black.sass */
+/* line 51, ../sass/black.sass */
 .box {
   background: #333333;
   border-color: #333333;
 }
 
-/* line 54, ../sass/black.sass */
+/* line 55, ../sass/black.sass */
 #panelRight input[type=text], .panelInfoSource input[type=text] {
-  background: #444444;
-  border-color: #444444;
+  background: #3b3b3b;
+  border-color: #3b3b3b;
   outline-color: #dddddd;
   color: white;
 }
 
-/* line 60, ../sass/black.sass */
+/* line 61, ../sass/black.sass */
 input[type=submit] {
-  background: #222222;
+  background: #111111;
 }
 
-/* line 64, ../sass/black.sass */
+/* line 65, ../sass/black.sass */
 .actions .action {
-  background: #333333;
+  background: #222222;
 }
-/* line 66, ../sass/black.sass */
+/* line 67, ../sass/black.sass */
 .actions .action .edit {
   opacity: 0.3;
 }
-/* line 68, ../sass/black.sass */
+/* line 69, ../sass/black.sass */
 .actions .action .edit:hover {
   opacity: 1;
 }
-/* line 70, ../sass/black.sass */
+/* line 71, ../sass/black.sass */
 .actions .action .remove {
   background: #aaaaaa;
-  color: #444444;
+  color: #3b3b3b;
 }
-/* line 74, ../sass/black.sass */
+/* line 75, ../sass/black.sass */
 .actions .action:first-child {
-  border-color: #444444;
+  border-color: #3b3b3b;
 }
 
-/* line 82, ../sass/black.sass */
+/* line 83, ../sass/black.sass */
 #panelTables .tabTable {
-  background: #222222;
+  background: #1a1a1a;
 }
-/* line 84, ../sass/black.sass */
+/* line 85, ../sass/black.sass */
 #panelTables .tabTable.active {
-  background: #444444;
+  background: #3b3b3b;
 }
 
-/* line 87, ../sass/black.sass */
+/* line 88, ../sass/black.sass */
 #panelTables #btn-irc {
-  background: #444444;
+  background: #3b3b3b;
 }
 
-/* line 90, ../sass/black.sass */
+/* line 91, ../sass/black.sass */
 .close {
   background: #333333;
 }

@@ -42,6 +42,7 @@ $colorSat : #be2620
 
 
 @import "users"
+@import "systemusage"
 
 
 html
@@ -146,7 +147,7 @@ header
 	top : 0
 	z-index: 20000
 	.btn
-		margin-top : 10px
+		margin-top : 3px
 
 
 #currentUser
@@ -161,17 +162,17 @@ header
 		opacity : 1
 
 #logoSat
-	width : 50px
-	height : 50px
+	width : 49px
+	height : 49px
 	float : left
 	//padding : 10px 0 0 50px
 	//margin-left : 3px
-	background : #be2620 url(../../images/logo_sat.png) no-repeat 8px 12px
+	background : #be2620 url(../../images/logo_sat.png) no-repeat 9px 12px
 #logoScenic
 	color : white
-	font-size : 2em
+	font-size : 18px
 	letter-spacing : 0.09em
-	margin : 16px 0 0 15px
+	margin : 17px 0 0 11px
 	float : left
 	font-family : "Irma Light"
 
@@ -184,20 +185,20 @@ header
 		background : url(../../images/logoTempiSnake.png) no-repeat center center
 
 .btn
-	color : white
-	padding : 5px 20px 6px
-	cursor : pointer
-	font-size : 1.2em
-	float : left
-	//+border-radius(3px)
-	//margin : 5px 5px 0 10px
-	//border : 1px solid #333
-	//+background-image(linear-gradient(#444 10%, #333 90%))
-	+transition(.1s linear all)
-	text-decoration : none
-	position : relative
-	font-family : "Irma Light"
-	line-height : 28px
+	// color : white
+	// padding : 0px 20px 6px
+	// cursor : pointer
+	// font-size : 1.2em
+	// float : left
+	// +border-radius(3px)
+	// margin : 5px 5px 0 10px
+	// border : 1px solid #222
+	// // +background-image(linear-gradient(#444 10%, #333 90%))
+	// // +transition(.1s linear all)
+	// text-decoration : none
+	// position : relative
+	// font-family : "Irma Light"
+	// line-height : 28px
 	&:hover
 		//background-image: (linear-gradient(#e52a22 40%, #be2620 90%))
 		background : #333
@@ -232,6 +233,32 @@ header
 .btn-group
 	display : inline-block
 
+
+.menu_list
+	color : #999
+	+box-shadow(0px 2px -2px 2px black)
+
+	li
+		display : inline-block
+		padding : 10px
+		+background-image(linear-gradient(#444 10%, #333 90%))
+		border : 1px #222 solid
+		border-right : none
+		float : left
+		margin : 0
+		&:first-child
+			+border-radius(2px 0 0  2px)
+		&:last-child
+			+border-radius(0 2px 2px 0)
+		&:hover
+			cursor : pointer
+			+background-image(linear-gradient(#333 10%, #2c2c2c 90%))
+			+box-shadow(0px 2px -2px 2px black inset)
+
+
+#menu_header
+	float : right
+	margin : 10px
 
 #msgHighLight
 	width : 310px
@@ -310,35 +337,45 @@ header
 		display : block!important
 
 	.get_classes , .channel
-		padding : 5px 15px
+		padding : 6px 15px 5px 25px
 		margin-right : 10px
 		//border-left : 1px solid #555
 		display : inline-block
 		color : #ccc
-		line-height : 30px
+		line-height : 25px
 		font-family: "Irma Light"
 		//+background-image(linear-gradient(#363636 1%, #303030 99%))
 		cursor : pointer
-		font-size : 13px
+		font-size : 12px
 		letter-spacing: 0.08em
 		&:hover
-			+background-image(linear-gradient(#262626 0%, #333 49%))
-
+			background : #be2620
+			// +background-image(linear-gradient(#333 10%, #222 90%))
+		&:before
+			content : ""
+			width: 0
+			height: 0
+			border-left: 4px solid transparent
+			border-right: 4px solid transparent
+			border-top: 4px solid white
+			position : absolute
+			left : 10px
+			top : 16px
 	a
 		text-decoration: none
 	.ui-menu a
 		color : #ccc
 		text-decoration: none
-		padding : 10px
+		padding : 5px 10px
 		margin : 0
 		line-height: 13px
 		&.ui-state-focus
 			background : #be2620
-			padding : 10px
+			padding : 5px 10px
 			line-height: 13px
 			margin : 0
 		&.ui-state-active
-			padding : 10px
+			padding : 5px 10px
 			margin : 0
 
 	.newMsg
@@ -362,17 +399,17 @@ header
 			position : absolute
 			//display : none
 			color : white
-			top : 30px
+			top : 35px
 			left : -2px
 			//background : #333
 			font-size : 14px
 			z-index : 1000
-			padding-top : 10px
+			padding-top : 0px
 			//+box-shadow(rgba(black, 0.3) 0px 7px 11px)
 			li
 				min-width : 150px
 				line-height : 15px
-				padding : 10px 15px
+				padding : 5px 15px
 				background : #333
 				border-bottom : 1px #3a3a3a solid
 				position : relative
@@ -443,10 +480,10 @@ header
 
 #panelTables
 	position : fixed
-	background : #333
+	background : #222
 	width : 50px
 	height : 100%
-	padding-top : 86px
+	padding-top : ($heightHeader + 50)
 	overflow : hidden
 	border : none
 	//background : url(../../images/bgTable.png)
@@ -459,17 +496,17 @@ header
 		border : none
 		float : right
 		margin : 5px 0px 0
-		+box-shadow(rgba(black, 0.2) -2px 0px 10px inset)
+		+box-shadow(-4px 0px 7px -5px black inset)
 		opacity : 0.8
 		background : url(../../images/bgTable.png)
-		+border-radius(3px 0 0 3px)
+		+border-radius(2px 0 0 2px)
 		&:hover
 			cursor : pointer
 			opacity : 1
 		&.active
-			box-shadow : none
+			//box-shadow : none
 			opacity : 1
-
+			+box-shadow(-4px 0px 7px -5px black inset)
 		.content
 			width : 100%
 			height : 100%
@@ -478,8 +515,8 @@ header
 			background : url(../../images/iconeTransmission.png) no-repeat center center
 		&.control .content
 			background : url(../../images/iconeControle.png) no-repeat center center
-		&.audio .content
-			background : url(../../images/iconeAudio.png) no-repeat center center
+		&.sink .content
+			background : url(../../images/iconeSink.png) no-repeat center center
 
 	#btn-irc
 		background : url(../../images/bgTable.png)
@@ -492,7 +529,7 @@ header
 		.content
 			width : 100%
 			height : 100%
-			background : url(../../images/icon-irc.png) no-repeat center 2px
+			background : #1a1a1a url(../../images/icon-irc.png) no-repeat center 2px
 			text-align: center
 			line-height: 27px
 			color: white
@@ -670,10 +707,17 @@ header
 		top : 0
 		left : 0
 		right : 0
+		overflow : hidden
+		white-space : nowrap
 
 	.setMethod, .sendProperty
-		float : right
-		padding : 11px 10px
+		padding: 13px 10px
+		background: #444
+		color: white
+		text-decoration: none
+		margin: 0 0 0 5px
+		border-radius: 2px
+
 
 	.mapInput
 		width : 60px!important
@@ -700,6 +744,7 @@ header
 	input[type=submit]
 		width : 100%
 		height : 35px
+		cursor : pointer
 	.delete
 		color : #be2620
 		float : left
@@ -729,12 +774,13 @@ header
 .panelBox
 	width : 250px
 	padding : 15px 20px 10px
-	background : #333
+	background : #2a2a2a
 	position : absolute
 
-	top : 50px
+	top : 60px
 	color : white
 	font-size : 1.3em
+	+box-shadow(0px 9px 25px -10px #2a2a2a)
 	//+border-radius(3px)
 	&:before
 		content: ""
@@ -742,7 +788,7 @@ header
 		height : 0
 		border-left : 8px solid transparent
 		border-right : 8px solid transparent
-		border-bottom : 7px solid #333333
+		border-bottom : 7px solid #2a2a2a
 		position : absolute
 		top : -7px
 		right : 10px
@@ -753,7 +799,7 @@ header
 
 
 #panelInfo
-	right : 2px
+	right : 106px
 	div
 		width : 90px
 		float : left
@@ -770,7 +816,7 @@ header
 		color : white
 
 #panelFiles
-	right : 130px
+	right : 17px
 	
 	.file
 		cursor: pointer
@@ -796,7 +842,7 @@ header
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	.content
 		position : absolute
-		right : 310px
+		right : 20px
 		top : 60px
 		z-index : 1000
 		overflow-x : hidden
@@ -832,20 +878,21 @@ header
 	+box-shadow(rgba(black, 1) 10px 10px 20px -15px inset)
 
 td,th
-	border : 1px solid #d3d3d3
+	//border : 1px solid #d3d3d3
 	word-wrap : break-word
 	//border-right : none
 	.short
 		//width : 100px
 		max-width: 100px
-		margin : 0 10px
+		//margin : 0 10px
 		position : relative
 th:last-child
 	border-bottom : none
 
 
 td
-	min-width : 100px
+	min-width : 118px
+	position : relative
 
 .table
 	//background : #fcfcfc
@@ -853,7 +900,7 @@ td
 	-webkit-tap-highlight-color : rgba(0,0,0,0)
 	padding : 0
 	float : left
-	margin : 46px 0 0 5px
+	margin : ($heightHeader - 5) 0 0 5px
 	//+boxShadow
 	position : fixed
 	display : none
@@ -864,9 +911,9 @@ td
 		z-index : 100
 		left : 0
 		right : 0
-		height : 40px
+		height : 35px
 		margin : 0 0 10px
-		background : #222
+		background : #333
 		padding : 0
 		// border-bottom : 1px solid #d3d3d3
 		// +box-shadow(rgba(white, 0.4)  0px -7px 0px -6px inset)
@@ -883,9 +930,24 @@ td
 			&:hover
 				+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
 
-
-
-
+		.filter
+			padding : 7px 0 0 10px
+			width : 150px
+			float : left
+			opacity : 0.5
+			&:hover
+				opacity : 1
+				cursor : pointer
+			select
+				width : 100%
+				background : #444
+				border : #444
+				color : white
+				cursor : pointer
+				padding : 2px 0
+				option
+					cursor : pointer
+					border : none
 	#titleOut
 		position: absolute
 		left: 0
@@ -930,46 +992,7 @@ td
 	#titleOut
 		display : block
 
-.actions
-	//height : 32px
-	//position : absolute
-	height : 40px
-	// top : -10px
-	left : 0
-	right : 0
-	display : none
-	opacity : 0
-	background : #f1f1f1
-	.action
-		background : #333
-		width : 60px
-		display: table-cell
-		vertical-align: middle
-		&:first-child
-			border-right : 1px solid #ccc
-		.remove
-			background : #aaa
-			color : #333
-			width : 20px
-			line-height: 20px
-			+border-radius(20px)
-			margin : 0 auto
-			padding : 0 1px 1px 1px
-			&:hover
-				background : #be2620
-				color : white
-				cursor : pointer
 
-		.edit
-			height : 27px
-			background : url(../../images/settings.png) center center no-repeat
-			opacity : 0.1
-			color : #bbb
-			z-index : 100
-			&:hover
-				opacity : 0.8
-				border : none
-				cursor : pointer
 
 // .destinations
 // 	.actions
@@ -977,18 +1000,20 @@ td
 
 .sources
 	position : relative
+	margin-left : 20px
+	margin-top : 30px
+
 	.source:first-child
-		margin-top : 30px
-		&:before
-			content : "Remote sources"
-			//font-family: "Irma Light"
-			background : #555
-			padding : 2px 5px
-			color : white
-			position : relative
-			top : -7px
-			left : -16px
-			//+border-radius(3px 3px 0 0 )
+		// &:before
+		// 	content : "Remote sources"
+		// 	//font-family: "Irma Light"
+		// 	background : #555
+		// 	padding : 2px 5px
+		// 	color : white
+		// 	position : relative
+		// 	top : -7px
+		// 	left : -16px
+		// 	//+border-radius(3px 3px 0 0 )
 
 #remote-sources .source:first-child:before
 	content : "Remote sources"
@@ -996,9 +1021,9 @@ td
 
 #local-sources .source:first-child
 	margin-top : -7px
-	&:before
-		// top : 0px
-		content : "Local sources"
+	// &:before
+	// 	// top : 0px
+	// 	content : "Local sources"
 
 
 .tableScenic
@@ -1014,68 +1039,10 @@ td
 	min-height : 110px
 	min-width : 420px
 
-	table.source
-		margin: 0 0 3px 0px
-		// &:nth-child(odd) 
-		// 	background : #eee
-		// &:nth-child(even)
-		// 	background : #fafafa
-		.shmdata.inactive, .shmdata.active
-			position : relative
-			// &:after
-			// 	content : ""
-			// 	position : absolute
-			// 	left : 245px
-			// 	margin-top : 9px
-			// 	// top : 5px
-			// 	z-index : 20
-			// 	width : 5px
-			// 	height : 5px
-			// 	background-color : #690
-			// 	border-radius : 50%
 
-		.shmdata.active:after
-			//+box-shadow(#555 0 -1px 3px 0px, inset #7D0 0 -1px 9px, #7D0 0 2px 12px)
-
-		.shmdata th
-			border-right : 2px solid #be2620
-
-		.shmdata.active th
-			border-right : 2px solid #01b101
-
-		.nameInOut
-			padding : 0 15px 0 5px
-			text-align : left
-
-		.preview, .status
-			width : 15px
-			height : 18px
-			position : absolute
-			//background : #ddd
-			//border-left : 1px solid #ccc
-			right : -22px
-			top : 0
-		.preview
-			background : url(../../images/icon-preview.png) no-repeat top center
-			opacity : 1
-			transition: 0.2s
-			height : 10px
-			margin : 3px 0 0 
-			&:hover
-				opacity : 0.6
-				cursor : pointer
-			&.active
-				background-position : bottom center
-
-		.status
-			top : 0px
-			right : 0
-			border-bottom : 1px solid #ccc
-		.info
-			cursor : help
 
 	.infoTable
-		width : 258px
+		width : 240px
 		padding : 0
 		border : none
 
@@ -1084,14 +1051,14 @@ td
 		position : relative
 		width : 80px
 		//max-width : 110px
-		width : 120px
+		width : 119px
 		// overflow : hidden
 		height : 40px
 		// padding : 0 9px
 		// border-right : 1px solid #292929
 
 		.mapper
-			background : #888
+			background : #222
 			width : 100%
 			height : 100%
 			// padding : 0 10px
@@ -1109,10 +1076,10 @@ td
 		+box-shadow(rgba(#333, 0.1) 0px 2px 4px)
 		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
 
-	.destinations
-		//+box-shadow(rgba(#333, 0.1) 0px 2px 4px)
-		background : rgba(white, 0.5)
-		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.3)))
+	// .destinations
+	// 	//+box-shadow(rgba(#333, 0.1) 0px 2px 4px)
+	// 	background : rgba(white, 0.5)
+	// 	+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.3)))
 
 
 	tr .groupSource
@@ -1137,24 +1104,24 @@ td
 		//+transform-origin(3px, 3px)
 		writing-mode: tb-rl
 
-	.nameInOut
+	// .nameInOut
 
-		color : #333
-		background : rgba(white, 0.3)
-		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
-		//padding : 15px 20px
-		min-width : 70px
-		min-height: 50px
-		&:hover .short.nameSource
-			display : none
-		&:hover .actions
-			display : table
-			opacity : 1
-		a
-			color : #333
-			text-decoration : none
-			&:hover
-				color : #be2620
+	// 	color : #333
+	// 	background : rgba(white, 0.3)
+	// 	+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
+	// 	//padding : 15px 20px
+	// 	min-width : 70px
+	// 	min-height: 50px
+	// 	&:hover .short.nameSource
+	// 		display : none
+	// 	&:hover .actions
+	// 		display : table
+	// 		opacity : 1
+	// 	a
+	// 		color : #333
+	// 		text-decoration : none
+	// 		&:hover
+	// 			color : #be2620
 
 	.sourceNames
 		.nameInOut
@@ -1168,13 +1135,13 @@ td
 		padding : 0
 		border : none
 
-.scenic2 .destinations
-	//display : block
-	margin-bottom : 5px
-	height : 41px
-	.nameInOut
-		background : rgba(white, 0.4)
-		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
+// .scenic2 .destinations
+// 	//display : block
+// 	margin-bottom : 5px
+// 	height : 41px
+// 	.nameInOut
+// 		background : rgba(white, 0.4)
+// 		+background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)))
 
 
 .panelInfoSource
@@ -1196,7 +1163,9 @@ td
 	background : #eee
 
 .box
-	background : rgba(white, 0.2)	
+	background : rgba(white, 0.2)
+	border-bottom : 1px solid #222
+	text-align : center
 	//border : 1px solid #ddd
 	//border-top : none
 	input[type=text]
@@ -1212,7 +1181,9 @@ td
 		padding: 0
 		border: 1px solid #eee
 
-
+.box_disabled
+	background : #333 url(../../images/box_disabled.png)
+	border-bottom : 1px solid #333
 
 .box:hover, .boxSelect
 	cursor : pointer
@@ -1238,11 +1209,11 @@ td
 	padding : 0 10px
 	border : none
 
-#tr-top th
-	border-bottom : none
+// #tr-top th
+// 	border-bottom : none
 
-#tr-top th:first-child
-	border-bottom : none
+// #tr-top th:first-child
+// 	border-bottom : none
 
 .titleNodesource
 	width : 100%
@@ -1284,17 +1255,17 @@ td
 .content-port-destination
 	height : 100%
 	// margin-left : -10px
-	position : relative
+	// position : relative
 	// width : 118%
 	border : none
 
 #port_destination
 	background : #292929
-	color : white
+	color : white!important
 	outline : 0
 	font-size : 12px
 	border : none
-	height : 100%
+	height : 40px
 .connection
 	background : #444
 	text-align : center
@@ -1307,17 +1278,14 @@ td
 	vertical-align : middle
 	color : white
 	// +transition(.2s linear all)
-	
-	&:hover
-		+box-shadow(rgba(black, 0.5) 0 0 30px inset)
-		background : #444
+	// &:hover
+	// 	+box-shadow(rgba(black, 0.5) 0 0 30px inset)
+	// 	background : #444
 
 td.active
-	background : #777
 	color : white
 	cursor : pointer
 	position : relative
-	background : #292929
 	&:hover
 		// background : #777!important
 		background : #be2620 url(../../images/bgBox_disconnect.png) no-repeat center center !important 
@@ -2222,6 +2190,176 @@ html[xmlns] .clearfix
 			color: #8ec06a
 			+box-shadow(inset 0 2px 3px rgba(255,255,255,0.13), 0 5px 8px rgba(0,0,0,0.35), 0 3px 10px 4px rgba(0,0,0,0.2))
 
+
+
+
+/************************ TABLE - QUIDDITY **********************/
+
+
+.source
+	float : left
+	width : 100%
+.quiddity
+	min-height : 40px
+	position : relative
+	background : #222
+	float : left
+	margin : 0 0 5px
+	.name
+		width : 100px
+		color : white
+		position : absolute
+		padding : 0 10px
+		text-align: center
+		float : left
+		background : #222
+		line-height: 40px
+
+$colorBorder : #3a3a3a
+.shmdatas
+	float : left
+	// min-height: 50px
+	margin-left : 120px
+	.shmdata td, .shmdata th
+		border-left : 1px solid $colorBorder
+		border-bottom : 1px solid $colorBorder
+		color : #eee
+		// height : 45px
+	.shmdata th
+		cursor : help
+		background : #222
+		.shmdata-name
+			padding : 15px 25px
+	th:after
+		content : ""
+		position: absolute
+		// right : 0
+		top : 0
+		bottom : 0
+		width : 2px
+		background : #be2620
+
+	.active th:after
+		background : #008000
+
+	.shmdata:first-child td
+		border-top : 1px solid $colorBorder
+
+	.shmdata td:last-child
+		border-right : 1px solid $colorBorder
+
+
+#control
+	.source
+		margin : 10px 0 0 
+	.property
+		background : #222
+
+.destinations
+	margin-left : 235px
+	td.destination
+		width : inherit
+		height : inherit
+		background : none
+		.content
+			width : 120px
+			height : 30px
+			position : relative
+			// margin-bottom : 15px
+		.name
+			width : 100px
+			color : white
+			position : absolute
+			padding : 15px 10px 0
+			text-align: center
+			float : left
+			height: 30px
+			background : #222
+			border-left : 1px solid #333
+			white-space: normal
+			overflow : hidden
+
+.vignette
+	color : white
+	line-height : 20px
+	background : #333
+	padding : 0 10px
+	margin : 20px 0 10px 0
+	float : left
+
+.tableSink
+	width : 100%
+	float : left
+	position : relative
+	.vignette
+		position : absolute
+		left : 20px
+		top : 20px
+	.shmdatas
+		margin-left : 0
+
+/************************ TABLE - BUTTON ACTIONS **********************/
+
+.actions
+	//height : 32px
+	position : absolute
+	// height : 40px
+	// top : -10px
+	left : 0
+	right : 0
+	top : 0
+	bottom : 0
+	//display : none
+	background : #222222
+	opacity : 0
+	.action
+		background : #222222
+		width : 70px
+		height : 40px
+		display: table-cell
+		vertical-align: middle
+		// &:first-child
+		// 	border-right : 1px solid #ccc
+		.remove
+			background : #aaa
+			color : #333
+			width : 20px
+			line-height: 20px
+			+border-radius(20px)
+			margin : 0 auto
+			padding : 0 1px 1px 1px
+			&:hover
+				background : #be2620
+				color : white
+				cursor : pointer
+
+		.edit
+			height : 27px
+			background : url(../../images/settings.png) center center no-repeat
+			opacity : 0.1
+			color : #bbb
+			z-index : 100
+			&:hover
+				opacity : 0.8
+				border : none
+				cursor : pointer
+
+/* activation for source */
+.name:hover .actions
+	// display : table
+	opacity : 1
+
+/* Table Sink */
+#sink
+	.quiddity .name
+		// line-height : 50px
+	.infoTable
+		height : 60px
+#transfer
+	.vignette.local-sources
+		margin-top : -35px
+	.destinations
+		//height : 50px
 
 #audio .shmdata .preview
 	display : none

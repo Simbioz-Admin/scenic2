@@ -18,6 +18,7 @@ define(
     var app = express();
 
     //param necessary for access file and use authentification
+    app.use(express.static(rootPath));
     app.use('/assets', express.static("assets"));
     app.use('/client_side', express.static("client_side"));
     app.use('/templates', express.static("templates"));

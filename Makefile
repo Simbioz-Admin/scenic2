@@ -1,12 +1,12 @@
 VERSION := $(shell ./scenic2 -v | cut -d ' ' -f3)
 PROJDIRS := client_side server_side templates assets 
+EXECFILES := scenic2 \
+	scenic2-installer
 SRCFILES := package.json \
 	server.js \
 	index.html \
 	login.html \
-	scenic2 \
-	npm-verify.js \
-	scenic2-installer
+	npm-verify.js
 ALTFILES := COPYING \
 	INSTALL \
 	NEWS \
@@ -29,6 +29,7 @@ install: all
 	@echo building directories for version $(VERSION)
 	mkdir -p $(DESTDIR)$(TARGETDIR)
 	@echo installing files 
+	install $(EXECFILES) $(DESTDIR)$(TARGETDIR)
 	install  -m a+r $(SRCFILES) $(DESTDIR)$(TARGETDIR)
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f"; \
@@ -58,7 +59,8 @@ test:
 
 dist:
 	mkdir -p $(ARCHIVE)
-	install $(SRCFILES) $(ARCHIVE)
+	install $(EXECFILES) $(ARCHIVE)
+	install -m a+r $(SRCFILES) $(ARCHIVE)
 	install $(ALTFILES) $(ARCHIVE)
 	install scenic-launcher.desktop $(ARCHIVE)
 	@for f in $(PROJDIRS); do \

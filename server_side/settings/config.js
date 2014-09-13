@@ -22,7 +22,7 @@ for (k in interfaces) {
 var pickAddress
 
 var config = {
-  version: "2.0.22",
+  version: "2.0.24",
   host: addresses[0],
   port: {
     soap: 8085,

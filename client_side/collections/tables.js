@@ -49,7 +49,7 @@ define(
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["src", "source", "httpsdpdec"]
+                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink"]
                         },
                         destinations: {
                             select: ["sink"],

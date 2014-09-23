@@ -71,7 +71,7 @@ define(
                             id: "create_receiver"
                         }],
                         sources: {
-                            select: ["src", "source", "httpsdpdec"]
+                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink"]
                         },
                         collectionDestinations: collections.receivers
                     }

@@ -65,8 +65,9 @@ define(
                 /* Called when the view is initialized */
 
                 initialize: function() {
-                    $('body').bind('click', this.closePanel);
-                    $('body').bind('click', this.panelBoxRemove);
+                  // clicking on the body would remove a floating element.
+                  //$('body').bind('click', this.closePanel);
+                    //$('body').bind('click', this.panelBoxRemove);
                     var that = this;
                     /** Event called when the server has a message for you */
                     socket.on("msg", function(type, msg) {
@@ -163,7 +164,7 @@ define(
 
 
                 create_receiver: function(element) {
-                    element.stopPropagation();
+                    //element.stopPropagation();
                     var template = _.template(TemplateReceiver);
                     $("#panelRight .content").html(template);
                     views.global.openPanel();
@@ -172,7 +173,7 @@ define(
 
                 add_receiver: function(e) {
                     e.preventDefault();
-                    e.stopPropagation();
+                    //e.stopPropagation();
                     var destination = {
                         name: $("#clientName").val(),
                         hostName: $("#clientHost").val(),
@@ -354,7 +355,7 @@ define(
                 /* Called for showing panel Info  */
 
                 panelInfo: function(element) {
-                    element.stopPropagation();
+                    // element.stopPropagation();
                     if ($("#panelInfo").length == 0) {
                         $(".panelBox").remove();
                         var template = _.template(panelInfoTemplate, {

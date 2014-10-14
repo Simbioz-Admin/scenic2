@@ -49,7 +49,7 @@ define(
                             type: "destinations"
                         }],
                         sources: {
-                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink"]
+                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
                         },
                         destinations: {
                             select: ["sink"],
@@ -71,7 +71,7 @@ define(
                             id: "create_receiver"
                         }],
                         sources: {
-                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink"]
+                            select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
                         },
                         collectionDestinations: collections.receivers
                     }

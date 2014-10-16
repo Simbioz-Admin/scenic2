@@ -150,7 +150,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
             var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
             if (property_description && property_description.error) {
-                log.error(property_description.error + "(property : " + propertyName + ", quiddity : " + quiddName + ")");
+                log.error(property_description.error + "(property : " + property + ", quiddity : " + quiddName + ")");
                 return;
             }
             callback(property_description);

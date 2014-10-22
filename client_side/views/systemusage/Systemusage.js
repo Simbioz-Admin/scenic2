@@ -35,7 +35,7 @@ define(
                 events: {
                     //"click": "runHtop"
                 },
-                className: 'tabTable',
+                className: 'monitor',
                 id: "preview_usagesystem",
                 cpuRender: false,
                 //el: $("#panelLeft"),
@@ -51,6 +51,7 @@ define(
                         delete info.cpu.cpu;
                         that.renderCpu(info.cpu);
                         that.renderMem(info.mem);
+                        that.renderNetwork(info.net);
                     });
                     $("#menu_header").after(this.el);
                     var template = _.template(previewUsageTemplate);
@@ -93,6 +94,13 @@ define(
                     //$(".total", this.el).html(Math.round(info.cpu.cpu.total * 10000) / 100 + "%");
                 }, 
                 renderMem: function(info) {
+                    var percentUsedMemory = Math.round((info.total-info.free)/info.total*100);
+                    console.log(percentUsedMemory);
+                    $(".memory .content").html(percentUsedMemory+"%");
+
+
+                },
+                renderNetwork:function(info){
                     console.log(info);
                 }
             });

@@ -303,50 +303,11 @@ div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }
 
-/* line 2, ../sass/_systemusage.sass */
-.chart {
-  position: relative;
-  float: right;
-  background: #222222;
-  width: 160px;
-  height: 40px;
-  margin: 6px;
-}
-
-/* line 13, ../sass/_systemusage.sass */
-.bar {
-  fill: grey;
-  fill-opacity: 0.5;
-  stroke-width: 0.1;
-}
-
-/* line 18, ../sass/_systemusage.sass */
-.Netbar {
-  fill: grey;
-  fill-opacity: 0.5;
-  stroke-width: 0.1;
-}
-
-/* line 23, ../sass/_systemusage.sass */
-.monBg {
-  height: 100%;
-  width: 50px;
-  stroke: grey;
-  stroke-width: 0.5;
-  fill: grey;
-  fill-opacity: 0.1;
-}
-
-/* line 31, ../sass/_systemusage.sass */
-.monLabel {
-  fill: grey;
-}
-
 /* line 35, ../sass/_systemusage.sass */
 #preview_usagesystem {
   color: white;
   position: relative;
-  height: 40px;
+  height: 35px;
   width: 200px;
   float: right;
 }
@@ -357,13 +318,22 @@ div.users #login_sip input[type=submit]:hover {
 /* line 43, ../sass/_systemusage.sass */
 #preview_usagesystem .info {
   height: 12px;
-  margin: 2px auto;
+  margin: 3px 5px 0 0;
   position: relative;
   width: 50px;
   height: 100%;
   float: left;
+  border: 1px solid #444444;
+  padding: 5px 0 0;
 }
-/* line 53, ../sass/_systemusage.sass */
+/* line 52, ../sass/_systemusage.sass */
+#preview_usagesystem .info .label {
+  text-align: center;
+  font-size: 10px;
+  color: #aaaaaa;
+  margin-bottom: 7px;
+}
+/* line 60, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .bar {
   width: 3px;
   height: 2%;
@@ -371,33 +341,33 @@ div.users #login_sip input[type=submit]:hover {
   position: absolute;
   bottom: 0;
 }
-/* line 59, ../sass/_systemusage.sass */
+/* line 66, ../sass/_systemusage.sass */
 #preview_usagesystem .alert {
   background: #be2620 !important;
 }
-/* line 64, ../sass/_systemusage.sass */
+/* line 71, ../sass/_systemusage.sass */
 #preview_usagesystem .memory .bar {
   height: 3px;
   background: #555555;
   width: 100%;
   margin: 0 0 3px 0;
 }
-/* line 69, ../sass/_systemusage.sass */
+/* line 76, ../sass/_systemusage.sass */
 #preview_usagesystem .network {
   font-size: 9px;
   text-align: left;
   color: #cccccc;
 }
-/* line 76, ../sass/_systemusage.sass */
+/* line 83, ../sass/_systemusage.sass */
 #preview_usagesystem .cpu_info {
   text-align: center;
   padding: 2px 5px;
 }
-/* line 79, ../sass/_systemusage.sass */
+/* line 86, ../sass/_systemusage.sass */
 #preview_usagesystem .total {
   font-size: 14px;
 }
-/* line 81, ../sass/_systemusage.sass */
+/* line 88, ../sass/_systemusage.sass */
 #preview_usagesystem .text {
   font-size: 10px;
 }

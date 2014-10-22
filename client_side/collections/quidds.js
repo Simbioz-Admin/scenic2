@@ -77,6 +77,14 @@ define(
                     socket.on('addShmdata', function(qname, shmdata) {
                         that.addShmdata(qname, shmdata);
                     });
+                    
+                    socket.on('removeShmdata', function(qname, shmdata){
+                        var quiddity = that.get(qname);
+                        var shmdatas = quiddity.get("shmdatasCollection");
+                        var shmdata = shmdatas.get(shmdata)
+                        shmdata.trigger('destroy', shmdata);
+                        // .delete();
+                    });
 
                     /** Event called when the shmdatas readers is updated */
                     socket.on("update_shmdatas_readers", function(name, shmdatas) {
@@ -179,7 +187,7 @@ define(
                                 });
                             }
                         }
-                        // // views.quidds.updateVuMeter(quiddName, name);
+                        // views.quidds.updateVuMeter(quiddName, name);
 
                     } else {
                         var model = collections.quidds.get(quiddName);

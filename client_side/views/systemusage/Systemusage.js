@@ -51,7 +51,7 @@ define(
                         delete info.cpu.cpu;
                         that.renderCpu(info.cpu);
                         that.renderMem(info.mem);
-                        that.renderNetwork(info.net);
+                        that.renderNetwork(info.net.eth0);
                     });
                     $("#menu_header").after(this.el);
                     var template = _.template(previewUsageTemplate);
@@ -94,14 +94,10 @@ define(
                     //$(".total", this.el).html(Math.round(info.cpu.cpu.total * 10000) / 100 + "%");
                 }, 
                 renderMem: function(info) {
-                    var percentUsedMemory = Math.round((info.total-info.free)/info.total*100);
-                    console.log(percentUsedMemory);
+                    var percentUsedMemory = 100-Math.round(100*(parseInt(info.cached)+parseInt(info.buffers)+parseInt(info.free))/parseInt(info.total));
                     $(".memory .content").html(percentUsedMemory+"%");
-
-
                 },
                 renderNetwork:function(info){
-                    console.log(info);
                 }
             });
 

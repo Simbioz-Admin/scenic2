@@ -133,13 +133,15 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
             /* 1. we need to check if the stream is already added to defaultrtp */
-            var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers")).shmdata_readers;
+            
+            // var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers")).shmdata_readers;
+            var shmdataDefaultrtp = $.parseJSON(switcher.get_info("defaultrtp", ".shmdata.reader"));
             var pathAlreadyAdd = _.findWhere(shmdataDefaultrtp, {
                 path: path
             });
 
             /* add data stream to dest */
-            if (!pathAlreadyAdd) {
+            if (!shmdataDefaultrtp.error) {
                 log.debug("add path to datastream", path);
                 var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
                 if (!addDataStream) return log.error("Error add data stream to dest", path);

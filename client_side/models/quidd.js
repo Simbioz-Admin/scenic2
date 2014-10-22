@@ -437,7 +437,9 @@ define(
                     delete this.get("methods")[method];
                     /* Warned the view that the method has been removed */
                     this.trigger("remove:method", method);
-                }
+                },
+
+                
             });
 
         return QuiddModel;

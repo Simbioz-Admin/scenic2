@@ -54,11 +54,10 @@ define(
 
                 /* Called for render the view */
                 render: function() {
-                    // var nameShm = this.model.get("path").split('_')[3];
-                    // var nameShm = this.model.get("path");
+                    var nameShm = this.model.get("path").split('_')[3];
                     var pathShm = this.model.get("path").split("/");
-                    var fullNameShm = pathShm[pathShm.length - 1];
-                    nameShm = ST.mask(fullNameShm);
+                    // var fullNameShm = pathShm[pathShm.length - 1];
+                    //nameShm = ST.mask(fullNameShm);
                     templateShmdata = _.template(TemplateShmdata, {
                         name: nameShm,
                         nameQuidd: this.model.get("quidd"),

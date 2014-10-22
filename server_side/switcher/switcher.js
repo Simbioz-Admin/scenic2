@@ -104,9 +104,9 @@ define(
 
         /* ************ PROP - SHMDATA-READERS ************ */
 
-        if (qprop == "shmdata-readers") {
-          io.sockets.emit("update_shmdatas_readers", qname, pvalue);
-        }
+        // if (qprop == "shmdata-readers") {
+        //   io.sockets.emit("update_shmdatas_readers", qname, pvalue);
+        // }
 
 
         /* ************ PROP - STARTED ************ */
@@ -184,15 +184,24 @@ define(
         }
 
         if (qname != "systemusage" && qsignal == "on-tree-grafted") {
-          if (pvalue[0].indexOf(".shmdata.reader") >= 0) {
+          if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
             var shmdataInfo = JSON.parse(switcher.get_info(qname, ".shmdata.reader"));
-            console.log("AA",shmdataInfo);
+            console.log(' : ', qname, ' ', qsignal, ' ', pvalue);
             io.sockets.emit("update_shmdatas_readers", qname, shmdataInfo);
           }
         }
 
+
+        if(qsignal == "on-tree-pruned")
+          console.log(qname, qsignal, pvalue);
+
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
-          console.log(' : ', qname, ' ', qsignal, ' ', pvalue);
+          console.log("PRUNED", qname, pvalue);
+          if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer
+            var shmdata = pvalue[0].replace(".shmdata.writer.", "");
+            io.sockets.emit("removeShmdata", qname, shmdata);
+            // io.sockets.emit("update_shmdatas_readers", qname, pvalue);
+          }
         }
 
 
@@ -303,17 +312,14 @@ define(
 
     function createVuMeter(quiddName) {
       log.debug("create vuMeter for " + quiddName);
-      var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
 
-      $.each(shmdatas, function(index, shmdata) {
-        //remove the old vumeter just in case
-        //console.log("Remove vumeter for recreating", shmdata.path);
-        //switcher.remove("vumeter_" + shmdata.path);
-        var vumeter = switcher.create("fakesink", "vumeter_" + shmdata.path);
+      var shmdatas = $.parseJSON(switcher.get_info(quiddName, ".shmdata.writer"));
+      $.each(shmdatas, function(shmdata, info) {
+
+        var vumeter = switcher.create("fakesink", "vumeter_" + shmdata);
 
         if (vumeter) {
-          log.debug("fakesink quiddity created : ", "vumeter_" + shmdata.path);
-          switcher.invoke(vumeter, "connect", [shmdata.path]);
+          switcher.invoke(vumeter, "connect", [shmdata]);
           switcher.subscribe_to_property(vumeter, "byte-rate");
         }
 

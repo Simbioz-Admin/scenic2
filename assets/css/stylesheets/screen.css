@@ -303,23 +303,67 @@ div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }
 
-/* line 4, ../sass/_systemusage.sass */
+/* line 2, ../sass/_systemusage.sass */
+.chart {
+  position: relative;
+  float: right;
+  background: #222222;
+  width: 160px;
+  height: 40px;
+  margin: 6px;
+}
+
+/* line 13, ../sass/_systemusage.sass */
+.bar {
+  fill: grey;
+  fill-opacity: 0.5;
+  stroke-width: 0.1;
+}
+
+/* line 18, ../sass/_systemusage.sass */
+.Netbar {
+  fill: grey;
+  fill-opacity: 0.5;
+  stroke-width: 0.1;
+}
+
+/* line 23, ../sass/_systemusage.sass */
+.monBg {
+  height: 100%;
+  width: 50px;
+  stroke: grey;
+  stroke-width: 0.5;
+  fill: grey;
+  fill-opacity: 0.1;
+}
+
+/* line 31, ../sass/_systemusage.sass */
+.monLabel {
+  fill: grey;
+}
+
+/* line 35, ../sass/_systemusage.sass */
 #preview_usagesystem {
   color: white;
   position: relative;
+  height: 40px;
+  width: 200px;
+  float: right;
 }
-/* line 7, ../sass/_systemusage.sass */
+/* line 41, ../sass/_systemusage.sass */
+#preview_usagesystem .cpu_info {
+  height: 100%;
+}
+/* line 43, ../sass/_systemusage.sass */
 #preview_usagesystem .info {
   height: 12px;
   margin: 2px auto;
   position: relative;
-  width: 100%;
+  width: 50px;
+  height: 100%;
+  float: left;
 }
-/* line 12, ../sass/_systemusage.sass */
-#preview_usagesystem .cpus {
-  height: 10px;
-}
-/* line 15, ../sass/_systemusage.sass */
+/* line 53, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .bar {
   width: 3px;
   height: 2%;
@@ -327,38 +371,33 @@ div.users #login_sip input[type=submit]:hover {
   position: absolute;
   bottom: 0;
 }
-/* line 21, ../sass/_systemusage.sass */
+/* line 59, ../sass/_systemusage.sass */
 #preview_usagesystem .alert {
   background: #be2620 !important;
 }
-/* line 23, ../sass/_systemusage.sass */
-#preview_usagesystem .memory {
-  height: 4px;
-}
-/* line 26, ../sass/_systemusage.sass */
+/* line 64, ../sass/_systemusage.sass */
 #preview_usagesystem .memory .bar {
   height: 3px;
   background: #555555;
   width: 100%;
   margin: 0 0 3px 0;
 }
-/* line 31, ../sass/_systemusage.sass */
+/* line 69, ../sass/_systemusage.sass */
 #preview_usagesystem .network {
-  height: 20px;
   font-size: 9px;
   text-align: left;
   color: #cccccc;
 }
-/* line 38, ../sass/_systemusage.sass */
+/* line 76, ../sass/_systemusage.sass */
 #preview_usagesystem .cpu_info {
   text-align: center;
   padding: 2px 5px;
 }
-/* line 41, ../sass/_systemusage.sass */
+/* line 79, ../sass/_systemusage.sass */
 #preview_usagesystem .total {
   font-size: 14px;
 }
-/* line 43, ../sass/_systemusage.sass */
+/* line 81, ../sass/_systemusage.sass */
 #preview_usagesystem .text {
   font-size: 10px;
 }
@@ -3378,36 +3417,4 @@ html[xmlns] .clearfix {
   table {
     border-collapse: inherit !important;
   }
-}
-svg .chart{
-    position: relative;
-    float:right;
-}
-
-rect {
-    // fill: grey;
-    // fill-opacity: 0.5;
- }
-
-.bar {
-    fill: grey;
-    fill-opacity: 0.5;
-    stroke-width: 0.1;
-}
-
-.Netbar {
-    fill: grey;
-    fill-opacity: 0.5;
-    stroke-width: 0.1;
-}
-
-.monBg{
-    stroke: grey;
-    stroke-width: 0.5;
-    fill: grey;
-    fill-opacity: 0.1;
-}
-
-.monLabel {
-    fill: grey;
 }

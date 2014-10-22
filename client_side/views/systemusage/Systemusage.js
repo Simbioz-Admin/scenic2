@@ -11,10 +11,10 @@ define(
         'backbone',
         'text!../../../templates/systemusage/preview_systemusage.html',
         'd3',
-        'views/systemusage/Htop'
+        // 'views/systemusage/Htop'
     ],
 
-    function(_, Backbone, previewUsageTemplate, d3, Htop) {
+    function(_, Backbone, previewUsageTemplate, d3) {
 
         /** 
          *	@constructor
@@ -33,7 +33,7 @@ define(
             {
                 template: previewUsageTemplate,
                 events: {
-                    "click": "runHtop"
+                    //"click": "runHtop"
                 },
                 className: 'tabTable',
                 id: "preview_usagesystem",
@@ -49,32 +49,33 @@ define(
                     socket.on("systemusage", function(info) {
                         info = $.parseJSON(info);
                         delete info.cpu.cpu;
-                        // console.log("systemusage", $.parseJSON(info));
-                        that.render(info);
+                        that.renderCpu(info.cpu);
+                        that.renderMem(info.mem);
                     });
-
-                    $("#panelTables").append(this.el);
+                    $("#menu_header").after(this.el);
                     var template = _.template(previewUsageTemplate);
                     $(this.el).html(template);
 
                 },
 
-                runHtop: function(info) {
-                    console.log("d3 called in Systemusage ");
-                    this.barView = new Htop();
-                },
-                renderBars: function (info) {
+                // runHtop: function(info) {
+                //     console.log("d3 called in Systemusage ");
+                //     this.barView = new Htop();
+                // },
+                renderCpu: function (info) {
                     var that = this;
+                    // console.log("systemusage", info);
+
                     if (!this.cpuRender) {
                         var leftBar = 0;
-                        var countCpu = info.cpu.length;
-                        _.each(info.cpu, function(cpu, name) {
+                        var countCpu = info.length;
+                        _.each(info, function(cpu, name) {
                             $(".cpus", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
                             leftBar = leftBar + 4;
                             if (!--countCpu) that.cpuRender = true;
                         });
                     } else {
-                        _.each(info.cpu, function(cpu, name) {
+                        _.each(info, function(cpu, name) {
                             if ((cpu.total * 100) < 95) {
                                 $("[data-cpu='" + name + "']", this.el).removeClass("alert");
                             }
@@ -87,10 +88,12 @@ define(
                             });
                         });
                     }
+
+
                     //$(".total", this.el).html(Math.round(info.cpu.cpu.total * 10000) / 100 + "%");
                 }, 
-                render: function(info) {
-                    this.renderBars(info);
+                renderMem: function(info) {
+                    console.log(info);
                 }
             });
 

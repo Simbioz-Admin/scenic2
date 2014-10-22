@@ -54,14 +54,14 @@ define(
           var cpuBg = d3.select(".chart")
             .append("rect")
             .attr("class", "monBg")
-            .attr("width", 50)
-            .attr("height", 50);
+            // .attr("width", 50)
+            // .attr("height", 50);
 
           var cpuLabel = d3.select(".chart")
             .append("text")
             .attr("class", "monLabel")
-            .attr("x", 5)
-            .attr("y", 15)
+            .attr("x", 4)
+            .attr("y", 12)
           //.attr("fill", "grey")
             .text("CPU");
 
@@ -109,7 +109,7 @@ define(
             }
           }
           var width = 200;
-          var height = 50;
+          var height = 40;
           var barWidth = (width / 4) / netdata.length;
           var y = d3.scale.linear()
             .range([height, 0]);
@@ -148,7 +148,7 @@ define(
             }
           }
           var width = 200;
-          var height = 50;
+          var height = 40;
 
           var arcTX = d3.svg.arc()
             .innerRadius(function (d, i) {
@@ -197,7 +197,7 @@ define(
         },
         cpuMonitor: function (data) {
           var width = 200;
-          var height = 50;
+          var height = 40;
           var barWidth = (width / 4) / data.length;
           var y = d3.scale.linear()
             .range([height, 0]);

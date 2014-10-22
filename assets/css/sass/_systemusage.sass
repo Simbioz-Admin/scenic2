@@ -1,17 +1,55 @@
 
+.chart
+	position : relative
+	float : right
+	background : #222
+	width : 160px
+	height : 40px
+	margin : 6px
+rect
+	// fill : grey
+	// fill-opacity : 0.5
+
+.bar
+	fill : grey
+	fill-opacity : 0.5
+	stroke-width : 0.1
+
+.Netbar
+	fill : grey
+	fill-opacity : 0.5
+	stroke-width : 0.1
+
+.monBg
+	height : 100%
+	width : 50px
+	stroke : grey
+	stroke-width : 0.5
+	fill : grey
+	fill-opacity : 0.1
+
+.monLabel
+	fill : grey
 
 
 #preview_usagesystem
 	color : white
 	position : relative
+	height : 40px
+	width : 200px
+	float : right
+	.cpu_info
+		height : 100%
 	.info
 		height : 12px
 		margin : 2px auto
 		position : relative
-		width : 100%
+		width : 50px
+		height : 100%
+		float : left
 	.cpus
 		//background : blue
-		height : 10px
+		// height : 10px
 		.bar
 			width : 3px
 			height : 2%
@@ -21,7 +59,7 @@
 	.alert
 		background : #be2620!important
 	.memory
-		height : 4px
+		// height : 4px
 		// background : green
 		.bar
 			height : 3px
@@ -30,7 +68,7 @@
 			margin : 0 0 3px 0
 	.network
 		//background : orange
-		height : 20px
+		// height : 20px
 		font-size : 9px
 		text-align : left
 		color : #ccc

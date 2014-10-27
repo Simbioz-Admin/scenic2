@@ -141,13 +141,14 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             });
 
             /* add data stream to dest */
-            if (!shmdataDefaultrtp.error) {
-                log.debug("add path to datastream", path);
-                var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
-                if (!addDataStream) return log.error("Error add data stream to dest", path);
-            } else {
-                log.debug("path already added", path);
-            }
+            // FIXME test pathAlreadyAdd instead of shmdataDefaultrtp.error
+	    //if (!shmdataDefaultrtp.error) {
+            log.debug("add path to datastream", path);
+            var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
+            if (!addDataStream) return log.error("Error add data stream to dest", path);
+            // } else {
+            //     log.debug("path already added", path);
+            // }
 
             /* 2. we associate the stream with a destination on defaultrtp */
             var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);

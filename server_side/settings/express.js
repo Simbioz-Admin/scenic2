@@ -51,6 +51,10 @@ define(
       }
     });
 
+    app.get('/get_info/:quiddName/:path', function(req, res){
+      var info = nodeSwitcher.get_info(req.params.quiddName, req.params.path);
+      res.send($.parseJSON(info));
+    });
 
     app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res) {
       if (req.params.val) {

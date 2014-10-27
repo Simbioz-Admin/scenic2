@@ -31,7 +31,8 @@ define(
                     path: null,
                     quidd: null,
                     byteRate: 0,
-                    category: null
+                    category: null,
+                    type : null
                 },
 
 

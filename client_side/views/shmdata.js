@@ -95,6 +95,7 @@ define(
                     var that = this;
                     var active = '';
                     var port = '';
+                    /* Render for Tab transfer */
                     if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
                         _.each(destination.get("data_streams"), function(stream) {
                             if (stream.path == that.model.get("path")) {
@@ -105,6 +106,7 @@ define(
                         $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                     }
 
+                    /* Render for Tab Sink */
                     if (tableType == "sink" && that.table.get("type") == tableType) {
 
                         /* Check if we can create a connexion between shmdata and sink */
@@ -112,13 +114,13 @@ define(
                             if($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0){
                                 if(canSink == "true"){
                                     /* Check if already connected */
+
                                     var shmdata_readers = null;
-                                    _.each(destination.get("properties"), function(prop) {
-                                        if (prop.name == "shmdata-readers" && prop.value) shmdata_readers = $.parseJSON(prop.value).shmdata_readers;
-                                    });
-                                    if(shmdata_readers){
-                                        _.each(shmdata_readers, function(shm) {
-                                            if (shm.path == that.model.get("path")) active = "active";
+                                    var shmdatasReaders = destination.get("shmdatasCollection").where({type : 'reader'});
+
+                                    if(shmdatasReaders){
+                                        _.each(shmdatasReaders,function(shm) {
+                                            if (shm.get('path') == that.model.get("path")) active = "active";
                                         });
                                     }
 

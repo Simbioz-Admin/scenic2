@@ -153,8 +153,10 @@ define(
 
                     if (this.model.get("type") == "sink") {
                         if (box.hasClass("active")) {
-                            socket.emit("invoke", destination, "disconnect-all", [], function(data) {})
+                            console.log('ask disconnect all', destination, path);
+                            socket.emit("invoke", destination, "disconnect_all", [path], function(data) {});
                         } else {
+                            console.log('ask connect ', path);
                             socket.emit("invoke", destination, "connect", [path], function(data) {});
                         }
                     }

@@ -191,7 +191,6 @@ define(
           }
         }
 
-
         if(qsignal == "on-tree-pruned")
           console.log(qname, qsignal, pvalue);
 

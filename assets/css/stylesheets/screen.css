@@ -1,4 +1,4 @@
-/* line 17, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,45 +20,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.3/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
@@ -83,10 +83,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /* line 12, ../sass/_users.sass */
 div.users {
   width: 300px;
-  position: absolute;
-  top: 41px;
+  position: fixed;
+  top: 51px;
   bottom: 0;
-  right: 0;
+  right: -300px;
   z-index: 2000;
   /* LOGIN FORM */
 }
@@ -158,12 +158,12 @@ div.users h2 {
   padding: 0 0 0 10px;
   cursor: pointer;
   display: inline-block;
-  padding: 0 15px;
+  padding: 0 17px;
   position: relative;
 }
 /* line 77, ../sass/_users.sass */
 div.users h2:hover {
-  background: #333333;
+  background: #be2620;
 }
 /* line 81, ../sass/_users.sass */
 div.users .user {
@@ -308,7 +308,7 @@ div.users #login_sip input[type=submit]:hover {
   color: white;
   position: relative;
   height: 35px;
-  width: 200px;
+  width: 280px;
   float: right;
 }
 /* line 41, ../sass/_systemusage.sass */
@@ -320,7 +320,7 @@ div.users #login_sip input[type=submit]:hover {
   height: 12px;
   margin: 3px 5px 0 0;
   position: relative;
-  width: 50px;
+  width: 80px;
   height: 100%;
   float: left;
   border: 1px solid #444444;
@@ -331,7 +331,7 @@ div.users #login_sip input[type=submit]:hover {
   text-align: center;
   font-size: 10px;
   color: #aaaaaa;
-  margin-bottom: 7px;
+  margin-bottom: 3px;
 }
 /* line 60, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .bar {
@@ -345,29 +345,30 @@ div.users #login_sip input[type=submit]:hover {
 #preview_usagesystem .alert {
   background: #be2620 !important;
 }
-/* line 71, ../sass/_systemusage.sass */
-#preview_usagesystem .memory .bar {
-  height: 3px;
-  background: #555555;
-  width: 100%;
-  margin: 0 0 3px 0;
+/* line 69, ../sass/_systemusage.sass */
+#preview_usagesystem .memory .content {
+  margin-top: 4px;
 }
-/* line 76, ../sass/_systemusage.sass */
+/* line 71, ../sass/_systemusage.sass */
 #preview_usagesystem .network {
   font-size: 9px;
   text-align: left;
   color: #cccccc;
 }
-/* line 83, ../sass/_systemusage.sass */
+/* line 77, ../sass/_systemusage.sass */
+#preview_usagesystem .network .receive, #preview_usagesystem .network .transfer {
+  text-align: center;
+}
+/* line 80, ../sass/_systemusage.sass */
 #preview_usagesystem .cpu_info {
   text-align: center;
   padding: 2px 5px;
 }
-/* line 86, ../sass/_systemusage.sass */
+/* line 83, ../sass/_systemusage.sass */
 #preview_usagesystem .total {
   font-size: 14px;
 }
-/* line 88, ../sass/_systemusage.sass */
+/* line 85, ../sass/_systemusage.sass */
 #preview_usagesystem .text {
   font-size: 10px;
 }
@@ -3206,8 +3207,9 @@ html[xmlns] .clearfix {
 /* line 2231, ../sass/screen.sass */
 .shmdatas .shmdata th .shmdata-name {
   padding: 15px 25px;
+  width: 45px;
 }
-/* line 2233, ../sass/screen.sass */
+/* line 2234, ../sass/screen.sass */
 .shmdatas th:after {
   content: "";
   position: absolute;
@@ -3216,45 +3218,45 @@ html[xmlns] .clearfix {
   width: 2px;
   background: #be2620;
 }
-/* line 2242, ../sass/screen.sass */
+/* line 2243, ../sass/screen.sass */
 .shmdatas .active th:after {
   background: green;
 }
-/* line 2245, ../sass/screen.sass */
+/* line 2246, ../sass/screen.sass */
 .shmdatas .shmdata:first-child td {
   border-top: 1px solid #3a3a3a;
 }
-/* line 2248, ../sass/screen.sass */
+/* line 2249, ../sass/screen.sass */
 .shmdatas .shmdata td:last-child {
   border-right: 1px solid #3a3a3a;
 }
 
-/* line 2253, ../sass/screen.sass */
+/* line 2254, ../sass/screen.sass */
 #control .source {
   margin: 10px 0 0;
 }
-/* line 2255, ../sass/screen.sass */
+/* line 2256, ../sass/screen.sass */
 #control .property {
   background: #222222;
 }
 
-/* line 2258, ../sass/screen.sass */
+/* line 2259, ../sass/screen.sass */
 .destinations {
   margin-left: 235px;
 }
-/* line 2260, ../sass/screen.sass */
+/* line 2261, ../sass/screen.sass */
 .destinations td.destination {
   width: inherit;
   height: inherit;
   background: none;
 }
-/* line 2264, ../sass/screen.sass */
+/* line 2265, ../sass/screen.sass */
 .destinations td.destination .content {
   width: 120px;
   height: 30px;
   position: relative;
 }
-/* line 2269, ../sass/screen.sass */
+/* line 2270, ../sass/screen.sass */
 .destinations td.destination .name {
   width: 100px;
   color: white;
@@ -3269,7 +3271,7 @@ html[xmlns] .clearfix {
   overflow: hidden;
 }
 
-/* line 2282, ../sass/screen.sass */
+/* line 2283, ../sass/screen.sass */
 .vignette {
   color: white;
   line-height: 20px;
@@ -3279,25 +3281,25 @@ html[xmlns] .clearfix {
   float: left;
 }
 
-/* line 2290, ../sass/screen.sass */
+/* line 2291, ../sass/screen.sass */
 .tableSink {
   width: 100%;
   float: left;
   position: relative;
 }
-/* line 2294, ../sass/screen.sass */
+/* line 2295, ../sass/screen.sass */
 .tableSink .vignette {
   position: absolute;
   left: 20px;
   top: 20px;
 }
-/* line 2298, ../sass/screen.sass */
+/* line 2299, ../sass/screen.sass */
 .tableSink .shmdatas {
   margin-left: 0;
 }
 
 /*********************** TABLE - BUTTON ACTIONS ********************* */
-/* line 2303, ../sass/screen.sass */
+/* line 2304, ../sass/screen.sass */
 .actions {
   position: absolute;
   left: 0;
@@ -3307,7 +3309,7 @@ html[xmlns] .clearfix {
   background: #222222;
   opacity: 0;
 }
-/* line 2315, ../sass/screen.sass */
+/* line 2316, ../sass/screen.sass */
 .actions .action {
   background: #222222;
   width: 70px;
@@ -3315,7 +3317,7 @@ html[xmlns] .clearfix {
   display: table-cell;
   vertical-align: middle;
 }
-/* line 2323, ../sass/screen.sass */
+/* line 2324, ../sass/screen.sass */
 .actions .action .remove {
   background: #aaaaaa;
   color: #333333;
@@ -3329,13 +3331,13 @@ html[xmlns] .clearfix {
   margin: 0 auto;
   padding: 0 1px 1px 1px;
 }
-/* line 2331, ../sass/screen.sass */
+/* line 2332, ../sass/screen.sass */
 .actions .action .remove:hover {
   background: #be2620;
   color: white;
   cursor: pointer;
 }
-/* line 2336, ../sass/screen.sass */
+/* line 2337, ../sass/screen.sass */
 .actions .action .edit {
   height: 27px;
   background: url(../../images/settings.png) center center no-repeat;
@@ -3343,7 +3345,7 @@ html[xmlns] .clearfix {
   color: #bbbbbb;
   z-index: 100;
 }
-/* line 2342, ../sass/screen.sass */
+/* line 2343, ../sass/screen.sass */
 .actions .action .edit:hover {
   opacity: 0.8;
   border: none;
@@ -3351,39 +3353,39 @@ html[xmlns] .clearfix {
 }
 
 /* activation for source */
-/* line 2348, ../sass/screen.sass */
+/* line 2349, ../sass/screen.sass */
 .name:hover .actions {
   opacity: 1;
 }
 
 /* Table Sink */
-/* line 2356, ../sass/screen.sass */
+/* line 2357, ../sass/screen.sass */
 #sink .infoTable {
   height: 60px;
 }
 
-/* line 2359, ../sass/screen.sass */
+/* line 2360, ../sass/screen.sass */
 #transfer .vignette.local-sources {
   margin-top: -35px;
 }
 
-/* line 2364, ../sass/screen.sass */
+/* line 2365, ../sass/screen.sass */
 #audio .shmdata .preview {
   display: none;
 }
 
 @-moz-document url-prefix() {
-  /* line 2368, ../sass/screen.sass */
+  /* line 2369, ../sass/screen.sass */
   .preview {
     right: 2px !important;
   }
 
-  /* line 2371, ../sass/screen.sass */
+  /* line 2372, ../sass/screen.sass */
   .shmdata.inactive:after, .shmdata.active:after {
     left: 259px !important;
   }
 
-  /* line 2374, ../sass/screen.sass */
+  /* line 2375, ../sass/screen.sass */
   table {
     border-collapse: inherit !important;
   }

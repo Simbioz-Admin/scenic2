@@ -98,6 +98,24 @@ define(
                     $(".memory .content").html(percentUsedMemory+"%");
                 },
                 renderNetwork:function(info){
+                    var unit = '/Bps'
+                    var rxRate = info.rx_rate/8;
+                    var txRate = info.tx_rate/8;
+                    var lengthRx = rxRate.toString().length;
+                    var lengthTx = txRate.toString().length;
+                    var unitRx = unitTx = '';
+                    if(lengthRx > 3 && lengthRx < 6) unitRx = 'K';
+                    if(lengthTx > 3 && lengthTx < 6) unitTx = 'K';
+                    if(lengthRx > 6 && lengthRx < 9) unitRx = 'M';
+                    if(lengthTx > 6 && lengthTx < 9) unitTx = 'M';
+                    if(lengthRx > 9 && lengthRx < 12) unitRx = 'G';
+                    if(lengthTx > 9 && lengthTx < 12) unitTx = 'G';
+
+                    //console.log(unitRx, unitTx);
+                    $('.network .receive').html(rxRate+unitRx+unit);
+                    $('.network .transfer').html(txRate+unitTx+unit);
+                    //console.log(rxRate,unitRx, txRate, unitTx);
+
                 }
             });
 

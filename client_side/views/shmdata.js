@@ -45,9 +45,8 @@ define(
                     /* Subscribe to the remove of a specific mapper */
                     this.model.on('remove', this.removeView, this);
                     this.model.on("change:byteRate", this.updateByteRate, this);
-                    this.model.on("renderConnection", this.connectionForDestination, this);
+                    this.model.on("renderConnection", this.renderConnections, this);
                     this.table = options.table;
-                    //console.log("Create shmdata for the quidd " + this.model.get("quidd") + " for the table " + this.table);
                     // this.render();
 
                 },
@@ -80,7 +79,7 @@ define(
                     this.renderConnections();
                 },
 
-                renderConnections: function(fromDests) {
+                renderConnections: function() {
                     var that = this;
                     $("td", that.el).remove();
                     _.defer(function(){
@@ -105,30 +104,30 @@ define(
                         });
                         $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                     }
-
+ 
                     /* Render for Tab Sink */
                     if (tableType == "sink" && that.table.get("type") == tableType) {
 
                         /* Check if we can create a connexion between shmdata and sink */
                         socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink){
-                            if($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0){
-                                if(canSink == "true"){
-                                    /* Check if already connected */
+                          if($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0){
+                              if(canSink == "true"){
 
-                                    var shmdata_readers = null;
-                                    var shmdatasReaders = destination.get("shmdatasCollection").where({type : 'reader'});
+                                /* Check if already connected */
+                                var shmdata_readers = null;
+                                var shmdatasReaders = destination.get("shmdatasCollection").where({type : 'reader'});
 
-                                    if(shmdatasReaders){
-                                        _.each(shmdatasReaders,function(shm) {
-                                            if (shm.get('path') == that.model.get("path")) active = "active";
-                                        });
-                                    }
-
-                                    $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
-                                } else {
-                                    $(that.el).append('<td class="box_disabled ' + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '"></td>');
+                                if(shmdatasReaders){
+                                    _.each(shmdatasReaders,function(shm) {
+                                        if (shm.get('path') == that.model.get("path")) active = "active";
+                                    });
                                 }
-                            }
+
+                                  $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                              } else {
+                                  $(that.el).append('<td class="box_disabled ' + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '"></td>');
+                              }
+                          }
                         });
 
                     }
@@ -166,6 +165,7 @@ define(
                     });
                 },
                 removeView: function() {
+
                     this.remove();
                 },
                 editQuidd: function() {

@@ -50,16 +50,21 @@ define(
                         // if (type.indexOf("osc") >= 0) this.set("type", "osc");
 
                         /* listen if the quidd is removed */
-                        collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);
+                        if(this.get("quidd")){
+                            collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);
+                        }
+
+
                 },
-                createViewForTable: function(table) {
-                    console.log("createViewForTable", this);
+                /*createViewForTable: function(table) {
+                    console.log("createViewForTable", this.get('type'));
                     new ViewShmdata({
                         model: this,
                         table: table
                     })
-                },
+                },*/
                 removeModel: function() {
+                    console.log("Remove Shmdata");
                     this.trigger("destroy", this);
                 }
             }

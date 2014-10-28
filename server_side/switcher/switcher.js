@@ -178,26 +178,41 @@ define(
             /* temporary add name in info (request for add by default) */
             shmdatasInfo["path"] = pvalue[0].replace(".shmdata.writer.", "");
             shmdatasInfo['quidd'] = qname;
+            shmdatasInfo['type'] = "writer";
             createVuMeter(qname);
+            io.sockets.emit("addShmdata", qname, shmdatasInfo);
+          }
+
+          if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
+            var shmdatasInfo = JSON.parse(switcher.get_info(qname, pvalue[0]));
+            shmdatasInfo["path"] = pvalue[0].replace(".shmdata.reader.", "");
+            shmdatasInfo['type'] = "reader";
+            shmdatasInfo['quidd'] = qname;
             io.sockets.emit("addShmdata", qname, shmdatasInfo);
           }
         }
 
-        if (qname != "systemusage" && qsignal == "on-tree-grafted") {
-          if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
-            var shmdataInfo = JSON.parse(switcher.get_info(qname, ".shmdata.reader"));
-            console.log(' : ', qname, ' ', qsignal, ' ', pvalue);
-            io.sockets.emit("update_shmdatas_readers", qname, shmdataInfo);
-          }
-        }
-
-        if(qsignal == "on-tree-pruned")
-          console.log(qname, qsignal, pvalue);
-
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
           console.log("PRUNED", qname, pvalue);
+          
+          //Shmdata Writer
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer
-            var shmdata = pvalue[0].replace(".shmdata.writer.", "");
+            var shmdata = {
+              path : pvalue[0].replace(".shmdata.writer.", ""),
+              type : 'writer'
+            }
+
+            io.sockets.emit("removeShmdata", qname, shmdata);
+            // io.sockets.emit("update_shmdatas_readers", qname, pvalue);
+          }
+
+          //Shmdata Reader
+          if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
+            var shmdata = {
+              path : pvalue[0].replace(".shmdata.reader.", ""),
+              type : 'reader'
+            }
+            
             io.sockets.emit("removeShmdata", qname, shmdata);
             // io.sockets.emit("update_shmdatas_readers", qname, pvalue);
           }

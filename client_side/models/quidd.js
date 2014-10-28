@@ -157,28 +157,6 @@ function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMappe
               });
           },
 
-          updateShmdatas: function(shmdatas) {
-              var that = this;
-              var collShmdatas = that.get("shmdatasCollection");
-
-              console.log("current shmdatas info", collShmdatas);
-              console.log("server shmdatas", shmdatas);
-              return;
-              // collShmdatas.reset();
-              //     collShmdatas.each(function(shm) {
-              //         shm.trigger("destroy", shm);
-              //     });
-              //     if (shmdatas && shmdatas.length > 0) {
-              //         _.each(shmdatas, function(shm) {
-              //             collShmdatas.add({
-              //                 path: shm.path,
-              //                 quidd: that.get("name")
-              //             });
-              //         });
-              //     }
-              //     this.trigger("updateShmdatas", this);
-          },
-
           /**
            *	Allows you to create a view that contains all the information to edit the quiddity
            *	also allows to register the change in the quiddity

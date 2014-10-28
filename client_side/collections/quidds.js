@@ -79,10 +79,21 @@ define(
                     });
                     
                     socket.on('removeShmdata', function(qname, shmdata){
+                        console.log('removeShmdata', qname, shmdata);
+
+                        //If the shmdata is a type reader (connection) we refresh shmdata source
+                        if(shmdata.type == 'reader'){
+                            console.log('the shmdata is a type reader (connection) we refresh shmdata source');
+                            var quiddSource = shmdata.path.split('_')[2];
+                            quidd = collections.quidds.get(quiddSource);
+                            quidd.trigger("updateConnexions");
+                        }
+
                         var quiddity = that.get(qname);
                         var shmdatas = quiddity.get("shmdatasCollection");
-                        var shmdata = shmdatas.get(shmdata)
+                        var shmdata = shmdatas.get(shmdata.path);
                         shmdata.trigger('destroy', shmdata);
+
                         // .delete();
                     });
 
@@ -216,14 +227,16 @@ define(
                     if (quidd) {
                         var shmdataCollection = quidd.get("shmdatasCollection");
                         shmdataCollection.add(shmdata);
-                        quidd.trigger("updateShmdatas");
-                    }
-                },
+                        if(shmdata.type == 'writer'){
+                            quidd.trigger("updateShmdatas");
+                        }
 
-                updateShmdatas: function(quiddName, shmdatas) {
-                    var quidd = this.get(quiddName);
-                    //sometimes the server ask to update shmdatas but is not yet insert in frontend, also we check that!
-                    if (quidd) quidd.updateShmdatas(shmdatas);
+                        if(shmdata.type == 'reader'){
+                            var quiddSource = shmdata.path.split('_')[2];
+                            quidd = collections.quidds.get(quiddSource);
+                            quidd.trigger("updateConnexions");
+                        }
+                    }
                 },
 
                 /**

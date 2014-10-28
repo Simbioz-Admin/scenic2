@@ -47,6 +47,7 @@ define(
                     /* Subscribe for remove and change shmdatas on quiddity source */
                     this.model.on('destroy', this.removeView, this);
                     this.model.on('updateShmdatas', this.render, this);
+                    this.model.on('updateConnexions', this.updateConnexions, this);
                     this.model.on("toggleShow", this.toggleShow, this);
 
                     // this.model.on('updateByteRate', this.updateByteRateAndPreview);
@@ -67,6 +68,8 @@ define(
 
                 render: function() {
                     var that = this;
+                    //Render Shmdata of this source
+                    console.log('render shmdatas source');
                     $(".shmdatas", that.el).html("");
                     if(this.model.get("shmdatasCollection").size() > 0){
                         this.model.get("shmdatasCollection").each(function(shm) {
@@ -81,6 +84,11 @@ define(
                     }
                 },
 
+                updateConnexions:function(){
+                    this.model.get('shmdatasCollection').each(function(shm){
+                        shm.trigger('renderConnection')
+                    });
+                },
 
                 /* called when we want to have a preview of the quiddity (audio or video) */
 

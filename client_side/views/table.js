@@ -39,7 +39,7 @@ define(
                     "mouseenter #create-midi": "getMenuMidiDevice",
                     "mouseenter .get_classes": 'get_classes',
                     "mouseleave #subMenu": 'leaveSubMenu',
-                    "click .box": "ask_connection",
+                    "click .box": "toggle_connection",
                     "keypress #port_destination": "set_connection",
                     "blur #port_destination": "removeInputDestination",
                     "change .dropdown_filter": "filter_quiddities"
@@ -136,7 +136,7 @@ define(
                     $("#subMenu").remove();
                 },
 
-                ask_connection: function(e) {
+                toggle_connection: function(e) {
 
                     var box = $(e.target),
                         destination = box.data("destination"),
@@ -263,7 +263,6 @@ define(
                     /* remove terms not needed*/
                     category = category.replace(" source", "").replace(" sink", "");
                     if($(".dropdown_filter ."+category, this.el).length == 0){
-                        console.log("add cat ", category);
                         $(".dropdown_filter", this.el).append("<option class='"+category+"' value='"+category+"'>"+category+"</option>")
                     }
                     // console.log("ask for add category filter :", category, "for the table", this.model.get("name"));

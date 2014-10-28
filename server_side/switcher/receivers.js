@@ -133,27 +133,22 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
             /* 1. we need to check if the stream is already added to defaultrtp */
-            
-            // var shmdataDefaultrtp = $.parseJSON(switcher.get_property_value("defaultrtp", "shmdata-readers")).shmdata_readers;
             var shmdataDefaultrtp = $.parseJSON(switcher.get_info("defaultrtp", ".shmdata.reader"));
-            var pathAlreadyAdd = _.findWhere(shmdataDefaultrtp, {
-                path: path
-            });
+            var pathAlreadyAdd = _.keys(shmdataDefaultrtp);
 
             /* add data stream to dest */
-            // FIXME test pathAlreadyAdd instead of shmdataDefaultrtp.error
-	    //if (!shmdataDefaultrtp.error) {
-            log.debug("add path to datastream", path);
-            var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
-            if (!addDataStream) return log.error("Error add data stream to dest", path);
-            // } else {
-            //     log.debug("path already added", path);
-            // }
+	        if (!_.contains(pathAlreadyAdd, path)) {
+                log.debug("add path to datastream", path);
+                var addDataStream = switcher.invoke("defaultrtp", "add_data_stream", [path]);
+                if (!addDataStream) return log.error("Error add data stream to dest", path);
+
+            } else {
+                log.debug("path already added", path);
+            }
 
             /* 2. we associate the stream with a destination on defaultrtp */
             var addUdp = switcher.invoke("defaultrtp", "add_udp_stream_to_dest", [path, id, port]);
             if (!addUdp) return cb("error add Udp");
-
 
             /* 3. we save data stream to the dico destination */
             var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));

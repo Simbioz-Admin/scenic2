@@ -152,12 +152,35 @@ define(
                     }
 
                     if (this.model.get("type") == "sink") {
+        
+                        /* Find information about the number of connection possible */
+                        console.log(this.model.get("collectionDestinations").get(destination));
+                        
                         if (box.hasClass("active")) {
                             console.log('ask disconnect all', destination, path);
                             socket.emit("invoke", destination, "disconnect", [path], function(data) {});
                         } else {
-                            console.log('ask connect ', path);
-                            socket.emit("invoke", destination, "connect", [path], function(data) {});
+                            
+                            socket.emit('get_info', destination, 'shmdata', function(shmdata){
+                                var nbConnectionExisting = (shmdata.reader != 'null') ? _.size(shmdata.reader) : 0;
+                                var maxReader = parseInt(shmdata.max_reader);
+                                if(maxReader > nbConnectionExisting){
+                                    socket.emit("invoke", destination, "connect", [path], function(data) {});
+
+                                }else{
+                                    if(maxReader == 1){
+                                        socket.emit("invoke", destination, "disconnect-all", [], function(data) {
+                                            socket.emit("invoke", destination, "connect", [path], function(data) {});
+                                        });
+                                    }
+                                    else {
+                                      views.global.notification('error', 'you have reached the maximum connection. The limit is '+maxReader);
+                                    }
+                                }
+                                
+                            });
+
+
                         }
                     }
 

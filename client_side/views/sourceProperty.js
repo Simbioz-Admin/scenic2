@@ -68,7 +68,6 @@
                 /* called when a new source in table control is created or when existing is updated (add or remove property) */
 
                 render: function() {
-
                     /* remove all properties */
                     $(".shmdatas", this.el).html("");
 
@@ -79,7 +78,11 @@
 
 
                     _.each(properties, function(property, index) {
-                        if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
+                        if (property.name != "device" 
+                            && property.name != "devices-json" 
+                            && property.name != "shmdata-writers" 
+                            && property.name != "shmdata-readers" 
+                            && property.name != "started") {
                             var propertyTpl = _.template(TemplateSourceProperty, {
                                 property: property,
                                 destinations: destinations
@@ -88,34 +91,7 @@
                             $(".shmdatas", that.el).append(propertyTpl);
                         }
                     });
-                    // $(this.el).html("");
-
-                    //parse the properties of source for show on interface
-                    // _.each(properties, function(property, index) {
-                    //     if (property.name != "device" && property.name != "devices-json" && property.name != "started") {
-                    //         var template = _.template(TemplateSourceProperty, {
-                    //             property: property,
-                    //             index: countProperty,
-                    //             nbProperties: Object.keys(properties).length,
-                    //             sourceName: that.model.get("name"),
-                    //             destinations: destinations
-                    //         });
-
-                    //         $(that.el).append($(template));
-                    //         countProperty++;
-                    //     }
-                    // });
-
-                    //if no properties we show the source anyway
-                    // if ($(that.el).html() == "") {
-                    //     var template = _.template(TemplateSourceProperty, {
-                    //         sourceName: that.model.get("name"),
-                    //         property: null
-                    //     });
-
-                    //     $(that.el).append($(template));
-                    // }
-
+                   
                     //check if mapper exist for the 
                     collections.quidds.each(function(quidd) {
                         if (quidd.get("category") == "mapper" && quidd.get("view") != null) {

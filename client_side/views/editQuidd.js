@@ -89,7 +89,6 @@ define(
                 /* Called when a new method is added to the quiddity */
 
                 addProperty: function(property) {
-
                     var prop = this.model.get("properties")[property],
                         that = this,
                         templateProp = _.template(TemplateQuiddProperty, {

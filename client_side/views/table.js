@@ -45,7 +45,9 @@ define(
                     "change .dropdown_filter": "filter_quiddities"
                 },
 
-                /* Called on initialization of the table (control / transfer) */
+                /* 
+                 * Called on initialization of the table (control / transfer) 
+                 */
                 initialize: function() {
 
 
@@ -53,9 +55,6 @@ define(
                     this.model.on("addCategoryFilter", this.addCategoryFilter, this);
                     this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
 
-                    // if (this.model.get("type") == "sink") {
-                    //     this.model.on('newCategoryTable', this.newCategoryTable, this);
-                    // }
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
@@ -67,6 +66,7 @@ define(
                             type: this.model.get("type")
                         }
                     });
+
                     btnTable.append("<div class='content'></div>");
                     $("#panelTables").prepend(btnTable);
 
@@ -89,10 +89,10 @@ define(
                 },
 
 
-                /* Called for get list of quiddity source 
-                 *	The list of quiddity source is get when source word appear in name Class quiddity
+                /* 
+                 * Called for get list of quiddity source 
+                 * The list of quiddity source is get when source word appear in name Class quiddity
                  */
-
                 get_classes: function(e) {
                     $("#subMenu").remove();
                     var type = e.target ? $(e.target).data("type") : e;
@@ -143,7 +143,6 @@ define(
                         id = box.data("id"),
                         path = box.parent().data("path");
 
-
                     /* if transfer we ask port for connect to the receiver */
                     if (this.model.get("type") == "transfer") {
                         /* if already connect */
@@ -154,10 +153,7 @@ define(
                     if (this.model.get("type") == "sink") {
         
                         /* Find information about the number of connection possible */
-                        console.log(this.model.get("collectionDestinations").get(destination));
-                        
                         if (box.hasClass("active")) {
-                            console.log('ask disconnect all', destination, path);
                             socket.emit("invoke", destination, "disconnect", [path], function(data) {});
                         } else {
                             
@@ -205,7 +201,9 @@ define(
                     }
                 },
 
-                /* removes the input who we defined the port */
+                /* 
+                 *  removes the input who we defined the port 
+                 */
                 removeInputDestination: function(element) {
                     $(element.target).parent().parent().html("");
                 },
@@ -215,7 +213,6 @@ define(
                  *	called for showing list of properties existing
                  *	We show only the propertie of quiddities added to the table transfer
                  */
-
                 getMenuProperties: function(element) {
                     var quiddsMenu = {};
                     collections.quidds.each(function(quidd) {
@@ -244,8 +241,9 @@ define(
                 },
 
 
-                /* Called for get the list of device Midi */
-
+                /* 
+                 * Called for get the list of device Midi 
+                 */
                 getMenuMidiDevice: function(element) {
                     $("#listDevicesMidi").remove();
                     collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
@@ -268,10 +266,10 @@ define(
                     });
                 },
 
-                /* add a new table for category */
-
+                /* 
+                 * add a new table for category 
+                 */
                 newCategoryTable: function(tableType, type) {
-                    console.log("ask to create category table", tableType, type);
                     if (tableType == this.model.get("type")) {
                         /* check if already exist */
                         if ($("[data-type='" + type + "']", this.el).length == 0) {
@@ -282,6 +280,7 @@ define(
                         }
                     }
                 },
+
                 addCategoryFilter : function(category){
                     /* remove terms not needed*/
                     category = category.replace(" source", "").replace(" sink", "");
@@ -300,7 +299,7 @@ define(
                     }
 
                     if(orientation == "destination"){
-                        var sourceSameCat = this.model.get("collectionDestinations").where({"category": category}).length;
+                        var sourceSameCat = this.model. get("collectionDestinations").where({"category": category}).length;
                         category = category.replace(" source", "").replace(" sink", "");
                         if(sourceSameCat-1 == 0) $(".dropdown_filter ."+category).remove();
                     }

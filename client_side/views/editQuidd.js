@@ -1,10 +1,10 @@
 define(
 
     /** 
-     *	View EditQuidd
-     *	Manage interaction between a specifc node and the interface for editing
-     *	all modification are detected when we press enter or switch input
-     *	@exports Views/EditQuidd
+     *  View EditQuidd
+     *  Manage interaction between a specifc node and the interface for editing
+     *  all modification are detected when we press enter or switch input
+     *  @exports Views/EditQuidd
      */
 
     [
@@ -17,12 +17,12 @@ define(
 
 
         /** 
-         *	@constructor
+         *  @constructor
          *  @requires Underscore
          *  @requires Backbone
-         *	@requires TemplateQuidd
-         *	@requires TemplateQuiddProperty
-         *	@requires TemplateQuiddMethod
+         *  @requires TemplateQuidd
+         *  @requires TemplateQuiddProperty
+         *  @requires TemplateQuiddMethod
          *  @augments module:Backbone.View
          */
 
@@ -30,7 +30,7 @@ define(
         var ViewQuiddEdit = Backbone.View.extend(
 
             /**
-             *	@lends module: Views/EditQuidd~ViewQuiddEdit.prototype
+             *  @lends module: Views/EditQuidd~ViewQuiddEdit.prototype
              */
 
             {
@@ -42,8 +42,9 @@ define(
                     "click #form-quidd, #title" : "handlePropagation"
                 },
 
-                /* Called when the view is initialized */
+                properties_exlude : ['devices-json','shmdata-writers','shmdata-readers'],
 
+                /* Called when the view is initialized */
                 initialize: function() {
 
                     var that = this;
@@ -65,7 +66,10 @@ define(
 
                     //add properties
                     _.each(this.model.get("properties"), function(property) {
-                        that.addProperty(property.name);
+                        //Exclude some properties
+                        if(!_.contains( that.properties_exlude, property.name)){
+                          that.addProperty(property.name);
+                        }
                     });
 
                     //add methods
@@ -89,12 +93,15 @@ define(
                 /* Called when a new method is added to the quiddity */
 
                 addProperty: function(property) {
+
+
                     var prop = this.model.get("properties")[property],
                         that = this,
                         templateProp = _.template(TemplateQuiddProperty, {
                             property: prop
                         });
 
+                   
                     /* check position weight for place the property added */
                     //temporary add negative weight for started (need to be always on top)
                     if (prop.name == "started") prop["position weight"] = -1000;
@@ -102,7 +109,6 @@ define(
 
 
                     /* generate slider for specific type of property */
-
                     if (prop.type == "float" || prop.type == "int" || prop.type == "double" || prop.type == "uint") {
                         prop["default value"] = prop["default value"].replace(",", ".");
                         var step = (prop.type == "int" || prop.type == "uint" ? 1 : (parseInt(prop.maximum) - parseInt(prop.minimum)) / 200);

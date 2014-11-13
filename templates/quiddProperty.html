@@ -1,7 +1,8 @@
 
 
-<% if(property.writable == "true") { %>
 <li id="prop_<%=property.name%>" data-weight="<%=property['position weight']%>">
+
+<% if(property.writable == "true") { %>
 
 	<% var valueField = property["default value"]; %>
 
@@ -50,5 +51,13 @@
 		</select>
 		<% } %>
 	</div>
-</li>
+
 <% } %>
+
+
+<% if(property.writable == "false") { %>
+	<h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
+	<%=property["default value"]%>
+<% } %>
+</li>
+

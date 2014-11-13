@@ -193,7 +193,7 @@ define(
         }
 
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
-          console.log("PRUNED", qname, pvalue);
+          log.debug("PRUNED", qname, pvalue);
           
           //Shmdata Writer
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer
@@ -203,7 +203,6 @@ define(
             }
 
             io.sockets.emit("removeShmdata", qname, shmdata);
-            // io.sockets.emit("update_shmdatas_readers", qname, pvalue);
           }
 
           //Shmdata Reader
@@ -214,7 +213,6 @@ define(
             }
             
             io.sockets.emit("removeShmdata", qname, shmdata);
-            // io.sockets.emit("update_shmdatas_readers", qname, pvalue);
           }
         }
 

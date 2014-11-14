@@ -49,7 +49,6 @@ define(
 
                 initialize: function(options) {
                     var that = this;
-
                     /* generate a btn for the table */
                     this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
 
@@ -162,7 +161,7 @@ define(
                     var that = this;
                     e.preventDefault();
                     var dataFormConfig = $('#login_sip', this.el).serializeObject();
-
+                    
                     socket.emit("sip_login", dataFormConfig, function(err, configSip) {
                         if (err) return views.global.notification("error", err);
                         /* update info contact sip */

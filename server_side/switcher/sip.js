@@ -124,7 +124,8 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 config.sip = {
                     port: sip.port,
                     address: sip.address,
-                    name: sip.name
+                    name: sip.name,
+                    password : sip.password
                 }
                 createSip(function(err) {
                     if (err) return cb(err);

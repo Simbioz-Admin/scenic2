@@ -3,16 +3,17 @@
         <h1>Login to sip</h1>
 
         <label>Address</label>
-        <input type="text" width="100%" name="address" value="<%=sip.address%>" autofocus>
+        <input type="text" width="100%" name="address" value="<%=sip.address%>" >
 
         <div class="half">
             <label>Username</label>
-            <input type="text" name="name" value="<%=sip.name%>">
+            <input type="text" name="name" value="<%=sip.name%>" autofocus>
 
         </div>
         <div class="half">
-            <label>Port </label>
-            <input type="text" name="port" value="<%=sip.port%>">
+            <label>Password </label>
+            <input type="password" name="password" value="">
+            <input style="display:none;" type="text" name="port" value="<%=sip.port%>">
         </div>
     </div>
 

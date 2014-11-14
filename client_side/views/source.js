@@ -71,8 +71,13 @@ define(
                     //Render Shmdata of this source
                     console.log('render shmdatas source');
                     $(".shmdatas", that.el).html("");
-                    if(this.model.get("shmdatasCollection").size() > 0){
-                        this.model.get("shmdatasCollection").each(function(shm) {
+                    
+                    var shmdatas = this.model.get("shmdatasCollection");
+                    var shmdataWriters = shmdatas.where({ type : 'writer'});
+
+                    if(shmdataWriters.length > 0){
+
+                        _.each(shmdataWriters,function(shm) {
                             var viewShm = new ViewShmdata({
                                 model: shm,
                                 modelQuidd: that.model,

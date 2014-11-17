@@ -30,6 +30,7 @@ define(
             {
                 idAttribute: "sip_url",
                 defaults: {
+                    name : null,
                     sip_url: null,
                     status: null,
                     status_text: "Aucun message",

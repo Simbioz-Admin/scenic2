@@ -32,7 +32,7 @@ define(
                 url: '/users/',
                 orderBy: "status",
 
-                initialize: function() {
+                initialize: function() {    
                     var that = this;
                     console.log("initialize collection users");
 
@@ -40,10 +40,7 @@ define(
                     /* @TODO remove duplicate code change value status */
                     socket.on("updateInfoUser", function(infoUser) {
                         var model = that.get(infoUser.sip_url);
-                        if (infoUser.status == "online") infoUser.status = 0;
-                        if (infoUser.status == "busy") infoUser.status = 1;
-                        if (infoUser.status == "away") infoUser.status = 2;
-                        if (infoUser.status == "offline") infoUser.status = 3;
+                        user.status = that.priorityStatus(user.status);
                         if (model) model.set(infoUser);
                         // that.trigger("reOrder");
                     });
@@ -55,15 +52,26 @@ define(
                 },
 
                 parse: function(results, xhr) {
-                    _.each(results, function(user) {
-                        if (user.status == "online") user.status = 0;
-                        if (user.status == "busy") user.status = 1;
-                        if (user.status == "away") user.status = 2;
-                        if (user.status == "offline") user.status = 3;
-                    })
-                    return results;
-                },
+                    var that = this;
+                    console.log("Parse", results.presence);
+                    var users = [];
 
+                    _.each(results.presence, function(user, id){
+                        user.status = that.priorityStatus(user.status);
+                        user["id"] = id;
+                        user["uri"] = results.buddy[id]["uri"];
+                        user["name"] = results.buddy[id]["name"];
+                        users.push(user);
+                    });
+                    return users;
+                },
+                priorityStatus : function(status){
+                    if (status == "online") return 0;
+                    if (status == "busy") return 1;
+                    if (status == "away") return 2;
+                    if (status == "offline") return 3;
+                    if (status == "unknown") return 4;
+                },
                 /* define the attribute for order model of this collection */
                 comparator: function(a) {
                     return a.get(this.orderBy);

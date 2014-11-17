@@ -7,16 +7,20 @@
 
         <div class="half">
             <label>Username</label>
-            <input type="text" name="name" value="<%=sip.name%>" autofocus>
+            <input type="text" name="name" value="" autofocus>
 
         </div>
         <div class="half">
             <label>Password </label>
             <input type="password" name="password" value="">
-            <input style="display:none;" type="text" name="port" value="<%=sip.port%>">
         </div>
+        <div class="half">
+            <label>Port SIP </label>
+             <input type="text" name="port" value="<%=sip.port%>">
+        </div>
+        
     </div>
-
     <input type="submit" value="login" >
+
 	
 </form>

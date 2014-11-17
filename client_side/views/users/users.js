@@ -82,9 +82,8 @@ define(
                     this.toggleList(0);
                     /* generate the view for each user */
                     this.collection.each(function(user) {
-
                         /* check if user model is of current user scenic */
-                        if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("sip_url")) {
+                        if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("name")) {
                             new ViewUser({
                                 model: user
                             });
@@ -160,13 +159,13 @@ define(
                 loginSip: function(e) {
                     var that = this;
                     e.preventDefault();
-                    var dataFormConfig = $('#login_sip', this.el).serializeObject();
-                    
-                    socket.emit("sip_login", dataFormConfig, function(err, configSip) {
+                    that.sipInformation = $('#login_sip', this.el).serializeObject();
+
+                    socket.emit("sip_login",  that.sipInformation, function(err, configSip) {
                         if (err) return views.global.notification("error", err);
                         /* update info contact sip */
-                        config.sip = configSip;
-                        console.log(config.sip, configSip);
+                        //console.log("Logged", configSip);
+                        //config.sip = configSip;
                         collections.users.fetch({
                             success: function() {
                                 that.render();

@@ -11,9 +11,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
          *  @description add to the array listUsers a new users
          */
 
-        function addListUser(userInfo) {
-            log.switcher("User sip connected", userInfo.sip_url);
-            listUsers.push(userInfo);
+        function addUser(URI, name, cb) {
+            log.debug("User sip connected");
+            var addBuddy = switcher.invoke(quiddSipName, "add_buddy", [URI]);
+            if(!addBuddy) return cb("Error add "+name+" to the sip server");
+            var setName = switcher.invoke(quiddSipName, "name_buddy", [name, URI]);
+            if(!setName) return cb("Error set name "+name);
+
         }
 
 
@@ -22,25 +26,42 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
          *  @description set the connection with the server sip. This function is called a initialization of switcher
          */
 
-        function createSip(cb) {
+        function createSip(name, password, address, port, cb) {
 
-            /* create quiddity sip */
+            //@TODO : Encrypt client side and decrypt server side the password
+
+            /* Create the server SIP */
             quiddSipName = switcher.create("sip", quiddSipName);
-            if (!quiddSipName) return cb("Error login sip server");
+            if (!quiddSipName) return log.error("Error login sip server");
+            switcher.invoke(quiddSipName, "unregister", []);
 
-            /* set port for sipquid */
-            console.log("PORT SIP", String(config.sip.port));
-            var setPortSip = switcher.set_property_value(quiddSipName, "port", String(config.sip.port));
-            log.debug("setPortSip", setPortSip);
+            /* Connect to the server SIP */
+            log.debug("Ask connect to server sip", name+"@"+address,password);
+            var register = switcher.invoke(quiddSipName, "register", [name+"@"+address,password]);
+            if(!register) return log.error("Error when try login to the server SIP");
 
-            /* * subscribe to the modification on this quiddity */
+            /* subscribe to the modification on this quiddity */
             switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
             switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
 
-            var register = switcher.invoke(quiddSipName, "register", [config.sip.name,
-                config.sip.address,
-                "1234"
-            ]);
+            /* Create a dico for Users */
+            var usersDico = switcher.create( "dico", "users");
+            if(!usersDico) return log.error("error create dico Users");
+
+            /* Try load file users dico */
+            var loadUsers = switcher.invoke("users", "load", [ config.scenicSavePath + "users.json"]);
+            if(!loadUsers) log.warn("No files existing for dico users");
+
+            if(loadUsers){ 
+              /* Load Dico Users in quiddity SIP */
+              var users = JSON.parse(switcher.get_properties_description("users")).properties;
+
+              _.each(users, function(user){
+                  addUser(user.name, user["default value"], function(err){
+                    if(err) return log.error(err);
+                  });
+              });
+            }
 
             if (register == "false") {
                 log.error("Error register quid sip");
@@ -81,7 +102,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 });
 
                 /* if no user existing in the list */
-                if (!userUpdated) return addListUser(userInfo);
+                //if (!userUpdated) return addListUser(userInfo);
 
                 /* if user exist we update info */
                 var indexUserOnTheList = _.indexOf(listUsers, userUpdated);
@@ -108,7 +129,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
              */
 
             getListUsers: function() {
-                return listUsers;
+                var users =  $.parseJSON(switcher.get_info(quiddSipName, "."));
+                log.debug("Get List users", users);
+                if(!users.error){
+                    return users;
+                } else {
+                    return [];
+                }
             },
 
 
@@ -121,15 +148,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 log.debug("Ask for login Sip Server", parseInt(sip.port));
                 /* set information config */
                 switcher.remove(quiddSipName);
-                config.sip = {
-                    port: sip.port,
-                    address: sip.address,
-                    name: sip.name,
-                    password : sip.password
-                }
-                createSip(function(err) {
+                createSip(sip.name, sip.password, sip.address, sip.port, function(err) {
                     if (err) return cb(err);
-                    return cb(null, config.sip);
+                    return cb(null, sip);
                 });
             },
 
@@ -141,6 +162,8 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
             logout: function(cb) {
                 log.debug("ask for logout to the server sip");
+                var unregister = switcher.invoke(quiddSipName, "unregister", []);
+                console.log("unregister", unregister);
                 if (switcher.remove(quiddSipName)) {
                     listUsers = [];
                     cb(null, true);

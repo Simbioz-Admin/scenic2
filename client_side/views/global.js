@@ -94,8 +94,6 @@ define(
 
         notification: function(type, msg) {
           var speed = 500;
-
-          if (type != "error") return;
           $("#msgHighLight").remove();
           $("body").append("<div id='msgHighLight' class='" + type + "'>" + msg + "</div>");
           $("#msgHighLight").animate({

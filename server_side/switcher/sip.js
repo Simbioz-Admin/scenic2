@@ -18,6 +18,24 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             var setName = switcher.invoke(quiddSipName, "name_buddy", [name, URI]);
             if(!setName) return cb("Error set name "+name);
 
+            /* Insert a new entry in the dico users */
+            var newEntry = switcher.invoke("users", "new-entry", [URI, "", ""]);
+            switcher.set_property_value("users", URI, name);
+
+            /* save the dico users */
+            var saveDicoUsers = switcher.invoke("users", "save",  [ config.scenicSavePath + "users.json"]);
+            if(!saveDicoUsers) return cb("error saved dico users");
+
+            cb(null, "User "+URI+" successfully added");
+        }
+
+        /*
+         *  @function removeUser
+         *  @description remove a user from sipquid and dico
+         */
+
+        function removeUser(URI, cb) {
+          log.debug("remove User");
         }
 
 
@@ -57,8 +75,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
               var users = JSON.parse(switcher.get_properties_description("users")).properties;
 
               _.each(users, function(user){
-                  addUser(user.name, user["default value"], function(err){
+                  addUser(user.name, user["default value"], function(err, info){
                     if(err) return log.error(err);
+                    log.debug(info);
                   });
               });
             }
@@ -82,46 +101,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 log.info("initialize sip");
                 io = socketIo;
             },
-
-
-            /*
-             *  @function updateInfoUser
-             *  @description Update information whebn
-             */
-
-            updateInfoUser: function(userInfo) {
-                try {
-                    userInfo = $.parseJSON(userInfo);
-                } catch (e) {
-                    return log.error("error try parseJSON userInfo");
-                }
-
-                /* check if user is not already in the list */
-                var userUpdated = _.findWhere(listUsers, {
-                    sip_url: userInfo.sip_url
-                });
-
-                /* if no user existing in the list */
-                //if (!userUpdated) return addListUser(userInfo);
-
-                /* if user exist we update info */
-                var indexUserOnTheList = _.indexOf(listUsers, userUpdated);
-                listUsers[indexUserOnTheList] = userInfo;
-
-                /* send information to the client slide */
-                io.sockets.emit("updateInfoUser", userInfo);
-            },
-
-
-            /*
-             *  @function removeFromList
-             *  @description Remove from the list user a user (currently disable)
-             */
-
-            removeFromList: function(userInfo) {
-                log.debug("Remove from list", userInfo);
-            },
-
 
             /*
              *  @function getListUsers
@@ -166,13 +145,26 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 console.log("unregister", unregister);
                 if (switcher.remove(quiddSipName)) {
                     listUsers = [];
-                    cb(null, true);
+                    return cb(null, true);
                 } else {
                     log.error("error when try logout server sip")
-                    cb("error when try logout server sip", false);
+                    return cb("error when try logout server sip", false);
                 }
 
+            },
+
+            /*
+             *  @function addUser
+             *  @description Add a new user in the dico and server sip
+             */
+
+            addUser : function(uri, cb){
+              log.debug("ask to add user ",uri);
+              addUser(uri, uri, function(err, info){
+                return cb(err, info);
+              });
             }
+
         }
 
 

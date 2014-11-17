@@ -37,11 +37,18 @@ define(
                     console.log("initialize collection users");
 
                     /* receive update info user from server side */
-                    /* @TODO remove duplicate code change value status */
-                    socket.on("updateInfoUser", function(infoUser) {
-                        var model = that.get(infoUser.sip_url);
-                        user.status = that.priorityStatus(user.status);
-                        if (model) model.set(infoUser);
+                    
+
+                    socket.on("infoUser", function(infoUser) {
+                        console.log("infoUser", infoUser);
+                        that.fetch({
+                        success: function() {
+                            views.users.render(true);
+                          }
+                        });
+                        // var model = that.get(infoUser.sip_url);
+                        // user.status = that.priorityStatus(user.status);
+                        // if (model) model.set(infoUser);
                         // that.trigger("reOrder");
                     });
 
@@ -53,7 +60,6 @@ define(
 
                 parse: function(results, xhr) {
                     var that = this;
-                    console.log("Parse", results.presence);
                     var users = [];
 
                     _.each(results.presence, function(user, id){

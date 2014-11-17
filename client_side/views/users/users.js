@@ -38,7 +38,8 @@ define(
                 events: {
                     'click h2': 'toggleList',
                     'click .logout': 'logoutSip',
-                    'submit #login_sip': 'loginSip'
+                    'submit #login_sip': 'loginSip',
+                    'change #add-user' : 'addUser'
                 },
 
 
@@ -69,7 +70,7 @@ define(
                  * @description Add the global list users sip and information about current user connected
                  */
 
-                render: function() {
+                render: function(connect) {
                     $(this.el).html("");
                     /* add information about user connected */
                     var tpl = _.template(this.template, {
@@ -79,7 +80,7 @@ define(
 
 
                     //this.toggleList(0);
-                    this.toggleList(0);
+                    if(!connect)this.toggleList(0);
                     /* generate the view for each user */
                     this.collection.each(function(user) {
                         /* check if user model is of current user scenic */
@@ -168,7 +169,7 @@ define(
                         //config.sip = configSip;
                         collections.users.fetch({
                             success: function() {
-                                that.render();
+                                that.render(true);
                             }
                         });
                         views.global.notification("valid", "success login server sip");
@@ -196,8 +197,22 @@ define(
                         views.global.notification("valid", "success logout server sip");
 
                     });
-                }
+                },
 
+                /*
+                 * @function AddUser
+                 * @description Insert a new User in the list
+                 */
+
+                 addUser : function(e){
+                    var uri = $(e.currentTarget).val();
+                    console.log("ask to add ",uri);
+                    socket.emit("addUser", uri, function(err, info){
+                        if(err) return views.global.notification("error", err);
+                        $(e.currentTarget).val("");
+                        return views.global.notification("valid", info);
+                    })
+                 }
             });
 
         return UsersView;

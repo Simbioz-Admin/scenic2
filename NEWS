@@ -1,18 +1,94 @@
 Scenic2 release notes
 ===================
-Scenic2 0.?.? (2013-??-??)
+Scenic2 2.0.24 (2014-09-12)
 -------------------------
-This release is a developer snapshot in the stable ?.? series.
+This release is a bugfix release in the stable 2.0 series.
+
+Fixed bugs:
+
+* Fix epress path
+
+Scenic2 2.0.22 (2014-09-11)
+-------------------------
+This release is a bugfix release in the stable 2.0 series.
+
+Fixed bugs:
+
+* path issues introduced in previous release
+
+Scenic2 2.0.18 (2014-09-10)
+-------------------------
+This release is a developer snapshot in the stable 2.0 series.
 
 New features:
 
-*
+* Filter display of shmdatas
+* Display CPU and network usage in UI's header
+* Show only pertinent information when creating jack sinks/sources
+
+Fixed bugs:
+
+* Source name with fakesink not correct under certain conditions
+* Scenic would not start without network
+* Various fixes to mouse click handling
+* Auto selecting value when editing properties
+* Creation of 'undefined' when clicking on source/network
+* Hiding (dis)connect when configuring audio destination
+* Preview failing when httpsdpdec would take a long time
+* Dangling jack inputs after removal
+* some sources would not become available under sink tab
 
 Known bugs: 
 
-* 
+* CPU meter displays +1 CPU which is a total average (first meter)
+* There is no indication of the actual network bandwidth consumption only a relative amount capped at 15MBps
 
-Scenic2 0.4.4 (2013-10-15)
+Scenic2 2.0.16 (2014-06-10)
+-------------------------
+This a bug-fix release developer snapshot in the stable 2.0 series.
+
+Fixed bugs:
+
+* Fix installation paths
+* Handle version lookup with -v or --version even if optimist not present
+* Prepare for proper handling by debian packaging system
+
+Known bugs: 
+
+* Automatic launch of Scenic2 following the modules installation may fail. Quitting the chrome application and relaunching scenic2 works
+
+Scenic2 2.0.12 (2014-04-10)
+-------------------------
+This a bug-fix release developer snapshot in the stable 2.0 series.
+
+Fixe bugs:
+
+* Fix installation paths
+* Handle version lookup with -v or --version even if optimist not present
+
+Known bugs: 
+
+* If install script was triggered due to missing node modules, the automatic launch of Scenic2 following the modules installation fails. Quitting the chro
+me application and relaunching scenic2 works
+
+Scenic2 2.0.8 (2014-04-01)
+-------------------------
+This release is a developer snapshot in the stable 2.0 series.
+
+New features:
+
+* Save and load scenes
+* Connect audio sources and sinks to jack server
+* Check and install missing dependencies automatically
+* Install nodejs modules locally for each user
+
+
+Known bugs: 
+
+* Sometimes the engine crashes when rapidly creating and distroying quiddities, including when loading from saved file
+
+
+Scenic2 0.2.0 (2013-10-15)
 -------------------------
 This release is a developer snapshot in the stable 0.4 series.
 

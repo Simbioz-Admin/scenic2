@@ -5,7 +5,32 @@
 /____/\___/\___/_/ /_/_/\___/   /____/ 
 
 
+Scenic2 
+=======
 Scenic2 is a stage teleconference system that allows for real time transmission of audiovisual data and arbitrary data flow over any IP network. Telepresence systems can be used in various artistic contexts, so that two different creatives spaces can communicate with each other or present a combined performance. Thus, a dramatic work could be performed simultaneously in various location in the world, with remote performers acting simultaneously. Scenic2 is a rewrite and improvement of the previous Scenic software.
 
 Scenic2 graphical user interface is available through use of a web browser. It is supporting multiple simultaneous users and secured with password. It also integrates a chat interface based on IRC.
 
+License
+-------
+GNU GPL v3
+
+Project URL
+-----------
+http://code.sat.qc.ca/redmine/projects/scenic2
+
+Dependencies
+------------
+
+* shmdata: http://code.sat.qc.ca/redmine/projects/libshmdata
+* switcher: http://code.sat.qc.ca/redmine/projects/switcher
+* chromium-browser
+
+Quickstart
+----------
+
+The simplest way to run Scenic2 from source is to start it from its own directory:
+cd <Scenic2 source dir>
+./scenic2
+
+Please refer to the documentation: http://code.sat.qc.ca/redmine/projects/scenic2/wiki/Scenic2_en

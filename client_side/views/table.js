@@ -99,7 +99,7 @@ define(
 
           /* get the quiddity classes authorized on this table */
           var classes = this.model.classes_authorized(type);
-
+          console.log("classes", type, classes);
           /* we not load classes if nothing is return */
           if (classes && classes.length == 0) return;
 
@@ -256,6 +256,7 @@ define(
          * Called for get the list of device Midi
          */
         getMenuMidiDevice: function(element) {
+          console.log("menu midi");
           $("#listDevicesMidi").remove();
           collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
             var devicesMidi = property["values"];

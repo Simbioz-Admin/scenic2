@@ -11,7 +11,7 @@ define(
     'underscore',
     'backbone',
     'jquery',
-    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
     'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
   ],
@@ -20,7 +20,7 @@ define(
     _,
     Backbone,
     $,
-    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
 
@@ -32,7 +32,7 @@ define(
      * @requires CollectionClassesDoc
      * @requires CollectionDestinationsRtp
      * @requires CollectionQuidds
-     * @requires CollectionDestinationProperties
+     * @requires CollectionDestinationsProperties
      * @requires CollectionLoggers
      * @requires CollectionIrcs
      * @requires ViewDestinations
@@ -82,7 +82,7 @@ define(
 
 
 
-              collections.destinationProperties = new CollectionDestinationProperties();
+              collections.destinationProperties = new CollectionDestinationsProperties();
               collections.destinationProperties.fetch();
 
               collections.loggers = new CollectionLoggers();

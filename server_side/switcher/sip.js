@@ -19,11 +19,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
       if (!setName) return cb("Error set name " + name);
 
       /* Insert a new entry in the dico users */
-      var newEntry = switcher.invoke("users", "new-entry", [URI, "", ""]);
-      switcher.set_property_value("users", URI, name);
+      var newEntry = switcher.invoke("destinationsSip", "update", [URI,URI]);
 
       /* save the dico users */
-      var saveDicoUsers = switcher.invoke("users", "save", [config.scenicSavePath + "users.json"]);
+      var saveDicoUsers = switcher.invoke("destinationsSip", "save", [config.scenicSavePath + "users.json"]);
       if (!saveDicoUsers) return cb("error saved dico users");
 
       cb(null, "User " + URI + " successfully added");
@@ -63,23 +62,31 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
       switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
 
       /* Create a dico for Users */
-      var usersDico = switcher.create("dico", "users");
+      var usersDico = switcher.create("dico", "destinationsSip");
       if (!usersDico) return log.error("error create dico Users");
 
       /* Try load file users dico */
-      var loadUsers = switcher.invoke("users", "load", [config.scenicSavePath + "users.json"]);
+      var loadUsers = switcher.invoke("destinationsSip", "load", [config.scenicSavePath + "users.json"]);
       if (!loadUsers) log.warn("No files existing for dico users");
 
       if (loadUsers) {
         /* Load Dico Users in quiddity SIP */
-        var users = JSON.parse(switcher.get_properties_description("users")).properties;
+        var users = JSON.parse(switcher.get_info("destinationsSip", ".dico"));
 
-        _.each(users, function(user) {
-          addUser(user.name, user["default value"], function(err, info) {
-            if (err) return log.error(err);
-            log.debug(info);
+        users = [
+          { name : "1001@scenic.sat.qc.ca", "default value":  "1001@scenic.sat.qc.ca"},
+          { name : "1002@scenic.sat.qc.ca", "default value":  "1002@scenic.sat.qc.ca"}
+        ];
+
+        console.log("TREE", users);
+        if(users){
+          _.each(users, function(user) {
+            addUser(user.name, user["default value"], function(err, info) {
+              if (err) return log.error(err);
+              log.debug(info);
+            });
           });
-        });
+        }
       }
 
       if (register == "false") {
@@ -172,7 +179,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
       addDestinationSip : function(uri,cb){
         log.debug("ask to add ",uri," to the destinationSip");
 
-        var addDestinationSip = switcher.invoke("destinationsSip", "new-entry", [uri, "", ""]);
+        var addDestinationSip = switcher.invoke("destinationsSip", "update", [uri, uri]);
         if(!addDestinationSip) {
           var err = "Error add DestinationSip "+uri;
           log.error(err);
@@ -182,13 +189,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         io.sockets.emit("addDestinationSip", uri);
         cb(null, "successfully added destination "+uri);
       },
+
       /*
        *  @function removeDestinationSip
        */
-
       removeDestinationSip : function(uri,cb){
         log.debug("ask to remove ",uri," to the destinationSip");
-        var removeDestinationSip = switcher.invoke("destinationsSip", "remove-entry", [uri]);
+        var removeDestinationSip = switcher.invoke("destinationsSip", "remove", [uri]);
          if(!removeDestinationSip) {
           var err = "Error remove DestinationSip "+uri;
           log.error(err);
@@ -197,7 +204,27 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         }
         io.sockets.emit("removeDestinationSip", uri);
         cb(null, "successfully remove destination "+uri);
-      }
+      },
+
+      /*
+       *  @function addShmdataToUserSip
+       */
+      attachShmdataToContact : function(user, path, attach, cb){
+        log.debug("Shmdata to contact", user, path, attach);
+        var attach = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
+        var type = (attach) ? "attach" : "detach";
+
+        if(!attach) {
+          var err = "error "+type+" shmdata to the user sip";
+          log.error(err);
+          return cb(err);
+        }
+
+        // io.sockets.emit("addShmdataToUserSip", )
+        cb(null, "successfully "+type+" Shmdata to the destination SIP");
+      },
+
+
     }
 
 

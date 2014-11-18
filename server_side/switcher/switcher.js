@@ -61,12 +61,12 @@ define(
         var dico = switcher.create("dico", "dico");
 
         /* create the properties controlProperties for stock properties of quidds for control */
-        switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-        switcher.invoke(dico, "new-entry", ["destinationsRtp", "stock informations about destinations for manage edition", "dico for manage destinations"]);
-        switcher.set_property_value("dico", "destinationsRtp", '[]');
+        switcher.invoke(dico, "update", ["controlProperties", "[]"]);
+        switcher.invoke(dico, "update", ["destinationsRtp", "[]"]);
+        // switcher.set_property_value("dico", "destinationsRtp", '[]');
 
         /* Create a dico for destinationsSIP */
-        switcher.create("dico", "destinationsSip");
+        // switcher.create("dico", "destinationsSip");
         
       }
 
@@ -199,7 +199,9 @@ define(
           }
 
           /* sipquidd */
-
+          if(qname == "sipquid")
+            log.debug("on-tree-grafted", qname, pvalue[0], qsignal);
+          
           if(qname == "sipquid" && pvalue[0].indexOf(".presence") >= 0){
             var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
             console.log("user Info Sip Quidd", infoUser);

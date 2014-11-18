@@ -30,7 +30,7 @@ define(
 
       {
         model: ModelDestinationRtp,
-        url: '/quidds/dico/properties/destinationsRtp/values/',
+        url: '/destinationsRtp',
         parse: function(results, xhr) {
           return results;
         },

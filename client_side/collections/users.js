@@ -60,11 +60,9 @@ define(
           var that = this;
           var users = [];
 
-          _.each(results.presence, function(user, id) {
+          _.each(results.buddy, function(user, id) {
             user.status = that.priorityStatus(user.status);
             user["id"] = id;
-            user["uri"] = results.buddy[id]["uri"];
-            user["name"] = results.buddy[id]["name"];
             users.push(user);
           });
           return users;

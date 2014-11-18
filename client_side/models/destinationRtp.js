@@ -49,7 +49,7 @@
                      var view = new ViewDestination({
                          model: this,
                          table: collections.tables.findWhere({
-                             type: "transfer"
+                             id: "transferRtp"
                          })
                      });
 

@@ -377,19 +377,18 @@ define(
         /* Called for switcher between the different table (control and tranfer) */
 
         showTable: function(event) {
-          var table = $(event.target).parent().data("type");
+          var table = $(event.target).parent().data("id");
           /* add to the local storage */
           localStorage['currentTable'] = table;
           collections.tables.currentTable = table;
           $(".tabTable").removeClass("active");
           $(event.target).parent().addClass("active");
           var target = $(event.target).attr('class')
-          if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
-            $("#htop").remove();
-          }
+          // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
+          //   $("#htop").remove();
+          // }
           $(".table").removeClass("active");
           $("#" + table).addClass("active");
-          
         }
       });
 

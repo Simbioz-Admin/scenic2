@@ -2,17 +2,17 @@
 define(
 
   /** 
-   *	View Source
-   *	The source view is for each source type quiddity create whatsoever to control or transfer table
-   *	@exports Views/Launch
+   *  View Source
+   *  The source view is for each source type quiddity create whatsoever to control or transfer table
+   *  @exports Views/Launch
    */
 
   [
     'underscore',
     'backbone',
     'jquery',
-    'collections/tables', 'collections/classes_doc', 'collections/receivers', 'collections/quidds', 'collections/control_properties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
-    'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon','views/systemusage/Systemusage'
+    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+    'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
   ],
 
@@ -20,7 +20,7 @@ define(
     _,
     Backbone,
     $,
-    CollectionTables, CollectionClassesDoc, CollectionReceivers, CollectionQuidds, CollectionDestinationProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
 
@@ -30,9 +30,9 @@ define(
      * @requires Jquery
      * @requires CollectionTables
      * @requires CollectionClassesDoc
-     * @requires CollectionReceivers
+     * @requires CollectionDestinationsRtp
      * @requires CollectionQuidds
-     * @requires CollectionDestinationProperties
+     * @requires CollectionDestinationsProperties
      * @requires CollectionLoggers
      * @requires CollectionIrcs
      * @requires ViewDestinations
@@ -41,7 +41,7 @@ define(
      * @requires ViewDestinationProperties
      * @requires ViewLoggers
      * @requires ViewIrcs
-     * @requires ViewSysmon 
+     * @requires ViewSysmon
      *  @augments module:Backbone.View
      */
 
@@ -61,9 +61,15 @@ define(
           });
 
           collections.quidds = new CollectionQuidds();
-          
-          collections.receivers = new CollectionReceivers();
-          collections.receivers.fetch();
+
+          collections.destinationsRtp = new CollectionDestinationsRtp();
+          collections.destinationsRtp.fetch();
+
+          collections.destinationsSip = new CollectionDestinationsSip();
+          collections.destinationsSip.fetch();
+
+          collections.users = new CollectionUsers();
+
 
           collections.tables = new CollectionTables();
 
@@ -76,7 +82,7 @@ define(
 
 
 
-              collections.destinationProperties = new CollectionDestinationProperties();
+              collections.destinationProperties = new CollectionDestinationsProperties();
               collections.destinationProperties.fetch();
 
               collections.loggers = new CollectionLoggers();
@@ -97,9 +103,6 @@ define(
 
 
               /* generate view for manage users */
-
-              collections.users = new CollectionUsers();
-
               collections.users.fetch({
                 success: function() {
                   views.users = new ViewUsers({

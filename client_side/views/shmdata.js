@@ -84,6 +84,7 @@ define(
                     $("td", that.el).remove();
                     _.defer(function(){
                         that.table.get("collectionDestinations").each(function(destination) {
+                            console.log(destination);
                             that.connectionForDestination(destination, that.table.get("type"));
                         });
                     });

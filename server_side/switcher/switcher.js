@@ -62,8 +62,12 @@ define(
 
         /* create the properties controlProperties for stock properties of quidds for control */
         switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-        switcher.invoke(dico, "new-entry", ["destinations", "stock informations about destinations for manage edition", "dico for manage destinations"]);
-        switcher.set_property_value("dico", "destinations", '[]');
+        switcher.invoke(dico, "new-entry", ["destinationsRtp", "stock informations about destinations for manage edition", "dico for manage destinations"]);
+        switcher.set_property_value("dico", "destinationsRtp", '[]');
+
+        /* Create a dico for destinationsSIP */
+        switcher.create("dico", "destinationsSip");
+        
       }
 
 

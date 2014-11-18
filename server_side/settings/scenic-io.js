@@ -139,6 +139,8 @@ define(
                 socket.on("sip_logout", switcher.sip.logout);
                 socket.on("sip_login", switcher.sip.login);
                 socket.on("addUser", switcher.sip.addUser);
+                socket.on("addDestinationSip", switcher.sip.addDestinationSip);
+                socket.on("removeDestinationSip", switcher.sip.removeDestinationSip);
 
 
                 //************************* SAVE ****************************//

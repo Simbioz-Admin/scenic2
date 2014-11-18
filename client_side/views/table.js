@@ -58,12 +58,12 @@ define(
                     /* generate a btn for the table */
                     var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
-                    var active = (currentTable == this.model.get("type") ? "active" : "");
+                    var active = (currentTable == this.model.get("id") ? "active" : "");
                     var btnTable = $("<div></div>", {
                         text: "",
                         class: "tabTable " + this.model.get("type") + " " + active,
                         data: {
-                            type: this.model.get("type")
+                            id: this.model.get("id")
                         }
                     });
 
@@ -77,7 +77,7 @@ define(
                         menus: this.model.get("menus")
                     });
                     $(this.el)
-                        .attr("id", this.model.get("type"))
+                        .attr("id", this.model.get("id"))
                         .addClass(active)
                         .html(template);
 
@@ -144,13 +144,14 @@ define(
                         path = box.parent().data("path");
 
                     /* if transfer we ask port for connect to the receiver */
-                    if (this.model.get("type") == "transfer") {
+                    if (this.model.get("id") == "transferRtp") {
                         /* if already connect */
                         if (box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok) {});
                         box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
                     }
 
-                    if (this.model.get("type") == "sink") {
+
+                    if (this.model.get("id") == "sink") {
         
                         /* Find information about the number of connection possible */
                         if (box.hasClass("active")) {
@@ -194,7 +195,7 @@ define(
                             port = $(e.target).val(),
                             portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
                             that = this;
-
+                            
                         socket.emit("connect_destination", quiddName, path, id, port, portSoap, function(ok) {
                             that.removeInputDestination(e);
                         });

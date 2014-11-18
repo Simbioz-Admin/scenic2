@@ -22,7 +22,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         var create_destination = function(destination, cb) {
 
             /* Get the destinations existing stock in dico (propety destinations) */
-            var destinations = switcher.get_property_value("dico", "destinations"),
+            var destinations = switcher.get_property_value("dico", "destinationsRtp"),
                 destinations = $.parseJSON(destinations),
                 exist = _.findWhere(destinations, {
                     name: destination.name
@@ -44,7 +44,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
 
             destinations.push(destination);
-            var setDestination = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+            var setDestination = switcher.set_property_value("dico", "destinationsRtp", JSON.stringify(destinations));
             if (!setDestination) {
                 var msg = "Failed to set property destination for add " + destination.hostName;
                 log.error(msg);
@@ -151,7 +151,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
             if (!addUdp) return cb("error add Udp");
 
             /* 3. we save data stream to the dico destination */
-            var destinations = $.parseJSON(switcher.get_property_value("dico", "destinations"));
+            var destinations = $.parseJSON(switcher.get_property_value("dico", "destinationsRtp"));
             destinations = _.map(destinations, function(destination) {
 
                 if (destination.id == id) {
@@ -163,7 +163,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
                 }
                 return destination;
             });
-            var setPropertyValueOfDico = switcher.set_property_value("dico", "destinations", JSON.stringify(destinations));
+            var setPropertyValueOfDico = switcher.set_property_value("dico", "destinationsRtp", JSON.stringify(destinations));
             if (!setPropertyValueOfDico) return cb("error when saving Destinations Dico");
 
 

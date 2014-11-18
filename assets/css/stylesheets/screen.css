@@ -83,8 +83,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /* line 12, ../sass/_users.sass */
 div.users {
   width: 300px;
+  background: #333333;
   position: fixed;
-  top: 51px;
+  top: 85px;
   bottom: 0;
   right: -300px;
   z-index: 2000;
@@ -122,7 +123,7 @@ div.users .content_users {
   right: 0;
   left: 0;
   bottom: 0;
-  top: 87px;
+  top: 50px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -199,12 +200,12 @@ div.users .user .information h3 {
   cursor: default;
   margin: 0 0 5px 0;
   color: #fefefe;
-  font-size: 14px;
+  font-size: 12px;
 }
 /* line 111, ../sass/_users.sass */
 div.users .user .information .last_message {
   color: #999999;
-  font-size: 12px;
+  font-size: 11px;
   height: 13px;
   overflow: hidden;
 }

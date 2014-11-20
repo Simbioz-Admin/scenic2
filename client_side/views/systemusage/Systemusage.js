@@ -67,7 +67,7 @@ define(
             var countCpu = info.length;
             _.each(info, function(cpu, name) {
               $(".cpus .content", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
-              leftBar = leftBar + 4;
+              leftBar = leftBar + 6;
               if (!--countCpu) that.cpuRender = true;
             });
           } else {

@@ -356,7 +356,7 @@ div.users #login_sip input[type=submit]:hover {
 }
 /* line 61, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .bar {
-  width: 3px;
+  width: 5px;
   height: 2%;
   background: #555555;
   position: absolute;

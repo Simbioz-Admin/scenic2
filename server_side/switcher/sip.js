@@ -1,159 +1,234 @@
 define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
-    function(config, switcher, log, _, $, portastic) {
+  function(config, switcher, log, _, $, portastic) {
 
-        var listUsers = [];
-        var io;
-        var quiddSipName = "sipquid";
+    var listUsers = [];
+    var io;
+    var quiddSipName = "sipquid";
 
-        /*
-         *  @function addListUser
-         *  @description add to the array listUsers a new users
-         */
+    /*
+     *  @function addListUser
+     *  @description add to the array listUsers a new users
+     */
 
-        function addListUser(userInfo) {
-            log.switcher("User sip connected", userInfo.sip_url);
-            listUsers.push(userInfo);
+    function addUser(URI, name, cb) {
+      log.debug("User sip connected");
+      var addBuddy = switcher.invoke(quiddSipName, "add_buddy", [URI]);
+      if (!addBuddy) return cb("Error add " + name + " to the sip server");
+      var setName = switcher.invoke(quiddSipName, "name_buddy", [name, URI]);
+      if (!setName) return cb("Error set name " + name);
+
+      /* Insert a new entry in the dico users */
+      var newEntry = switcher.invoke("destinationsSip", "update", [URI,URI]);
+
+      /* save the dico users */
+      var saveDicoUsers = switcher.invoke("destinationsSip", "save", [config.scenicSavePath + "users.json"]);
+      if (!saveDicoUsers) return cb("error saved dico users");
+
+      cb(null, "User " + URI + " successfully added");
+    }
+
+    /*
+     *  @function removeUser
+     *  @description remove a user from sipquid and dico
+     */
+
+    function removeUser(URI, cb) {
+      log.debug("remove User");
+    }
+
+
+    /*
+     *  @function createSip
+     *  @description set the connection with the server sip. This function is called a initialization of switcher
+     */
+
+    function createSip(name, password, address, port, cb) {
+
+      //@TODO : Encrypt client side and decrypt server side the password
+
+      /* Create the server SIP */
+      quiddSipName = switcher.create("sip", quiddSipName);
+      if (!quiddSipName) return log.error("Error login sip server");
+      switcher.invoke(quiddSipName, "unregister", []);
+
+      /* Connect to the server SIP */
+      log.debug("Ask connect to server sip", name + "@" + address, password);
+      var register = switcher.invoke(quiddSipName, "register", [name + "@" + address, password]);
+      if (!register) return log.error("Error when try login to the server SIP");
+
+      /* subscribe to the modification on this quiddity */
+      switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
+      switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
+
+      /* Create a dico for Users */
+      var usersDico = switcher.create("dico", "destinationsSip");
+      if (!usersDico) return log.error("error create dico Users");
+
+      /* Try load file users dico */
+      var loadUsers = switcher.invoke("destinationsSip", "load", [config.scenicSavePath + "users.json"]);
+      if (!loadUsers) log.warn("No files existing for dico users");
+
+      if (loadUsers) {
+        /* Load Dico Users in quiddity SIP */
+        var users = JSON.parse(switcher.get_info("destinationsSip", ".dico"));
+
+        users = [
+          { name : "1001@scenic.sat.qc.ca", "default value":  "1001@scenic.sat.qc.ca"},
+          { name : "1002@scenic.sat.qc.ca", "default value":  "1002@scenic.sat.qc.ca"}
+        ];
+
+        console.log("TREE", users);
+        if(users){
+          _.each(users, function(user) {
+            addUser(user.name, user["default value"], function(err, info) {
+              if (err) return log.error(err);
+              log.debug(info);
+            });
+          });
+        }
+      }
+
+      if (register == "false") {
+        log.error("Error register quid sip");
+        return cb("Error register quid sip", null);
+      }
+
+      if (cb) cb(null);
+    }
+
+    return {
+
+      /*
+       *  @function initialize
+       *  @description initialize for get socket.io accessible
+       */
+
+      initialize: function(socketIo) {
+        log.info("initialize sip");
+        io = socketIo;
+      },
+
+      /*
+       *  @function getListUsers
+       *  @description Return the list of users Sip (for create collection client side)
+       */
+
+      getListUsers: function() {
+        var users = $.parseJSON(switcher.get_info(quiddSipName, "."));
+        log.debug("Get List users", users);
+        if (!users.error) {
+          return users;
+        } else {
+          return [];
+        }
+      },
+
+
+      /*
+       *  @function login
+       *  @description Log user to the server sip
+       */
+
+      login: function(sip, cb) {
+        log.debug("Ask for login Sip Server", parseInt(sip.port));
+        /* set information config */
+        switcher.remove(quiddSipName);
+        createSip(sip.name, sip.password, sip.address, sip.port, function(err) {
+          if (err) return cb(err);
+          return cb(null, sip);
+        });
+      },
+
+
+      /*
+       *  @function logout
+       *  @description logout from the server SIP
+       */
+
+      logout: function(cb) {
+        log.debug("ask for logout to the server sip");
+        var unregister = switcher.invoke(quiddSipName, "unregister", []);
+        console.log("unregister", unregister);
+        if (switcher.remove(quiddSipName)) {
+          listUsers = [];
+          return cb(null, true);
+        } else {
+          log.error("error when try logout server sip")
+          return cb("error when try logout server sip", false);
         }
 
+      },
 
-        /*
-         *  @function createSip
-         *  @description set the connection with the server sip. This function is called a initialization of switcher
-         */
+      /*
+       *  @function addUser
+       *  @description Add a new user in the dico and server sip
+       */
 
-        function createSip(cb) {
+      addUser: function(uri, cb) {
+        log.debug("ask to add user ", uri);
+        addUser(uri, uri, function(err, info) {
+          return cb(err, info);
+        });
+      },
 
-            /* create quiddity sip */
-            quiddSipName = switcher.create("sip", quiddSipName);
-            if (!quiddSipName) return cb("Error login sip server");
+      /*
+       *  @function addDestinationSip
+       */
 
-            /* set port for sipquid */
-            console.log("PORT SIP", String(config.sip.port));
-            var setPortSip = switcher.set_property_value(quiddSipName, "port", String(config.sip.port));
-            log.debug("setPortSip", setPortSip);
+      addDestinationSip : function(uri,cb){
+        log.debug("ask to add ",uri," to the destinationSip");
 
-            /* * subscribe to the modification on this quiddity */
-            switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
-            switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
+        var addDestinationSip = switcher.invoke("destinationsSip", "update", [uri, uri]);
+        if(!addDestinationSip) {
+          var err = "Error add DestinationSip "+uri;
+          log.error(err);
+          cb(err);
+          return;
+        }
+        io.sockets.emit("addDestinationSip", uri);
+        cb(null, "successfully added destination "+uri);
+      },
 
-            var register = switcher.invoke(quiddSipName, "register", [config.sip.name,
-                config.sip.address,
-                "1234"
-            ]);
+      /*
+       *  @function removeDestinationSip
+       */
+      removeDestinationSip : function(uri,cb){
+        log.debug("ask to remove ",uri," to the destinationSip");
+        var removeDestinationSip = switcher.invoke("destinationsSip", "remove", [uri]);
+         if(!removeDestinationSip) {
+          var err = "Error remove DestinationSip "+uri;
+          log.error(err);
+          cb(err);
+          return;
+        }
+        io.sockets.emit("removeDestinationSip", uri);
+        cb(null, "successfully remove destination "+uri);
+      },
 
-            if (register == "false") {
-                log.error("Error register quid sip");
-                return cb("Error register quid sip", null);
-            }
+      /*
+       *  @function addShmdataToUserSip
+       */
+      attachShmdataToContact : function(user, path, attach, cb){
+        log.debug("Shmdata to contact", user, path, attach);
+        var attach = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
+        var type = (attach) ? "attach" : "detach";
 
-            if (cb) cb(null);
+        if(!attach) {
+          var err = "error "+type+" shmdata to the user sip";
+          log.error(err);
+          return cb(err);
         }
 
-        return {
-
-            /*
-             *  @function initialize
-             *  @description initialize for get socket.io accessible
-             */
-
-            initialize: function(socketIo) {
-                log.info("initialize sip");
-                io = socketIo;
-            },
-
-
-            /*
-             *  @function updateInfoUser
-             *  @description Update information whebn
-             */
-
-            updateInfoUser: function(userInfo) {
-                try {
-                    userInfo = $.parseJSON(userInfo);
-                } catch (e) {
-                    return log.error("error try parseJSON userInfo");
-                }
-
-                /* check if user is not already in the list */
-                var userUpdated = _.findWhere(listUsers, {
-                    sip_url: userInfo.sip_url
-                });
-
-                /* if no user existing in the list */
-                if (!userUpdated) return addListUser(userInfo);
-
-                /* if user exist we update info */
-                var indexUserOnTheList = _.indexOf(listUsers, userUpdated);
-                listUsers[indexUserOnTheList] = userInfo;
-
-                /* send information to the client slide */
-                io.sockets.emit("updateInfoUser", userInfo);
-            },
-
-
-            /*
-             *  @function removeFromList
-             *  @description Remove from the list user a user (currently disable)
-             */
-
-            removeFromList: function(userInfo) {
-                log.debug("Remove from list", userInfo);
-            },
-
-
-            /*
-             *  @function getListUsers
-             *  @description Return the list of users Sip (for create collection client side)
-             */
-
-            getListUsers: function() {
-                return listUsers;
-            },
-
-
-            /*
-             *  @function login
-             *  @description Log user to the server sip
-             */
-
-            login: function(sip, cb) {
-                log.debug("Ask for login Sip Server", parseInt(sip.port));
-                /* set information config */
-                switcher.remove(quiddSipName);
-                config.sip = {
-                    port: sip.port,
-                    address: sip.address,
-                    name: sip.name,
-                    password : sip.password
-                }
-                createSip(function(err) {
-                    if (err) return cb(err);
-                    return cb(null, config.sip);
-                });
-            },
-
-
-            /*
-             *  @function logout
-             *  @description logout from the server SIP
-             */
-
-            logout: function(cb) {
-                log.debug("ask for logout to the server sip");
-                if (switcher.remove(quiddSipName)) {
-                    listUsers = [];
-                    cb(null, true);
-                } else {
-                    log.error("error when try logout server sip")
-                    cb("error when try logout server sip", false);
-                }
-
-            }
-        }
+        // io.sockets.emit("addShmdataToUserSip", )
+        cb(null, "successfully "+type+" Shmdata to the destination SIP");
+      },
 
 
     }
+
+
+  }
 
 
 );

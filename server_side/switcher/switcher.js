@@ -61,9 +61,13 @@ define(
         var dico = switcher.create("dico", "dico");
 
         /* create the properties controlProperties for stock properties of quidds for control */
-        switcher.invoke(dico, "new-entry", ["controlProperties", "stock informations about properties controlable by controlers (midi, osc, etc..)", "Properties of Quidds for Controls"]);
-        switcher.invoke(dico, "new-entry", ["destinations", "stock informations about destinations for manage edition", "dico for manage destinations"]);
-        switcher.set_property_value("dico", "destinations", '[]');
+        switcher.invoke(dico, "update", ["controlProperties", "[]"]);
+        switcher.invoke(dico, "update", ["destinationsRtp", "[]"]);
+        // switcher.set_property_value("dico", "destinationsRtp", '[]');
+
+        /* Create a dico for destinationsSIP */
+        // switcher.create("dico", "destinationsSip");
+        
       }
 
 
@@ -160,19 +164,20 @@ define(
 
         /* manage callback fro SIP quidd  */
 
-        if (qname == "sipquid" && qsignal == "on-tree-grafted") {
-          sip.updateInfoUser(switcher.get_info(qname, pvalue[0]));
-        }
-        if (qname == "sipquid" && qsignal == "on-tree-pruned") {
-          sip.removeFromList(switcher.get_info(qname, pvalue[0]));
+        // if (qname == "sipquid" && qsignal == "on-tree-grafted") {
+        //   sip.updateInfoUser(switcher.get_info(qname, pvalue[0]));
+        // }
+        // if (qname == "sipquid" && qsignal == "on-tree-pruned") {
+        //   sip.removeFromList(switcher.get_info(qname, pvalue[0]));
 
-        }
+        // }
 
-        /* information about shmdata with tree */
+        /* ON TREE GRAFTED */
 
         if (qname != "systemusage" && qsignal == "on-tree-grafted") {
 
           /* shmdata writer */
+
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) {
             var shmdatasInfo = JSON.parse(switcher.get_info(qname, pvalue[0]));
             /* temporary add name in info (request for add by default) */
@@ -183,17 +188,33 @@ define(
             io.sockets.emit("addShmdata", qname, shmdatasInfo);
           }
 
-          if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
+          /* Shmdata reader */
+
+          if (pvalue[0].indexOf(".shmdata.reader") >= 0) {
             var shmdatasInfo = JSON.parse(switcher.get_info(qname, pvalue[0]));
             shmdatasInfo["path"] = pvalue[0].replace(".shmdata.reader.", "");
             shmdatasInfo['type'] = "reader";
             shmdatasInfo['quidd'] = qname;
             io.sockets.emit("addShmdata", qname, shmdatasInfo);
           }
+
+          /* sipquidd */
+          if(qname == "sipquid")
+            log.debug("on-tree-grafted", qname, pvalue[0], qsignal);
+          
+          if(qname == "sipquid" && pvalue[0].indexOf(".presence") >= 0){
+            var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
+            console.log("user Info Sip Quidd", infoUser);
+            io.sockets.emit('infoUser', infoUser);
+          }
+
+
         }
 
+
+        /* ON TREE PRUNED */
+
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
-          log.debug("PRUNED", qname, pvalue);
           
           //Shmdata Writer
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer

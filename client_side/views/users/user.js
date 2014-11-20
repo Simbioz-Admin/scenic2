@@ -35,7 +35,7 @@ define(
                 events: {
                     "mouseenter": "showActions",
                     "mouseleave": "hideActions",
-                    "click .add_table": "test"
+                    "click .add_destinationSip": "add_destinationSip"
                 },
 
 
@@ -84,8 +84,18 @@ define(
                         "marginLeft": 0
                     }, 100);
                 },
-                test: function() {
-                    console.log("test", $(this.el).data('status'));
+                add_destinationSip: function() {
+                    console.log("test", this.model.get("uri"));
+
+                    console.log(collections.destinationsSip.get(this.model.get('uri')));
+                    if(!collections.destinationsSip.get(this.model.get('uri'))){
+                        socket.emit("addDestinationSip", this.model.get("uri"), function(err, msg){
+                            if(err) return views.global.notification("error",err);
+                            console.log(msg);
+                        });
+                    } else {
+                        views.global.notification("error","this user is already in destinations SIP");
+                    }
                 }
 
             });

@@ -53,7 +53,7 @@ define(
                     // this.model.on('updateByteRate', this.updateByteRateAndPreview);
                     this.table = options.table;
 
-                    $("#" + this.table.get("type") + " .sources").append(this.el);
+                    $("#" + this.table.get("id") + " .sources").append(this.el);
 
                     /* we check if the category of this quidd exist in filter table */
                     this.table.trigger("addCategoryFilter", this.model.get("category"));

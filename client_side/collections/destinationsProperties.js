@@ -30,7 +30,7 @@ define(
 			 */
 
 			{
-				url: '/quidds/dico/properties/controlProperties/value',
+				url: '/destinationsProperties',
 				model: ModelControlProperty,
 				parse: function(results, xhr) {
 					return results;

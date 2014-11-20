@@ -1,11 +1,10 @@
 <h2>Contacts</h2>
-<% console.log("LOGIN", loginForm); %>
 <% if(!loginForm){ %>
 <div class="itsMe user">
 	<div class="information">
-		<h3> </h3>
-		<div class="last_message"></div>
-		<a href="#" class="logout">discconect</a>
+		<h3>Pachesnel</h3>
+		<div class="last_message">No message</div>
+		<a href="#" class="logout">disconnect</a>
 	</div>
 </div>
 <% } %>
@@ -13,8 +12,10 @@
 	<input type="text" name="" value="" placeholder="Rechercher un utilisateur...">
 </div> -->
 	<div class="content_users">
+		<input type="text" id="add-user" value="" placeholder="+ user uri...">
 		<div class="status-0 list"></div>
 		<div class="status-1 list"></div>
 		<div class="status-2 list"></div>
 		<div class="status-3 list"></div>
+		<div class="status-4 list"></div>
 	</div>

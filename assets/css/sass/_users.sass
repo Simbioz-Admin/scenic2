@@ -1,4 +1,4 @@
-/* scrollbar Custom */
+s/* scrollbar Custom */
 ::-webkit-scrollbar
 	width: 8px
 	cursor : scrollbar
@@ -10,8 +10,8 @@
 	background : #999
 
 div.users
-	width : 300px
-	//background : #333
+	width : 220px
+	background : #222
 	position : fixed
 	top : 51px
 	bottom : 0
@@ -42,7 +42,7 @@ div.users
 		right : 0
 		left : 0
 		bottom : 0
-		top : 94px
+		top : 85px
 		overflow-y : auto
 		overflow-x : hidden
 	.current_user
@@ -77,6 +77,12 @@ div.users
 		&:hover
 			background : #be2620
 
+	#add-user
+		+border-radius(0)
+		background: #333
+		color : white
+		margin : 0
+		border-color : #444
 
 	.user
 		position : relative
@@ -95,7 +101,7 @@ div.users
 				cursor : default
 				margin : 0 0 5px 0
 				color : #fefefe
-				font-size : 14px
+				font-size : 12px
 			// &.status-0, &.status-online
 			// 	border-color : #01b101
 			// &.status-1
@@ -104,7 +110,7 @@ div.users
 			// 	border-color : #555
 			.last_message
 				color : #999
-				font-size: 12px
+				font-size: 11px
 				height : 13px
 				overflow: hidden
 
@@ -156,6 +162,9 @@ div.users
 		color : white
 		position : relative
 		z-index : 2
+		display : inline-block
+		.parameters
+			display : inline-block
 		h1
 			font-size : 18px
 			margin-bottom : 20px
@@ -169,7 +178,7 @@ div.users
 			width : 47%
 			float : left
 			position : relative
-			margin-right : 10px
+			margin-right : 7px
 			input
 				width : 95%
 			&:last-child

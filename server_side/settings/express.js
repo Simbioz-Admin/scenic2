@@ -87,9 +87,17 @@ define(
     });
 
 
-    app.get('/destinations', function(request, response) {
+    app.get('/destinationsRtp', function(request, response) {
       response.contentType('application/json');
-      var destinations = nodeSwitcher.get_property_value("defaultrtp", "destinations-json");
+      var destinations = nodeSwitcher.invoke("dico","read", ["destinationsRtp"]);
+      response.send(destinations);
+
+    });
+
+
+    app.get('/destinationsProperties', function(request, response) {
+      response.contentType('application/json');
+      var destinations = nodeSwitcher.invoke("dico","read", ["controlProperties"]);
       response.send(destinations);
 
     });

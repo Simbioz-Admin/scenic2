@@ -275,7 +275,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         //************************ DICO *****************************************//
 
         function set_property_value_of_dico(property, value, callback) {
-            var currentValueDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+            var currentValueDicoProperty = $.parseJSON(switcher.invoke("dico", "read", [property]));
             if (currentValueDicoProperty)
                 currentValueDicoProperty[currentValueDicoProperty.length] = value;
             else
@@ -288,7 +288,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         }
 
         function removeConrolByQuiddParent(quiddParent) {
-            var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", 'controlProperties'));
+            var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read",[ 'controlProperties']));
             _.each(currentValuesDicoProperty, function(control) {
                 if (control.quiddName == quiddParent) {
                     remove_property_value_of_dico("controlProperties", control.name);
@@ -297,13 +297,12 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         }
 
         function remove_property_value_of_dico(property, name) {
-            var currentValuesDicoProperty = $.parseJSON(switcher.get_property_value("dico", property));
+            var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read", property));
             var newValuesDico = [];
             _.each(currentValuesDicoProperty, function(value) {
                 if (value.name != name)
                     newValuesDico.push(value);
             });
-
 
             if (property == "controlProperties") {
                 /* parse all quidds for remove mapper associate */
@@ -319,7 +318,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
             log.debug("Remove property", property, name);
 
-            switcher.set_property_value("dico", property, JSON.stringify(newValuesDico));
+            switcher.invoke("dico", "update", [ property, JSON.stringify(newValuesDico)]);
             io.sockets.emit("removeValueOfPropertyDico", property, name);
         }
 

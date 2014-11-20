@@ -59,19 +59,14 @@ define(
 
                 },
 
-                // runHtop: function(info) {
-                //     console.log("d3 called in Systemusage ");
-                //     this.barView = new Htop();
-                // },
                 renderCpu: function (info) {
                     var that = this;
-                    // console.log("systemusage", info);
 
                     if (!this.cpuRender) {
                         var leftBar = 0;
                         var countCpu = info.length;
                         _.each(info, function(cpu, name) {
-                            $(".cpus", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
+                            $(".cpus .content", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
                             leftBar = leftBar + 4;
                             if (!--countCpu) that.cpuRender = true;
                         });

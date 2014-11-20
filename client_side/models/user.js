@@ -1,45 +1,47 @@
 define(
 
+  /** 
+   *  Model User
+   *  @exports Models/User
+   */
+
+  [
+    'underscore',
+    'backbone',
+    'views/users/user',
+    'views/destination'
+  ],
+
+  function(_, Backbone, ViewUser, ViewDestination) {
+
     /** 
-     *	Model User
-     *	@exports Models/User
+     *  @constructor
+     *  @requires Underscore
+     *  @requires Backbone
+     *  @requires ViewUser
+     *  @requires ViewDestination
+     *  @augments module:Backbone.Model
      */
 
-    [
-        'underscore',
-        'backbone',
-        'views/users/user'
-    ],
+    var UserModel = Backbone.Model.extend(
 
-    function(_, Backbone, ViewUser) {
+      /**
+       *  @lends module: Models/User~UserModel.prototype
+       */
 
-        /** 
-         *	@constructor
-         *  @requires Underscore
-         *  @requires Backbone
-         *	@requires ViewUser
-         *  @augments module:Backbone.Model
-         */
+      {
+        idAttribute: "sip_url",
+        defaults: {
+          name: null,
+          sip_url: null,
+          status: null,
+          status_text: "Aucun message",
+          subscription_state: "Aucun message"
+        },
+        initialize: function() {
 
-        var UserModel = Backbone.Model.extend(
+        }
+      });
 
-            /**
-             *	@lends module: Models/User~UserModel.prototype
-             */
-
-            {
-                idAttribute: "sip_url",
-                defaults: {
-                    sip_url: null,
-                    status: null,
-                    status_text: "Aucun message",
-                    subscription_state: "Aucun message"
-                },
-                initialize: function() {
-
-
-                }
-            });
-
-        return UserModel;
-    })
+    return UserModel;
+  })

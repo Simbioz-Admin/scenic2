@@ -94,9 +94,9 @@ define(
               id: "get_properties"
             }],
             sources: {
-              select: ["midi source"],
+              select: ["midisrc"],
             },
-            collectionDestinations: collections.receivers
+            collectionDestinations: collections.destinationsRtp
           }
 
           /* Manage transfer of shmdatas to the sip destination */
@@ -118,7 +118,8 @@ define(
           this.add(controlMatrix);
           this.add(shmdataMatrix);
           this.add(RTPtransferMatrix);
-          this.add(SIPtransferMatrix);
+          //this.add(SIPtransferMatrix);
+
         }
       });
     return CollectionTables;

@@ -296,7 +296,7 @@ define(
           socket.emit("load", $(e.target).html(), function(ok) {
             if (ok) {
 
-              collections.receivers.fetch({
+              collections.destinationsRtp.fetch({
                 success: function(response) {
 
                   //regenerate source transfer

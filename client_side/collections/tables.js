@@ -94,7 +94,7 @@ define(
               id: "get_properties"
             }],
             sources: {
-              select: ["midi source"],
+              select: ["midisrc"],
             },
             collectionDestinations: collections.destinationsRtp
           }
@@ -119,6 +119,7 @@ define(
           this.add(shmdataMatrix);
           this.add(RTPtransferMatrix);
           //this.add(SIPtransferMatrix);
+
         }
       });
     return CollectionTables;

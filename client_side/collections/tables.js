@@ -118,7 +118,7 @@ define(
           this.add(controlMatrix);
           this.add(shmdataMatrix);
           this.add(RTPtransferMatrix);
-          //this.add(SIPtransferMatrix);
+          this.add(SIPtransferMatrix);
 
         }
       });

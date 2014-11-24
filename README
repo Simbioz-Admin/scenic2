@@ -26,6 +26,8 @@ Dependencies
 * switcher: http://code.sat.qc.ca/redmine/projects/switcher
 * chromium-browser
 
+sudo apt-get install nodejs-legacy chromium-browser npm
+
 Quickstart
 ----------
 

@@ -113,6 +113,7 @@ define(
               select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
             collectionDestinations: collections.users
+            
           }
 
           this.add(controlMatrix);

@@ -39,6 +39,12 @@ define(
           /* receive update info user from server side */
           socket.on("infoUser", function(infoUser) {
             console.log("infoUser", infoUser);
+            var user = that.get(infoUser.uri);
+            if(user){
+              user.set(infoUser);
+            }else{
+              that.add(infoUser);
+            }
             that.fetch({
               success: function() {
                 views.users.render(true);

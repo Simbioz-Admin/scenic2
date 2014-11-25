@@ -155,7 +155,6 @@ define(
           if (this.model.get("id") == "transferSip") {
             console.log(destination, id, path);
             var attach = box.hasClass("active") ? false : true;
-
             socket.emit("attachShmdataToContact", destination, path, attach, function(err, msg){
               if(err) return views.global.notification("error", err);
               views.global.notification("valid", msg);

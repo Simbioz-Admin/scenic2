@@ -1,4 +1,4 @@
-s/* scrollbar Custom */
+/* scrollbar Custom */
 ::-webkit-scrollbar
 	width: 8px
 	cursor : scrollbar
@@ -27,7 +27,7 @@ div.users
 		.information
 			// border : none
 			background : #222
-			border-top : 1px solid #1a1a1a
+			//border-top : 1px solid #1a1a1a
 			border-left-color : #01b101
 		.logout
 			position : absolute
@@ -75,7 +75,7 @@ div.users
 		padding : 0 17px
 		position : relative
 		&:hover
-			background : #be2620
+			//background : #be2620
 
 	#add-user
 		+border-radius(0)
@@ -142,8 +142,11 @@ div.users
 					cursor : pointer
 			.add_table
 				background : url(../../images/bgBox.png) center center no-repeat
-			.chat
-				background : url(../../images/icon_chat.png) center center no-repeat
+			.edit_user
+				background : url(../../images/settings.png) center center no-repeat
+				//background : url(../../images/icon_chat.png) center center no-repeat
+				&:hover
+					text-decoration: none
 
 		&[data-status='0'] .information, &[data-status='0'] .status
 			border-color : #01b101

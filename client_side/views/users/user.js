@@ -35,7 +35,8 @@ define(
                 events: {
                     "mouseenter": "showActions",
                     "mouseleave": "hideActions",
-                    "click .add_destinationSip": "add_destinationSip"
+                    "click .add_destinationSip": "add_destinationSip",
+                    "click .edit_user" : "edit_user"
                 },
 
 
@@ -47,13 +48,22 @@ define(
                 initialize: function(options) {
                     this.listenTo(this.model, 'change:status', this.refreshStatus);
                     this.listenTo(this.model, 'change:status_text', this.changeText);
+
                     this.render();
+                    
                 },
 
                 /* Called for render the view */
                 render: function() {
 
-                    $(".users .content_users .status-" + this.model.get("status")).append(this.el);
+                    var userSip = JSON.parse(localStorage['userSip']);
+                    if(userSip.name == this.model.get('name')){
+                        this.model.set('itsMe', true);
+                        $('.itsMe').html(this.el);
+                    } else {
+                        $(".users .content_users .status-" + this.model.get("status")).append(this.el);
+                    }
+
                     var tpl = _.template(TemplateUser, this.model.toJSON());
                     $(this.el).html(tpl);
                     var status = this.model.get("status");
@@ -75,9 +85,11 @@ define(
                     $(".last_message", this.el).html(this.model.get("status_text"));
                 },
                 showActions: function() {
-                    $(".information", this.el).stop(true, true).animate({
-                        "marginLeft": 140
-                    }, 100);
+                    if(!this.model.get('itsMe')){
+                        $(".information", this.el).stop(true, true).animate({
+                            "marginLeft": 140
+                        }, 100);
+                    }
                 },
                 hideActions: function() {
                     $(".information", this.el).stop(true, true).animate({
@@ -87,8 +99,9 @@ define(
                 add_destinationSip: function() {
                     console.log("test", this.model.get("uri"));
 
-                    console.log(collections.destinationsSip.get(this.model.get('uri')));
-                    if(!collections.destinationsSip.get(this.model.get('uri'))){
+                    console.log(collections.users.get(this.model.get('uri')));
+                    var user = collections.users.get(this.model.get('uri'));
+                    if(!user.in_tabl){
                         socket.emit("addDestinationSip", this.model.get("uri"), function(err, msg){
                             if(err) return views.global.notification("error",err);
                             console.log(msg);
@@ -96,6 +109,9 @@ define(
                     } else {
                         views.global.notification("error","this user is already in destinations SIP");
                     }
+                },
+                edit_user : function(){
+                    this.model.edit();
                 }
 
             });

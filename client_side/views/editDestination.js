@@ -8,15 +8,15 @@ define(
   [
     'underscore',
     'backbone',
-    'text!../../templates/editDestination.html',
+    'text!../../templates/editDestinationRtp.html',
   ],
 
-  function(_, Backbone, TemplateEditDestination) {
+  function(_, Backbone, TemplateEditDestinationRtp) {
     /** 
      *	@constructor
      *  @requires Underscore
      *  @requires Backbone
-     *	@requires TemplateEditDestination
+     *	@requires TemplateEditDestinationRtp
      *  @augments module:Backbone.View
      */
 
@@ -33,7 +33,7 @@ define(
         initialize: function() {
           var that = this;
           //generate template for receive information about destination
-          var template = _.template(TemplateEditDestination, {
+          var template = _.template(TemplateEditDestinationRtp, {
             destination: that.model
           });
 

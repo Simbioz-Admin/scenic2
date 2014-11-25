@@ -200,9 +200,8 @@ define(
 
           /* sipquidd */
           if(qname == "sipquid")
-            log.debug("on-tree-grafted", qname, pvalue[0], qsignal);
           
-          if(qname == "sipquid" && pvalue[0].indexOf(".presence") >= 0){
+          if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
             var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
             console.log("user Info Sip Quidd", infoUser);
             io.sockets.emit('infoUser', infoUser);

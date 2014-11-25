@@ -1,4 +1,4 @@
-/* line 17, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,49 +20,50 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../var/lib/gems/1.9.1/gems/compass-0.12.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../usr/share/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
 
+/* scrollbar Custom */
 /* line 2, ../sass/_users.sass */
 ::-webkit-scrollbar {
   width: 8px;
@@ -101,7 +102,6 @@ div.users .itsMe.user .status {
 /* line 27, ../sass/_users.sass */
 div.users .itsMe.user .information {
   background: #222222;
-  border-top: 1px solid #1a1a1a;
   border-left-color: #01b101;
 }
 /* line 32, ../sass/_users.sass */
@@ -160,10 +160,6 @@ div.users h2 {
   display: inline-block;
   padding: 0 17px;
   position: relative;
-}
-/* line 77, ../sass/_users.sass */
-div.users h2:hover {
-  background: #be2620;
 }
 /* line 80, ../sass/_users.sass */
 div.users #add-user {
@@ -242,26 +238,30 @@ div.users .user .actionsOnUser .add_table {
   background: url(../../images/bgBox.png) center center no-repeat;
 }
 /* line 145, ../sass/_users.sass */
-div.users .user .actionsOnUser .chat {
-  background: url(../../images/icon_chat.png) center center no-repeat;
+div.users .user .actionsOnUser .edit_user {
+  background: url(../../images/settings.png) center center no-repeat;
 }
 /* line 148, ../sass/_users.sass */
+div.users .user .actionsOnUser .edit_user:hover {
+  text-decoration: none;
+}
+/* line 151, ../sass/_users.sass */
 div.users .user[data-status='0'] .information, div.users .user[data-status='0'] .status {
   border-color: #01b101;
 }
-/* line 150, ../sass/_users.sass */
+/* line 153, ../sass/_users.sass */
 div.users .user[data-status='1'] .information {
   border-color: #be2620;
 }
-/* line 152, ../sass/_users.sass */
+/* line 155, ../sass/_users.sass */
 div.users .user[data-status='2'] .information {
   border-color: orange;
 }
-/* line 154, ../sass/_users.sass */
+/* line 157, ../sass/_users.sass */
 div.users .user[data-status='3'] .information {
   border-color: #555555;
 }
-/* line 159, ../sass/_users.sass */
+/* line 162, ../sass/_users.sass */
 div.users #login_sip {
   background: #222222;
   padding: 20px;
@@ -270,41 +270,41 @@ div.users #login_sip {
   z-index: 2;
   display: inline-block;
 }
-/* line 166, ../sass/_users.sass */
+/* line 169, ../sass/_users.sass */
 div.users #login_sip .parameters {
   display: inline-block;
 }
-/* line 168, ../sass/_users.sass */
+/* line 171, ../sass/_users.sass */
 div.users #login_sip h1 {
   font-size: 18px;
   margin-bottom: 20px;
 }
-/* line 171, ../sass/_users.sass */
+/* line 174, ../sass/_users.sass */
 div.users #login_sip label {
   font-size: 14px;
 }
-/* line 173, ../sass/_users.sass */
+/* line 176, ../sass/_users.sass */
 div.users #login_sip input {
   background: #111111;
   color: white;
   border-color: #222222;
 }
-/* line 177, ../sass/_users.sass */
+/* line 180, ../sass/_users.sass */
 div.users #login_sip .half {
   width: 47%;
   float: left;
   position: relative;
   margin-right: 7px;
 }
-/* line 182, ../sass/_users.sass */
+/* line 185, ../sass/_users.sass */
 div.users #login_sip .half input {
   width: 95%;
 }
-/* line 184, ../sass/_users.sass */
+/* line 187, ../sass/_users.sass */
 div.users #login_sip .half:last-child {
   margin-right: 0;
 }
-/* line 186, ../sass/_users.sass */
+/* line 189, ../sass/_users.sass */
 div.users #login_sip input[type=submit] {
   background: #111111;
   width: inherit;
@@ -315,7 +315,7 @@ div.users #login_sip input[type=submit] {
   padding: 0 10px;
   cursor: pointer;
 }
-/* line 195, ../sass/_users.sass */
+/* line 198, ../sass/_users.sass */
 div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }

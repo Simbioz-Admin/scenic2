@@ -37,6 +37,7 @@
                      "hostName": null,
                      "portSoap": null,
                      "data_streams": [],
+                     "in_tab" : true,
                      // "soapClient": false
                  },
 

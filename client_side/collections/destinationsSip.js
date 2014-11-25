@@ -12,7 +12,7 @@ define(
     'models/destinationSip',
   ],
 
-  function(_, Backbone, ModelDestinationRtp) {
+  function(_, Backbone, ModelDestinationSip) {
 
     /** 
      *  @constructor
@@ -29,9 +29,8 @@ define(
        */
 
       {
-        model: ModelDestinationRtp,
-        url: '/quidds/destinationsSip/properties/',
-        timer: 5000,
+        model: ModelDestinationSip,
+        url: '/users',
         parse: function(results, xhr) {
           return results.properties;
         },

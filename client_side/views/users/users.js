@@ -36,7 +36,7 @@ define(
         template: TemplateUsers,
         listOpen: true,
         events: {
-          'click h2': 'toggleList',
+          //'click h2': 'toggleList',
           'click .logout': 'logoutSip',
           'submit #login_sip': 'loginSip',
           'change #add-user': 'addUser'
@@ -58,6 +58,7 @@ define(
 
           if (this.collection.length == 0) {
             that.renderLogin();
+            localStorage["usersPanelClose"] = true;
             that.toggleList(0);
           } else {
             that.render();
@@ -160,7 +161,11 @@ define(
         loginSip: function(e) {
           var that = this;
           e.preventDefault();
+
           that.sipInformation = $('#login_sip', this.el).serializeObject();
+          
+          if(localStorage["userSip"]) localStorage["userSip"] = null;
+          localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
           socket.emit("sip_login", that.sipInformation, function(err, configSip) {
             if (err) return views.global.notification("error", err);

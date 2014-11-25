@@ -65,8 +65,8 @@ define(
           collections.destinationsRtp = new CollectionDestinationsRtp();
           collections.destinationsRtp.fetch();
 
-          collections.destinationsSip = new CollectionDestinationsSip();
-          collections.destinationsSip.fetch();
+          //collections.destinationsSip = new CollectionDestinationsSip();
+          //collections.destinationsSip.fetch();
 
           collections.users = new CollectionUsers();
 

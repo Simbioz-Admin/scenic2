@@ -94,15 +94,23 @@ define(
                     var that = this;
                     var active = '';
                     var port = '';
+
                     /* Render for Tab transfer */
-                    if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
-                        _.each(destination.get("data_streams"), function(stream) {
-                            if (stream.path == that.model.get("path")) {
-                                active = "active";
-                                port = stream.port;
+                    if (tableType == "transfer" && that.table.get("type") == tableType 
+                        && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0
+                        && destination.get('in_tab')) {
+
+                            _.each(destination.get("data_streams"), function(stream) {
+                                if (stream.path == that.model.get("path")) {
+                                    active = "active";
+                                    port = stream.port;
+                                }
+                            });
+
+                            if(destination.get('connection')){
+
                             }
-                        });
-                        $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+                            $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                     }
  
                     /* Render for Tab Sink */

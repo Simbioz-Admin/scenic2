@@ -57,8 +57,6 @@ define(
             this.set("collectionDestinations", new Backbone.Collection);
             this.get("collectionDestinations").add(quiddsDestinations);
 
-          }else {
-            console.log(this.get("collectionDestinations"));
           }
 
           /* Create view for the table and associate this model */

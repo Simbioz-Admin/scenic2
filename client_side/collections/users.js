@@ -11,13 +11,13 @@ define(
     'models/user'
   ],
 
-  function(_, Backbone, ModelLogger) {
+  function(_, Backbone, ModelUser) {
 
     /** 
      *  @constructor
      *  @requires Underscore
      *  @requires Backbone
-     *  @requires ModelLogger
+     *  @requires ModelUser
      *  @augments module:Backbone.Collection
      */
 
@@ -28,7 +28,7 @@ define(
        */
 
       {
-        model: ModelLogger,
+        model: ModelUser,
         url: '/users/',
         orderBy: "status",
 
@@ -50,17 +50,27 @@ define(
             // that.trigger("reOrder");
           });
 
+          socket.on("addDestinationSip", function(uri){
+            console.log("ask add destinationSip in tab", uri);
+            var user = that.get(uri);
+            user.set('in_tab',true);
+            user.add_tab();
+          });
 
-          // this.bind("add", function(note) {
-          //  console.log(note);
-          // });
+          socket.on("removeDestinationSip", function(destinationSip){
+            console.log("ask remove destinationSip");
+            console.log(destinationSip);
+            console.log(that.toJSON());
+            var model = that.get(destinationSip);
+            model.trigger('destroy', model, that);
+          });
         },
 
         parse: function(results, xhr) {
           var that = this;
           var users = [];
 
-          _.each(results.buddy, function(user, id) {
+          _.each(results, function(user, id) {
             user.status = that.priorityStatus(user.status);
             user["id"] = id;
             users.push(user);

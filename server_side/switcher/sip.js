@@ -19,10 +19,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
       if (!setName) return cb("Error set name " + name);
 
       /* Insert a new entry in the dico users */
-      var newEntry = switcher.invoke("destinationsSip", "update", [URI,URI]);
+      var newEntry = switcher.invoke("usersSip", "update", [URI,URI]);
 
       /* save the dico users */
-      var saveDicoUsers = switcher.invoke("destinationsSip", "save", [config.scenicSavePath + "users.json"]);
+      var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
       if (!saveDicoUsers) return cb("error saved dico users");
 
       cb(null, "User " + URI + " successfully added");
@@ -61,27 +61,31 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
       switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
       switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
 
-      /* Create a dico for Users */
-      var usersDico = switcher.create("dico", "destinationsSip");
+      /* Add user connected to the sip quiddity */
+      addUser(name + "@" + address, name, function(err){
+        if(err) return log.error(err);
+      });
+
+      /* Create dico for DestinationsSip */
+      var destinationsSip = switcher.create('dico','destinationsSip');
+      if (!destinationsSip) return log.error("error create dico destinationsSip");
+
+      /* Create a dico for Users Save */
+      var usersDico = switcher.create("dico", "usersSip");
       if (!usersDico) return log.error("error create dico Users");
 
       /* Try load file users dico */
-      var loadUsers = switcher.invoke("destinationsSip", "load", [config.scenicSavePath + "users.json"]);
+      var loadUsers = switcher.invoke("usersSip", "load", [config.scenicSavePath + "users.json"]);
       if (!loadUsers) log.warn("No files existing for dico users");
 
       if (loadUsers) {
         /* Load Dico Users in quiddity SIP */
-        var users = JSON.parse(switcher.get_info("destinationsSip", ".dico"));
-
-        users = [
-          { name : "1001@scenic.sat.qc.ca", "default value":  "1001@scenic.sat.qc.ca"},
-          { name : "1002@scenic.sat.qc.ca", "default value":  "1002@scenic.sat.qc.ca"}
-        ];
+        var users = JSON.parse(switcher.get_info("usersSip", ".dico"));
 
         console.log("TREE", users);
-        if(users){
-          _.each(users, function(user) {
-            addUser(user.name, user["default value"], function(err, info) {
+        if(!users.error){
+          _.each(users, function(username, key) {
+            addUser(key, username, function(err, info) {
               if (err) return log.error(err);
               log.debug(info);
             });
@@ -115,10 +119,21 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
        */
 
       getListUsers: function() {
+
         var users = $.parseJSON(switcher.get_info(quiddSipName, "."));
+        /* get users added to the tab Sip */ 
+        var destinationSip = $.parseJSON(switcher.get_info("destinationsSip", ".dico"));
+        var keys = _.keys(destinationSip);
+        console.log('KEYS', keys);
+        _.each(users.buddy, function(user, i){
+          if(_.contains(keys,user.uri)){
+            users.buddy[i]['in_tab'] = true;
+          }
+        });
+
         log.debug("Get List users", users);
         if (!users.error) {
-          return users;
+          return users.buddy;
         } else {
           return [];
         }

@@ -234,6 +234,26 @@ define(
             
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
+
+          if(qname == "sipquid"){
+            var value = pvalue[0].split('.');
+            var user = '.'+value[0]+'.'+value[1];
+
+            var info = switcher.get_info(qname, user);
+            console.log("------------------------");
+            console.log(user);
+            console.log(info);
+            console.log("------------------------");
+            io.sockets.emit('infoUser', info);
+          }
+          
+
+          if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
+            var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
+            console.log("user Info Sip Quidd purged", infoUser);
+            io.sockets.emit('infoUser', infoUser);
+          }
+
         }
 
 

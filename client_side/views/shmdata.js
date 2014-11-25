@@ -109,7 +109,14 @@ define(
 
                             if(destination.get('connection')){
 
+                                _.each(destination.get('connection'), function(connection){
+                                    if(that.model.get("path") == connection){
+                                        console.log(connection);
+                                        active = "active";
+                                    }   
+                                });
                             }
+                            
                             $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
                     }
  

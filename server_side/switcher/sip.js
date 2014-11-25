@@ -226,10 +226,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
        */
       attachShmdataToContact : function(user, path, attach, cb){
         log.debug("Shmdata to contact", user, path, attach);
-        var attach = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
+        var attachShm = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
         var type = (attach) ? "attach" : "detach";
 
-        if(!attach) {
+        if(!attachShm) {
           var err = "error "+type+" shmdata to the user sip";
           log.error(err);
           return cb(err);

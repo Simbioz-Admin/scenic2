@@ -48,6 +48,7 @@ define(
                 initialize: function(options) {
                     this.listenTo(this.model, 'change:status', this.refreshStatus);
                     this.listenTo(this.model, 'change:status_text', this.changeText);
+                    this.listenTo(this.model, 'change:connection', this.connections);
 
                     this.render();
                     
@@ -75,7 +76,6 @@ define(
                 refreshStatus: function() {
                     /* 0 : online   1 : absent   2 : offline */
                     var currentStatus = this.model.get("status");
-                    console.log(currentStatus);
                     var user = $(this.el).detach();
                     $(".users .content_users .status-" + currentStatus).append(user);
                     $(this.el).attr("data-status", currentStatus);
@@ -109,6 +109,14 @@ define(
                     } else {
                         views.global.notification("error","this user is already in destinations SIP");
                     }
+                },
+                connections : function(){
+                    var that = this;
+                    console.log("modification on connexion!");
+                    $('[data-destination="'+this.model.get('uri')+'"]').removeClass('active');
+                    _.each(this.model.get('connection'), function(connection){
+                        $('[data-path="'+connection+'"] [data-destination="'+that.model.get('uri')+'"]').addClass('active');
+                    });
                 },
                 edit_user : function(){
                     this.model.edit();

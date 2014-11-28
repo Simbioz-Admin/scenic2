@@ -142,6 +142,8 @@ define(
                 socket.on("addDestinationSip", switcher.sip.addDestinationSip);
                 socket.on("removeDestinationSip", switcher.sip.removeDestinationSip);
                 socket.on("attachShmdataToContact", switcher.sip.attachShmdataToContact);
+                socket.on("callContact", switcher.sip.callContact);
+                socket.on("hangUpContact", switcher.sip.hangUpContact);
 
                 //************************* SAVE ****************************//
 

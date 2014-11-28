@@ -35,8 +35,9 @@ define(
                 events: {
                     "mouseenter": "showActions",
                     "mouseleave": "hideActions",
-                    "click .add_destinationSip": "add_destinationSip",
-                    "click .edit_user" : "edit_user"
+                    "click .add_table": "add_destinationSip",
+                    "click .edit_user" : "edit_user",
+                    "click .call" : "call_contact"
                 },
 
 
@@ -49,13 +50,7 @@ define(
                     this.listenTo(this.model, 'change:status', this.refreshStatus);
                     this.listenTo(this.model, 'change:status_text', this.changeText);
                     this.listenTo(this.model, 'change:connection', this.connections);
-
-                    this.render();
-                    
-                },
-
-                /* Called for render the view */
-                render: function() {
+                    //this.listenTo(this.model, 'destroy', this.hang_up_contact);
 
                     var userSip = JSON.parse(localStorage['userSip']);
                     if(userSip.name == this.model.get('name')){
@@ -65,6 +60,14 @@ define(
                         $(".users .content_users .status-" + this.model.get("status")).append(this.el);
                     }
 
+                    this.render();
+                    
+                },
+
+                /* Called for render the view */
+                render: function() {
+
+              
                     var tpl = _.template(TemplateUser, this.model.toJSON());
                     $(this.el).html(tpl);
                     var status = this.model.get("status");
@@ -97,14 +100,16 @@ define(
                     }, 100);
                 },
                 add_destinationSip: function() {
+                    var that = this;
                     console.log("test", this.model.get("uri"));
 
                     console.log(collections.users.get(this.model.get('uri')));
                     var user = collections.users.get(this.model.get('uri'));
-                    if(!user.in_tabl){
+                    if(!user.in_tab){
                         socket.emit("addDestinationSip", this.model.get("uri"), function(err, msg){
                             if(err) return views.global.notification("error",err);
-                            console.log(msg);
+                            console.log('AAA');
+                            $('.add_destinationSip',that.el).toggleClass('add_table call');
                         });
                     } else {
                         views.global.notification("error","this user is already in destinations SIP");
@@ -120,6 +125,21 @@ define(
                 },
                 edit_user : function(){
                     this.model.edit();
+                },
+                call_contact : function(){
+                    var that = this;
+                    socket.emit("callContact", this.model.get('uri'), function(err, msg){
+                        if(err) return views.global.notification('error', err);
+                        views.global.notification("valid",msg+" "+that.model.get('name'));
+                    });
+                },
+                hang_up_contact : function(){
+                    console.log('hangUP!');
+                    var that = this;
+                    socket.emit("hangUpContact", this.model.get('uri'), function(err, msg){
+                        if(err) return views.global.notification('error', err);
+                        views.global.notification("valid",msg+" "+that.model.get('name'));
+                    });
                 }
 
             });

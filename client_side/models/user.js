@@ -39,6 +39,7 @@ define(
           subscription_state: "Aucun message",
           itsMe : false,
           in_tab : false,
+          call : false,
           connection : {}
         },
         initialize: function() {
@@ -62,7 +63,8 @@ define(
              if (ok) {
                socket.emit("removeDestinationSip", that.get("name"), function(err, msg) {
                  if (err)  return views.global.notification("error", err);
-                 views.global.notification("valid", msg)
+                 views.global.notification("valid", msg);
+                 
                });
                //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
              }

@@ -37,7 +37,7 @@ define(
         events: {
           "mouseenter #create-quiddsProperties": "getMenuProperties",
           "mouseenter #create-midi": "getMenuMidiDevice",
-          "mouseenter .get_classes": 'get_classes',
+          "click .get_classes": 'getClasses',
           "mouseleave #subMenu": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -51,7 +51,7 @@ define(
         initialize: function() {
 
 
-          this.model.on("trigger:menu", this.get_classes, this);
+          this.model.on("trigger:menu", this.getClasses, this);
           this.model.on("addCategoryFilter", this.addCategoryFilter, this);
           this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
 
@@ -93,7 +93,7 @@ define(
          * Called for get list of quiddity source
          * The list of quiddity source is get when source word appear in name Class quiddity
          */
-        get_classes: function(e) {
+        getClasses: function(e) {
           $("#subMenu").remove();
           var type = e.target ? $(e.target).data("type") : e;
 
@@ -133,7 +133,7 @@ define(
         },
 
         leaveSubMenu: function(e) {
-          $("#subMenu").remove();
+          $("#subMenu").menu("collapse");
         },
 
         toggle_connection: function(e) {

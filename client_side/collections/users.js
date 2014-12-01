@@ -57,16 +57,12 @@ define(
           });
 
           socket.on("addDestinationSip", function(uri){
-            console.log("ask add destinationSip in tab", uri);
             var user = that.get(uri);
             user.set('in_tab',true);
             user.add_tab();
           });
 
           socket.on("removeDestinationSip", function(destinationSip){
-            console.log("ask remove destinationSip");
-            console.log(destinationSip);
-            console.log(that.toJSON());
             var model = that.get(destinationSip);
             model.trigger('destroy', model, that);
           });

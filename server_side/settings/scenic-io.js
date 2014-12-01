@@ -139,11 +139,12 @@ define(
                 socket.on("sip_logout", switcher.sip.logout);
                 socket.on("sip_login", switcher.sip.login);
                 socket.on("addUser", switcher.sip.addUser);
-                socket.on("addDestinationSip", switcher.sip.addDestinationSip);
-                socket.on("removeDestinationSip", switcher.sip.removeDestinationSip);
+                socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
+                socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
                 socket.on("attachShmdataToContact", switcher.sip.attachShmdataToContact);
                 socket.on("callContact", switcher.sip.callContact);
                 socket.on("hangUpContact", switcher.sip.hangUpContact);
+                socket.on("updateUser", switcher.sip.updateUser);
 
                 //************************* SAVE ****************************//
 

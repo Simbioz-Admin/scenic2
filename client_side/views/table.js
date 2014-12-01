@@ -99,7 +99,6 @@ define(
 
           /* get the quiddity classes authorized on this table */
           var classes = this.model.classes_authorized(type);
-          console.log("classes", type, classes);
           /* we not load classes if nothing is return */
           if (classes && classes.length == 0) return;
 

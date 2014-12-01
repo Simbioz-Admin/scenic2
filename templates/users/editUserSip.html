@@ -1,0 +1,31 @@
+<div class="close" id="close-panelRight">X</div>
+<div id="title">Edit destination <%=destination.get('name')%></div>
+
+<form id="form-user"  onsubmit="return(false)">
+
+	<% if(!destination.get('itsMe')){ %>
+		<h3 class="info" title="" >Name user</h3>
+		<input type="text" id="name" value="<%=destination.get('name')%>" />
+	<% } %>
+
+	<% if(destination.get('itsMe')){ %>
+		<h3  class='info'>Message</h3>
+		<input type='text' id='statusText' value='<%=destination.get('status_text')%>' >
+	<% } %>
+
+	<% if(destination.get('itsMe')){ %>
+		<h3  class='info'>Status</h3>
+		<select id='status' >
+			<option value="online" >online</option>
+			<option value="busy" >busy</option>
+			<option value="away" >away</option>
+			<optionvalue="offline" >offline</option>
+		</select>
+	<% } %>
+
+	<input type="submit" class="btn btn-large" value="Save"/><br>
+	
+	<% if(!destination.get('itsMe')){ %>
+		<button class="remove">Remove user</button>
+	<% } %>
+</form>

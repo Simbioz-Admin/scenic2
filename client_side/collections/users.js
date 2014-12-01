@@ -64,6 +64,11 @@ define(
 
           socket.on("removeDestinationSip", function(destinationSip){
             var model = that.get(destinationSip);
+            model.trigger('destroyDestinationMatrix', model, that);
+          });
+
+          socket.on("removeUser", function(uri){
+            var model = that.get(uri);
             model.trigger('destroy', model, that);
           });
         },

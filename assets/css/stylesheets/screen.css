@@ -324,6 +324,19 @@ div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }
 
+/* line 204, ../sass/_users.sass */
+.remove {
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  float: right;
+}
+/* line 210, ../sass/_users.sass */
+.remove:hover {
+  color: red;
+}
+
 /* line 35, ../sass/_systemusage.sass */
 #preview_usagesystem {
   color: white;

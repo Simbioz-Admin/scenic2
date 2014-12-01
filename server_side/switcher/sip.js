@@ -194,7 +194,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
              *  @function addDestinationSip
              */
 
-            addDestinationSip: function(uri, cb) {
+            addUserToDestinationMatrix: function(uri, cb) {
                 log.debug("ask to add ", uri, " to the destinationSip");
 
                 var addDestinationSip = switcher.invoke("destinationsSip", "update", [uri, uri]);
@@ -211,7 +211,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             /*
              *  @function removeDestinationSip
              */
-            removeDestinationSip: function(uri, cb) {
+            removeUserToDestinationMatrix: function(uri, cb) {
                 log.debug("ask to remove ", uri, " to the destinationSip");
                 var removeDestinationSip = switcher.invoke("destinationsSip", "remove", [uri]);
                 if (!removeDestinationSip) {
@@ -251,7 +251,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             },
 
             callContact: function(uri, cb) {
-              log.debug('Ask to call contact URI ',uri);
+                log.debug('Ask to call contact URI ', uri);
                 var call = switcher.invoke(quiddSipName, 'call', [uri]);
                 if (!call) {
                     var msg = 'error called uri : ' + uri;
@@ -261,8 +261,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 cb(null, 'success called contact');
 
             },
+
             hangUpContact: function(uri, cb) {
-              log.debug('Ask to hang up contact URI ',uri);
+                log.debug('Ask to hang up contact URI ', uri);
                 var call = switcher.invoke(quiddSipName, 'hang-up', [uri]);
                 if (!call) {
                     var msg = 'error called uri : ' + uri;
@@ -271,8 +272,37 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 }
                 cb(null, 'success hang up contact');
 
-            }
+            },
 
+            updateUser : function(uri, name, statusText, status, cb){
+
+              if(name){
+                log.debug('Update name of the uri '+uri+' by '+name);
+                var updateName = switcher.invoke(quiddSipName, "name_buddy", [name, uri]);
+                if (!updateName){
+                  var msgError = "Error update name " + name;
+                  log.error(msgError)
+                  return cb(msgError);
+                }
+              }
+
+              if(statusText){
+                log.debug('Update status text of the uri '+uri+' by '+statusText);
+              }
+
+              if(status){
+                log.debug('Update status of the uri '+uri+' by '+statusText);
+              }             
+
+              /* Insert a new entry in the dico users */
+              var dicoUser = switcher.invoke("usersSip", "update", [uri, name]);
+              cb(null, 'successfully update '+name);
+
+            },
+            changeStatus : function(status,cb){
+              log.debug('Ask to change status for '+status);
+
+            }
 
         }
 

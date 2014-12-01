@@ -1,10 +1,10 @@
-<% if(!itsMe){ %>
 	<div class="actionsOnUser">
+	<% if(!itsMe){ %>
 		<% var button = (!in_tab) ? 'add_table' : 'call' %>
 		<div class="action <%=button%> add_destinationSip"></div>
+	<% } %>
 		<div class="action edit_user"></div>
 	</div>
-<% } %>
 <div class="information">
 	<h3><%=name%></h3>
 	<div class="last_message"><%=status_text%></div>

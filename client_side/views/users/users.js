@@ -163,7 +163,7 @@ define(
           e.preventDefault();
 
           that.sipInformation = $('#login_sip', this.el).serializeObject();
-          
+          that.sipInformation["uri"] =  that.sipInformation.name+'@'+that.sipInformation.address;
           if(localStorage["userSip"]) localStorage["userSip"] = null;
           localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
@@ -211,7 +211,6 @@ define(
 
         addUser: function(e) {
           var uri = $(e.currentTarget).val();
-          console.log("ask to add ", uri);
           socket.emit("addUser", uri, function(err, info) {
             if (err) return views.global.notification("error", err);
             $(e.currentTarget).val("");

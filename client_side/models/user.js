@@ -9,10 +9,11 @@ define(
     'underscore',
     'backbone',
     'views/users/user',
+    'views/users/editUser',
     'views/destination'
   ],
 
-  function(_, Backbone, ViewUser, ViewDestination) {
+  function(_, Backbone, ViewUser, ViewEditUser, ViewDestination) {
 
     /** 
      *  @constructor
@@ -43,11 +44,9 @@ define(
           connection : {}
         },
         initialize: function() {
-
           if(this.get('in_tab')) this.add_tab();
         },
         add_tab:function(){
-          console.log('add tab!');
           //we create automatically the view for destination based on ViewDestination
           var view = new ViewDestination({
              model: this,
@@ -61,7 +60,7 @@ define(
 
            var result = views.global.confirmation("Are you sure?", function(ok) {
              if (ok) {
-               socket.emit("removeDestinationSip", that.get("name"), function(err, msg) {
+               socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {
                  if (err)  return views.global.notification("error", err);
                  views.global.notification("valid", msg);
                  
@@ -71,8 +70,11 @@ define(
            });
          },
          edit : function(){
-          console.log('ask to edit user');
-         }
+          var that = this;
+          new ViewEditUser({
+                model: that
+          });
+         },
 
       });
 

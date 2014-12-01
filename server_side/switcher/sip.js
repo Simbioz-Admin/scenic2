@@ -29,16 +29,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         }
 
         /*
-         *  @function removeUser
-         *  @description remove a user from sipquid and dico
-         */
-
-        function removeUser(URI, cb) {
-            log.debug("remove User");
-        }
-
-
-        /*
          *  @function createSip
          *  @description set the connection with the server sip. This function is called a initialization of switcher
          */
@@ -235,7 +225,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             /*
              *  @function addShmdataToUserSip
              */
-            attachShmdataToContact: function(user, path, attach, cb) {
+            attachShmdataToUser: function(user, path, attach, cb) {
                 log.debug("Shmdata to contact", user, path, attach);
                 var attachShm = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
                 var type = (attach) ? "attach" : "detach";
@@ -250,7 +240,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 cb(null, "successfully " + type + " Shmdata to the destination SIP");
             },
 
-            callContact: function(uri, cb) {
+            callUser: function(uri, cb) {
                 log.debug('Ask to call contact URI ', uri);
                 var call = switcher.invoke(quiddSipName, 'call', [uri]);
                 if (!call) {
@@ -262,7 +252,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
             },
 
-            hangUpContact: function(uri, cb) {
+            hangUpUser: function(uri, cb) {
                 log.debug('Ask to hang up contact URI ', uri);
                 var call = switcher.invoke(quiddSipName, 'hang-up', [uri]);
                 if (!call) {
@@ -274,33 +264,51 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
             },
 
-            updateUser : function(uri, name, statusText, status, cb){
+            updateUser: function(uri, name, statusText, status, cb) {
 
-              if(name){
-                log.debug('Update name of the uri '+uri+' by '+name);
-                var updateName = switcher.invoke(quiddSipName, "name_buddy", [name, uri]);
-                if (!updateName){
-                  var msgError = "Error update name " + name;
-                  log.error(msgError)
-                  return cb(msgError);
+                if (name) {
+                    log.debug('Update name of the uri ' + uri + ' by ' + name);
+                    var updateName = switcher.invoke(quiddSipName, "name_buddy", [name, uri]);
+                    if (!updateName) {
+                        var msgError = "Error update name " + name;
+                        log.error(msgError)
+                        return cb(msgError);
+                    }
                 }
-              }
 
-              if(statusText){
-                log.debug('Update status text of the uri '+uri+' by '+statusText);
-              }
+                if (statusText) {
+                    log.debug('Update status text of the uri ' + uri + ' by ' + statusText);
+                }
 
-              if(status){
-                log.debug('Update status of the uri '+uri+' by '+statusText);
-              }             
+                if (status) {
+                    log.debug('Update status of the uri ' + uri + ' by ' + statusText);
+                }
 
-              /* Insert a new entry in the dico users */
-              var dicoUser = switcher.invoke("usersSip", "update", [uri, name]);
-              cb(null, 'successfully update '+name);
+                /* Insert a new entry in the dico users */
+                var dicoUser = switcher.invoke("usersSip", "update", [uri, name]);
+                cb(null, 'successfully update ' + name);
 
             },
-            changeStatus : function(status,cb){
-              log.debug('Ask to change status for '+status);
+            changeStatus: function(status, cb) {
+                log.debug('Ask to change status for ' + status);
+
+            },
+
+            removeUser: function(uri, cb) {
+              log.debug("remove User "+uri);
+              var removeBuddy = switcher.invoke(quiddSipName, "del_buddy", [uri]);
+              if (!removeBuddy) return cb("Error remove " + name + " to the sip server");
+
+
+              /* Remove entry in the dico users */
+              var removeEntry = switcher.invoke("usersSip", "remove", [uri]);
+
+              /* save the dico users */
+              var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
+              if (!saveDicoUsers) return cb("error saved dico users");
+
+              cb(null, "User " + uri + " successfully removed");
+              io.sockets.emit("removeUser", uri);
 
             }
 

@@ -42,6 +42,7 @@ define(
 
         initialize: function(options) {
           this.model.on('destroy', this.removeView, this);
+          this.model.on('destroyDestinationMatrix', this.removeView, this);
           this.model.on("toggleShow", this.toggleShow, this);
 
           this.table = options.table;

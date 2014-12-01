@@ -141,10 +141,11 @@ define(
                 socket.on("addUser", switcher.sip.addUser);
                 socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
                 socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
-                socket.on("attachShmdataToContact", switcher.sip.attachShmdataToContact);
-                socket.on("callContact", switcher.sip.callContact);
-                socket.on("hangUpContact", switcher.sip.hangUpContact);
+                socket.on("attachShmdataToUser", switcher.sip.attachShmdataToUser);
+                socket.on("callUser", switcher.sip.callUser);
+                socket.on("hangUpUser", switcher.sip.hangUpUser);
                 socket.on("updateUser", switcher.sip.updateUser);
+                socket.on("removeUser", switcher.sip.removeUser);
 
                 //************************* SAVE ****************************//
 

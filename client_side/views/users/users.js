@@ -59,7 +59,7 @@ define(
           if (this.collection.length == 0) {
             that.renderLogin();
             localStorage["usersPanelClose"] = true;
-            that.toggleList(0);
+            //that.toggleList(0);
           } else {
             that.render();
           }
@@ -81,7 +81,7 @@ define(
 
 
           //this.toggleList(0);
-          if (!connect) this.toggleList(0);
+          //if (!connect) this.toggleList(0);
           /* generate the view for each user */
           this.collection.each(function(user) {
             /* check if user model is of current user scenic */
@@ -115,13 +115,13 @@ define(
          * @function toggleList
          * @description Show or Hide list of contact. Information state is saved in localStorage
          */
-
+        /*
         toggleList: function(speed) {
           var that = this;
           var speed = (typeof speed == "number") ? speed : 300;
           if (this.listOpen) {
             localStorage["usersPanelClose"] = true;
-            /* action of close users list */
+            //action of close users list
             $(".actions_global").animate({
               "right": 90
             }, speed);
@@ -137,7 +137,7 @@ define(
           } else {
             localStorage["usersPanelClose"] = false;
 
-            /* action of open users list */
+            // action of open users list
             $(".actions_global").animate({
               "right": 290
             }, speed);
@@ -150,7 +150,7 @@ define(
               "left": 0
             }, speed);
           }
-        },
+        }, */
 
 
         /*

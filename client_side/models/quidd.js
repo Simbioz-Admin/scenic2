@@ -93,7 +93,7 @@ define(
             if (that.get("category") != "mapper" && that.get("class") != "midisrc") {
               _.each(collections.tables.models, function(tableModel) {
                 /* 1. Check autorization (sources / destinations) for create view for each table */
-                var authorization = tableModel.is_authorize(that.get("class"));
+                var authorization = tableModel.isAuthorized(that.get("class"));
 
                 if (authorization.source) {
                   /* insert in collection */

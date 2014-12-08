@@ -35,14 +35,15 @@ define(
         tagName: 'div',
         className: 'table',
         events: {
-          "mouseenter #create-quiddsProperties": "getMenuProperties",
-          "mouseenter #create-midi": "getMenuMidiDevice",
-          "click .get_classes": 'getClasses',
-          "mouseleave #subMenu": 'leaveSubMenu',
+          "click #create-quiddsProperties": "getMenuProperties",
+          "click #create-midi": "getMenuMidiDevice",
+          "click .contextMenu": 'getClasses',
+          // "mouseleave #subMenu": 'leaveSubMenu',
+          "click body.scenic2": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
           "blur #port_destination": "removeInputDestination",
-          "change .dropdown_filter": "filter_quiddities"
+          "change .dropdown_filter": "filter_quiddities",
         },
 
         /* 
@@ -90,16 +91,15 @@ define(
 
 
         /* 
-         * Called for get list of quiddity source
+         * Called to get list of quiddity source
          * The list of quiddity source is get when source word appear in name Class quiddity
          */
         getClasses: function(e) {
           $("#subMenu").remove();
-          var type = e.target ? $(e.target).data("type") : e;
+          var shmdataType = e.target ? $(e.target).data("type") : e;
 
           /* get the quiddity classes authorized on this table */
-          var classes = this.model.classes_authorized(type);
-          console.log("classes", type, classes);
+          var classes = this.model.selectByCategory(shmdataType);
           /* we not load classes if nothing is return */
           if (classes && classes.length == 0) return;
 
@@ -114,7 +114,7 @@ define(
           });
 
           $("#listSources", this.el).remove();
-          $(".table.active [data-type='" + type + "']").after(template);
+          $(".table.active [data-type='" + shmdataType + "']").after(template);
 
           /* here we listen select for call views.quidds.defineName */
           $("#subMenu").menu({
@@ -124,7 +124,7 @@ define(
             }
           }, {
             select: function(event, ui) {
-              event.preventDefault();
+              // event.preventDefault();
               event.stopPropagation();
               views.quidds.defineName(ui.item);
             }
@@ -133,6 +133,7 @@ define(
         },
 
         leaveSubMenu: function(e) {
+          console.log("leaveSubmenu called");
           $("#subMenu").menu("collapse");
         },
 

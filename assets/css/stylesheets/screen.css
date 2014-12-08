@@ -781,7 +781,7 @@ header .btn {
   display: block !important;
 }
 /* line 339, ../sass/screen.sass */
-.headerMenu .get_classes, .headerMenu .channel {
+.headerMenu .contextMenu, .headerMenu .channel {
   padding: 6px 15px 5px 25px;
   margin-right: 10px;
   display: inline-block;
@@ -793,11 +793,11 @@ header .btn {
   letter-spacing: 0.08em;
 }
 /* line 351, ../sass/screen.sass */
-.headerMenu .get_classes:hover, .headerMenu .channel:hover {
+.headerMenu .contextMenu:hover, .headerMenu .channel:hover {
   background: #be2620;
 }
 /* line 354, ../sass/screen.sass */
-.headerMenu .get_classes:before, .headerMenu .channel:before {
+.headerMenu .contextMenu:before, .headerMenu .channel:before {
   content: "";
   width: 0;
   height: 0;

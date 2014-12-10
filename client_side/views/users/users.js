@@ -50,19 +50,21 @@ define(
 
         initialize: function(options) {
           var that = this;
-          /* generate a btn for the table */
-          this.listOpen = (typeof localStorage["usersPanelClose"] === "undefined") ? false : (localStorage["usersPanelClose"] === 'true');
 
           this.collection.on('reOrder', this.reOrder);
           $("#transferSip").append($(this.el));
 
-          if (this.collection.length == 0) {
-            that.renderLogin();
-            localStorage["usersPanelClose"] = true;
-            that.toggleList(0);
-          } else {
-            that.render();
-          }
+          //Check if quiddity sipQuid is created
+          socket.emit('get_info', 'sipquid','.buddy', function(infoQuidd){
+            if(!infoQuidd.error){
+              that.render();
+            }else{
+              that.renderLogin();
+              localStorage["usersPanelClose"] = true;
+            }
+            //Fetch collection users
+            // that.collection.fetch();
+          });
         },
 
 
@@ -71,30 +73,37 @@ define(
          * @description Add the global list users sip and information about current user connected
          */
 
-        render: function(connect) {
-          $(this.el).html("");
-          /* add information about user connected */
-          var tpl = _.template(this.template, {
-            loginForm: false
+        render: function() {
+          var that = this;
+          //Get List status for users
+          socket.emit("getListStatus", function(err, listStatus) {
+            collections.users.listStatus = listStatus;
+
+            $(that.el).html("");
+            /* add information about user connected */
+            var tpl = _.template(that.template, {
+              loginForm: false,
+              listStatus: collections.users.listStatus
+            });
+            $(that.el).append(tpl);
+
+            that.collection.reset();
+            that.collection.fetch();
+
+
+            
+            // that.collection.each(function(user) {
+            //   /* check if user model is of current user scenic */
+            //   if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("name")) {
+            //     new ViewUser({
+            //       model: user
+            //     });
+            //   } else {
+            //     $(".itsMe h3", that.el).html(user.get("sip_url"));
+            //     $(".itsMe .last_message", that.el).html(user.get("status_text"));
+            //   }
+            // });
           });
-          $(this.el).append(tpl);
-
-
-          //this.toggleList(0);
-          if (!connect) this.toggleList(0);
-          /* generate the view for each user */
-          this.collection.each(function(user) {
-            /* check if user model is of current user scenic */
-            if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("name")) {
-              new ViewUser({
-                model: user
-              });
-            } else {
-              $(".itsMe h3", this.el).html(user.get("sip_url"));
-              $(".itsMe .last_message", this.el).html(user.get("status_text"));
-            }
-          });
-
 
         },
 
@@ -111,47 +120,6 @@ define(
           $(this.el).append(loginTpl);
         },
 
-        /*
-         * @function toggleList
-         * @description Show or Hide list of contact. Information state is saved in localStorage
-         */
-
-        toggleList: function(speed) {
-          var that = this;
-          var speed = (typeof speed == "number") ? speed : 300;
-          if (this.listOpen) {
-            localStorage["usersPanelClose"] = true;
-            /* action of close users list */
-            $(".actions_global").animate({
-              "right": 90
-            }, speed);
-            $(this.el).animate({
-              "right": -300
-            }, speed, function() {
-
-              that.listOpen = false;
-            });
-            $("h2", this.el).animate({
-              "left": -100
-            }, speed);
-          } else {
-            localStorage["usersPanelClose"] = false;
-
-            /* action of open users list */
-            $(".actions_global").animate({
-              "right": 290
-            }, speed);
-            $(this.el).animate({
-              "right": 0
-            }, function() {
-              that.listOpen = true;
-            });
-            $("h2", this.el).animate({
-              "left": 0
-            }, speed);
-          }
-        },
-
 
         /*
          * @function loginSip
@@ -163,20 +131,13 @@ define(
           e.preventDefault();
 
           that.sipInformation = $('#login_sip', this.el).serializeObject();
-          that.sipInformation["uri"] =  that.sipInformation.name+'@'+that.sipInformation.address;
-          if(localStorage["userSip"]) localStorage["userSip"] = null;
+          that.sipInformation["uri"] = that.sipInformation.name + '@' + that.sipInformation.address;
+          if (localStorage["userSip"]) localStorage["userSip"] = null;
           localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
           socket.emit("sip_login", that.sipInformation, function(err, configSip) {
             if (err) return views.global.notification("error", err);
-            /* update info contact sip */
-            //console.log("Logged", configSip);
-            //config.sip = configSip;
-            collections.users.fetch({
-              success: function() {
-                that.render(true);
-              }
-            });
+            that.render();
             views.global.notification("valid", "success login server sip");
             $("#login_sip", this.el).remove();
           });

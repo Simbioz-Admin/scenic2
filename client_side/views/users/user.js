@@ -47,17 +47,18 @@ define(
          */
 
         initialize: function(options) {
-          this.listenTo(this.model, 'change:status', this.refreshStatus);
-          this.listenTo(this.model, 'change:status_text', this.changeText);
+          //this.listenTo(this.model, 'change', this.refreshStatus);
+          this.listenTo(this.model, 'change', this.render);
           this.listenTo(this.model, 'change:connection', this.connections);
           this.listenTo(this.model, 'destroy', this.removeView);
 
           var userSip = JSON.parse(localStorage['userSip']);
+          
           if (userSip.uri == this.model.get('uri')) {
             this.model.set('itsMe', true);
             $('.itsMe').html(this.el);
           } else {
-            $(".users .content_users .status-" + this.model.get("status")).append(this.el);
+            $(".users .content_users [data-status='" + this.model.get("status") + "']").append(this.el);
           }
 
           this.render();
@@ -65,13 +66,11 @@ define(
         },
 
         /* Called for render the view */
-        render: function() {
-
-
+        render: function() { 
           var tpl = _.template(TemplateUser, this.model.toJSON());
           $(this.el).html(tpl);
           var status = this.model.get("status");
-          $(this.el).attr("data-status", status);
+          $(this.el).attr("data-statusUser", status);
           // $(".users").append(this.el);
           // this.refreshStatus();
 
@@ -79,11 +78,14 @@ define(
         refreshStatus: function() {
           /* 0 : online   1 : absent   2 : offline */
           var currentStatus = this.model.get("status");
-          var user = $(this.el).detach();
-          $(".users .content_users .status-" + currentStatus).append(user);
-          $(this.el).attr("data-status", currentStatus);
+          if (!this.model.get('itsMe')) {
+            var user = $(this.el).detach();
+            $(".users .content_users .status-" + currentStatus).append(user);
+          }
+          $(this.el).attr("data-statusUser", currentStatus);
         },
         changeText: function() {
+          console.log('change text', this.model.get("status_text"));
           $(".last_message", this.el).html(this.model.get("status_text"));
         },
         showActions: function() {

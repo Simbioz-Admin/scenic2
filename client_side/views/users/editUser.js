@@ -25,6 +25,7 @@ define(
        *	@lends module: Views/EditQuidd~ViewEditDestination.prototype
        */
       {
+        className: 'editUser',
         events: {
           "submit #form-user": 'update',
           "click .remove" : 'removeUser'
@@ -35,7 +36,8 @@ define(
           var that = this;
           //generate template for receive information about destination
           var template = _.template(TemplateEditDestinationRtp, {
-            destination: that.model
+            destination: that.model,
+            listStatus : collections.users.listStatus
           });
 
           $(this.el).append(template);
@@ -51,6 +53,7 @@ define(
           var statusText = $('#statusText').val();
           var status = $('#status').val();
 
+          console.log(name,uri, statusText, status);
           socket.emit('updateUser', uri, name, statusText, status, function(err,msg){
             if(err) return views.global.notification('error', err);
             views.global.notification('valid',msg);

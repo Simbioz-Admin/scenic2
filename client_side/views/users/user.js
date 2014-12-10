@@ -49,7 +49,7 @@ define(
         initialize: function(options) {
           //this.listenTo(this.model, 'change', this.refreshStatus);
           this.listenTo(this.model, 'change', this.render);
-          //this.listenTo(this.model, 'change:connection', this.connections);
+          this.listenTo(this.model, 'change:connection', this.connections);
           this.listenTo(this.model, 'destroy', this.removeView);
 
           var userSip = JSON.parse(localStorage['userSip']);

@@ -198,8 +198,7 @@ define(
           }
 
           /* sipquidd */
-          if(qname == "sipquid")
-          
+
           if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
             //TODO : Get Better method for get information about user without split value
             var idUser = pvalue[0].split(".")[2];
@@ -236,19 +235,10 @@ define(
           }
 
           if(qname == "sipquid"){
-            var value = pvalue[0].split('.');
-            var user = '.'+value[0]+'.'+value[1];
-
-            var info = switcher.get_info(qname, user);
-            io.sockets.emit('infoUser', info);
-          }
-          
-
-          if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
-            var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
+            var idUser = pvalue[0].split(".")[2];
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.'+idUser));
             io.sockets.emit('infoUser', infoUser);
           }
-
         }
 
 

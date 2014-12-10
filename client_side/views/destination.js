@@ -42,6 +42,8 @@ define(
 
         initialize: function(options) {
 
+          var that = this;
+          
           this.model.on('change', this.render, this);
           this.model.on('destroy', this.removeView, this);
           this.model.on('destroyDestinationMatrix', this.removeView, this);

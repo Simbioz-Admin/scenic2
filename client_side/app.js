@@ -102,14 +102,12 @@ define(
               });
 
 
-              /* generate view for manage users */
-              collections.users.fetch({
-                success: function() {
-                  views.users = new ViewUsers({
-                    collection: collections.users
-                  });
-                }
+              views.users = new ViewUsers({
+                collection: collections.users
               });
+
+              /* generate view for manage users */
+              //collections.users.fetch();
             }
           });
 

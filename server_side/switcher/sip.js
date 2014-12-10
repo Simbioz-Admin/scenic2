@@ -19,7 +19,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
             if (!setName) return cb("Error set name " + name);
 
             /* Insert a new entry in the dico users */
-            var newEntry = switcher.invoke("usersSip", "update", [URI, URI]);
+            var newEntry = switcher.invoke("usersSip", "update", [URI, name]);
 
             /* save the dico users */
             var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
@@ -72,7 +72,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 /* Load Dico Users in quiddity SIP */
                 var users = JSON.parse(switcher.get_info("usersSip", ".dico"));
 
-                console.log("TREE", users);
                 if (!users.error) {
                     _.each(users, function(username, key) {
                         addUser(key, username, function(err, info) {
@@ -117,7 +116,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 /* get users added to the tab Sip */
                 var destinationSip = $.parseJSON(switcher.get_info("destinationsSip", ".dico"));
                 var keys = _.keys(destinationSip);
-                console.log('KEYS', keys);
                 _.each(users.buddy, function(user, i) {
                     if (_.contains(keys, user.uri)) {
                         users.buddy[i]['in_tab'] = true;
@@ -277,15 +275,17 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 }
 
                 if (statusText) {
-                    log.debug('Update status text of the uri ' + uri + ' by ' + statusText);
+                    var setStatusNote = switcher.set_property_value(quiddSipName, 'status-note', statusText);
                 }
 
                 if (status) {
-                    log.debug('Update status of the uri ' + uri + ' by ' + statusText);
+                    var setStatus = switcher.set_property_value(quiddSipName, 'status', status);
                 }
 
-                /* Insert a new entry in the dico users */
+                /* Update name user of dico Users and save */
                 var dicoUser = switcher.invoke("usersSip", "update", [uri, name]);
+                var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
+                if (!saveDicoUsers) return cb("error saved dico users");
                 cb(null, 'successfully update ' + name);
 
             },
@@ -299,7 +299,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
               var removeBuddy = switcher.invoke(quiddSipName, "del_buddy", [uri]);
               if (!removeBuddy) return cb("Error remove " + name + " to the sip server");
 
-
               /* Remove entry in the dico users */
               var removeEntry = switcher.invoke("usersSip", "remove", [uri]);
 
@@ -310,6 +309,17 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
               cb(null, "User " + uri + " successfully removed");
               io.sockets.emit("removeUser", uri);
 
+            },
+
+            getListStatus : function(cb){
+                log.debug('ask get list users');
+                var listStatus = switcher.get_property_description(quiddSipName, "status");
+                if(listStatus != ""){
+                    cb(null, JSON.parse(listStatus).values);
+                }
+                else {
+                    cb(null,[]);
+                }
             }
 
         }

@@ -6,6 +6,8 @@
 	<% if(!destination.get('itsMe')){ %>
 		<h3 class="info" title="" >Name user</h3>
 		<input type="text" id="name" value="<%=destination.get('name')%>" />
+	<% }else{  %>
+		<input type="hidden" id="name" value="<%=destination.get('name')%>" />
 	<% } %>
 
 	<% if(destination.get('itsMe')){ %>
@@ -16,10 +18,9 @@
 	<% if(destination.get('itsMe')){ %>
 		<h3  class='info'>Status</h3>
 		<select id='status' >
-			<option value="online" >online</option>
-			<option value="busy" >busy</option>
-			<option value="away" >away</option>
-			<optionvalue="offline" >offline</option>
+			<% _.each(listStatus, function(status){ %>
+				<option value="<%=status.value%>" <%if(status.value == destination.get('status')){ %> <% }%> ><%=status.name%></option>
+			<% }); %>
 		</select>
 	<% } %>
 

@@ -41,17 +41,13 @@ define(
         /* Called when the view is initialized */
 
         initialize: function(options) {
+
+          this.model.on('change', this.render, this);
           this.model.on('destroy', this.removeView, this);
           this.model.on('destroyDestinationMatrix', this.removeView, this);
           this.model.on("toggleShow", this.toggleShow, this);
 
           this.table = options.table;
-          var that = this,
-            template = _.template(TemplateDestination, {
-              name: this.model.get("name"),
-            });
-
-          $(this.el).append(template);
 
           /* we check if the category of this quidd exist in filter table */
           if (this.model.get("category")) this.table.trigger("addCategoryFilter", this.model.get("category"));
@@ -59,11 +55,14 @@ define(
           if (this.model.get("category")) {
             $(this.el).attr("data-type", this.model.get("category"));
           }
+
           //add the template to the destination table transfer
           // if (this.model.get("category")) this.table.trigger("newCategoryTable", this.table.get("type"), this.model.get("category").replace(" sink", ""));
 
           var category = this.model.get("category") ? " [data-type='" + this.model.get("category").replace(" sink", "") + "']" : "";
           $("#" + this.table.get("id") + " .destinations").append($(this.el));
+          this.render();
+          //Render connection shmdata for this destination
           var sources = this.table.get("collectionSources");
           sources.each(function(source) {
             if (source) {
@@ -75,6 +74,15 @@ define(
           });
 
         },
+
+      render : function(){
+          
+          var that = this,
+            template = _.template(TemplateDestination, {
+              name: this.model.get("name"),
+            });
+          $(this.el).html(template);
+      },
 
         toggleShow: function(state, tableName) {
 

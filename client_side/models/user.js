@@ -38,43 +38,61 @@ define(
           status: null,
           status_text: "Aucun message",
           subscription_state: "Aucun message",
-          itsMe : false,
-          in_tab : false,
-          call : false,
-          connection : {}
+          itsMe: false,
+          in_tab: false,
+          call: false,
+          connection: {}
         },
         initialize: function() {
-          if(this.get('in_tab')) this.add_tab();
+          if (this.get('in_tab')) this.add_tab();
+
+          // that.collection.each(function(user) {
+          /* check if user model is of current user scenic */
+          if ("sip:" + config.sip.name + "@" + config.sip.address !== this.get("name")) {
+            new ViewUser({
+              model: this
+            });
+          } else {
+            $(".itsMe h3", that.el).html(this.get("sip_url"));
+            $(".itsMe .last_message", that.el).html(this.get("status_text"));
+          }
+
         },
-        add_tab:function(){
+        add_tab: function() {
           //we create automatically the view for destination based on ViewDestination
           var view = new ViewDestination({
-             model: this,
-             table: collections.tables.findWhere({
-               id: "transferSip"
-             })
+            model: this,
+            table: collections.tables.findWhere({
+              id: "transferSip"
+            })
           });
         },
-        askDelete: function() {
-           var that = this;
+        askDelete: function(removeMatrix) {
+          var that = this;
 
-           var result = views.global.confirmation("Are you sure?", function(ok) {
-             if (ok) {
-               socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {
-                 if (err)  return views.global.notification("error", err);
-                 views.global.notification("valid", msg);
-                 
-               });
-               //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
-             }
-           });
-         },
-         edit : function(){
+          var result = views.global.confirmation("Are you sure?", function(ok) {
+            if (ok) {
+              //Just ask to remove the user of the matrix not remove from user SIP
+              if (removeMatrix) {
+                socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {
+                  if (err) return views.global.notification("error", err);
+                  views.global.notification("valid", msg);
+                  views.global.closePanel();
+
+                });
+              }
+              //remove from the user SIP
+
+              //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
+            }
+          });
+        },
+        edit: function() {
           var that = this;
           new ViewEditUser({
-                model: that
+            model: that
           });
-         },
+        },
 
       });
 

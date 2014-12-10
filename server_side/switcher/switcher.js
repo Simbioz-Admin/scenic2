@@ -142,7 +142,7 @@ define(
         }
 
         /* broadcast all the modification on properties */
-        _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
+        _.each(config.subscribe_quidd_f, function(quiddName, socketId) {
           if (quiddName == qname) {
             var socket = io.sockets.sockets[socketId];
             if (socket) socket.emit("signals_properties_value", qname, qprop, pvalue);
@@ -201,8 +201,9 @@ define(
           if(qname == "sipquid")
           
           if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
-            var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
-            console.log("user Info Sip Quidd", infoUser);
+            //TODO : Get Better method for get information about user without split value
+            var idUser = pvalue[0].split(".")[2];
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.'+idUser));
             io.sockets.emit('infoUser', infoUser);
           }
 
@@ -239,17 +240,12 @@ define(
             var user = '.'+value[0]+'.'+value[1];
 
             var info = switcher.get_info(qname, user);
-            console.log("------------------------");
-            console.log(user);
-            console.log(info);
-            console.log("------------------------");
             io.sockets.emit('infoUser', info);
           }
           
 
           if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
             var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
-            console.log("user Info Sip Quidd purged", infoUser);
             io.sockets.emit('infoUser', infoUser);
           }
 

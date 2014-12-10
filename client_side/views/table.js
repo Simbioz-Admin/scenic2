@@ -139,25 +139,22 @@ define(
 
           var box = $(e.target),
             destination = box.data("destination"),
-            id = box.data("id"),
             path = box.parent().data("path");
 
           /* if transfer we ask port for connect to the receiver */
           if (this.model.get("id") == "transferRtp") {
             /* if already connect */
-            if (box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok) {});
+            if (box.hasClass("active")) return socket.emit("remove_connection", path, destination, function(ok) {});
             box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
           }
 
           /* if transferSip we ask to add shmdata to the user */
           if (this.model.get("id") == "transferSip") {
-            console.log(destination, id, path);
             var attach = box.hasClass("active") ? false : true;
             socket.emit("attachShmdataToUser", destination, path, attach, function(err, msg){
               if(err) return views.global.notification("error", err);
               views.global.notification("valid", msg);
             });
-
           }
 
           if (this.model.get("id") == "sink") {
@@ -197,7 +194,7 @@ define(
           if (e.which == 13) //touch enter
           {
             var box = $(e.target).parent(),
-              id = $(e.target).closest("td").data("id"),
+              id = $(e.target).closest("td").data("destination"),
               path = $(e.target).closest("tr").data("path"),
               quiddName = $(e.target).closest("tr").data("quiddname"),
               port = $(e.target).val(),

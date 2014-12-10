@@ -34,13 +34,17 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
          */
 
         function createSip(name, password, address, port, cb) {
-
+            log.debug("Create Sip Server ", name, address, port);
             //@TODO : Encrypt client side and decrypt server side the password
 
             /* Create the server SIP */
             quiddSipName = switcher.create("sip", quiddSipName);
             if (!quiddSipName) return log.error("Error login sip server");
             switcher.invoke(quiddSipName, "unregister", []);
+
+            /* Define port for Sip Server */
+            var port = switcher.set_property_value(quiddSipName, "port", port); 
+            if(!port) return log.error("Error set port ",port, " for sip quiddity");
 
             /* Connect to the server SIP */
             log.debug("Ask connect to server sip", name + "@" + address, password);
@@ -287,10 +291,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
                 var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
                 if (!saveDicoUsers) return cb("error saved dico users");
                 cb(null, 'successfully update ' + name);
-
-            },
-            changeStatus: function(status, cb) {
-                log.debug('Ask to change status for ' + status);
 
             },
 

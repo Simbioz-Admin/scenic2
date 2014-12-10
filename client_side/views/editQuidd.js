@@ -192,8 +192,7 @@ define(
                     if ($(element.target).hasClass("checkbox"))
                         value = String(element.target.checked);
 
-                    this.model.setPropertyValue(property, value, function() {});
-
+                    this.model.setPropertyValue(property, value);
 
                 },
 

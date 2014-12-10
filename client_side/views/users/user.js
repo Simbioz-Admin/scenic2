@@ -37,7 +37,9 @@ define(
           "mouseleave": "hideActions",
           "click .add_table": "addUserToDestinationMatrix",
           "click .edit_user": "editUser",
-          "click .call": "callContact"
+          "click .call": "callContact",
+          "change #statusText": "setStatusText",
+          "click .listStatus" : "setStatus"
         },
 
 
@@ -47,13 +49,12 @@ define(
          */
 
         initialize: function(options) {
-          //this.listenTo(this.model, 'change', this.refreshStatus);
           this.listenTo(this.model, 'change', this.render);
           this.listenTo(this.model, 'change:connection', this.connections);
           this.listenTo(this.model, 'destroy', this.removeView);
 
           var userSip = JSON.parse(localStorage['userSip']);
-          
+
           if (userSip.uri == this.model.get('uri')) {
             this.model.set('itsMe', true);
             $('.itsMe').html(this.el);
@@ -66,7 +67,8 @@ define(
         },
 
         /* Called for render the view */
-        render: function() { 
+        render: function() {
+          console.log('render view user', this.model.get('name'));
           var tpl = _.template(TemplateUser, this.model.toJSON());
           $(this.el).html(tpl);
           var status = this.model.get("status");
@@ -75,25 +77,33 @@ define(
           // this.refreshStatus();
 
         },
-        refreshStatus: function() {
-          /* 0 : online   1 : absent   2 : offline */
-          var currentStatus = this.model.get("status");
-          if (!this.model.get('itsMe')) {
-            var user = $(this.el).detach();
-            $(".users .content_users .status-" + currentStatus).append(user);
-          }
-          $(this.el).attr("data-statusUser", currentStatus);
+        // refreshStatus: function() {
+        //   /* 0 : online   1 : absent   2 : offline */
+        //   var currentStatus = this.model.get("status");
+        //   if (!this.model.get('itsMe')) {
+        //     var user = $(this.el).detach();
+        //     $(".users .content_users .status-" + currentStatus).append(user);
+        //   }
+        //   $(this.el).attr("data-statusUser", currentStatus);
+        // },
+        setStatus : function(e){
+          var status = $(e.target).data("status");
+          console.log("Set status ", status);
+          var sipQuidd = collections.quidds.get("sipquid");
+          sipQuidd.setPropertyValue('status', String(status));
         },
-        changeText: function() {
-          console.log('change text', this.model.get("status_text"));
-          $(".last_message", this.el).html(this.model.get("status_text"));
+        setStatusText: function(e) {
+          var statusText = $(e.target).val();
+          var sipQuidd = collections.quidds.get("sipquid");
+          sipQuidd.setPropertyValue('status-note', statusText);
         },
+
         showActions: function() {
-          //if(!this.model.get('itsMe')){
-          $(".information", this.el).stop(true, true).animate({
-            "marginLeft": 140
-          }, 100);
-          //}
+          if (!this.model.get('itsMe')) {
+            $(".information", this.el).stop(true, true).animate({
+              "marginLeft": 140
+            }, 100);
+          }
         },
         hideActions: function() {
           $(".information", this.el).stop(true, true).animate({

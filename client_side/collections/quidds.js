@@ -64,7 +64,6 @@ define(
 
           /** Event called when the value of a property changes */
           socket.on("signals_properties_value", function(quiddName, prop, value) {
-            if(prop != "byte-rate") console.log(prop);
             that.signalsPropertiesUpdate(quiddName, prop, value);
           });
 
@@ -84,7 +83,6 @@ define(
 
             //If the shmdata is a type reader (connection) we refresh shmdata source
             if(shmdata.type == 'reader'){
-              console.log('the shmdata is a type reader (connection) we refresh shmdata source');
               var quiddSource = shmdata.path.split('_')[2];
               quidd = collections.quidds.get(quiddSource);
               quidd.trigger("updateConnexions");

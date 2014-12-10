@@ -16,8 +16,43 @@ div.users
 	top : 51px
 	bottom : 0
 	right : 0px
-	z-index : 2000
 	.itsMe.user
+		input
+			background : none
+			padding : 0
+			margin : 0
+			height : inherit
+			border : none
+			color : white
+			display : inline
+			width : 50%
+			float : left
+
+		#currentStatus
+			position : relative
+			color : white
+			float : left
+			margin : 2px 10px 0 0
+			&:before
+				content : "▾"
+				margin-right : 5px
+			ul
+				display : none
+				position : absolute
+				z-index: 12
+				background : #222
+				padding-top : 5px
+				margin : 0 0 0 -5px
+				li
+					padding : 5px 10px 5px 5px
+					border-bottom : 1px solid #555
+					&:hover
+						background : #111
+					&:last-child
+						border : none
+			&:hover ul
+				display : block
+
 		.status
 			width : 15px
 			height : 15px
@@ -86,14 +121,13 @@ div.users
 
 	.user
 		position : relative
-		z-index: 0
 		border-bottom : 1px solid #2c2c2c
 		.information
 			padding : 10px
 			border-left : 2px solid grey
 			cursor : pointer
 			position : relative
-			z-index: 2
+			// z-index: 2
 			background : #333
 			h3
 				padding : 0px
@@ -112,7 +146,7 @@ div.users
 				color : #999
 				font-size: 11px
 				height : 13px
-				overflow: hidden
+				// overflow: hidden
 
 		// &:nth-child(odd) .information
 		// 	background : #333
@@ -125,7 +159,7 @@ div.users
 			left : 0
 			background : #2a2a2a
 			color : white
-			z-index : 1
+			// z-index : 1
 			.action
 				width : 70px
 				height : 100%
@@ -156,7 +190,7 @@ div.users
 			border-color : #be2620
 		&[data-statusUser='away'] .information
 			border-color : orange
-		&[data-statusUsero='offline'] .information
+		&[data-statusUser='offline'] .information
 			border-color : #555	
 
 

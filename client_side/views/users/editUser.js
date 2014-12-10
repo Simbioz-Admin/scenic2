@@ -28,7 +28,7 @@ define(
         className: 'editUser',
         events: {
           "submit #form-user": 'update',
-          "click .remove" : 'removeUser'
+          "click .remove" : 'removeUser',
         },
 
         /* Called when the view is initialized */
@@ -53,7 +53,9 @@ define(
           var statusText = $('#statusText').val();
           var status = $('#status').val();
 
-          console.log(name,uri, statusText, status);
+          // console.log(name,uri, statusText, status);
+          // var sipQuidd = collections.quidd.get('sipquid');
+
           socket.emit('updateUser', uri, name, statusText, status, function(err,msg){
             if(err) return views.global.notification('error', err);
             views.global.notification('valid',msg);

@@ -45,18 +45,9 @@ define(
         },
         initialize: function() {
           if (this.get('in_tab')) this.add_tab();
-
-          // that.collection.each(function(user) {
-          /* check if user model is of current user scenic */
-          if ("sip:" + config.sip.name + "@" + config.sip.address !== this.get("name")) {
-            new ViewUser({
-              model: this
-            });
-          } else {
-            $(".itsMe h3", that.el).html(this.get("sip_url"));
-            $(".itsMe .last_message", that.el).html(this.get("status_text"));
-          }
-
+          new ViewUser({
+            model: this
+          });
         },
         add_tab: function() {
           //we create automatically the view for destination based on ViewDestination
@@ -67,20 +58,18 @@ define(
             })
           });
         },
-        askDelete: function(removeMatrix) {
+        askDelete: function() {
           var that = this;
 
-          var result = views.global.confirmation("Are you sure?", function(ok) {
+          var result = views.global.confirmation("Are you sureaaaa?", function(ok) {
             if (ok) {
               //Just ask to remove the user of the matrix not remove from user SIP
-              if (removeMatrix) {
-                socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {
-                  if (err) return views.global.notification("error", err);
-                  views.global.notification("valid", msg);
-                  views.global.closePanel();
+              socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {
+                if (err) return views.global.notification("error", err);
+                views.global.notification("valid", msg);
+                views.global.closePanel();
 
-                });
-              }
+              });
               //remove from the user SIP
 
               //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});

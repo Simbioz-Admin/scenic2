@@ -142,7 +142,7 @@ define(
         }
 
         /* broadcast all the modification on properties */
-        _.each(config.subscribe_quidd_f, function(quiddName, socketId) {
+        _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
           if (quiddName == qname) {
             var socket = io.sockets.sockets[socketId];
             if (socket) socket.emit("signals_properties_value", qname, qprop, pvalue);
@@ -158,7 +158,7 @@ define(
       switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
         if (qname != "systemusage") {
-          log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
+          log.switcher('signal : ', qname, ' ', qsignal, ' ', pvalue);
         }
 
         /* manage callback fro SIP quidd  */

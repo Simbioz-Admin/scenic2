@@ -110,7 +110,7 @@ define(
               type: "sources"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+              select: ["sip","src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
             collectionDestinations: collections.users
             

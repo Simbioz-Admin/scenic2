@@ -116,8 +116,13 @@ define(
       if (quiddName && property && value) {
         var ok = switcher.set_property_value(quiddName, property, String(value));
         if (ok) {
-          log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
-          cb(property, value);
+          var msgError = "failed to set the property " + property + " of " + quiddName;
+          log.error(msgError);
+          return cb(msgError);
+        }
+
+        log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
+        cb(null);
 
         } else {
           log.error("failed to set the property " + property + " of " + quiddName);
@@ -228,18 +233,17 @@ define(
 
 
     function get_property_value(quiddName, property, cb) {
-      var property_value = "";
       log.debug("Get property value", quiddName, property);
       if (quiddName && property) {
         try {
           log.debug("trying to get property value")
           // property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
-          property_value = switcher.get_property_value(quiddName, property);
+          var property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
           console.log("property value in try", property_value);
         } catch (e) {
           log.error("Error", e.stack)
           console.log(e.stack)
-          property_value = switcher.get_property_value(quiddName, property);
+          var property_value = switcher.get_property_value(quiddName, property);
           console.log("property_value in catch", property_value);
           log.debug("error getting property value", e);
         }
@@ -298,16 +302,16 @@ define(
     }
 
     function removeConrolByQuiddParent(quiddParent) {
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read",[ 'controlProperties']));
+      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", ['controlProperties']));
       _.each(currentValuesDicoProperty, function(control) {
         if (control.quiddName == quiddParent) {
           remove_property_value_of_dico("controlProperties", control.name);
         }
       })
-        }
+    }
 
     function remove_property_value_of_dico(property, name) {
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read", property));
+      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", property));
       var newValuesDico = [];
       _.each(currentValuesDicoProperty, function(value) {
         if (value.name != name)
@@ -328,7 +332,7 @@ define(
 
       log.debug("Remove property", property, name);
 
-      switcher.invoke("dico", "update", [ property, JSON.stringify(newValuesDico)]);
+      switcher.invoke("dico", "update", [property, JSON.stringify(newValuesDico)]);
       io.sockets.emit("removeValueOfPropertyDico", property, name);
     }
 

@@ -150,13 +150,13 @@ div.users
 				&:hover
 					text-decoration: none
 
-		&[data-status='0'] .information, &[data-status='0'] .status
+		&[data-statusUser='online'] .information, &[data-status='0'] .status
 			border-color : #01b101
-		&[data-status='1'] .information
+		&[data-statusUser='busy'] .information
 			border-color : #be2620
-		&[data-status='2'] .information
+		&[data-statusUser='away'] .information
 			border-color : orange
-		&[data-status='3'] .information
+		&[data-statusUsero='offline'] .information
 			border-color : #555	
 
 
@@ -200,12 +200,13 @@ div.users
 			&:hover
 				background : #333
 
-//Edit user
-.remove
-	background : none
-	color : white
-	border : none
-	cursor : pointer
-	float : right
-	&:hover
-		color : red
+.editUser
+	//Edit user
+	.remove
+		background : none
+		color : white
+		border : none
+		cursor : pointer
+		float : right
+		&:hover
+			color : red

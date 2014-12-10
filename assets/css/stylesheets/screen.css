@@ -250,19 +250,19 @@ div.users .user .actionsOnUser .edit_user:hover {
   text-decoration: none;
 }
 /* line 153, ../sass/_users.sass */
-div.users .user[data-status='0'] .information, div.users .user[data-status='0'] .status {
+div.users .user[data-statusUser='online'] .information, div.users .user[data-status='0'] .status {
   border-color: #01b101;
 }
 /* line 155, ../sass/_users.sass */
-div.users .user[data-status='1'] .information {
+div.users .user[data-statusUser='busy'] .information {
   border-color: #be2620;
 }
 /* line 157, ../sass/_users.sass */
-div.users .user[data-status='2'] .information {
+div.users .user[data-statusUser='away'] .information {
   border-color: orange;
 }
 /* line 159, ../sass/_users.sass */
-div.users .user[data-status='3'] .information {
+div.users .user[data-statusUsero='offline'] .information {
   border-color: #555555;
 }
 /* line 164, ../sass/_users.sass */
@@ -324,16 +324,16 @@ div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }
 
-/* line 204, ../sass/_users.sass */
-.remove {
+/* line 205, ../sass/_users.sass */
+.editUser .remove {
   background: none;
   color: white;
   border: none;
   cursor: pointer;
   float: right;
 }
-/* line 210, ../sass/_users.sass */
-.remove:hover {
+/* line 211, ../sass/_users.sass */
+.editUser .remove:hover {
   color: red;
 }
 

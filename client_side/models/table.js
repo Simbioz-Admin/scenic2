@@ -47,13 +47,13 @@ define(
           /* Create collection source and destination */
           /* we check if it's already a collection */
 
-          var quiddsSources = this.get_quidds("sources");
+          var quiddsSources = this.getQuidds("sources");
           this.set("collectionSources", new Backbone.Collection);
           this.get("collectionSources").add(quiddsSources);
 
 
           if (!this.get("collectionDestinations")) {
-            var quiddsDestinations = this.get_quidds("destinations");
+            var quiddsDestinations = this.getQuidds("destinations");
             this.set("collectionDestinations", new Backbone.Collection);
             this.get("collectionDestinations").add(quiddsDestinations);
 
@@ -66,32 +66,33 @@ define(
         },
 
         /* Return the quiddities authorize baded on tyoe (source or destination) */
-        get_quidds: function(orientation) {
+        getQuidds: function(shmdataType) {
 
           /* parse global collection quidds contains all quidds already created for return just what you want */
-          if (this.get(orientation)) {
-            var quiddsSelect = this.get(orientation).select;
+          if (this.get(shmdataType)) {
+            var quiddsSelect = this.get(shmdataType).select;
             return collections.quidds.SelectQuidds(quiddsSelect);
           }
         },
 
         /* Return list of quiddity you can created for this table */
-        classes_authorized: function(orientation) {
+        selectByCategory: function(shmdataType) {
 
-          var classes, that = this;
+          var classes, 
+              that = this;
 
-          if (!this.get(orientation)) return null;
+          if (!this.get(shmdataType)) return null;
 
           /* if specified category selected */
-          if (this.get(orientation).select) {
-            classes = collections.classesDoc.getByCategory(this.get(orientation).select);
+          if (this.get(shmdataType).select) {
+            classes = collections.classesDoc.getByCategory(this.get(shmdataType).select);
           } else {
             classes = collections.classesDoc.toJSON();
           }
 
-          if (this.get(orientation).exclude) {
+          if (this.get(shmdataType).exclude) {
             classes = _.filter(classes, function(clas) {
-              if (!_.contains(that.get(orientation).exclude, clas["category"])) return clas
+              if (!_.contains(that.get(shmdataType).exclude, clas["category"])) return clas
             });
           }
 
@@ -99,12 +100,12 @@ define(
 
         },
 
-        is_authorize: function(quiddClass) {
-          var authorized_source = _.find(this.classes_authorized("sources"), function(clas) {
+        isAuthorized: function(quiddClass) {
+          var authorized_source = _.find(this.selectByCategory("sources"), function(clas) {
             return clas["class name"] == quiddClass;
           });
 
-          var authorized_destination = _.find(this.classes_authorized("destinations"), function(clas) {
+          var authorized_destination = _.find(this.selectByCategory("destinations"), function(clas) {
             return clas["class name"] == quiddClass;
           });
 

@@ -30,7 +30,8 @@ var config = {
   },
   sip: {
     port: 5060,
-    address: "scenic.sat.qc.ca"
+    // address: "scenic.sat.qc.ca"
+    address : "10.10.30.179"
   },
   rtpsession: "defaultrtp",
   logLevel: "warn",

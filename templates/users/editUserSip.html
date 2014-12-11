@@ -19,7 +19,7 @@
 		<h3  class='info'>Status</h3>
 		<select id='status' >
 			<% _.each(listStatus, function(status){ %>
-				<option value="<%=status.value%>" <%if(status.value == destination.get('status')){ %> <% }%> ><%=status.name%></option>
+				<option value="<%=status.value%>" <%if(status.name.toLowerCase() == destination.get('status')){ %> selected <% }%> ><%=status.name%></option>
 			<% }); %>
 		</select>
 	<% } %>

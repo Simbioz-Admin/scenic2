@@ -27,11 +27,28 @@ switcher.create("SOAPcontrolServer", "soap");
 switcher.invoke("soap", "set_port", [8074]);
 
 var quiddSipName = "sipQuidd";
+console.log('1. Create quiddity SIP');
 switcher.create("sip", quiddSipName);
-if (!quiddSipName) return cb("Error login sip server");
+if (!quiddSipName) console.log("Error  create Quiddity sip");
 
-// var setPortSip = switcher.set_property_value(quiddSipName, "port", "5060");
-// //console.log("setPortSip", setPortSip);
+
+console.log('2. Register user pachesnel');
+var register = switcher.invoke(quiddSipName, "register", ["pachesnel@scenic.sat.qc.ca","test" ]);
+
+console.log('3. Unregister SIP server');
+var unregister =  switcher.invoke(quiddSipName, "unregister", []);
+
+console.log('4. Remove quiddity SIP');
+var removeQuidity = switcher.remove(quiddSipName);
+if(!removeQuidity) console.log('ERROR : Remove quiddity SIP');
+
+console.log('5. Re-create quiddity SIP');
+quiddSipName = switcher.create("sip", quiddSipName);
+if (!quiddSipName) console.log("ERROR : re-create Quiddity sip");
+
+
+return;
+
 
 /* subscribe to the modification on this quiddity */
 switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");

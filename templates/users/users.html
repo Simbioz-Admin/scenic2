@@ -9,7 +9,7 @@
 		<input type="text" id="add-user" value="" placeholder="+ user uri...">
 		<% if (typeof(listStatus) != "undefined") { %>
 			<% _.each(listStatus, function(status){ %>
-				<div data-status="<%=status.name%>" class="status-<%=status.value%> list"></div>
+				<div data-status="<%=status.name.toLowerCase()%>" class="status-<%=status.value%> list"></div>
 			<% }); %>
 				<div data-status="offline" class="status-offline list"></div>
 				<div data-status="online" class="status-online list"></div>

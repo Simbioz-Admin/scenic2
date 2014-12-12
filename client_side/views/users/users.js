@@ -135,7 +135,7 @@ define(
           if (localStorage["userSip"]) localStorage["userSip"] = null;
           localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
-          socket.emit("sip_login", that.sipInformation, function(err, configSip) {
+          socket.emit("sip_login", that.sipInformation, function(err, configSip){
             if (err) return views.global.notification("error", err);
             that.render();
             views.global.notification("valid", "success login server sip");
@@ -150,19 +150,19 @@ define(
 
         logoutSip: function(e) {
           var that = this;
-          e.preventDefault();
+          //e.preventDefault();
 
-          socket.emit("sip_logout", function(err, confirm) {
-            if (err) return views.global.notification("error", err);
-
+          socket.emit('invoke', 'sipquid', 'unregister',  [], function(err) {
+            if(err) return views.global.notification("error", err);
+            socket.emit('remove', 'sipquid');
             /* if successfully logout we remove all information about users for showing form login */
             $(that.el).html("");
             collections.users.reset();
             that.renderLogin();
 
             views.global.notification("valid", "success logout server sip");
-
           });
+          return;
         },
 
         /*

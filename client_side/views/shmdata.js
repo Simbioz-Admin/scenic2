@@ -92,7 +92,7 @@ define(
         connectionForDestination: function(destination, tableType) {
           /* check if the connexion existing between source and destination */
           var that = this;
-          var active = '';
+          var active = null;
           var port = '';
 
 
@@ -124,29 +124,29 @@ define(
 
             /* Check if we can create a connexion between shmdata and sink */
             socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink) {
-              
-              if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
-                if (canSink == "true") {
-                //console.log(that.model.get('path'), canSink);
-                  /* Check if already connected */
-                  var shmdata_readers = null;
-                  var shmdatasReaders = destination.get("shmdatasCollection").where({
-                    type: 'reader'
-                  });
 
-                  if (shmdatasReaders) {
-                    _.each(shmdatasReaders, function(shm) {
-                      console.log(shm.get('path'), that.model.get('path'));
-                      if (shm.get('path') == that.model.get("path")) active = "active";
-                      console.log("ACTIVE", active);
-                    });
-                  }
+              if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
+
+                /* Check if already connected */
+                var shmdata_readers = null;
+                var shmdatasReaders = destination.get("shmdatasCollection").where({
+                  type: 'reader'
+                });
+
+                if (shmdatasReaders) {
+                  _.each(shmdatasReaders, function(shm) {
+                    if (shm.get('path') == that.model.get("path")) active = "active";
+                  });
+                }
+
+                if (canSink == "true" || active) {
+                  //console.log(that.model.get('path'), canSink);
                   var statusBox = 'box';
                 } else {
                   var statusBox = "box_disabled";
                 }
-                
-                $(that.el).append('<td class="'+statusBox+' '+active+ '" data-destination="' + destinationId  + '"></td>');
+
+                $(that.el).append('<td class="' + statusBox + ' ' + active + '" data-destination="' + destinationId + '"></td>');
 
               }
             });

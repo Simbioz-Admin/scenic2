@@ -133,7 +133,7 @@ define(
         },
 
         leaveSubMenu: function(e) {
-          $("#subMenu").menu("collapse");
+          $("#subMenu").remove();
         },
 
         toggle_connection: function(e) {

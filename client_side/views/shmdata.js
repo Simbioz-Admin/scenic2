@@ -111,7 +111,6 @@ define(
 
               _.each(destination.get('connection'), function(connection) {
                 if (that.model.get("path") == connection) {
-                  console.log(connection);
                   active = "active";
                 }
               });
@@ -125,9 +124,10 @@ define(
 
             /* Check if we can create a connexion between shmdata and sink */
             socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink) {
+              
               if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
                 if (canSink == "true") {
-
+                //console.log(that.model.get('path'), canSink);
                   /* Check if already connected */
                   var shmdata_readers = null;
                   var shmdatasReaders = destination.get("shmdatasCollection").where({
@@ -136,7 +136,9 @@ define(
 
                   if (shmdatasReaders) {
                     _.each(shmdatasReaders, function(shm) {
+                      console.log(shm.get('path'), that.model.get('path'));
                       if (shm.get('path') == that.model.get("path")) active = "active";
+                      console.log("ACTIVE", active);
                     });
                   }
                   var statusBox = 'box';
@@ -144,7 +146,7 @@ define(
                   var statusBox = "box_disabled";
                 }
                 
-                $(that.el).append('<td class="'+statusBox+'' + that.table.get("name") + '" data-destination="' + destinationId  + '"></td>');
+                $(that.el).append('<td class="'+statusBox+' '+active+ '" data-destination="' + destinationId  + '"></td>');
 
               }
             });

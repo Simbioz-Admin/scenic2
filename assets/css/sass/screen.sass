@@ -262,7 +262,7 @@ header
 
 #msgHighLight
 	width : 310px
-	position : absolute
+	position : fixed
 	left : 50%
 	right : 50%
 	top : -50px
@@ -711,13 +711,16 @@ header
 		white-space : nowrap
 
 	.setMethod, .sendProperty
-		padding: 13px 10px
+		padding: 11px 10px
 		background: #444
 		color: white
 		text-decoration: none
 		margin: 0 0 0 5px
 		border-radius: 2px
-
+		border : none
+		cursor : pointer
+		&:hover
+			background : #555	
 
 	.mapInput
 		width : 60px!important

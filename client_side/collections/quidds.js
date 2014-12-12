@@ -160,6 +160,7 @@ define(
                         model.addProperty(name[0]);
                     }
                     if (prop == "on-method-added") {
+                        console.log('on method added', name[0]);
                         model.addMethod(name[0]);
                     }
                     if (prop == "on-method-removed") {

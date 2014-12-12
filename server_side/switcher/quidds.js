@@ -249,14 +249,15 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     }
 
 
-    function invoke(quiddName, method, parameters, callback) {
+    function invoke(quiddName, method, parameters, cb) {
       var invoke = switcher.invoke(quiddName, method, parameters);
       log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
       if (!invoke) {
-        log.error("failed to invoke " + quiddName + " method " + method);
-        return;
+        var msgError = "failed to invoke " + quiddName + " method " + method;
+        log.error(msgError);
+        return cb(msgError);        
       }
-      if (callback) callback(invoke);
+      if(cb) cb(null);
 
       if (method == "remove_udp_stream_to_dest")
         io.sockets.emit("remove_connection", invoke, quiddName, parameters);

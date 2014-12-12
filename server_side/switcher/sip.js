@@ -6,6 +6,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
         var io;
         var quiddSipName = "sipquid";
 
+
         /*
          *  @function addListUser
          *  @description add to the array listUsers a new users
@@ -39,7 +40,11 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic'],
 
             /* Create the server SIP */
             quiddSipName = switcher.create("sip", quiddSipName);
-            if (!quiddSipName) return log.error("Error login sip server");
+            if (!quiddSipName){
+                var msgError = "Error create sip quiddity";
+                log.error(msgError);
+                return cb(msgError);
+            }
             switcher.subscribe_to_property(quiddSipName, 'sip-registration');
             console.log("REGISTRATION_SIP 1", switcher.get_property_value(quiddSipName, "sip-registration"));
             switcher.invoke(quiddSipName, "unregister", []);

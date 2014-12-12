@@ -906,7 +906,6 @@ header .btn {
   top: 0;
   left: 133px;
   width: 200px;
-  height: 400px;
 }
 /* line 436, ../sass/screen.sass */
 .headerMenu > li > ul li > ul > li > ul {
@@ -915,7 +914,6 @@ header .btn {
   top: 0;
   left: 190px;
   width: 250px;
-  height: 400px;
 }
 /* line 444, ../sass/screen.sass */
 .headerMenu > li > ul li > ul > li > ul li {

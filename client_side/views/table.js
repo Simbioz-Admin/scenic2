@@ -38,7 +38,7 @@ define(
           "click #create-quiddsProperties": "getMenuProperties",
           "click #create-midi": "getMenuMidiDevice",
           "click .contextMenu": 'getClasses',
-          // "mouseleave #subMenu": 'leaveSubMenu',
+          "mouseleave #subMenu": 'leaveSubMenu',
           "click body.scenic2": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -133,7 +133,6 @@ define(
         },
 
         leaveSubMenu: function(e) {
-          console.log("leaveSubmenu called");
           $("#subMenu").menu("collapse");
         },
 

@@ -145,7 +145,6 @@ define(
                 socket.on("callUser", switcher.sip.callUser);
                 socket.on("getListStatus", switcher.sip.getListStatus);
                 socket.on("hangUpUser", switcher.sip.hangUpUser);
-                socket.on("updateUser", switcher.sip.updateUser);
                 socket.on("removeUser", switcher.sip.removeUser);
 
         //************************* SAVE ****************************//

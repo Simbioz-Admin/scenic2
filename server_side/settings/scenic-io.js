@@ -110,6 +110,7 @@ define(
         socket.on("get_info", switcher.quidds.get_info);
         socket.on("get_properties_description", switcher.quidds.get_properties_description);
         socket.on("get_methods_description", switcher.quidds.get_methods_description);
+                socket.on("get_method_description", switcher.quidds.get_method_description);
         socket.on("get_property_description", switcher.quidds.get_property_description);
         socket.on("get_property_value", switcher.quidds.get_property_value);
         socket.on("set_property_value", switcher.quidds.set_property_value);

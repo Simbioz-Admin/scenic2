@@ -204,7 +204,7 @@ define(
     }
 
 
-    function get_methods_description(quiddName, callback) {
+    function get_methods_description(quiddName, cb) {
       var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
       if (!methods) {
         var msg = "failed to get methods description " + quiddName;
@@ -216,10 +216,10 @@ define(
       _.each(methods, function(method) {
         methods_to_send[method.name] = method;
       });
-      callback(null, methods_to_send);
+      cb(null, methods_to_send);
     }
 
-    function get_method_description(quiddName, method, callbackcb) {
+    function get_method_description(quiddName, method, cb) {
       var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
       if (!descriptionJson) {
         var msg = "failed to get " + method + " method description" + quiddName;
@@ -346,7 +346,7 @@ define(
       get_info: get_info,
       get_properties_description: get_properties_description,
       get_methods_description: get_methods_description,
-      get_methods_description: get_methods_description,
+      get_method_description: get_method_description,
       get_properties_values: get_properties_values,
       get_property_value: get_property_value,
       set_property_value: set_property_value,

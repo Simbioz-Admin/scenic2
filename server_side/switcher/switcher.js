@@ -67,7 +67,7 @@ define(
 
         /* Create a dico for destinationsSIP */
         // switcher.create("dico", "destinationsSip");
-        
+
       }
 
 
@@ -92,26 +92,11 @@ define(
         }
 
 
-        /* ************ PROP - SHMDATA-WRITERS ************ */
+        /* ************ PROP - SIPQUID ************ */
 
-        // if (qprop == "shmdata-writers") {
-        //     /* if the quidd have shmdata we create view meter */
-        //     if (JSON.parse(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
-
-        //       Send to all users informing the creation of shmdatas for a specific quiddity 
-        //     var shmdatas = JSON.parse(pvalue).shmdata_writers;
-        //     log.debug("send Shmdatas for ", qname);
-        //     io.sockets.emit("updateShmdatas", qname, shmdatas);
-
-        // }
-
-
-        /* ************ PROP - SHMDATA-READERS ************ */
-
-        // if (qprop == "shmdata-readers") {
-        //   io.sockets.emit("update_shmdatas_readers", qname, pvalue);
-        // }
-
+        if (qprop == "sip-registration" && qname == "sipquid") {
+          log.debug("Sip Registration", pvalue);
+        }
 
         /* ************ PROP - STARTED ************ */
 
@@ -119,7 +104,8 @@ define(
 
           log.debug("remove shmdata of", qname);
           var destinations = switcher.get_property_value("dico", "destinations"),
-          destinations = JSON.parse(destinations);
+            destinations = JSON.parse(destinations);
+
           _.each(destinations, function(dest) {
             _.each(dest.data_streams, function(stream) {
               log.debug(stream.quiddName, qname);
@@ -199,10 +185,10 @@ define(
 
           /* sipquidd */
 
-          if(qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0){
+          if (qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0) {
             //TODO : Get Better method for get information about user without split value
             var idUser = pvalue[0].split(".")[2];
-            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.'+idUser));
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
             io.sockets.emit('infoUser', infoUser);
           }
 
@@ -213,30 +199,30 @@ define(
         /* ON TREE PRUNED */
 
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
-          
+
           //Shmdata Writer
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer
             var shmdata = {
-              path : pvalue[0].replace(".shmdata.writer.", ""),
-              type : 'writer'
+              path: pvalue[0].replace(".shmdata.writer.", ""),
+              type: 'writer'
             }
-            console.log("on-tree-pruned removing Shmdata writer", qname, shmdata);
+
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
 
           //Shmdata Reader
           if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
             var shmdata = {
-              path : pvalue[0].replace(".shmdata.reader.", ""),
-              type : 'reader'
+              path: pvalue[0].replace(".shmdata.reader.", ""),
+              type: 'reader'
             }
-            console.log("on-tree-pruned removing Shmdata reader", qname, shmdata);
+
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
 
-          if(qname == "sipquid"){
+          if (qname == "sipquid") {
             var idUser = pvalue[0].split(".")[2];
-            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.'+idUser));
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
             io.sockets.emit('infoUser', infoUser);
           }
         }

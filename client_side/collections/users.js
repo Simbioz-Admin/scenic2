@@ -8,10 +8,11 @@ define(
   [
     'underscore',
     'backbone',
-    'models/user'
+    'models/user',
+    'tripledes'
   ],
 
-  function(_, Backbone, ModelUser) {
+  function(_, Backbone, ModelUser,tripledes) {
 
     /** 
      *  @constructor
@@ -111,20 +112,24 @@ define(
         },
         loginSip: function(address, name, password, port, cb) {
 
+            var secretString = 'Les patates sont douces!';
+            var encrypted = CryptoJS.AES.encrypt(password, secretString);
+
             var sipInformation = {
               address: address,
               uri: name + '@' + address,
               name: name,
-              password: password,
+              password: encrypted.toString(),
               port: port
             };
+
+
 
             if (localStorage["userSip"]) localStorage["userSip"] = null;
             localStorage["userSip"] = JSON.stringify(sipInformation);
 
             socket.emit("sip_login", sipInformation, function(err, configSip) {
               if (err) return views.global.notification("error", err);
-              views.global.notification("valid", "success login server sip");
               $("#login_sip", this.el).remove();
               cb(null);
             });

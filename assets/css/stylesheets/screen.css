@@ -280,38 +280,64 @@ div.users .user .actionsOnUser .action:hover {
   cursor: pointer;
 }
 /* line 177, ../sass/_users.sass */
-div.users .user .actionsOnUser .call {
-  background: url(../../images/iconePhone.png) center center no-repeat;
+div.users .user .actionsOnUser .call, div.users .user .actionsOnUser .hangUp {
+  position: relative;
 }
-/* line 179, ../sass/_users.sass */
+/* line 180, ../sass/_users.sass */
+div.users .user .actionsOnUser .call:before, div.users .user .actionsOnUser .hangUp:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(../../images/iconePhone.png) center center no-repeat;
+  left: 0;
+}
+/* line 187, ../sass/_users.sass */
+div.users .user .actionsOnUser .hangUp {
+  background-color: #be2520;
+}
+/* line 189, ../sass/_users.sass */
+div.users .user .actionsOnUser .hangUp:hover {
+  background-color: #be2520;
+}
+/* line 191, ../sass/_users.sass */
+div.users .user .actionsOnUser .hangUp:before {
+  margin: 3px 0;
+  -webkit-transform: rotate(137deg);
+  -moz-transform: rotate(137deg);
+  -ms-transform: rotate(137deg);
+  -o-transform: rotate(137deg);
+  transform: rotate(137deg);
+}
+/* line 195, ../sass/_users.sass */
 div.users .user .actionsOnUser .add_table {
   background: url(../../images/bgBox.png) center center no-repeat;
 }
-/* line 181, ../sass/_users.sass */
+/* line 197, ../sass/_users.sass */
 div.users .user .actionsOnUser .edit_user {
   background: url(../../images/settings.png) center center no-repeat;
 }
-/* line 184, ../sass/_users.sass */
+/* line 200, ../sass/_users.sass */
 div.users .user .actionsOnUser .edit_user:hover {
   text-decoration: none;
 }
-/* line 187, ../sass/_users.sass */
+/* line 203, ../sass/_users.sass */
 div.users .user[data-statusUser='online'] .information, div.users .user[data-status='0'] .status {
   border-color: #01b101;
 }
-/* line 189, ../sass/_users.sass */
+/* line 205, ../sass/_users.sass */
 div.users .user[data-statusUser='busy'] .information {
   border-color: #be2620;
 }
-/* line 191, ../sass/_users.sass */
+/* line 207, ../sass/_users.sass */
 div.users .user[data-statusUser='away'] .information {
   border-color: orange;
 }
-/* line 193, ../sass/_users.sass */
+/* line 209, ../sass/_users.sass */
 div.users .user[data-statusUser='offline'] .information {
   border-color: #555555;
 }
-/* line 198, ../sass/_users.sass */
+/* line 214, ../sass/_users.sass */
 div.users #login_sip {
   background: #222222;
   padding: 20px;
@@ -320,41 +346,41 @@ div.users #login_sip {
   z-index: 2;
   display: inline-block;
 }
-/* line 205, ../sass/_users.sass */
+/* line 221, ../sass/_users.sass */
 div.users #login_sip .parameters {
   display: inline-block;
 }
-/* line 207, ../sass/_users.sass */
+/* line 223, ../sass/_users.sass */
 div.users #login_sip h1 {
   font-size: 18px;
   margin-bottom: 20px;
 }
-/* line 210, ../sass/_users.sass */
+/* line 226, ../sass/_users.sass */
 div.users #login_sip label {
   font-size: 14px;
 }
-/* line 212, ../sass/_users.sass */
+/* line 228, ../sass/_users.sass */
 div.users #login_sip input {
   background: #111111;
   color: white;
   border-color: #222222;
 }
-/* line 216, ../sass/_users.sass */
+/* line 232, ../sass/_users.sass */
 div.users #login_sip .half {
   width: 47%;
   float: left;
   position: relative;
   margin-right: 7px;
 }
-/* line 221, ../sass/_users.sass */
+/* line 237, ../sass/_users.sass */
 div.users #login_sip .half input {
   width: 95%;
 }
-/* line 223, ../sass/_users.sass */
+/* line 239, ../sass/_users.sass */
 div.users #login_sip .half:last-child {
   margin-right: 0;
 }
-/* line 225, ../sass/_users.sass */
+/* line 241, ../sass/_users.sass */
 div.users #login_sip input[type=submit] {
   background: #111111;
   width: inherit;
@@ -365,12 +391,12 @@ div.users #login_sip input[type=submit] {
   padding: 0 10px;
   cursor: pointer;
 }
-/* line 234, ../sass/_users.sass */
+/* line 250, ../sass/_users.sass */
 div.users #login_sip input[type=submit]:hover {
   background: #333333;
 }
 
-/* line 239, ../sass/_users.sass */
+/* line 255, ../sass/_users.sass */
 .editUser .remove {
   background: none;
   color: white;
@@ -378,7 +404,7 @@ div.users #login_sip input[type=submit]:hover {
   cursor: pointer;
   float: right;
 }
-/* line 245, ../sass/_users.sass */
+/* line 261, ../sass/_users.sass */
 .editUser .remove:hover {
   color: red;
 }
@@ -388,7 +414,7 @@ div.users #login_sip input[type=submit]:hover {
   color: white;
   position: relative;
   height: 35px;
-  width: 220px;
+  width: 200px;
   float: right;
 }
 /* line 41, ../sass/_systemusage.sass */
@@ -400,24 +426,23 @@ div.users #login_sip input[type=submit]:hover {
   height: 12px;
   margin: 3px 5px 0 0;
   position: relative;
-  width: 80px;
+  width: 65px;
   height: 100%;
   float: left;
-  border: 1px solid #444444;
   padding: 5px 0 0;
 }
-/* line 52, ../sass/_systemusage.sass */
+/* line 51, ../sass/_systemusage.sass */
 #preview_usagesystem .info .label {
   text-align: center;
   font-size: 10px;
   color: #aaaaaa;
   margin-bottom: 3px;
 }
-/* line 57, ../sass/_systemusage.sass */
+/* line 56, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus {
   width: 50px;
 }
-/* line 61, ../sass/_systemusage.sass */
+/* line 60, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .bar {
   width: 5px;
   height: 2%;
@@ -425,44 +450,44 @@ div.users #login_sip input[type=submit]:hover {
   position: absolute;
   bottom: 0;
 }
-/* line 67, ../sass/_systemusage.sass */
+/* line 66, ../sass/_systemusage.sass */
 #preview_usagesystem .cpus .content {
   height: 22px;
   width: 100%;
   position: relative;
 }
-/* line 71, ../sass/_systemusage.sass */
+/* line 70, ../sass/_systemusage.sass */
 #preview_usagesystem .alert {
   background: #be2620 !important;
 }
-/* line 73, ../sass/_systemusage.sass */
+/* line 72, ../sass/_systemusage.sass */
 #preview_usagesystem .memory {
   width: 50px;
 }
-/* line 75, ../sass/_systemusage.sass */
+/* line 74, ../sass/_systemusage.sass */
 #preview_usagesystem .memory .content {
   margin-top: 8px;
 }
-/* line 77, ../sass/_systemusage.sass */
+/* line 76, ../sass/_systemusage.sass */
 #preview_usagesystem .network {
   font-size: 9px;
   text-align: left;
   color: #cccccc;
 }
-/* line 83, ../sass/_systemusage.sass */
-#preview_usagesystem .network .receive, #preview_usagesystem .network .transfer {
-  margin-left: 10px;
+/* line 82, ../sass/_systemusage.sass */
+#preview_usagesystem .network .label {
+  text-align: left;
 }
-/* line 87, ../sass/_systemusage.sass */
+/* line 88, ../sass/_systemusage.sass */
 #preview_usagesystem .cpu_info {
   text-align: center;
   padding: 2px 5px;
 }
-/* line 90, ../sass/_systemusage.sass */
+/* line 91, ../sass/_systemusage.sass */
 #preview_usagesystem .total {
   font-size: 14px;
 }
-/* line 92, ../sass/_systemusage.sass */
+/* line 93, ../sass/_systemusage.sass */
 #preview_usagesystem .text {
   font-size: 10px;
 }
@@ -844,7 +869,7 @@ header .btn {
   display: block !important;
 }
 /* line 339, ../sass/screen.sass */
-.headerMenu .get_classes, .headerMenu .channel {
+.headerMenu .contextMenu, .headerMenu .channel {
   padding: 6px 15px 5px 25px;
   margin-right: 10px;
   display: inline-block;
@@ -856,11 +881,11 @@ header .btn {
   letter-spacing: 0.08em;
 }
 /* line 351, ../sass/screen.sass */
-.headerMenu .get_classes:hover, .headerMenu .channel:hover {
+.headerMenu .contextMenu:hover, .headerMenu .channel:hover {
   background: #be2620;
 }
 /* line 354, ../sass/screen.sass */
-.headerMenu .get_classes:before, .headerMenu .channel:before {
+.headerMenu .contextMenu:before, .headerMenu .channel:before {
   content: "";
   width: 0;
   height: 0;
@@ -969,7 +994,6 @@ header .btn {
   top: 0;
   left: 133px;
   width: 200px;
-  height: 400px;
 }
 /* line 436, ../sass/screen.sass */
 .headerMenu > li > ul li > ul > li > ul {
@@ -978,7 +1002,6 @@ header .btn {
   top: 0;
   left: 190px;
   width: 250px;
-  height: 400px;
 }
 /* line 444, ../sass/screen.sass */
 .headerMenu > li > ul li > ul > li > ul li {

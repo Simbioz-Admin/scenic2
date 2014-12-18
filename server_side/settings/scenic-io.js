@@ -143,9 +143,7 @@ define(
                 socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
                 socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
                 socket.on("attachShmdataToUser", switcher.sip.attachShmdataToUser);
-                socket.on("callUser", switcher.sip.callUser);
                 socket.on("getListStatus", switcher.sip.getListStatus);
-                socket.on("hangUpUser", switcher.sip.hangUpUser);
                 socket.on("removeUser", switcher.sip.removeUser);
 
                 //************************* SAVE ****************************//

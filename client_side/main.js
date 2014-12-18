@@ -9,6 +9,7 @@ require.config({
         util: 'libs/util',
         jquery: 'libs/jquery-min',
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
+        tripledes: 'libs/tripledes',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',
         smartMenu: 'libs/smartmenus/jquery.smartmenus.min',

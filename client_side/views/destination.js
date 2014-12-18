@@ -118,6 +118,10 @@ define(
 
           /* remove old box */
           $("[data-id='" + this.model.get('name') + "']").remove();
+
+          //reset button add table list user
+          console.log('reset list user');
+          $('[data-idUser="'+this.model.get('uri')+'"] .add_destinationSip').removeClass('call hangUp').addClass('add_table');
         }
       });
 

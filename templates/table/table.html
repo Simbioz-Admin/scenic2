@@ -4,47 +4,44 @@
 
 
 <div id="headerTable">
-	<ul class="menuTable headerMenu" >
-		<% _.each(menus, function(menu){ %>
-			<li>
-				<a href="#" class="get_classes" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>" ><%=menu.name%></a>
-			</li>
-		<% }); %>
-	</ul>
-	<div class="filter">
-		<select name="" class="dropdown_filter">
-			<option value="">Show all categories</option>
-		</select>
-	</div>
+  <ul class="menuTable headerMenu" >
+    <% _.each(menus, function(menu){ %>
+    <li>
+      <a href="#" class="contextMenu" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>" ><%=menu.name%></a>
+    </li>
+    <% }); %>
+  </ul>
+  <div class="filter">
+    <select name="" class="dropdown_filter">
+      <option value="">Show all categories</option>
+    </select>
+  </div>
 </div><!-- headerTable -->
 
 <% if(type == "transfer" || type == "sink"){ %>
-	<div class="destinations"></div>
-	<div class="sources"></div>
+<div class="destinations"></div>
+<div class="sources"></div>
 <% } %>
 
 
 
 <% if(type == "control"){ %>
-	<table class="tableScenic">
-		<thead>
-			<tr>
-				<th rowspan="2"  class="infoTable">
-				</th>
-			</tr>
-			<tr class="destinations"></tr>
-		</thead>
-		<tbody >
-			<!-- <tr > <td rowspan="2">test</td> </tr> -->
-			<tr><td colspan="7" >
-				<div id="local-sources" class="sources"></div>
-			</td></tr>
-			<tr><td colspan="7"  >
-				<div id="remote-sources" class="sources"></div>
-			</td></tr>
-		</tbody>
-	</table>
+<table class="tableScenic">
+  <thead>
+    <tr>
+      <th rowspan="2"  class="infoTable">
+      </th>
+    </tr>
+    <tr class="destinations"></tr>
+  </thead>
+  <tbody >
+    <!-- <tr > <td rowspan="2">test</td> </tr> -->
+    <tr><td colspan="7" >
+	<div id="local-sources" class="sources"></div>
+    </td></tr>
+    <tr><td colspan="7"  >
+	<div id="remote-sources" class="sources"></div>
+    </td></tr>
+  </tbody>
+</table>
 <% } %>
-
-
-

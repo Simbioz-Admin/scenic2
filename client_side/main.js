@@ -46,12 +46,13 @@ require([
     'launch',
     'util',
     'punch',
+    'collections/users',
     'jqueryCookie',
     collections = [],
     views = [],
     socket = io.connect(),
-    config = {}
-], function(app, launch, util, socket) {
+    config = {},
+], function(app, launch, util, socket, CollectionUsers  ) {
 
     var socket = io.connect();
 
@@ -59,6 +60,9 @@ require([
     socket.emit("getConfig", function(configServer) {
         config = configServer;
     });
+
+    collections.users = new CollectionUsers();
+
 
     if (localStorage["oldId"]) {
         socket.emit("returnRefresh", localStorage["oldId"], socket.socket.sessionid);

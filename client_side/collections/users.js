@@ -43,11 +43,11 @@ define(
               if (user) {
                 user.set(infoUser);
               } else {
-                if(infoUser.uri){
+                if (infoUser.uri) {
                   that.add(infoUser);
                 }
               }
-              
+
               /*
               that.fetch({
                 success: function() {
@@ -101,11 +101,31 @@ define(
           return a.get(this.orderBy);
         },
         getListStatus: function(cb) {
-            var that = this;
-            // Get list status for users          
-            socket.emit("getListStatus", function(err, listStatus) {
-              if (err) return cb(err);
-              that.listStatus = listStatus;
+          var that = this;
+          // Get list status for users          
+          socket.emit("getListStatus", function(err, listStatus) {
+            if (err) return cb(err);
+            that.listStatus = listStatus;
+            cb(null);
+          });
+        },
+        loginSip: function(address, name, password, port, cb) {
+
+            var sipInformation = {
+              address: address,
+              uri: name + '@' + address,
+              name: name,
+              password: password,
+              port: port
+            };
+
+            if (localStorage["userSip"]) localStorage["userSip"] = null;
+            localStorage["userSip"] = JSON.stringify(sipInformation);
+
+            socket.emit("sip_login", sipInformation, function(err, configSip) {
+              if (err) return views.global.notification("error", err);
+              views.global.notification("valid", "success login server sip");
+              $("#login_sip", this.el).remove();
               cb(null);
             });
           }

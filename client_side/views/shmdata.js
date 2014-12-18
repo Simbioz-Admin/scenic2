@@ -123,7 +123,7 @@ define(
           if (tableType == "sink" && that.table.get("type") == tableType) {
 
             /* Check if we can create a connexion between shmdata and sink */
-            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink) {
+            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(err, canSink) {
 
               if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
 
@@ -138,7 +138,7 @@ define(
                     if (shm.get('path') == that.model.get("path")) active = "active";
                   });
                 }
-
+                console.log(canSink);
                 if (canSink == "true" || active) {
                   //console.log(that.model.get('path'), canSink);
                   var statusBox = 'box';

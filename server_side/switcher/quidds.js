@@ -257,7 +257,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         log.error(msgError);
         return cb(msgError);        
       }
-      if(cb) cb(null);
+      if(cb) cb(null, invoke);
 
       if (method == "remove_udp_stream_to_dest")
         io.sockets.emit("remove_connection", invoke, quiddName, parameters);

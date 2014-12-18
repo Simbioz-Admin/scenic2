@@ -1,27 +1,38 @@
 <div id="lightBox">
-    <div id="launch">
-        <br>
-            <h1>Scenic2 Server configuration</h1>
-            <br>
-            <form id="form-config" >
+  <div id="launch">
+    <br>
+    <br>
+    <form id="form-config">
 
-                <div class="identification">
-                    <label>Identification</label>
-                    <input type="text" name="username" value="<%=username%>" autofocus="autofocus" >
-                    <input type="password" name="pass" placeholder="password" >
-                    <input type="password" name="confirmPass" placeholder="confirm password">
-                    <div class="info">* server access is unsecured without password</div>
-                </div>
+      <div id="accordion">
+        <h3>Configuration SIP</h3>
+        <div id='loginSip'>
 
-                <div class="parameters">
-                    <div class="half">
-                        <label>Port Soap</label>
-                        <input type="text" name="portSoap" value="<%=soap%>">
-                    </div>
-                    <div class="half"></div>
-                </div>
+        </div>
+        <h3>Scenic2 Server configuration</h3>
+        <div>
+          <div class="identification">
+            <label>Identification</label>
+            <input type="text" name="username" value="<%=username%>" autofocus="autofocus">
+            <input type="password" name="pass" placeholder="password">
+            <input type="password" name="confirmPass" placeholder="confirm password">
+            <div class="info">* server access is unsecured without password</div>
+          </div>
 
-              <!--   <div class="parameters">
+          <div class="parameters">
+            <div class="half">
+              <label>Port Soap</label>
+              <input type="text" name="portSoap" value="<%=soap%>">
+            </div>
+            <div class="half"></div>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <!--   <div class="parameters">
                     <h1>Server sip</h1>
       
                     <label>Address</label>
@@ -38,10 +49,10 @@
                     </div>
                 </div>
  -->
-                <input type="submit" value="Launch" id="submitParam">
-            </form>
-        
+      <input type="submit" value="Launch" id="submitParam">
+    </form>
 
-    </div>
+
+  </div>
 </div>
 <div id="bgLightBox"></div>

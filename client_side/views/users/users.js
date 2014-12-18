@@ -123,7 +123,7 @@ define(
 
         /*
          * @function loginSip
-         * @description Ask to the server logout to the server SIP
+         * @description Ask to the server login to the server SIP
          */
 
         loginSip: function(e) {
@@ -132,6 +132,14 @@ define(
 
           that.sipInformation = $('#login_sip', this.el).serializeObject();
           that.sipInformation["uri"] = that.sipInformation.name + '@' + that.sipInformation.address;
+
+          that.collection.loginSip(that.sipInformation.address, that.sipInformation.name, that.sipInformation.password, that.sipInformation.port, function(err){
+            if(err) return views.global.notification('error', err);
+            that.render();
+            views.global.notification("valid", "success login server sip");
+            $("#login_sip", this.el).remove();
+          });
+          /*
           if (localStorage["userSip"]) localStorage["userSip"] = null;
           localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
@@ -141,6 +149,7 @@ define(
             views.global.notification("valid", "success login server sip");
             $("#login_sip", this.el).remove();
           });
+          */
         },
 
         /*

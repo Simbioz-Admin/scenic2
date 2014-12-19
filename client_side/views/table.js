@@ -118,10 +118,10 @@ define(
 
           /* here we listen select for call views.quidds.defineName */
           $("#subMenu").menu({
-            delay: 0,
-            position: {
-              at: "right-2 top-2"
-            }
+            delay: 1500,
+            // position: {
+            //   at: "right-2 top-2"
+            // }
           }, {
             select: function(event, ui) {
               // event.preventDefault();

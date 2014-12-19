@@ -1,42 +1,42 @@
 <% if(type == "QuiddsAndProperties") { %>
-	<ul id="listQuiddsProperties">
-		<% _.each(menus, function(menu, name){ %>
-			<li>
-				<%=name%>
-				<ul data-quiddname="<%=name%>">
-					<% _.each(menu, function(property){ %>
-							<li class="create-ControlProperty" data-property="<%=property%>" ><%=property%></li>
-					<% }); %>
-				</ul>
-			</li>
-		<% }); %>
-	</ul>
+<ul id="listQuiddsProperties">
+  <% _.each(menus, function(menu, name){ %>
+  <li>
+    <%=name%>
+    <ul data-quiddname="<%=name%>">
+      <% _.each(menu, function(property){ %>
+      <li class="create-ControlProperty" data-property="<%=property%>" ><%=property%></li>
+      <% }); %>
+    </ul>
+  </li>
+  <% }); %>
+</ul>
 <% } %>
 
 <% if(type == "sources") { %>
-	<% if(menus){ %>
-		<ul id="listSources">
-			<% _.each(menus, function(link, name){ %>
-				<li>
-					<%=name%>
-					<ul>
-						<% _.each(link, function(name){ %>
-						<%  var autoDetect = _.contains(config.deviceAutoDetect, name["class name"]);	%>
-							<li class="createDevice<% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=name["class name"]%>" ><%=name["long name"]%></li>
-						<% }); %>
-					</ul>
-				</li>
-			<% }); %>
-		</ul>	
-	<% } %>
+<% if(menus){ %>
+<ul id="listSources">
+  <% _.each(menus, function(link, name){ %>
+  <li>
+    <%=name%>
+    <ul>
+      <% _.each(link, function(name){ %>
+      <%  var autoDetect = _.contains(config.deviceAutoDetect, name["class name"]);	%>
+      <li class="createDevice<% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=name["class name"]%>" ><%=name["long name"]%></li>
+      <% }); %>
+    </ul>
+  </li>
+  <% }); %>
+</ul>	
+<% } %>
 <% } %>
 
 <% if(type == "devicesMidi") { %>
-	<ul id="listDevicesMidi">
-		<% _.each(menus, function(menu, name){ %>
-			<li class="createDevice" data-name="midisrc" data-deviceDetected="<%=menu.value%>">
-				<%=menu.name%>
-			</li>
-		<% }); %>
-	</ul>
+<ul id="listDevicesMidi">
+  <% _.each(menus, function(menu, name){ %>
+  <li class="createDevice" data-name="midisrc" data-deviceDetected="<%=menu.value%>">
+    <%=menu.name%>
+  </li>
+  <% }); %>
+</ul>
 <% } %>

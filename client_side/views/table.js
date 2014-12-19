@@ -38,7 +38,7 @@ define(
           "click #create-quiddsProperties": "getMenuProperties",
           "click #create-midi": "getMenuMidiDevice",
           "click .contextMenu": 'getClasses',
-          // "mouseleave #subMenu": 'leaveSubMenu',
+          "mouseleave #subMenu": 'leaveSubMenu',
           "click body.scenic2": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -134,12 +134,11 @@ define(
         },
 
         leaveSubMenu: function(e) {
-          console.log("leaveSubmenu called");
-          $("#subMenu").menu("collapse");
+          $("#subMenu").remove();
         },
 
         toggle_connection: function(e) {
-
+          console.log('toggle_connection');
           var box = $(e.target),
             destination = box.data("destination"),
             path = box.parent().data("path");
@@ -161,7 +160,6 @@ define(
           }
 
           if (this.model.get("id") == "sink") {
-
             /* Find information about the number of connection possible */
             if (box.hasClass("active")) {
               socket.emit("invoke", destination, "disconnect", [path], function(data) {});
@@ -170,7 +168,7 @@ define(
               socket.emit('get_info', destination, 'shmdata', function(shmdata) {
                 var nbConnectionExisting = (shmdata.reader != 'null') ? _.size(shmdata.reader) : 0;
                 var maxReader = parseInt(shmdata.max_reader);
-                if (maxReader > nbConnectionExisting) {
+                if (maxReader > nbConnectionExisting  || maxReader == 0) {
                   socket.emit("invoke", destination, "connect", [path], function(data) {});
 
                 } else {

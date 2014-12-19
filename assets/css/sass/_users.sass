@@ -174,8 +174,24 @@ div.users
 					opacity : 1
 					background-color : #111
 					cursor : pointer
-			.call
-				background : url(../../images/iconePhone.png) center center no-repeat
+			.call, .hangUp
+				position : relative
+				//background : url(../../images/iconePhone.png) center center no-repeat
+				&:before
+					content : ''
+					position : absolute
+					width : 100%
+					height : 100%
+					background : url(../../images/iconePhone.png) center center no-repeat
+					left : 0
+			.hangUp
+				background-color : #be2520
+				&:hover
+					background-color : #be2520
+				&:before
+					margin : 3px 0
+					+transform(rotate(137deg))
+
 			.add_table
 				background : url(../../images/bgBox.png) center center no-repeat
 			.edit_user

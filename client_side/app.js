@@ -68,7 +68,7 @@ define(
           //collections.destinationsSip = new CollectionDestinationsSip();
           //collections.destinationsSip.fetch();
 
-          collections.users = new CollectionUsers();
+          //collections.users = new CollectionUsers();
 
 
           collections.tables = new CollectionTables();

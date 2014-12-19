@@ -153,7 +153,7 @@ define(
 
           });
         },
-        updateProperties : function(){
+        updateProperties: function() {
           console.log("update properties");
         },
 
@@ -270,7 +270,7 @@ define(
           var that = this;
           socket.emit("set_property_value", this.get("name"), property, value, function(err) {
             if (err) return views.global.notification("error", err);
-            if(cb) cb("ok");
+            if (cb) cb("ok");
           });
         },
 
@@ -352,7 +352,8 @@ define(
 
         addMethod: function(method) {
           var that = this;
-          socket.emit("get_method_description", this.get("name"), method, function(description) {
+          socket.emit("get_method_description", this.get("name"), method, function(err,description) {
+            if(err) return views.global.notification('error', err);
             that.get("methods")[method] = description;
             /* Warned the view that the method has been added */
             that.trigger("add:method", method);

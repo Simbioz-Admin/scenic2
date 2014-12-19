@@ -229,12 +229,20 @@ define(
                 setMethod: function(element) {
                     var that = this,
                         method = $(element.target).attr("id"),
-                        valueMethod = $("[name='" + method + "']").val();
+                        methodArguments = [],
+                        nbArguments = $("[name='" + method + "']").length;
 
-                    if (method && valueMethod) {
-                        this.model.setMethod(method, [valueMethod], function(ok) {});
+                    $.each($("[name='" + method + "']"), function(i, method){
+                        if($(method).val()) methodArguments.push($(method).val());
+                    });
+
+                    console.log(nbArguments, methodArguments.length);
+
+                    if (nbArguments == methodArguments.length) {
+                        this.model.setMethod(method, methodArguments, function(ok) {});
                     } else {
-                        views.global.notification("error", "error with set method value");
+                        console.log('a');
+                        views.global.notification("error", "Missing some arguments of your method");
                     }
                 }
             });

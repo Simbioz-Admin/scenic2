@@ -92,7 +92,7 @@ define(
         connectionForDestination: function(destination, tableType) {
           /* check if the connexion existing between source and destination */
           var that = this;
-          var active = '';
+          var active = null;
           var port = '';
 
 
@@ -111,7 +111,6 @@ define(
 
               _.each(destination.get('connection'), function(connection) {
                 if (that.model.get("path") == connection) {
-                  console.log(connection);
                   active = "active";
                 }
               });
@@ -124,27 +123,30 @@ define(
           if (tableType == "sink" && that.table.get("type") == tableType) {
 
             /* Check if we can create a connexion between shmdata and sink */
-            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink) {
+            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(err, canSink) {
+
               if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
-                if (canSink == "true") {
 
-                  /* Check if already connected */
-                  var shmdata_readers = null;
-                  var shmdatasReaders = destination.get("shmdatasCollection").where({
-                    type: 'reader'
+                /* Check if already connected */
+                var shmdata_readers = null;
+                var shmdatasReaders = destination.get("shmdatasCollection").where({
+                  type: 'reader'
+                });
+
+                if (shmdatasReaders) {
+                  _.each(shmdatasReaders, function(shm) {
+                    if (shm.get('path') == that.model.get("path")) active = "active";
                   });
-
-                  if (shmdatasReaders) {
-                    _.each(shmdatasReaders, function(shm) {
-                      if (shm.get('path') == that.model.get("path")) active = "active";
-                    });
-                  }
+                }
+                console.log(canSink);
+                if (canSink == "true" || active) {
+                  //console.log(that.model.get('path'), canSink);
                   var statusBox = 'box';
                 } else {
                   var statusBox = "box_disabled";
                 }
-                
-                $(that.el).append('<td class="'+statusBox+'' + that.table.get("name") + '" data-destination="' + destinationId  + '"></td>');
+
+                $(that.el).append('<td class="' + statusBox + ' ' + active + '" data-destination="' + destinationId + '"></td>');
 
               }
             });

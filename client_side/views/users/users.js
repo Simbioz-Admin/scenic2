@@ -123,7 +123,7 @@ define(
 
         /*
          * @function loginSip
-         * @description Ask to the server logout to the server SIP
+         * @description Ask to the server login to the server SIP
          */
 
         loginSip: function(e) {
@@ -132,15 +132,24 @@ define(
 
           that.sipInformation = $('#login_sip', this.el).serializeObject();
           that.sipInformation["uri"] = that.sipInformation.name + '@' + that.sipInformation.address;
+
+          that.collection.loginSip(that.sipInformation.address, that.sipInformation.name, that.sipInformation.password, that.sipInformation.port, function(err){
+            if(err) return views.global.notification('error', err);
+            that.render();
+            views.global.notification("valid", "success login server sip");
+            $("#login_sip", this.el).remove();
+          });
+          /*
           if (localStorage["userSip"]) localStorage["userSip"] = null;
           localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
-          socket.emit("sip_login", that.sipInformation, function(err, configSip) {
+          socket.emit("sip_login", that.sipInformation, function(err, configSip){
             if (err) return views.global.notification("error", err);
             that.render();
             views.global.notification("valid", "success login server sip");
             $("#login_sip", this.el).remove();
           });
+          */
         },
 
         /*
@@ -150,19 +159,19 @@ define(
 
         logoutSip: function(e) {
           var that = this;
-          e.preventDefault();
+          //e.preventDefault();
 
-          socket.emit("sip_logout", function(err, confirm) {
-            if (err) return views.global.notification("error", err);
-
+          socket.emit('invoke', 'sipquid', 'unregister',  [], function(err) {
+            if(err) return views.global.notification("error", err);
+            socket.emit('remove', 'sipquid');
             /* if successfully logout we remove all information about users for showing form login */
             $(that.el).html("");
             collections.users.reset();
             that.renderLogin();
 
             views.global.notification("valid", "success logout server sip");
-
           });
+          return;
         },
 
         /*

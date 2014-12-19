@@ -1,9 +1,9 @@
 define(
 
   /** 
-   *	View Global
-   *	Manage interaction with the Destination Model (quiddity)
-   *	@exports Views/Gobal
+   *  View Global
+   *  Manage interaction with the Destination Model (quiddity)
+   *  @exports Views/Gobal
    */
   [
     'underscore',
@@ -19,18 +19,18 @@ define(
 
   function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
     /** 
-     *	@constructor
+     *  @constructor
      *  @requires Underscore
      *  @requires Backbone
-     *	@requires quiddTemplate
-     *	@requires panelInfoTemplate
-     *	@requires confirmationTemplate
+     *  @requires quiddTemplate
+     *  @requires panelInfoTemplate
+     *  @requires confirmationTemplate
      *  @augments module:Backbone.View
      */
 
     var GlobalView = Backbone.View.extend(
       /**
-       *	@lends module: Views/Gobal~GlobalView.prototype
+       *  @lends module: Views/Gobal~GlobalView.prototype
        */
 
       {
@@ -152,7 +152,7 @@ define(
           $("#panelRight").data("quiddName", "");
           /* we unsubscribe to the quiddity */
 
-          if($("#quiddName").val()){
+          if ($("#quiddName").val()) {
             socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.socket.sessionid);
           }
         },
@@ -225,8 +225,8 @@ define(
         },
 
 
-        /* 	Called for all checkbox changed
-         *	To dynamically change its value
+        /*  Called for all checkbox changed
+         *  To dynamically change its value
          */
 
         stateCheckbox: function() {
@@ -248,13 +248,13 @@ define(
         },
 
         /* 
-         *	Called for saving the current state of scenic
+         *  Called for saving the current state of scenic
          */
 
         save: function(e) {
           e.preventDefault();
           var nameFile = $("#name_file").val(),
-          that = this;
+            that = this;
 
           if (nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
             that.notification("error", "the name is not correct (ex : save_202) ");
@@ -269,7 +269,7 @@ define(
         },
 
         /* 
-         *	Called for get files saved on the server
+         *  Called for get files saved on the server
          */
 
         get_save_file: function() {
@@ -288,7 +288,7 @@ define(
         },
 
         /*
-         *	Called for loading the state saved of scenic without the current state
+         *  Called for loading the state saved of scenic without the current state
          */
 
         load_file: function(e) {
@@ -304,6 +304,7 @@ define(
                   collections.quidds.fetch({
                     success: function() {
                       collections.destinationProperties.fetch();
+                      views.users.render();
                     }
                   });
 
@@ -330,11 +331,11 @@ define(
           var that = this;
           if (!this.statePanelLog) {
             $("#log").animate({
-              "right": 0
-            },
-                              function() {
-                                that.statePanelLog = true;
-                              });
+                "right": 0
+              },
+              function() {
+                that.statePanelLog = true;
+              });
           } else {
             $("#log").animate({
               "right": -$("#log").width() - 61
@@ -384,9 +385,9 @@ define(
           $(".tabTable").removeClass("active");
           $(event.target).parent().addClass("active");
           var target = $(event.target).attr('class')
-          // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
-          //   $("#htop").remove();
-          // }
+            // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
+            //   $("#htop").remove();
+            // }
           $(".table").removeClass("active");
           $("#" + table).addClass("active");
         }

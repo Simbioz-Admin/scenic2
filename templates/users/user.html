@@ -1,6 +1,8 @@
 <% if(!itsMe){ %>
 	<div class="actionsOnUser">
 		<% var button = (!in_tab) ? 'add_table' : 'call' %>
+		<% button = (call_status == 'calling') ? 'hangUp' : button; %>
+
 		<div class="action <%=button%> add_destinationSip"></div>
 		<div class="action edit_user"></div>
 	</div>

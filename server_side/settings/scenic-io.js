@@ -110,6 +110,7 @@ define(
                 socket.on("get_info", switcher.quidds.get_info);
                 socket.on("get_properties_description", switcher.quidds.get_properties_description);
                 socket.on("get_methods_description", switcher.quidds.get_methods_description);
+                socket.on("get_method_description", switcher.quidds.get_method_description);
                 socket.on("get_property_description", switcher.quidds.get_property_description);
                 socket.on("get_property_value", switcher.quidds.get_property_value);
                 socket.on("set_property_value", switcher.quidds.set_property_value);
@@ -142,10 +143,7 @@ define(
                 socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
                 socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
                 socket.on("attachShmdataToUser", switcher.sip.attachShmdataToUser);
-                socket.on("callUser", switcher.sip.callUser);
                 socket.on("getListStatus", switcher.sip.getListStatus);
-                socket.on("hangUpUser", switcher.sip.hangUpUser);
-                socket.on("updateUser", switcher.sip.updateUser);
                 socket.on("removeUser", switcher.sip.removeUser);
 
                 //************************* SAVE ****************************//

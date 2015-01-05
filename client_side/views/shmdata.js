@@ -157,7 +157,7 @@ define(
                         $("#info").css({
                             top: element.pageY,
                             left: element.pageX
-                        }).show();
+                        }).draggable().show();
                         $(".panelInfo").draggable({
                             cursor: "move",
                             handle: "#title"

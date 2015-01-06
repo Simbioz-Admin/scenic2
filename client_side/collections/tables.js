@@ -44,7 +44,7 @@ define(
             id :"sink",
             description: "Manage audio device and connexion audio",
             menus: [{
-              name: "source",
+              name: "Source",
               type: "sources"
             }, {
               name: "sink",
@@ -61,7 +61,7 @@ define(
 
           /* Create a table for managing shmdatas transmission throught RTP/SDP  */
           var RTPtransferMatrix = {
-            name: "transfer",
+            name: "Transfer",
             type: "transfer",
             id: "transferRtp",
             description: "manage connexion with destination type host",
@@ -81,7 +81,7 @@ define(
 
           /* Create matrix for manage connection between properties values and midi quiddity */
           var controlMatrix = {
-            name: "control",
+            name: "Control",
             type: "control",
             id: "control",
             description: "Control properties of quiddities with device",

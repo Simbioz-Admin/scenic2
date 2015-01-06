@@ -484,7 +484,7 @@ header
 	width : 50px
 	height : 100%
 	padding-top : ($heightHeader + 50)
-	overflow : hidden
+	//overflow : hidden
 	border : none
 	//background : url(../../images/bgTable.png)
 
@@ -517,6 +517,23 @@ header
 			background : url(../../images/iconeControle.png) no-repeat center center
 		&.sink .content
 			background : url(../../images/iconeSink.png) no-repeat center center
+
+		.name
+			position : absolute
+			line-height: 45px
+			font-size: 14px
+			color : white
+			background : #222
+			left : 45px
+			top : 0
+			padding : 0 20px 0
+			+transition(all 0.3s)
+			+border-radius(0 2px 2px 0)
+			opacity : 0
+		&:hover .name
+			opacity : 1
+
+
 
 	#btn-irc
 		background : url(../../images/bgTable.png)

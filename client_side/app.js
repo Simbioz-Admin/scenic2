@@ -11,6 +11,7 @@ define(
     'underscore',
     'backbone',
     'jquery',
+    'i18n',
     'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
     'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
@@ -20,6 +21,7 @@ define(
     _,
     Backbone,
     $,
+    i18n,
     CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
@@ -48,6 +50,12 @@ define(
     var initialize = function() {
       "use strict";
 
+
+      //init translation
+      i18n.init({ lng: "fr" }).done(function() {
+        $('body').i18n();
+      });
+      
       $("#currentUser").html(config.nameComputer);
 
       //loading the different collections

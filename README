@@ -36,3 +36,12 @@ cd <Scenic2 source dir>
 ./scenic2
 
 Please refer to the documentation: http://code.sat.qc.ca/redmine/projects/scenic2/wiki/Scenic2_en
+
+
+Translation
+-----------
+
+For scan the files after added new translation we need to install 
+
+$ npm install i18next-parse
+$ i18next /path/to/file/or/folder -l fr

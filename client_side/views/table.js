@@ -68,7 +68,7 @@ define(
             }
           });
 
-          btnTable.append("<div class='content'></div>");
+          btnTable.append("<div class='content'><div class='name'>"+this.model.get('name')+"</div></div>");
           $("#panelTables").prepend(btnTable);
 
 

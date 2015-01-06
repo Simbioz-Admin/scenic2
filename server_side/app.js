@@ -11,10 +11,11 @@ define(
         'node_switcher',
         'socket.io',
         'scenicIo',
-        './settings/irc'
+        './settings/irc',
+        './settings/i18n'
     ],
 
-    function(child_process, sys, argv, log, app, config, http, portastic, switcher, socketIo, scenicIo, irc) {
+    function(child_process, sys, argv, log, app, config, http, portastic, switcher, socketIo, scenicIo, irc, i18n) {
 
         /* Check validity of port */
         portastic.test(config.port.scenic, function(err, data) {

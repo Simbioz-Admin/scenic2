@@ -91,7 +91,6 @@ define(
                         quiddName = $("#quiddName").val(),
                         deviceDetected = $("#device").val();
                     /* Ask to the server create a new quiddity with className and name quiddity*/
-                    console.log(socket.socket.sessionid);
                     socket.emit("create", className, quiddName, socket.socket.sessionid, function(err, quiddInfo) {
                         if (err) return views.global.notification('error', err);
                         var model = collections.quidds.create(quiddInfo);

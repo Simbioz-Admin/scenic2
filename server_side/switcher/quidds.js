@@ -1,5 +1,5 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery'],
-  function(config, switcher, log, _, $) {
+define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
+  function(config, switcher, log, _, $, i18n) {
 
 
     var io;
@@ -19,7 +19,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
     function create(className, quiddName, socketId, cb) {
 
-
       if (!cb) cb = socketId; //its not always a user ask for create a quidd
 
       quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
@@ -35,8 +34,11 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         cb(null, quiddInfo);
 
       } else {
-        log.error("failed to create a quiddity class ", className);
-        cb("failed to create " + className + " maybe this name is already used?");
+        var erroMsg = i18n.t("failed to create __quiddName__ maybe this name is already used?", {
+          quiddName: className
+        });
+        log.error(erroMsg);
+        cb(erroMsg);
       }
 
     }
@@ -115,7 +117,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       if (quiddName && property && value) {
         var setProperty = switcher.set_property_value(quiddName, property, String(value));
         if (!setProperty) {
-          var msgError = "failed to set the property " + property + " of " + quiddName;
+          var msgError = i18n.t("failed to set the property __property__ of __quiddName__", {
+            property: property,
+            quiddName: quiddName
+          });
           log.error(msgError);
           return cb(msgError);
         }
@@ -124,7 +129,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
         cb(null);
 
       } else {
-        var msgError = "missing arguments for set property value :",
+        var msgError = i18n.t("missing arguments for set property value "),
           quiddName, property, value;
         log.error(msgError);
         cb(msgError);
@@ -205,7 +210,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     function get_methods_description(quiddName, cb) {
       var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
       if (!methods) {
-        var msg = "failed to get methods description " + quiddName;
+        var msg = i18n.t("failed to get methods description __quiddName__", {
+          quiddName: quiddName
+        });
         cb(msg);
         log.error(msg);
         return;
@@ -220,7 +227,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     function get_method_description(quiddName, method, cb) {
       var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
       if (!descriptionJson) {
-        var msg = "failed to get " + method + " method description" + quiddName;
+        var msg = i18n.t("failed to get __method__ method description __quiddName", {
+          method: method,
+          quiddName: quiddName
+        });
         cb(msg, err);
         log.error(msg);
         return;
@@ -239,12 +249,14 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
           var property_value = switcher.get_property_value(quiddName, property);
         }
       } else {
-        var msg = "failed o get property value (quiddity: " + quiddName + " property: " + property;
+        var msg = i18n.t("failed to get property value (quiddity: __quiddName__ property: __property__", {
+          quiddName: quiddName,
+          property: property
+        });
         cb(msg);
         log.error(msg);
         return;
       }
-      log.debug(property_value);
       cb(null, property_value);
     }
 
@@ -253,11 +265,14 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       var invoke = switcher.invoke(quiddName, method, parameters);
       log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
       if (!invoke) {
-        var msgError = "failed to invoke " + quiddName + " method " + method;
+        var msgError = i18n.t("failed to invoke __quiddName__ method __method__", {
+          quiddName: quiddName,
+          method: method
+        });
         log.error(msgError);
-        return cb(msgError);        
+        return cb(msgError);
       }
-      if(cb) cb(null, invoke);
+      if (cb) cb(null, invoke);
 
       if (method == "remove_udp_stream_to_dest")
         io.sockets.emit("remove_connection", invoke, quiddName, parameters);

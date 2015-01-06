@@ -7,10 +7,11 @@ define(
     './server_side/switcher/receivers',
     'log',
     'underscore',
-    'jquery'
+    'jquery',
+    'i18next'
   ],
 
-  function(config, switcher, sip, quidds, receivers, log, _, $) {
+  function(config, switcher, sip, quidds, receivers, log, _, $, i18n) {
 
     var io;
 
@@ -74,6 +75,7 @@ define(
       /* log of switcher */
 
       switcher.register_log_callback(function(msg) {
+        //var msgT = i18n.t(msg);
         log.switcher(msg);
       });
 

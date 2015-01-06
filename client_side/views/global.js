@@ -14,7 +14,7 @@ define(
     'text!../../templates/panelSaveFile.html',
     'text!../../templates/confirmation.html',
     'text!../../templates/createReceiver.html',
-    'app'
+    'app',
   ],
 
   function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {

@@ -5,9 +5,7 @@ define(
   ],
 
   function(i18n, log) {
-
-
-
+    
     i18n.init({
       lng: "en",
       saveMissing : true,

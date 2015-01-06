@@ -35,6 +35,11 @@ define(
 
     });
 
+    //load file of translation i18next-client
+    app.get('/i18next.min.js', function(re,res){
+      res.sendfile(rootPath + '/node_modules/i18next-client/i18next.min.js');
+    });
+
 
     app.get('/classes_doc/:className?/:type?/:value?', function(req, res) {
 

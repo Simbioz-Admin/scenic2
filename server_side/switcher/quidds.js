@@ -249,7 +249,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
           var property_value = switcher.get_property_value(quiddName, property);
         }
       } else {
-        var msg = i18n.t("failed to get property value (quiddity: __quiddName__ property: __property__", {
+        var msg = i18n.t("failed to get property value (quiddity __quiddName__ -  property __property__", {
           quiddName: quiddName,
           property: property
         });

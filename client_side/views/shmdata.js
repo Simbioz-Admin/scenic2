@@ -146,7 +146,9 @@ define(
         infoShmdata: function(element) {
           var shmdata = this.model.get("path");
           var that = this;
+          console.log("vumeter_(!))" + shmdata + " is this")
           collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
+            console.log("property returned is ", val);
             val = val.replace(/,/g, "<br>");
             var template = _.template(infoTemplate, {
               info: val,

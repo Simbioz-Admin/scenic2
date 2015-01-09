@@ -120,7 +120,6 @@ define(
           log.debug("remove shmdata of", qname);
           var destinations = switcher.get_property_value("dico", "destinations"),
           destinations = JSON.parse(destinations);
-
           _.each(destinations, function(dest) {
             _.each(dest.data_streams, function(stream) {
               log.debug(stream.quiddName, qname);
@@ -222,7 +221,7 @@ define(
               path : pvalue[0].replace(".shmdata.writer.", ""),
               type : 'writer'
             }
-
+            console.log("on-tree-pruned removing Shmdata writer", qname, shmdata);
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
 
@@ -232,7 +231,7 @@ define(
               path : pvalue[0].replace(".shmdata.reader.", ""),
               type : 'reader'
             }
-            
+            console.log("on-tree-pruned removing Shmdata reader", qname, shmdata);
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
         }

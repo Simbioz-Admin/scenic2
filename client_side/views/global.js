@@ -80,6 +80,7 @@ define(
           $(document).keyup(function(e) {
             that.keyboardAction(e);
           });
+	  $(document).tooltip();
 
         },
 

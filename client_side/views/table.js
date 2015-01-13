@@ -63,7 +63,7 @@ define(
           var btnTable = $("<div></div>", {
             text: "",
             class: "tabTable " + this.model.get("type") + " " + active,
-	    title: this.model.get("type"),
+	    title: this.model.get("description"),
             data: {
               id: this.model.get("id"),
             }

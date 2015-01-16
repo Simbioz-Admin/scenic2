@@ -481,6 +481,7 @@ header
 
 #panelTables
 	position : fixed
+	z-index : 1
 	background : #222
 	width : 50px
 	height : 100%
@@ -531,9 +532,10 @@ header
 			+transition(all 0.3s)
 			+border-radius(0 2px 2px 0)
 			opacity : 0
+			display : none
 		&:hover .name
 			opacity : 1
-
+			display : block
 
 
 	#btn-irc

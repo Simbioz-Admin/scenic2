@@ -36,12 +36,10 @@ define(
         template: TemplateUsers,
         listOpen: true,
         events: {
-          //'click h2': 'toggleList',
           'click .logout': 'logoutSip',
           'submit #login_sip': 'loginSip',
           'change #add-user': 'addUser'
         },
-
 
         /*
          * @function initialize
@@ -90,19 +88,6 @@ define(
             that.collection.reset();
             that.collection.fetch();
 
-
-            
-            // that.collection.each(function(user) {
-            //   /* check if user model is of current user scenic */
-            //   if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("name")) {
-            //     new ViewUser({
-            //       model: user
-            //     });
-            //   } else {
-            //     $(".itsMe h3", that.el).html(user.get("sip_url"));
-            //     $(".itsMe .last_message", that.el).html(user.get("status_text"));
-            //   }
-            // });
           });
 
         },
@@ -118,6 +103,9 @@ define(
           $(this.el).append(tpl);
           var loginTpl = _.template(TemplateLoginForm, config);
           $(this.el).append(loginTpl);
+          
+          //translation
+          $(this.el).i18n();
         },
 
 
@@ -139,17 +127,7 @@ define(
             views.global.notification("valid", "success login server sip");
             $("#login_sip", this.el).remove();
           });
-          /*
-          if (localStorage["userSip"]) localStorage["userSip"] = null;
-          localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
-          socket.emit("sip_login", that.sipInformation, function(err, configSip){
-            if (err) return views.global.notification("error", err);
-            that.render();
-            views.global.notification("valid", "success login server sip");
-            $("#login_sip", this.el).remove();
-          });
-          */
         },
 
         /*

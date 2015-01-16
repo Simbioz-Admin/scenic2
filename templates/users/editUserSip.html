@@ -4,7 +4,7 @@
 <form id="form-user"  onsubmit="return(false)">
 
 	<% if(!destination.get('itsMe')){ %>
-		<h3 class="info" title="" >Name user</h3>
+		<h3 class="info" title="" data-i18n>Username</h3>
 		<input type="text" id="name" value="<%=destination.get('name')%>" />
 	<% }else{  %>
 		<input type="hidden" id="name" value="<%=destination.get('name')%>" />
@@ -27,6 +27,6 @@
 	<input type="submit" class="btn btn-large" value="Save"/><br>
 	
 	<% if(!destination.get('itsMe')){ %>
-		<button class="remove">Remove user</button>
+		<button class="remove" data-i18n>Remove user</button>
 	<% } %>
 </form>

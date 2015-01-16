@@ -60,7 +60,7 @@ require([
 ], function(app, launch, util, socket, CollectionUsers  ) {
 
     var socket = io.connect();
-
+    
     //recovery config information from the server
     socket.emit("getConfig", function(configServer) {
         config = configServer;

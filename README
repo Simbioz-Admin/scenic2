@@ -44,4 +44,10 @@ Translation
 For scan the files after added new translation we need to install 
 
 $ npm install i18next-parse
-$ i18next /path/to/file/or/folder -l fr
+$ i18next -l fr -r --directoryFilter '!node_modules, !.git, !assets' -f '$.t, i18n.t'
+
+For translation in client side we have to differente method 
+1. in jquery
+2. Inside a template, add 'data-i18n' inside the balise containing the term to translate for translate a form value : data-i18n="value"
+
+In server side we use directly the function i18n 

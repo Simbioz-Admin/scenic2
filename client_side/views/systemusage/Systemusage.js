@@ -56,6 +56,7 @@ define(
           $("#menu_header").after(this.el);
           var template = _.template(previewUsageTemplate);
           $(this.el).html(template);
+          $(this.el).i18n();
 
         },
 

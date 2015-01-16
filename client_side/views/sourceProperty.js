@@ -89,6 +89,7 @@
                             });
                             // $(propertyTpl).attr("data-propertyname", property.name);
                             $(".shmdatas", that.el).append(propertyTpl);
+                            $(that.el).i18n();
                         }
                     });
                    

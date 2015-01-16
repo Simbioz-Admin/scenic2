@@ -136,6 +136,9 @@ define(
                             }));
                         });
                     }
+
+                    //translation
+                    $(this.el).i18n();
                 },
 
 

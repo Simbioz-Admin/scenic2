@@ -51,7 +51,6 @@ define(
          */
         initialize: function() {
 
-
           this.model.on("trigger:menu", this.getClasses, this);
           this.model.on("addCategoryFilter", this.addCategoryFilter, this);
           this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
@@ -71,7 +70,6 @@ define(
           btnTable.append("<div class='content'><div class='name'>"+this.model.get('name')+"</div></div>");
           $("#panelTables").prepend(btnTable);
 
-
           /* generate the table */
           var template = _.template(TemplateTable, {
             type: this.model.get("type"),
@@ -85,7 +83,8 @@ define(
 
           /* add to the default panel */
           $("#panelLeft").append(this.el);
-
+          //translation
+          $(this.el).i18n();
 
         },
 
@@ -116,6 +115,8 @@ define(
 
           $("#listSources", this.el).remove();
           $(".table.active [data-type='" + shmdataType + "']").after(template);
+          console.log(template);
+          $('#listSources',this.el).i18n();
 
           /* here we listen select for call views.quidds.defineName */
           $("#subMenu").menu({

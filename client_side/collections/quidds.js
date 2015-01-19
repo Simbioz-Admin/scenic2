@@ -75,7 +75,7 @@ define(
 
           /* Event called when a new shmdata is added */
           socket.on('addShmdata', function(qname, shmdata) {
-            console.log("Creating shdata", qname,' ', shmdata)
+            console.log("Creating shmdata", qname,' ', shmdata)
             that.addShmdata(qname, shmdata);
           });
           

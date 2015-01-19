@@ -149,7 +149,7 @@ define(
           console.log("vumeter_(!))" + shmdata + " is this")
           collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
             console.log("property returned is ", val);
-            val = val.replace(/,/g, "<br>");
+            val = val.replace(/,/g, "\n");
             var template = _.template(infoTemplate, {
               info: val,
               shmdata: shmdata

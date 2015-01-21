@@ -84,9 +84,11 @@ define(
 
                         //If the shmdata is a type reader (connection) we refresh shmdata source
                         if(shmdata.type == 'reader'){
-                            var quiddSource = shmdata.path.split('_')[2];
-                            quidd = collections.quidds.get(quiddSource);
-                            quidd.trigger("updateConnexions");
+                            //var quiddSource = shmdata.path.split('_')[2];
+                            that.findQuiddByShmdata(shmdata.path, function(quidd){
+                                quidd.trigger("updateConnexions");
+                            });
+                            //quidd = collections.quidds.get(quiddSource);
                         }
 
                         var quiddity = that.get(qname);
@@ -234,10 +236,12 @@ define(
                         }
 
                         if(shmdata.type == 'reader'){
-                            console.log(shmdata.path);
+                            console.log(quiddName, shmdata.path);
                             var quiddSource = shmdata.path.split('_')[2];
-                            quidd = collections.quidds.get(quiddSource);
-                            quidd.trigger("updateConnexions");
+                            this.findQuiddByShmdata(shmdata.path, function(quidd){
+                                quidd.trigger("updateConnexions");
+                            });
+                            //quidd = collections.quidds.get(quiddSource);
                         }
                     }
                 },
@@ -266,6 +270,19 @@ define(
                     });
 
                     return quidds;
+                },
+
+                findQuiddByShmdata: function(shmdataPath, cb){
+                    collections.quidds.each(function(quidd){
+                        //console.log(quidd.get('name'));
+                        var shmdatasCollection = quidd.get("shmdatasCollection");
+                        var shm = shmdatasCollection.get(shmdataPath);
+                        if(shm){
+                            if(shm.get('type') === 'writer'){
+                                cb(quidd);
+                            }
+                        }
+                    });
                 }
 
             });

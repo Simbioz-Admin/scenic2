@@ -1,273 +1,274 @@
 define(
 
-  /** 
-   *	A module for creating collection of quiddities
-   *	@exports collections/quidds
-   */
-
-  [
-    'underscore',
-    'backbone',
-    'models/quidd',
-  ],
-
-  function(_, Backbone, QuiddModel) {
-
     /** 
-     *	@constructor
-     *  @requires Underscore
-     *  @requires Backbone
-     *	@requires QuiddModel
-     *  @augments module:Backbone.Collection
+     *	A module for creating collection of quiddities
+     *	@exports collections/quidds
      */
 
-    var QuiddsCollection = Backbone.Collection.extend(
+    [
+        'underscore',
+        'backbone',
+        'models/quidd',
+    ],
 
-      /**
-       *	@lends module:collections/quidds~QuiddsCollection.prototype
-       */
+    function(_, Backbone, QuiddModel) {
 
-      {
-        model: QuiddModel,
-        url: '/quidds/',
-        listEncoder: [],
-        parse: function(results, xhr) {
-          return results;
-        },
-
-
-        /** Initialization of the quidds Collection 
-         *	We declare all events for receive information about quiddities
+        /** 
+         *	@constructor
+         *  @requires Underscore
+         *  @requires Backbone
+         *	@requires QuiddModel
+         *  @augments module:Backbone.Collection
          */
 
-        initialize: function() {
-          var that = this;
+        var QuiddsCollection = Backbone.Collection.extend(
 
-          /** Event called when the server has created a quiddity */
-          socket.on("create", function(quiddInfo, socketId) {
-            that.create(quiddInfo);
-          });
+            /**
+             *	@lends module:collections/quidds~QuiddsCollection.prototype
+             */
 
-          /** Event called when the server has removed a quiddity */
-          socket.on("remove", function(quidd) {
-            that.delete(quidd);
-            console.log("remove", quidd);
-          });
-
-          /** Event called when a signal is emitted by switcher add/remove a method or property 
-           *	This event is called only if the user has the edit panel that quiddity is open
-           */
-          socket.on("signals_properties_info", function(prop, quiddName, value) {
-            that.signalsPropertiesInfo(prop, quiddName, value);
-          });
+            {
+                model: QuiddModel,
+                url: '/quidds/',
+                listEncoder: [],
+                parse: function(results, xhr) {
+                    return results;
+                },
 
 
-          /** Event called when the value of a property changes */
-          socket.on("signals_properties_value", function(quiddName, prop, value) {
-            that.signalsPropertiesUpdate(quiddName, prop, value);
-          });
+                /** Initialization of the quidds Collection 
+                 *	We declare all events for receive information about quiddities
+                 */
 
-          /** Event called when the shmdatas of specific quidd is created */
-          socket.on("updateShmdatas", function(qname, shmdatas) {
-            that.updateShmdatas(qname, shmdatas);
-          });
+                initialize: function() {
+                    var that = this;
 
-          /* Event called when a new shmdata is added */
-          socket.on('addShmdata', function(qname, shmdata) {
-            console.log("Creating shmdata", qname,' ', shmdata)
-            that.addShmdata(qname, shmdata);
-          });
-          
-          socket.on('removeShmdata', function(qname, shmdata){
-            console.log('removeShmdata', qname, shmdata);
+                    /** Event called when the server has created a quiddity */
+                    socket.on("create", function(quiddInfo, socketId) {
+                        that.create(quiddInfo);
+                    });
 
-            //If the shmdata is a type reader (connection) we refresh shmdata source
-            if(shmdata.type == 'reader'){
-              var quiddSource = shmdata.path.split('_')[2];
-              quidd = collections.quidds.get(quiddSource);
-              quidd.trigger("updateConnexions");
-            }
+                    /** Event called when the server has removed a quiddity */
+                    socket.on("remove", function(quidd) {
+                        that.delete(quidd);
+                        console.log("remove", quidd);
+                    });
 
-            var quiddity = that.get(qname);
-            var shmdatas = quiddity.get("shmdatasCollection");
-            var shmdata = shmdatas.get(shmdata.path);
-            shmdata.trigger('destroy', shmdata);
-            
-
-            // .delete();
-          });
-
-          /** Event called when the shmdatas readers is updated */
-          socket.on("update_shmdatas_readers", function(name, shmdatas) {
-            /* we parse connection for add or remove */
-            // var shmdatas = $.parseJSON(shmdatas);
-            $("[data-destination='" + name + "']").each(function(index, box) {
-              $(box).removeClass("active");
-              var path = $(box).parent().data("path");
-              _.each(shmdatas, function(shm, name) {
-                if (name == path) $(box).addClass("active");
-              });
-            });
-          });
-        },
+                    /** Event called when a signal is emitted by switcher add/remove a method or property 
+                     *	This event is called only if the user has the edit panel that quiddity is open
+                     */
+                    socket.on("signals_properties_info", function(prop, quiddName, value) {
+                        that.signalsPropertiesInfo(prop, quiddName, value);
+                    });
 
 
-        /**
-         *	Delete a model quiddity
-         *	This function is executed on event remove emitted by the server when switcher remove a quiddity
-         *	@param {string} quiddName The name of the quiddity (id) to remove
-         */
+                    /** Event called when the value of a property changes */
+                    socket.on("signals_properties_value", function(quiddName, prop, value) {
+                        that.signalsPropertiesUpdate(quiddName, prop, value);
+                    });
 
-        delete: function(quiddInfo) {
-          var model = this.get(quiddInfo);
-          if (model) {
-            model.trigger('destroy', model);
-            console.log(model);
-            if (quiddInfo.class != "sip") {
-              views.global.notification("info", quiddInfo + "  has deleted");
-            }
-          }
-        },
+                    /** Event called when the shmdatas of specific quidd is created */
+                    socket.on("updateShmdatas", function(qname, shmdatas) {
+                        console.log('update shmdatas', qname);
+                        that.updateShmdatas(qname, shmdatas);
+                    });
+
+                    /* Event called when a new shmdata is added */
+                    socket.on('addShmdata', function(qname, shmdata) {
+                        console.log('add shmdata', qname);
+                        that.addShmdata(qname, shmdata);
+                    });
+                    
+                    socket.on('removeShmdata', function(qname, shmdata){
+                        console.log('removeShmdata', qname);
+
+                        //If the shmdata is a type reader (connection) we refresh shmdata source
+                        if(shmdata.type == 'reader'){
+                            var quiddSource = shmdata.path.split('_')[2];
+                            quidd = collections.quidds.get(quiddSource);
+                            quidd.trigger("updateConnexions");
+                        }
+
+                        var quiddity = that.get(qname);
+                        var shmdatas = quiddity.get("shmdatasCollection");
+                        var shmdata = shmdatas.get(shmdata.path);
+                        shmdata.trigger('destroy', shmdata);
+
+                        // .delete();
+                    });
+
+                    /** Event called when the shmdatas readers is updated */
+                    socket.on("update_shmdatas_readers", function(name, shmdatas) {
+                        /* we parse connection for add or remove */
+                        // var shmdatas = $.parseJSON(shmdatas);
+                        $("[data-destination='" + name + "']").each(function(index, box) {
+                            $(box).removeClass("active");
+                            var path = $(box).parent().data("path");
+                            _.each(shmdatas, function(shm, name) {
+                                if (name == path) $(box).addClass("active");
+                            });
+                        });
+                    });
+                },
 
 
-        /**
-         *	create a model quiddity and add to the collection Quidds in client side
-         *	This function is executed on event create emitted by the server when switcher create a quiddity
-         *	@param {object} quiddInfo object json with information about the quiddity (name, class, etc...)
-         */
+                /**
+                 *	Delete a model quiddity
+                 *	This function is executed on event remove emitted by the server when switcher remove a quiddity
+                 *	@param {string} quiddName The name of the quiddity (id) to remove
+                 */
 
-        create: function(quiddInfo) {
-          var model = new QuiddModel(quiddInfo);
-          this.add(model);
-          if (quiddInfo.class != "sip") {
-            views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
-          }
-          return model;
-        },
+                delete: function(quiddInfo) {
+                    var model = this.get(quiddInfo);
+                    if (model) {
+                        model.trigger('destroy', model);
+                        console.log(model);
+                        if (quiddInfo.class != "sip") {
+                            views.global.notification("info", quiddInfo + "  has deleted");
+                        }
+                    }
+                },
 
-        /**
-         *	add/remove property or method of a specific quiddity
-         *	This function is executed on event signals properties info emitted by the server when switcher add/remove method or property
-         *	@param {string} prop The type of event on property or method
-         *	@param {string} quiddName The name of the quiddity
-         *	@param {string}	name The name of the property or method
-         */
 
-        signalsPropertiesInfo: function(prop, quiddName, name) {
-          var model = collections.quidds.get(quiddName);
-          if (prop == "on-property-removed") {
-            model.removeProperty(name[0]);
-          }
-          if (prop == "on-property-added") {
-            model.addProperty(name[0]);
-          }
-          if (prop == "on-method-added") {
+                /**
+                 *	create a model quiddity and add to the collection Quidds in client side
+                 *	This function is executed on event create emitted by the server when switcher create a quiddity
+                 *	@param {object} quiddInfo object json with information about the quiddity (name, class, etc...)
+                 */
+
+                create: function(quiddInfo) {
+                    var model = new QuiddModel(quiddInfo);
+                    this.add(model);
+                    if (quiddInfo.class != "sip") {
+                        views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
+                    }
+                    return model;
+                },
+
+                /**
+                 *	add/remove property or method of a specific quiddity
+                 *	This function is executed on event signals properties info emitted by the server when switcher add/remove method or property
+                 *	@param {string} prop The type of event on property or method
+                 *	@param {string} quiddName The name of the quiddity
+                 *	@param {string}	name The name of the property or method
+                 */
+
+                signalsPropertiesInfo: function(prop, quiddName, name) {
+                    var model = collections.quidds.get(quiddName);
+                    if (prop == "on-property-removed") {
+                        model.removeProperty(name[0]);
+                    }
+                    if (prop == "on-property-added") {
+                        model.addProperty(name[0]);
+                    }
+                    if (prop == "on-method-added") {
                         console.log('on method added', name[0]);
-            model.addMethod(name[0]);
-          }
-          if (prop == "on-method-removed") {
-            model.removeMethod(name[0]);
-          }
-        },
+                        model.addMethod(name[0]);
+                    }
+                    if (prop == "on-method-removed") {
+                        model.removeMethod(name[0]);
+                    }
+                },
 
 
-        /**
-         *	Update the property value of a specific quiddity
-         *	This function is executed on socket event signals properties update emitted by the server when switcher update a property value.
-         *	@param {string} prop The type of event on property or method
-         *	@param {string} quiddName The name of the quiddity
-         *	@param {string}	name The name of the property or method
-         *  @TODO Manage State shmdata and preview in specific QUiditty for fakeSink
-         */
+                /**
+                 *	Update the property value of a specific quiddity
+                 *	This function is executed on socket event signals properties update emitted by the server when switcher update a property value.
+                 *	@param {string} prop The type of event on property or method
+                 *	@param {string} quiddName The name of the quiddity
+                 *	@param {string}	name The name of the property or method
+                 *  @TODO Manage State shmdata and preview in specific QUiditty for fakeSink
+                 */
 
-        signalsPropertiesUpdate: function(quiddName, prop, value) {
+                signalsPropertiesUpdate: function(quiddName, prop, value) {
 
-          /** if it's byte-rate we update directly the status of viewmeter */
-          if (prop == "byte-rate") {
+                    /** if it's byte-rate we update directly the status of viewmeter */
+                    if (prop == "byte-rate") {
+                        var quiddNameArray = quiddName.split("_"),
+                            quiddNameFakeSink = quiddName,
+                            shmdata = quiddName.replace("vumeter_", "");
 
-            var quiddNameArray = quiddName.split("_"),
-            quiddNameFakeSink = quiddName,
-            shmdata = quiddName.replace("vumeter_", "");
+                        quiddName = quiddNameArray[quiddNameArray.length - 2];
 
-            quiddName = quiddNameArray[quiddNameArray.length - 2];
-            if(quiddName){
-              var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
-              var shmdataModel = shmdatasCollection.get(shmdata);
-              if (shmdataModel) {
-                shmdataModel.set({
-                  "byteRate": value
-                });
-              }
-            }
-            // views.quidds.updateVuMeter(quiddName, name);
+                        if(quiddName &&  collections.quidds.get(quiddName)){
+                            var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
+                            var shmdataModel = shmdatasCollection.get(shmdata);
+                            if (shmdataModel) {
+                                shmdataModel.set({
+                                    "byteRate": value
+                                });
+                            }
+                            //}
+                        }
+                        // views.quidds.updateVuMeter(quiddName, name);
 
-          } else {
-            var model = collections.quidds.get(quiddName);
-            if (model) {
-              var properties = model.get("properties");
-              if (properties.length == 0) {
-                model.set({
-                  properties: []
-                });
-                model.get('properties').push({
-                  name: prop,
-                  value: value
-                });
+                    } else {
+                        var model = collections.quidds.get(quiddName);
+                        if (model) {
+                            var properties = model.get("properties");
+                            if (properties.length == 0) {
+                                model.set({
+                                    properties: []
+                                });
+                                model.get('properties').push({
+                                    name: prop,
+                                    value: value
+                                });
 
-              } else {
-                model.get("properties")[prop]["default value"] = value;
-              }
+                            } else {
+                                model.get("properties")[prop]["default value"] = value;
+                            }
 
-              model.trigger("update:value", prop);
-            }
-          }
-        },
+                            model.trigger("update:value", prop);
+                        }
+                    }
+                },
 
-        addShmdata: function(quiddName, shmdata) {
-          var quidd = this.get(quiddName);
-          if (quidd) {
-            var shmdataCollection = quidd.get("shmdatasCollection");
-            shmdataCollection.add(shmdata);
-            if(shmdata.type == 'writer'){
-              quidd.trigger("updateShmdatas");
-            }
+                addShmdata: function(quiddName, shmdata) {
+                    var quidd = this.get(quiddName);
+                    if (quidd) {
+                        var shmdataCollection = quidd.get("shmdatasCollection");
+                        shmdataCollection.add(shmdata);
+                        if(shmdata.type == 'writer'){
+                            quidd.trigger("updateShmdatas");
+                        }
 
-            if(shmdata.type == 'reader'){
-              var quiddSource = shmdata.path.split('_')[2];
-              quidd = collections.quidds.get(quiddSource);
-              quidd.trigger("updateConnexions");
-            }
-          }
-        },
+                        if(shmdata.type == 'reader'){
+                            console.log(shmdata.path);
+                            var quiddSource = shmdata.path.split('_')[2];
+                            quidd = collections.quidds.get(quiddSource);
+                            quidd.trigger("updateConnexions");
+                        }
+                    }
+                },
 
-        /**
-         *	Ask to the server switcher the property value of a specific quiddity
-         *	@param {string} Name of the quiddity
-         *	@param {string} property The name of the property
-         *	@param {function} callback callback to send the value
-         */
+                /**
+                 *	Ask to the server switcher the property value of a specific quiddity
+                 *	@param {string} Name of the quiddity
+                 *	@param {string} property The name of the property
+                 *	@param {function} callback callback to send the value
+                 */
 
-        getPropertyValue: function(quiddName, property, callback) {
-          console.log("called getPropertyValue on " + quiddName + " property: " + property)
-          socket.emit("get_property_value", quiddName, property, function(err, propertyValue) {
-            if (err) return views.global.notification('error', err);
-            callback(propertyValue);
-          });
-        },
+                getPropertyValue: function(quiddName, property, callback) {
+                    socket.emit("get_property_value", quiddName, property, function(err, propertyValue) {
+                        if (err) return views.global.notification('error', err);
+                        callback(propertyValue);
+                    });
+                },
 
-        /**
-         *	Filter for get specific quidds of this collection
-         */
-        SelectQuidds: function(category) {
+                /**
+                 *	Filter for get specific quidds of this collection
+                 */
+                SelectQuidds: function(category) {
 
-          var quidds = this.filter(function(quidd) {
-            return quidd.get("category") == category;
-          });
+                    var quidds = this.filter(function(quidd) {
+                        return quidd.get("category") == category;
+                    });
 
-          return quidds;
-        }
+                    return quidds;
+                }
 
-      });
+            });
 
-    return QuiddsCollection;
-  })
+        return QuiddsCollection;
+    })

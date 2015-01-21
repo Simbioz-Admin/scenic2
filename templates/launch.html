@@ -5,23 +5,23 @@
     <form id="form-config">
 
       <div id="accordion">
-        <h3>Configuration SIP</h3>
+        <h3 ><span data-i18n>Configuration SIP</span></h3>
         <div id='loginSip'>
 
         </div>
-        <h3>Scenic2 Server configuration</h3>
+        <h3 ><span data-i18n>Scenic2 Server configuration</span></h3>
         <div>
           <div class="identification">
             <label>Identification</label>
             <input type="text" name="username" value="<%=username%>" autofocus="autofocus">
             <input type="password" name="pass" placeholder="password">
             <input type="password" name="confirmPass" placeholder="confirm password">
-            <div class="info">* server access is unsecured without password</div>
+            <div class="info" data-i18n>* server access is unsecured without password</div>
           </div>
 
           <div class="parameters">
             <div class="half">
-              <label>Port Soap</label>
+              <label data-i18n>Port SOAP</label>
               <input type="text" name="portSoap" value="<%=soap%>">
             </div>
             <div class="half"></div>

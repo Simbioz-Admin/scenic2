@@ -9,8 +9,9 @@ define(
   function(i18n, log, switcher, _) {
 
     i18n.init({
-      lng: "en",
+      lng: "fr",
       saveMissing: true,
+      ns : 'translation',
       resGetPath: 'locales/__lng__/__ns__.json',
       resSetPath: 'locales/__lng__/__ns__.json',
       fallbackLng: 'fr',

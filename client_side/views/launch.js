@@ -37,12 +37,22 @@ define(
         el: 'body',
         events: {
           "submit  #form-config": "verification",
-          "submit  #login_sip": "verification"
+          "keyup .inputSip": "verification",
         },
         initialize: function() {
           this.render();
         },
         render: function() {
+          
+          //init translation
+          i18n.init({
+            lng: "fr",
+            ns: 'translation'
+          }).done(function() {
+            $('body').i18n();
+          });
+
+
           var template = _.template(templateLaunch, {
             username: config.nameComputer,
             soap: config.port.soap,
@@ -50,6 +60,7 @@ define(
           });
           $(this.el).append(template);
           $("body").append(this.el);
+          $(this.el).i18n();
           var tplLoginSip = _.template(TemplateLoginForm, config);
           $('#loginSip', this.el).append(tplLoginSip);
           //Same form use for window user in scenic2 we remove submit and title
@@ -63,6 +74,11 @@ define(
         /* On click #submitParam we check parameters */
 
         verification: function(e) {
+
+          //impossible to trig the form sip with submit. Instead we listen keyup on 
+          //field SIP and verification is used only if its the enter key
+          if (e.which &&  e.which !== 13 ) return;  
+
           var dataFormConfig = $('#form-config').serializeObject(),
             dataFormSip = $('#login_sip').serializeObject(),
             verificationOk = true,
@@ -71,7 +87,7 @@ define(
           if (dataFormSip.name && dataFormSip.password) {
             console.log("ask connect server SIP", dataFormSip);
             collections.users.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
-              if(err) return console.error(err);
+              if (err) return console.error(err);
             });
           }
 

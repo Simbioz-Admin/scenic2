@@ -33,7 +33,7 @@ define(
      * @requires CollectionTables
      * @requires CollectionClassesDoc
      * @requires CollectionDestinationsRtp
-     * @requires CollectionQuidds
+     * @requires CollectionQuidds 
      * @requires CollectionDestinationsProperties
      * @requires CollectionLoggers
      * @requires CollectionIrcs
@@ -52,10 +52,13 @@ define(
 
 
       //init translation
-      i18n.init({ lng: "fr" }).done(function() {
-        $('body').i18n();
+      i18n.init({
+        lng: "fr",
+        ns: 'translation'
+      }).done(function() {
+          $('body').i18n();
       });
-      
+
       $("#currentUser").html(config.nameComputer);
 
       //loading the different collections

@@ -69,16 +69,18 @@ define(
 
                     /** Event called when the shmdatas of specific quidd is created */
                     socket.on("updateShmdatas", function(qname, shmdatas) {
+                        console.log('update shmdatas', qname);
                         that.updateShmdatas(qname, shmdatas);
                     });
 
                     /* Event called when a new shmdata is added */
                     socket.on('addShmdata', function(qname, shmdata) {
+                        console.log('add shmdata', qname);
                         that.addShmdata(qname, shmdata);
                     });
                     
                     socket.on('removeShmdata', function(qname, shmdata){
-                        console.log('removeShmdata', qname, shmdata);
+                        console.log('removeShmdata', qname);
 
                         //If the shmdata is a type reader (connection) we refresh shmdata source
                         if(shmdata.type == 'reader'){
@@ -182,13 +184,13 @@ define(
 
                     /** if it's byte-rate we update directly the status of viewmeter */
                     if (prop == "byte-rate") {
-
                         var quiddNameArray = quiddName.split("_"),
                             quiddNameFakeSink = quiddName,
                             shmdata = quiddName.replace("vumeter_", "");
 
                         quiddName = quiddNameArray[quiddNameArray.length - 2];
-                        if(quiddName){
+
+                        if(quiddName &&  collections.quidds.get(quiddName)){
                             var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");
                             var shmdataModel = shmdatasCollection.get(shmdata);
                             if (shmdataModel) {
@@ -196,6 +198,7 @@ define(
                                     "byteRate": value
                                 });
                             }
+                            //}
                         }
                         // views.quidds.updateVuMeter(quiddName, name);
 
@@ -231,6 +234,7 @@ define(
                         }
 
                         if(shmdata.type == 'reader'){
+                            console.log(shmdata.path);
                             var quiddSource = shmdata.path.split('_')[2];
                             quidd = collections.quidds.get(quiddSource);
                             quidd.trigger("updateConnexions");

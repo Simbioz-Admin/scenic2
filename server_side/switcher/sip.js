@@ -46,7 +46,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
                 return cb(msgError);
             }
             switcher.subscribe_to_property(quiddSipName, 'sip-registration');
-            console.log("REGISTRATION_SIP 1", switcher.get_property_value(quiddSipName, "sip-registration"));
             switcher.invoke(quiddSipName, "unregister", []);
 
             /* Define port for Sip Server */
@@ -60,7 +59,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
             var register = switcher.invoke(quiddSipName, "register", [name + "@" + address, decrypted]);
             if (!register) return log.error("Error when try login to the server SIP");
-            console.log("REGISTRATION_SIP 2", switcher.get_property_value(quiddSipName, "sip-registration"));
 
             /* subscribe to the modification on this quiddity */
             switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");

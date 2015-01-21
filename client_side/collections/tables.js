@@ -51,7 +51,7 @@ define(
               type: "destinations"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "te#xturetomeshsink", "pcldetectsink", "meshmergesink"]
+              select: ["sip","src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
             },
             destinations: {
               select: ["sink"],

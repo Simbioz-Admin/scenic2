@@ -115,7 +115,6 @@ define(
 
           $("#listSources", this.el).remove();
           $(".table.active [data-type='" + shmdataType + "']").after(template);
-          console.log(template);
           $('#listSources',this.el).i18n();
 
           /* here we listen select for call views.quidds.defineName */

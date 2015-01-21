@@ -2,12 +2,14 @@
   <% if(type == "classes"){ %>
   <% _.each(classes, function(category, name){ %>
   <li>
+    <% var name = $.t(name); %>
     <a href="#"><%=name%></a>
     <ul data-quiddname="<%=name%>">
       <% _.each(category, function(clas){ %>
       <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
       <li class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" >
-	<a href="#"><%=clas["long name"]%></a>
+        <% var longName = $.t(clas["long name"]); %>
+	     <a href="#"><%=longName%></a>
       </li>
       <% }); %>
     </ul>

@@ -38,6 +38,7 @@ define(
         events: {
           "menuselect .createQuidd a": "defineName",
           "click #create": "create",
+          "mouseup #quiddName" : "stopEvent"
         },
         delayAutoDetect: false,
 
@@ -77,10 +78,17 @@ define(
 
             $("#panelRight .content").html(template);
             views.global.openPanel();
+            //timeout wait for loading correctly field and focusing
+            setTimeout(function(){
+              $("#panelRight .content #quiddName").focus();
+            },1);
 
           }
         },
 
+        stopEvent : function(e){
+          e.preventDefault();
+        },
 
         /* Called after the user define a name for create a quiddity */
 

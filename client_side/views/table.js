@@ -38,7 +38,7 @@ define(
           "click #create-quiddsProperties": "getMenuProperties",
           "click #create-midi": "getMenuMidiDevice",
           "click .contextMenu": 'getClasses',
-          "mouseleave #subMenu": 'leaveSubMenu',
+          "mouseleave #sourceMenu": 'leaveSubMenu',
           "click body.scenic2": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -95,7 +95,7 @@ define(
          * The list of quiddity source is get when source word appear in name Class quiddity
          */
         getClasses: function(e) {
-          $("#subMenu").remove();
+          $("#sourceMenu").remove();
           var shmdataType = e.target ? $(e.target).data("type") : e;
 
           /* get the quiddity classes authorized on this table */
@@ -117,24 +117,49 @@ define(
           $(".table.active [data-type='" + shmdataType + "']").after(template);
           $('#listSources',this.el).i18n();
 
-          /* here we listen select for call views.quidds.defineName */
-          $("#subMenu").menu({
-            delay: 1500,
+          // /* here we listen select for call views.quidds.defineName */
+          // $("#subMenu").menu({
+          //   // items: "> :not(.ui-widget-header)",
+          //   //delay: 3500,
+          //   // position: {
+          //   //   at: "right-2 top-2"
+          //   // }
+          // }, {
+          //   select: function(event, ui) {
+          //     console.log("menu. item. selected", ui);
+          //     // event.preventDefault();
+          //     event.stopPropagation();
+          //     views.quidds.defineName(ui.item);
+          //   }
+          // }).focus();
+
+          $("#sourceMenu").accordion({
             // position: {
             //   at: "right-2 top-2"
             // }
-          }, {
-            select: function(event, ui) {
-              // event.preventDefault();
+            collapsible: true,
+            active: false
+            });
+          // $(".subMenu").menu({
+          //   select: function(event, ui) {
+          //     console.log("menu. item. selected", ui);
+          //     // event.preventDefault();
+          //     event.stopPropagation();
+          //     views.quidds.defineName(ui.item);
+          //   }
+          // });
+          $(".createQuidd").button()
+            .click(function(){
               event.stopPropagation();
-              views.quidds.defineName(ui.item);
-            }
-          }).focus();
+              views.quidds.defineName($(this));
+            });
 
         },
 
         leaveSubMenu: function(e) {
-          $("#subMenu").remove();
+          console.log("leave submenu");
+          $("#sourceMenu").remove();
+          // $("#subMenu").remove();
         },
 
         toggle_connection: function(e) {

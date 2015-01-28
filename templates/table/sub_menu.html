@@ -1,19 +1,39 @@
-<ul id="subMenu" >
+<div id="sourceMenu" >
   <% if(type == "classes"){ %>
   <% _.each(classes, function(category, name){ %>
-  <li>
-    <% var name = $.t(name); %>
-    <a href="#"><%=name%></a>
-    <ul data-quiddname="<%=name%>">
-      <% _.each(category, function(clas){ %>
-      <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
-      <li class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" >
-        <% var longName = $.t(clas["long name"]); %>
-	     <a href="#"><%=longName%></a>
-      </li>
+  <h3 class="menuHeading">
+    <%=name%>
+  </h3>
+  <div>
+    <% _.each(category, function(clas){ %>
+    <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
+    <button class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" data-quiddname="<%=clas['long name']%>">
+      <%=clas["long name"]%></button>
+<% }); %>
+  </div>
+  <% }) %>
+  <% } %>
+</div>
+<!--
+<div id="sourceMenu" >
+  <% if(type == "classes"){ %>
+  <% _.each(classes, function(category, name){ %>
+  <h3 class="menuHeading">
+    <%=name%>
+  </h3>
+    <div>
+      <ul id="subMenu">
+        <li>
+          <% _.each(category, function(clas){ %>
+          <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
+          <ul data-quiddname="<%=name%>">
+            <ul class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" >
+	      <a href="#"><%=clas["long name"]%></a>
+            </ul>
+          </ul>
+        </li>
       <% }); %>
-    </ul>
-  </li>
+    </div>
   <% }); %>
   <% } %>
 
@@ -21,6 +41,7 @@
 
   <% _.each(menus, function(menu, name){ %>
   <li>
+    boo
     <a href="#"><%=name%></a>
     <ul  data-quiddname="<%=name%>">
       <% _.each(menu, function(property){ %>
@@ -33,5 +54,6 @@
   <% }); %>
   
   <% } %>
-
 </ul>
+</div>
+-->

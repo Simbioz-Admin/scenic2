@@ -326,6 +326,17 @@ header
         border : 1px solid #999
 
 .headerMenu
+  >div
+    height: auto
+    color: white
+    a
+      text-decoration: none
+    ul
+      color: white
+
+  .ui-widget-header
+    color: $grey2
+    background: #b3b3b3
   
   .active
     display : block!important
@@ -885,6 +896,44 @@ td
   min-width : 118px
   position : relative
 
+#sourceMenu 
+  position: absolute
+  width: 175px
+  margin-right : 10px
+  // padding: 2px
+  font-size : 1.2em
+  +background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
+  +box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
+  +border-radius(3px)
+  border: none
+  color : #333
+  text-transform: uppercase
+  div
+    background: #222
+    height: auto
+    padding: 1px
+
+  &:hover
+    //+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
+  a
+    text-decoration: none
+  h3
+    display: block
+    background: #222
+
+
+button
+  &.createQuidd
+    color: #b3b3b3
+    margin: 1px
+    padding: 1px
+    background: #323232
+    width: 100%
+    border: 0
+    float:block
+    &.hover
+      background: #b33232
+
 .table
   //background : #fcfcfc
   //background : url(../../images/bgTable.png)
@@ -909,27 +958,14 @@ td
     // border-bottom : 1px solid #d3d3d3
     // +box-shadow(rgba(white, 0.4)  0px -7px 0px -6px inset)
     cursor : move
-    .headerMenu > li div
-      margin-right : 10px
-      font-size : 1.2em
-      +background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
-      +box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
-      +border-radius(3px)
-      border: none
-      color : #333
-      text-transform: uppercase
-      &:hover
-        +background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
-
     .filter
       padding : 7px 0 0 10px
       width : 150px
       float : left
       opacity : 0.5
       &:hover
-        opacity : 1
+        // opacity : 1
         cursor : pointer
-      select
         width : 100%
         background : #444
         border : #444
@@ -1534,7 +1570,7 @@ $sizeBulle : 12px
 
   .title
     cursor: move
-  .headerMenu
+  &.headerMenu
     li
       float : left
       font-size : 1.2em

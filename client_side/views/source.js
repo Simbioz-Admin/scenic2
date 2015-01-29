@@ -1,9 +1,9 @@
 define(
 
     /** 
-     *	View Source
-     *	The source view is for each source type quiddity create whatsoever to control or transfer table
-     *	@exports Views/Launch
+     *  View Source
+     *  The source view is for each source type quiddity create whatsoever to control or transfer table
+     *  @exports Views/Launch
      */
 
     [
@@ -17,17 +17,17 @@ define(
     function(_, Backbone, ConnexionView, ViewShmdata, TemplateSource) {
 
         /** 
-         *	@constructor
+         *  @constructor
          *  @requires Underscore
          *  @requires Backbone
-         *	@requires TemplateSource
+         *  @requires TemplateSource
          *  @augments module:Backbone.View
          */
 
         var SourceView = Backbone.View.extend(
 
             /**
-             *	@lends module: Views/source~SourceView.prototype
+             *  @lends module: Views/source~SourceView.prototype
              */
 
             {
@@ -61,7 +61,7 @@ define(
                     var quiddTpl = _.template(TemplateSource, {
                         name: this.model.get("name")
                     });
-                    
+
                     $(this.el).append(quiddTpl);
                     this.render();
                 },
@@ -69,15 +69,16 @@ define(
                 render: function() {
                     var that = this;
                     //Render Shmdata of this source
-                    console.log('render shmdatas source');
                     $(".shmdatas", that.el).html("");
-                    
+
                     var shmdatas = this.model.get("shmdatasCollection");
-                    var shmdataWriters = shmdatas.where({ type : 'writer'});
+                    var shmdataWriters = shmdatas.where({
+                        type: 'writer'
+                    });
 
-                    if(shmdataWriters.length > 0){
+                    if (shmdataWriters.length > 0) {
 
-                        _.each(shmdataWriters,function(shm) {
+                        _.each(shmdataWriters, function(shm) {
                             var viewShm = new ViewShmdata({
                                 model: shm,
                                 modelQuidd: that.model,
@@ -85,12 +86,12 @@ define(
                             });
                             $(".shmdatas", that.el).append(viewShm.el);
                             viewShm.render();
-                        }); 
+                        });
                     }
                 },
 
-                updateConnexions:function(){
-                    this.model.get('shmdatasCollection').each(function(shm){
+                updateConnexions: function() {
+                    this.model.get('shmdatasCollection').each(function(shm) {
                         shm.trigger('renderConnection')
                     });
                 },
@@ -118,11 +119,11 @@ define(
 
                 },
 
-                toggleShow : function(state, tableName){
+                toggleShow: function(state, tableName) {
 
                     /* trigger is called for all destination, we need to check if its for the good table */
-                    if(this.table.get("name") == tableName){
-                        if(state == "show") $(this.el).show();
+                    if (this.table.get("name") == tableName) {
+                        if (state == "show") $(this.el).show();
                         else $(this.el).hide();
                     }
                 },

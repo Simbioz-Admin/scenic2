@@ -29,7 +29,7 @@ define(
        */
 
       {
-        tagName: 'td',
+        tagName: 'div',
         className: 'destination',
         table: null,
         events: {

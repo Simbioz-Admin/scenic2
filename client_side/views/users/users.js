@@ -121,10 +121,15 @@ define(
           that.sipInformation = $('#login_sip', this.el).serializeObject();
           that.sipInformation["uri"] = that.sipInformation.name + '@' + that.sipInformation.address;
 
+          //Check information
+          if(!that.sipInformation.address || !that.sipInformation.name || !that.sipInformation.password || !that.sipInformation.port ){
+            return views.global.notification("error", $.t("Missing information to connect to the SIP server"));
+          }
+
           that.collection.loginSip(that.sipInformation.address, that.sipInformation.name, that.sipInformation.password, that.sipInformation.port, function(err){
             if(err) return views.global.notification('error', err);
             that.render();
-            views.global.notification("valid", "success login server sip");
+            views.global.notification("valid", $.t("Successful connection to the SIP server"));
             $("#login_sip", this.el).remove();
           });
 
@@ -147,7 +152,7 @@ define(
             collections.users.reset();
             that.renderLogin();
 
-            views.global.notification("valid", "success logout server sip");
+            views.global.notification("valid", $.t("Successful logout to the SIP server"));
           });
           return;
         },

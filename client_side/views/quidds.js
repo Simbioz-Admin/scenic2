@@ -77,6 +77,7 @@ define(
             });
 
             $("#panelRight .content").html(template);
+            $("#panelRight .content").i18n();
             views.global.openPanel();
             //timeout wait for loading correctly field and focusing
             setTimeout(function(){

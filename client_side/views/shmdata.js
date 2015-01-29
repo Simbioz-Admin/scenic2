@@ -138,7 +138,6 @@ define(
                     if (shm.get('path') == that.model.get("path")) active = "active";
                   });
                 }
-                console.log(canSink);
                 if (canSink == "true" || active) {
                   //console.log(that.model.get('path'), canSink);
                   var statusBox = 'box';

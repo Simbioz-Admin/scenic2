@@ -34,60 +34,66 @@
 
 #preview_usagesystem
 	color : white
-	position : relative
-	height : 35px
-	width : 200px
-	float : right
+	position : absolute
+	height : 250px
+	width : 100%
+	background : #222
+
+	// float : right
+	bottom : 0
 	.cpu_info
 		height : 100%
+		background : #2a2a2a	
+
+	.content
+		margin : 5px 10px
 	.info
-		height : 12px
-		margin : 3px 5px 0 0 
+		text-align: center
+		padding : 3px 0 0 0 
 		position : relative
-		width : 65px
-		height : 100%
+		width : 100%
 		float : left
-		padding : 5px 0 0 
+		height : 40px
+		border-top : 1px solid #1c1c1c
+		&:first-child
+			border : none
 		.label
-			text-align: center
 			font-size : 10px
 			color : #aaa
 			margin-bottom : 3px
 	.cpus
 		//background : blue
 		// height : 10px
-		width : 50px
 		.bar
 			width : 5px
 			height : 2%
 			background : #555
 			position : absolute
 			bottom : 0
-		.content
+		.content_bar
 			height : 22px
 			width : 100%
 			position : relative
 	.alert
 		background : #be2620!important
 	.memory
-		width : 50px
 		.content
 			margin-top : 8px
 	.network
 		//background : orange
 		// height : 20px
+		padding-bottom : 3px
 		font-size : 9px
-		text-align : left
+		// text-align : left
 		color : #ccc
 		.label
-			text-align: left
+			// text-align: left
 		.receive, .transfer
 			// margin-left: 10px
 			// text-align: center
 			//padding : 0 6px 2px 0
 	.cpu_info
-		text-align: center
-		padding : 2px 5px
+		padding : 2px 0px
 	.total
 		font-size : 14px
 	.text

@@ -23,7 +23,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
             var newEntry = switcher.invoke("usersSip", "update", [URI, name]);
 
             /* save the dico users */
-            var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
+            var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "/users.json"]);
             if (!saveDicoUsers) return cb("error saved dico users");
 
             cb(null, "User " + URI + " successfully added");
@@ -78,7 +78,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
             if (!usersDico) return log.error("error create dico Users");
 
             /* Try load file users dico */
-            var loadUsers = switcher.invoke("usersSip", "load", [config.scenicSavePath + "users.json"]);
+            var loadUsers = switcher.invoke("usersSip", "load", [config.scenicSavePath + "/users.json"]);
             if (!loadUsers) log.warn("No files existing for dico users");
 
             if (loadUsers) {
@@ -297,7 +297,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
                 /* Update name user of dico Users and save */
                 var dicoUser = switcher.invoke("usersSip", "update", [uri, name]);
-                var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
+                var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "/users.json"]);
                 if (!saveDicoUsers) return cb("error saved dico users");
                 cb(null, 'successfully update ' + name);
 
@@ -312,7 +312,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
               var removeEntry = switcher.invoke("usersSip", "remove", [uri]);
 
               /* save the dico users */
-              var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "users.json"]);
+              var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "/users.json"]);
               if (!saveDicoUsers) return cb("error saved dico users");
 
               cb(null, "User " + uri + " successfully removed");

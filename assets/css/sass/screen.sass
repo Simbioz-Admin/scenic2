@@ -142,7 +142,7 @@ header
     background : #333
     //background : url(../../images/bgHeader.png) left center repeat-x
     // +background-image(linear-gradient(#333 1%, #444 10%, #222 90%))
-    +box-shadow(rgba(black, 1) 0 0 7px)
+    //+box-shadow(rgba(black, 1) 0 0 7px)
     position : fixed
     top : 0
     z-index: 20000
@@ -241,20 +241,22 @@ header
 
     li
         display : inline-block
-        padding : 10px
+        padding :  15px 10px
         text-transform: uppercase
+        background : #2c2c2c
         // +background-image(linear-gradient(#444 10%, #333 90%))
         // border : 1px #222 solid
         border-right : none
         float : left
-        margin : 0
+        margin : 0 0 0 5px
         &:first-child
             +border-radius(2px 0 0  2px)
         &:last-child
             +border-radius(0 2px 2px 0)
         &:hover
             cursor : pointer
-            +background-image(linear-gradient(#333 10%, #2c2c2c 90%))
+            background : #222
+            // +background-image(linear-gradient(#333 10%, #2c2c2c 90%))
             +box-shadow(0px 2px -2px 2px black inset)
 
 
@@ -954,8 +956,8 @@ td
                 +background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
 
         .filter
-            padding : 7px 0 0 10px
-            width : 150px
+            padding : 0
+            width : 160px
             float : left
             opacity : 0.5
             &:hover
@@ -967,7 +969,8 @@ td
                 border : #444
                 color : white
                 cursor : pointer
-                padding : 2px 0
+                padding : 10px 5px 9px
+                margin : 0
                 option
                     cursor : pointer
                     border : none

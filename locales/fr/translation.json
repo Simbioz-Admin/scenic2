@@ -21,7 +21,7 @@
   "Yes": "Oui",
   "You need to discuss about scenic? Connect you on IRC public just here!": "",
   "choose a name, if empty a default name has been defined": "",
-  "create": "",
+  "create": "Créer",
   "failed to create __quiddName__ maybe this name is already used?": "",
   "failed to get __method__ method description __quiddName": "",
   "failed to get methods description __quiddName__": "",

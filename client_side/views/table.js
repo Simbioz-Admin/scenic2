@@ -51,7 +51,6 @@ define(
          */
         initialize: function() {
 
-
           this.model.on("trigger:menu", this.getClasses, this);
           this.model.on("addCategoryFilter", this.addCategoryFilter, this);
           this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
@@ -63,14 +62,14 @@ define(
           var btnTable = $("<div></div>", {
             text: "",
             class: "tabTable " + this.model.get("type") + " " + active,
+	    title: this.model.get("description"),
             data: {
-              id: this.model.get("id")
+              id: this.model.get("id"),
             }
           });
 
           btnTable.append("<div class='content'><div class='name'>"+this.model.get('name')+"</div></div>");
           $("#panelTables").prepend(btnTable);
-
 
           /* generate the table */
           var template = _.template(TemplateTable, {
@@ -85,7 +84,8 @@ define(
 
           /* add to the default panel */
           $("#panelLeft").append(this.el);
-
+          //translation
+          $(this.el).i18n();
 
         },
 
@@ -116,13 +116,14 @@ define(
 
           $("#listSources", this.el).remove();
           $(".table.active [data-type='" + shmdataType + "']").after(template);
+          $('#listSources',this.el).i18n();
 
           /* here we listen select for call views.quidds.defineName */
           $("#subMenu").menu({
-            delay: 0,
-            position: {
-              at: "right-2 top-2"
-            }
+            delay: 1500,
+            // position: {
+            //   at: "right-2 top-2"
+            // }
           }, {
             select: function(event, ui) {
               // event.preventDefault();

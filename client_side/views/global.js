@@ -14,7 +14,7 @@ define(
     'text!../../templates/panelSaveFile.html',
     'text!../../templates/confirmation.html',
     'text!../../templates/createReceiver.html',
-    'app'
+    'app',
   ],
 
   function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
@@ -56,7 +56,8 @@ define(
           "click #add-receiver": "add_receiver",
           "click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
           #btnSave, #quiddName, #panelSave, #btnGetFiles,\
-          #device, .edit": "preventPropagation"
+          #device, .edit": "preventPropagation",
+          "click .lang" : "changeLang"
         },
 
         /* Called when the view is initialized */
@@ -80,6 +81,10 @@ define(
           $(document).keyup(function(e) {
             that.keyboardAction(e);
           });
+	  $(document).tooltip();
+
+          //show current language in header
+          $("#langs [data-lang='"+$.cookie('lang')+"']").addClass("active");    
 
         },
 
@@ -93,16 +98,15 @@ define(
         /* Function called for show a specific message in the interface */
 
         notification: function(type, msg) {
+
           var speed = 500;
           $("#msgHighLight").remove();
           $("body").append("<div id='msgHighLight' class='" + type + "'>" + msg + "</div>");
-          $("#msgHighLight").animate({
-            top: "50"
-          }, speed, function() {
-            $(this).delay(4000).animate({
-              top: "-50"
-            }, speed);
-          });
+          setTimeout(function(){
+            $('#msgHighLight').addClass('active').delay(4000).queue(function(next){
+                $(this).removeClass("active");
+            });
+          },0)
 
           $("#msgHighLight").click(function() {
             $(this).remove();
@@ -275,6 +279,7 @@ define(
         get_save_file: function() {
           var that = this;
           socket.emit('get_save_file', function(saveFiles) {
+
             if ($("#panelFiles").length == 0) {
               $(".panelBox").remove();
               var template = _.template(panelLoadtemplate, {
@@ -378,19 +383,30 @@ define(
         /* Called for switcher between the different table (control and tranfer) */
 
         showTable: function(event) {
-          var table = $(event.target).parent().data("id");
+          var table = $(event.currentTarget).data("id");
           /* add to the local storage */
           localStorage['currentTable'] = table;
           collections.tables.currentTable = table;
           $(".tabTable").removeClass("active");
-          $(event.target).parent().addClass("active");
+          $(event.currentTarget).addClass("active");
           var target = $(event.target).attr('class')
             // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
             //   $("#htop").remove();
             // }
           $(".table").removeClass("active");
           $("#" + table).addClass("active");
+        },
+
+        changeLang : function(e){
+          var currentLang = $.cookie('lang');
+          var lang = $(e.currentTarget).data('lang');
+          if(lang != currentLang){
+            $.cookie('lang', lang);
+            location.reload();
+          }
+
         }
+
       });
 
     return GlobalView;

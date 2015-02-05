@@ -1,6 +1,5 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery'],
-  function(config, switcher, log, _, $) {
-
+define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
+  function(config, switcher, log, _, $, i18n) {
 
     var io;
 
@@ -8,6 +7,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       log.debug("init Receiver for get Io");
       io = socketIo;
     }
+
 
     /**
      *  @function create
@@ -26,7 +26,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       if (quiddName) {
 
         /* we stock id of socket and name of quidd because we want to alert the user 
-        client side when the quiddity is created for show the properties */
+           client side when the quiddity is created for show the properties */
 
         log.debug("quiddity " + quiddName + " (" + className + ") created.");
 
@@ -113,21 +113,17 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       }
 
       if (quiddName && property && value) {
-        var setProperty = switcher.set_property_value(quiddName, property, String(value));
-        if (!setProperty) {
-          var msgError = "failed to set the property " + property + " of " + quiddName;
-          log.error(msgError);
-          return cb(msgError);
+        var ok = switcher.set_property_value(quiddName, property, String(value));
+        if (ok) {
+          log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
+          cb(property, value);
+
+        } else {
+          log.error("failed to set the property " + property + " of " + quiddName);
+          socket.emit("msg", "error", "the property " + property + " of " + quiddName + " is not set");
         }
-
-        log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
-        cb(null);
-
       } else {
-        var msgError = "missing arguments for set property value :",
-          quiddName, property, value;
-        log.error(msgError);
-        cb(msgError);
+        log.error("missing arguments for set property value :", quiddName, property, value);
       }
     }
 
@@ -185,7 +181,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     function get_properties_description(quiddName, cb) {
 
       var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties,
-        properties_to_send = {};
+      properties_to_send = {};
 
       if (properties_description && properties_description.error) {
         var msg = properties_description.error + "(quiddity : " + quiddName + ")";
@@ -205,22 +201,27 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     function get_methods_description(quiddName, cb) {
       var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
       if (!methods) {
-        var msg = "failed to get methods description " + quiddName;
-        cb(msg);
-        log.error(msg);
+        var msg = i18n.t("failed to get methods description __quiddName__", {
+          quiddName: quiddName
+        });
         return;
       }
+
       var methods_to_send = {};
       _.each(methods, function(method) {
         methods_to_send[method.name] = method;
       });
+
       cb(null, methods_to_send);
     }
 
     function get_method_description(quiddName, method, cb) {
       var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
       if (!descriptionJson) {
-        var msg = "failed to get " + method + " method description" + quiddName;
+        var msg = i18n.t("failed to get __method__ method description __quiddName", {
+          method: method,
+          quiddName: quiddName
+        });
         cb(msg, err);
         log.error(msg);
         return;
@@ -239,25 +240,29 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
           var property_value = switcher.get_property_value(quiddName, property);
         }
       } else {
-        var msg = "failed o get property value (quiddity: " + quiddName + " property: " + property;
+        var msg = i18n.t("failed to get property value (quiddity __quiddName__ -  property __property__", {
+          quiddName: quiddName,
+          property: property
+        });
         cb(msg);
         log.error(msg);
         return;
       }
-      log.debug(property_value);
       cb(null, property_value);
     }
-
 
     function invoke(quiddName, method, parameters, cb) {
       var invoke = switcher.invoke(quiddName, method, parameters);
       log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
       if (!invoke) {
-        var msgError = "failed to invoke " + quiddName + " method " + method;
+        var msgError = i18n.t("failed to invoke __quiddName__ method __method__", {
+          quiddName: quiddName,
+          method: method
+        });
         log.error(msgError);
-        return cb(msgError);        
+        return cb(msgError);
       }
-      if(cb) cb(null, invoke);
+      if (cb) cb(null, invoke);
 
       if (method == "remove_udp_stream_to_dest")
         io.sockets.emit("remove_connection", invoke, quiddName, parameters);
@@ -293,6 +298,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
     }
 
     function removeConrolByQuiddParent(quiddParent) {
+
       var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", ['controlProperties']));
       _.each(currentValuesDicoProperty, function(control) {
         if (control.quiddName == quiddParent) {
@@ -349,5 +355,4 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       set_property_value_of_dico: set_property_value_of_dico,
       remove_property_value_of_dico: remove_property_value_of_dico
     }
-
   });

@@ -1,12 +1,11 @@
 <div class="panelBox" id="panelFiles">
-	<%
-	_.each(files, function(file) {
-		%>
-		<div>
-			<div class="file"><%=file%></div>
-			<div class="remove_save" data-name="<%=file%>">x</div>
-		</div>
-		<%
-	});
-	%>
+  <% _.each(files, function(file) { 
+  	if(file.indexOf( '.scenic') >= 0){ %>
+    <div>
+      <div class="file">
+        <%=file%>
+      </div>
+      <div class="remove_save" data-name="<%=file%>">x</div>
+    </div>
+    <% } }); %>
 </div>

@@ -53,9 +53,12 @@ define(
             that.renderMem(info.mem);
             that.renderNetwork(info.net.eth0);
           });
-          $("#menu_header").after(this.el);
+
+          // $("#menu_header").after(this.el);
+          $("#panelTables").append(this.el);
           var template = _.template(previewUsageTemplate);
           $(this.el).html(template);
+          $(this.el).i18n();
 
         },
 
@@ -66,7 +69,7 @@ define(
             var leftBar = 0;
             var countCpu = info.length;
             _.each(info, function(cpu, name) {
-              $(".cpus .content", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
+              $(".cpus .content_bar", this.el).prepend("<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>");
               leftBar = leftBar + 6;
               if (!--countCpu) that.cpuRender = true;
             });
@@ -90,7 +93,7 @@ define(
         }, 
         renderMem: function(info) {
           var percentUsedMemory = 100-Math.round(100*(parseInt(info.cached)+parseInt(info.buffers)+parseInt(info.free))/parseInt(info.total));
-          $(".memory .content").html(percentUsedMemory+"%");
+          $(".memory .content_memory").html(percentUsedMemory+"%");
         },
         renderNetwork:function(info){
           var rxRate = this.convertBytes(info.rx_rate);

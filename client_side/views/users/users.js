@@ -36,12 +36,10 @@ define(
         template: TemplateUsers,
         listOpen: true,
         events: {
-          //'click h2': 'toggleList',
           'click .logout': 'logoutSip',
           'submit #login_sip': 'loginSip',
           'change #add-user': 'addUser'
         },
-
 
         /*
          * @function initialize
@@ -90,19 +88,6 @@ define(
             that.collection.reset();
             that.collection.fetch();
 
-
-            
-            // that.collection.each(function(user) {
-            //   /* check if user model is of current user scenic */
-            //   if ("sip:" + config.sip.name + "@" + config.sip.address !== user.get("name")) {
-            //     new ViewUser({
-            //       model: user
-            //     });
-            //   } else {
-            //     $(".itsMe h3", that.el).html(user.get("sip_url"));
-            //     $(".itsMe .last_message", that.el).html(user.get("status_text"));
-            //   }
-            // });
           });
 
         },
@@ -118,6 +103,9 @@ define(
           $(this.el).append(tpl);
           var loginTpl = _.template(TemplateLoginForm, config);
           $(this.el).append(loginTpl);
+          
+          //translation
+          $(this.el).i18n();
         },
 
 
@@ -133,23 +121,18 @@ define(
           that.sipInformation = $('#login_sip', this.el).serializeObject();
           that.sipInformation["uri"] = that.sipInformation.name + '@' + that.sipInformation.address;
 
+          //Check information
+          if(!that.sipInformation.address || !that.sipInformation.name || !that.sipInformation.password || !that.sipInformation.port ){
+            return views.global.notification("error", $.t("Missing information to connect to the SIP server"));
+          }
+
           that.collection.loginSip(that.sipInformation.address, that.sipInformation.name, that.sipInformation.password, that.sipInformation.port, function(err){
             if(err) return views.global.notification('error', err);
             that.render();
-            views.global.notification("valid", "success login server sip");
+            views.global.notification("valid", $.t("Successful connection to the SIP server"));
             $("#login_sip", this.el).remove();
           });
-          /*
-          if (localStorage["userSip"]) localStorage["userSip"] = null;
-          localStorage["userSip"] = JSON.stringify(that.sipInformation);
 
-          socket.emit("sip_login", that.sipInformation, function(err, configSip){
-            if (err) return views.global.notification("error", err);
-            that.render();
-            views.global.notification("valid", "success login server sip");
-            $("#login_sip", this.el).remove();
-          });
-          */
         },
 
         /*
@@ -169,7 +152,7 @@ define(
             collections.users.reset();
             that.renderLogin();
 
-            views.global.notification("valid", "success logout server sip");
+            views.global.notification("valid", $.t("Successful logout to the SIP server"));
           });
           return;
         },

@@ -11,6 +11,7 @@ define(
     'underscore',
     'backbone',
     'jquery',
+    'i18n',
     'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
     'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
@@ -20,6 +21,7 @@ define(
     _,
     Backbone,
     $,
+    i18n,
     CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
@@ -31,7 +33,7 @@ define(
      * @requires CollectionTables
      * @requires CollectionClassesDoc
      * @requires CollectionDestinationsRtp
-     * @requires CollectionQuidds
+     * @requires CollectionQuidds 
      * @requires CollectionDestinationsProperties
      * @requires CollectionLoggers
      * @requires CollectionIrcs
@@ -47,6 +49,16 @@ define(
 
     var initialize = function() {
       "use strict";
+
+
+      //init translation
+      i18n.init({
+        lngWhitelist : ['en-US', 'en', 'fr', 'fr-FR'],
+        cookieName : 'lang',
+        ns: 'translation'
+      }).done(function() {
+          $('body').i18n();
+      });
 
       $("#currentUser").html(config.nameComputer);
 

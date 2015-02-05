@@ -53,7 +53,8 @@ define(
 
       //init translation
       i18n.init({
-        lng: "fr",
+        lngWhitelist : ['en-US', 'en', 'fr', 'fr-FR'],
+        cookieName : 'lang',
         ns: 'translation'
       }).done(function() {
           $('body').i18n();

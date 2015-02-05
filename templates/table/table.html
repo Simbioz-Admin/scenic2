@@ -11,7 +11,7 @@
     </li>
     <% }); %>
   </ul>
-  <div class="filter">
+  <div class="filter" title="filter">
     <select name="" class="dropdown_filter">
       <option value="" data-i18n>Show all categories</option>
     </select>
@@ -19,14 +19,15 @@
 </div><!-- headerTable -->
 
 <% if(type == "transfer" || type == "sink"){ %>
-      <div class="destinations"></div>
+<div class="destinations" title="destinations"></div>
+
 <div class="sources"></div>
 <% } %>
 
 
 
 <% if(type == "control"){ %>
-<table class="tableScenic">
+<table class="tableScenic" title="Control matrix">
   <thead>
     <tr>
       <th rowspan="2"  class="infoTable">

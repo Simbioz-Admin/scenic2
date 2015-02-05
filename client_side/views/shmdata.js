@@ -82,7 +82,8 @@ define(
         renderConnections: function() {
           var that = this;
           $("td", that.el).remove();
-          _.defer(function() {
+
+          _.defer(function(){
             that.table.get("collectionDestinations").each(function(destination) {
               that.connectionForDestination(destination, that.table.get("type"));
             });
@@ -105,6 +106,7 @@ define(
                 active = "active";
                 port = stream.port;
               }
+
             });
 
             if (destination.get('connection')) {
@@ -178,6 +180,7 @@ define(
               top: element.pageY,
               left: element.pageX
             }).show();
+
             $(".panelInfo").draggable({
               cursor: "move",
               handle: "#title"
@@ -198,3 +201,4 @@ define(
 
     return ShmdataView;
   })
+

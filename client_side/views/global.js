@@ -81,6 +81,7 @@ define(
           $(document).keyup(function(e) {
             that.keyboardAction(e);
           });
+	  $(document).tooltip();
 
           //show current language in header
           $("#langs [data-lang='"+$.cookie('lang')+"']").addClass("active");    

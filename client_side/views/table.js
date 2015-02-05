@@ -62,8 +62,9 @@ define(
           var btnTable = $("<div></div>", {
             text: "",
             class: "tabTable " + this.model.get("type") + " " + active,
+	    title: this.model.get("description"),
             data: {
-              id: this.model.get("id")
+              id: this.model.get("id"),
             }
           });
 
@@ -119,10 +120,10 @@ define(
 
           /* here we listen select for call views.quidds.defineName */
           $("#subMenu").menu({
-            delay: 0,
-            position: {
-              at: "right-2 top-2"
-            }
+            delay: 1500,
+            // position: {
+            //   at: "right-2 top-2"
+            // }
           }, {
             select: function(event, ui) {
               // event.preventDefault();

@@ -106,7 +106,7 @@ define(
 
           log.debug("remove shmdata of", qname);
           var destinations = switcher.get_property_value("dico", "destinations"),
-            destinations = JSON.parse(destinations);
+          destinations = JSON.parse(destinations);
 
           _.each(destinations, function(dest) {
             _.each(dest.data_streams, function(stream) {
@@ -208,7 +208,7 @@ define(
               path: pvalue[0].replace(".shmdata.writer.", ""),
               type: 'writer'
             }
-
+            console.log("on-tree-pruned removing Shmdata writer", qname, shmdata);
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
 

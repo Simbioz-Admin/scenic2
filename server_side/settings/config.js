@@ -23,6 +23,7 @@ var pickAddress
 
 var config = {
   version: "2.0.24",
+  lang : 'en',
   host: addresses[0],
   port: {
     soap: 8085,

@@ -9,8 +9,10 @@ define(
   function(i18n, log, switcher, _) {
 
     i18n.init({
-      lng: "fr",
+      // lng: "fr",
       saveMissing: true,
+      // cookieName : 'lang',
+      // useCookie : true,
       ns : 'translation',
       resGetPath: 'locales/__lng__/__ns__.json',
       resSetPath: 'locales/__lng__/__ns__.json',
@@ -23,8 +25,6 @@ define(
     }, function() {
       log.debug("Translation Init : ", i18n.lng());
 
-
-      console.log('Scan information switcher for translation');
       var classesDoc = JSON.parse(switcher.get_classes_doc()).classes;
       _.each(classesDoc, function(classDoc) {
         i18n.t(classDoc['long name']);

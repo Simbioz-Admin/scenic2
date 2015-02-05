@@ -56,7 +56,8 @@ define(
           "click #add-receiver": "add_receiver",
           "click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
           #btnSave, #quiddName, #panelSave, #btnGetFiles,\
-          #device, .edit": "preventPropagation"
+          #device, .edit": "preventPropagation",
+          "click .lang" : "changeLang"
         },
 
         /* Called when the view is initialized */
@@ -81,6 +82,9 @@ define(
             that.keyboardAction(e);
           });
 	  $(document).tooltip();
+
+          //show current language in header
+          $("#langs [data-lang='"+$.cookie('lang')+"']").addClass("active");    
 
         },
 
@@ -391,7 +395,18 @@ define(
             // }
           $(".table").removeClass("active");
           $("#" + table).addClass("active");
+        },
+
+        changeLang : function(e){
+          var currentLang = $.cookie('lang');
+          var lang = $(e.currentTarget).data('lang');
+          if(lang != currentLang){
+            $.cookie('lang', lang);
+            location.reload();
+          }
+
         }
+
       });
 
     return GlobalView;

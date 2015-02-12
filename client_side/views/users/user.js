@@ -130,7 +130,7 @@ define(
         },
         callContact: function() {
           var that = this;
-          socket.emit('invoke', 'sipquid', 'send_call', [this.model.get('uri')] , function(err) {
+          socket.emit('invoke', 'sipquid', 'call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
             views.global.notification("valid","successfully called " + that.model.get('name'));
           });

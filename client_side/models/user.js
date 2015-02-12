@@ -61,7 +61,7 @@ define(
         askDelete: function() {
           var that = this;
 
-          var result = views.global.confirmation("Are you sureaaaa?", function(ok) {
+          var result = views.global.confirmation("Are you sure?", function(ok) {
             if (ok) {
               //Just ask to remove the user of the matrix not remove from user SIP
               socket.emit("removeUserToDestinationMatrix", that.get("name"), function(err, msg) {

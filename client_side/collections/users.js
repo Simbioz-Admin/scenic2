@@ -67,11 +67,13 @@ define(
             user.add_tab();
           });
 
+          //receive when user remove destination SIP of the Tab SIP
           socket.on("removeDestinationSip", function(destinationSip) {
             var model = that.get(destinationSip);
             model.trigger('destroyDestinationMatrix', model, that);
           });
 
+          //receive when user is delete of the list Contacts
           socket.on("removeUser", function(uri) {
             var model = that.get(uri);
             model.trigger('destroy', model, that);

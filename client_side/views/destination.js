@@ -43,7 +43,7 @@ define(
         initialize: function(options) {
 
           var that = this;
-          
+
           this.model.on('change', this.render, this);
           this.model.on('destroy', this.removeView, this);
           this.model.on('destroyDestinationMatrix', this.removeView, this);
@@ -77,14 +77,14 @@ define(
 
         },
 
-      render : function(){
-          
+        render: function() {
+
           var that = this,
             template = _.template(TemplateDestination, {
               name: this.model.get("name"),
             });
           $(this.el).html(template);
-      },
+        },
 
         toggleShow: function(state, tableName) {
 
@@ -117,11 +117,10 @@ define(
           this.remove();
 
           /* remove old box */
-          $("[data-id='" + this.model.get('name') + "']").remove();
+          $("[data-destination='" + this.model.get('name') + "']").remove();
 
           //reset button add table list user
-          console.log('reset list user');
-          $('[data-idUser="'+this.model.get('uri')+'"] .add_destinationSip').removeClass('call hangUp').addClass('add_table');
+          $('[data-idUser="' + this.model.get('uri') + '"] .add_destinationSip').removeClass('call hangUp').addClass('add_table');
         }
       });
 

@@ -1,9 +1,9 @@
 define(
   /** 
-   *	View EditQuidd
-   *	Manage interaction between a specifc node and the interface for editing
-   *	all modification are detected when we press enter or switch input
-   *	@exports Views/EditQuidd
+   *  View EditQuidd
+   *  Manage interaction between a specifc node and the interface for editing
+   *  all modification are detected when we press enter or switch input
+   *  @exports Views/EditQuidd
    */
   [
     'underscore',
@@ -13,22 +13,22 @@ define(
 
   function(_, Backbone, TemplateEditDestinationRtp) {
     /** 
-     *	@constructor
+     *  @constructor
      *  @requires Underscore
      *  @requires Backbone
-     *	@requires TemplateEditDestinationRtp
+     *  @requires TemplateEditDestinationRtp
      *  @augments module:Backbone.View
      */
 
     var ViewEditDestination = Backbone.View.extend(
       /**
-       *	@lends module: Views/EditQuidd~ViewEditDestination.prototype
+       *  @lends module: Views/EditQuidd~ViewEditDestination.prototype
        */
       {
         className: 'editUser',
         events: {
           "submit #form-user": 'update',
-          "click .remove" : 'removeUser',
+          "click .remove": 'removeUser',
         },
 
         /* Called when the view is initialized */
@@ -37,7 +37,7 @@ define(
           //generate template for receive information about destination
           var template = _.template(TemplateEditDestinationRtp, {
             destination: that.model,
-            listStatus : collections.users.listStatus
+            listStatus: collections.users.listStatus
           });
 
           $(this.el).append(template);
@@ -56,26 +56,26 @@ define(
           // console.log(name,uri, statusText, status);
           // var sipQuidd = collections.quidd.get('sipquid');
 
-          socket.emit('updateUser', uri, name, statusText, status, function(err,msg){
-            if(err) return views.global.notification('error', err);
-            views.global.notification('valid',msg);
+          socket.emit('updateUser', uri, name, statusText, status, function(err, msg) {
+            if (err) return views.global.notification('error', err);
+            views.global.notification('valid', msg);
             views.global.closePanel();
           });
 
         },
-        removeUser : function(e){
+        removeUser: function(e) {
           e.preventDefault();
           var that = this;
-           var result = views.global.confirmation("Are you sure?", function(ok) {
-             if (ok) {
+          var result = views.global.confirmation("Are you sure?", function(ok) {
+            if (ok) {
               socket.emit("removeUser", that.model.get("uri"), function(err, msg) {
-                 if (err)  return views.global.notification("error", err);
-                 views.global.notification("valid", msg);
-                 
+                if (err) return views.global.notification("error", err);
+                views.global.notification("valid", msg);
+                views.global.closePanel();
               });
-               //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
-             }
-           });
+              //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
+            }
+          });
         }
 
       });

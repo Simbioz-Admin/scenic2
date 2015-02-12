@@ -73,7 +73,7 @@ define(
               id: "create_receiver"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+              select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
             collectionDestinations: collections.destinationsRtp
           }

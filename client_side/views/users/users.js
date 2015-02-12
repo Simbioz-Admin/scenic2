@@ -38,7 +38,8 @@ define(
         events: {
           'click .logout': 'logoutSip',
           'submit #login_sip': 'loginSip',
-          'change #add-user': 'addUser'
+          'change #add-user': 'addUser',
+          'click #statusText' : 'selectAllText'
         },
 
         /*
@@ -169,6 +170,10 @@ define(
             $(e.currentTarget).val("");
             return views.global.notification("valid", info);
           })
+        },
+
+        selectAllText : function(e){
+           $(e.currentTarget).select();
         }
       });
 

@@ -77,27 +77,20 @@ define(
           $(this.el).attr("data-statusUser", status);
           // $(".users").append(this.el);
           // this.refreshStatus();
-
         },
-        // refreshStatus: function() {
-        //   /* 0 : online   1 : absent   2 : offline */
-        //   var currentStatus = this.model.get("status");
-        //   if (!this.model.get('itsMe')) {
-        //     var user = $(this.el).detach();
-        //     $(".users .content_users .status-" + currentStatus).append(user);
-        //   }
-        //   $(this.el).attr("data-statusUser", currentStatus);
-        // },
+
         setStatus : function(e){
           var status = $(e.target).data("status");
           console.log("Set status ", status);
-          var sipQuidd = collections.quidds.get("sipquid");
-          sipQuidd.setPropertyValue('status', String(status));
+          socket.emit("set_property_value", "sipquid", 'status', String(status), function(err) {
+            if (err) return views.global.notification("error", err);
+          });
         },
         setStatusText: function(e) {
           var statusText = $(e.target).val();
-          var sipQuidd = collections.quidds.get("sipquid");
-          sipQuidd.setPropertyValue('status-note', statusText);
+          socket.emit("set_property_value", "sipquid", 'status-note', statusText, function(err) {
+            if (err) return views.global.notification("error", err);
+          });
         },
 
         showActions: function() {
@@ -137,7 +130,7 @@ define(
         },
         callContact: function() {
           var that = this;
-          socket.emit('invoke', 'sipquid', 'call', [this.model.get('uri')] , function(err) {
+          socket.emit('invoke', 'sipquid', 'send_call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
             views.global.notification("valid","successfully called " + that.model.get('name'));
           });

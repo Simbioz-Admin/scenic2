@@ -264,6 +264,7 @@ define(
          *  @param {string} property The name of the property
          *  @param {string} value The value of the property
          *  @param {function} callback Confirms that the property defined
+         *  @TODO : REMOVE THIS FUNCTION FOR CALL DIRECTLY
          */
 
         setPropertyValue: function(property, value, cb) {

@@ -116,7 +116,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
         var ok = switcher.set_property_value(quiddName, property, String(value));
         if (ok) {
           log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
-          cb(property, value);
+          cb(null, property, value);
 
         } else {
           log.error("failed to set the property " + property + " of " + quiddName);

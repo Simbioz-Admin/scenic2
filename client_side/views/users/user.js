@@ -38,6 +38,7 @@ define(
           "click .add_table": "addUserToDestinationMatrix",
           "click .edit_user": "editUser",
           "click .call": "callContact",
+          "click .hangUp" : 'hangUpContact',
           "change #statusText": "setStatusText",
           "click .listStatus" : "setStatus"
         },
@@ -68,34 +69,28 @@ define(
 
         /* Called for render the view */
         render: function() {
-          console.log('render view user', this.model.get('name'));
+          $(this.el).attr('data-idUser', this.model.get('uri'));
           var tpl = _.template(TemplateUser, this.model.toJSON());
+
           $(this.el).html(tpl);
           var status = this.model.get("status");
           $(this.el).attr("data-statusUser", status);
           // $(".users").append(this.el);
           // this.refreshStatus();
-
         },
-        // refreshStatus: function() {
-        //   /* 0 : online   1 : absent   2 : offline */
-        //   var currentStatus = this.model.get("status");
-        //   if (!this.model.get('itsMe')) {
-        //     var user = $(this.el).detach();
-        //     $(".users .content_users .status-" + currentStatus).append(user);
-        //   }
-        //   $(this.el).attr("data-statusUser", currentStatus);
-        // },
+
         setStatus : function(e){
           var status = $(e.target).data("status");
           console.log("Set status ", status);
-          var sipQuidd = collections.quidds.get("sipquid");
-          sipQuidd.setPropertyValue('status', String(status));
+          socket.emit("set_property_value", "sipquid", 'status', String(status), function(err) {
+            if (err) return views.global.notification("error", err);
+          });
         },
         setStatusText: function(e) {
           var statusText = $(e.target).val();
-          var sipQuidd = collections.quidds.get("sipquid");
-          sipQuidd.setPropertyValue('status-note', statusText);
+          socket.emit("set_property_value", "sipquid", 'status-note', statusText, function(err) {
+            if (err) return views.global.notification("error", err);
+          });
         },
 
         showActions: function() {
@@ -117,7 +112,7 @@ define(
           if (!user.in_tab) {
             socket.emit("addUserToDestinationMatrix", this.model.get("uri"), function(err, msg) {
               if (err) return views.global.notification("error", err);
-              $('.add_destinationSip', that.el).toggleClass('add_table call');
+              $('.add_destinationSip', that.el).removeClass('add_table').addClass('call');
             });
           } else {
             views.global.notification("error", "this user is already in destinations SIP");
@@ -125,7 +120,6 @@ define(
         },
         connections: function() {
           var that = this;
-          console.log("modification on connexion!");
           $('[data-destination="' + this.model.get('uri') + '"]').removeClass('active');
           _.each(this.model.get('connection'), function(connection) {
             $('[data-path="' + connection + '"] [data-destination="' + that.model.get('uri') + '"]').addClass('active');
@@ -136,17 +130,16 @@ define(
         },
         callContact: function() {
           var that = this;
-          socket.emit("callUser", this.model.get('uri'), function(err, msg) {
+          socket.emit('invoke', 'sipquid', 'send_call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
-            views.global.notification("valid", msg + " " + that.model.get('name'));
+            views.global.notification("valid","successfully called " + that.model.get('name'));
           });
         },
         hangUpContact: function() {
-          console.log('hangUP!');
           var that = this;
-          socket.emit("hangUpUser", this.model.get('uri'), function(err, msg) {
+          socket.emit('invoke', 'sipquid', 'hang-up', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
-            views.global.notification("valid", msg + " " + that.model.get('name'));
+            views.global.notification("valid","successfully hang up " + that.model.get('name'));
           });
         },
         removeView: function() {

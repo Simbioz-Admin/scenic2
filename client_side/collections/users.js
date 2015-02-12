@@ -37,7 +37,6 @@ define(
 
           /* receive update info user from server side */
           socket.on("infoUser", function(infoUser) {
-            console.log("infoUser", infoUser);
             if (infoUser != {}) {
               var user = that.get(infoUser.uri);
               if (user) {

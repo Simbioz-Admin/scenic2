@@ -81,7 +81,6 @@ define(
 
         setStatus : function(e){
           var status = $(e.target).data("status");
-          console.log("Set status ", status);
           socket.emit("set_property_value", "sipquid", 'status', String(status), function(err) {
             if (err) return views.global.notification("error", err);
           });
@@ -107,7 +106,6 @@ define(
         },
         addUserToDestinationMatrix: function() {
           var that = this;
-          console.log(collections.users.get(this.model.get('uri')));
           var user = collections.users.get(this.model.get('uri'));
           if (!user.in_tab) {
             socket.emit("addUserToDestinationMatrix", this.model.get("uri"), function(err, msg) {

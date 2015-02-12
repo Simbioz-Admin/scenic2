@@ -35,12 +35,14 @@ define(
         defaults: {
           name: null,
           sip_url: null,
+          uri : null,
           status: null,
           status_text: "Aucun message",
           subscription_state: "Aucun message",
           itsMe: false,
           in_tab: false,
-          call: false,
+          send: false,
+          send_status: "disconnect",
           connection: {}
         },
         initialize: function() {

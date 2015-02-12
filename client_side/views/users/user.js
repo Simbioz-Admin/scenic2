@@ -37,8 +37,8 @@ define(
           "mouseleave": "hideActions",
           "click .add_table": "addUserToDestinationMatrix",
           "click .edit_user": "editUser",
-          "click .call": "callContact",
-          "click .hangUp" : 'hangUpContact',
+          "change input.send": "callContact",
+          // "click .hangUp" : 'hangUpContact',
           "change #statusText": "setStatusText",
           "click .listStatus" : "setStatus"
         },
@@ -127,6 +127,7 @@ define(
           this.model.edit();
         },
         callContact: function() {
+          return console.log("CALLL");
           var that = this;
           socket.emit('invoke', 'sipquid', 'call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);

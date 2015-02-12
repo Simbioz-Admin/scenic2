@@ -1,11 +1,23 @@
 <div class="content">
+
+  <%if(typeof uri !=="undefined" ){ %>
+  <div class="call status_sip <%=send_status%>"></div>
+  <% } %>
+
   <div class='short name'>
     <%=name%>
   </div>
   <div class="actions">
     <div class="action">
-      <div class="edit"></div>
+      <%if(typeof uri !=="undefined" ){ %>
+        <input class="send checkbox" type="checkbox" id="send_sip" name="send_sip" value="false" <% if(send_status == "calling"){ %> checked="checked" <% } %> >
+        <label class="checkbox sipUser" for="send_sip" data-i18n="[title]Send data to the user" title="Send data to the user"></label>
+      <% } %>
+      <% if(typeof uri=="undefined" ){ %>
+        <div class="edit"></div>
+      <% } %>
     </div>
+
     <div class="action">
       <div class="remove">x</div>
     </div>

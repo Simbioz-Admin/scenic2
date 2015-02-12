@@ -34,6 +34,7 @@ define(
         table: null,
         events: {
           "click .edit": "edit",
+          "change input.send": "sendToUserSip",
           "click .remove": "removeClick"
         },
 
@@ -78,12 +79,11 @@ define(
         },
 
         render: function() {
-
           var that = this,
-            template = _.template(TemplateDestination, {
-              name: this.model.get("name"),
-            });
+          template = _.template(TemplateDestination,
+          this.model.toJSON());
           $(this.el).html(template);
+          $(this.el).i18n();
         },
 
         toggleShow: function(state, tableName) {
@@ -104,6 +104,14 @@ define(
           this.model.edit();
         },
 
+        sendToUserSip: function() {
+          var that = this;
+          var call = this.model.get('send_status') == "disconnected" ? "send" : "hang-up";
+          socket.emit('invoke', 'sipquid', call, [this.model.get('uri')], function(err) {
+            if (err) return views.global.notification('error', err);
+            views.global.notification("valid", "successfully called " + that.model.get('name'));
+          });
+        },
         /* Called when the click event is on the button remove destination */
         removeClick: function() {
           this.model.askDelete();

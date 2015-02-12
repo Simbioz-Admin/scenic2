@@ -50,17 +50,13 @@ define(
           var that = this;
           var name = $('#name', this.el).val();
           var uri = this.model.get('uri');
-          var statusText = $('#statusText').val();
-          var status = $('#status').val();
 
-          // console.log(name,uri, statusText, status);
-          // var sipQuidd = collections.quidd.get('sipquid');
-
-          socket.emit('updateUser', uri, name, statusText, status, function(err, msg) {
-            if (err) return views.global.notification('error', err);
-            views.global.notification('valid', msg);
-            views.global.closePanel();
-          });
+          if(name){
+            socket.emit('invoke', 'sipquid', 'name_buddy', [name, uri], function(err, msg){
+              if (err) return views.global.notification('error', err);
+              views.global.closePanel();
+            });
+          }
 
         },
         removeUser: function(e) {

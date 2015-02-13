@@ -42,7 +42,7 @@ Translation
 -----------
 
 Updating translation files: 
-$ npm install i18next-parse
+$ npm install i18next-parser
 $ i18next -l fr -r --directoryFilter '!node_modules, !.git, !assets' -f '$.t, i18n.t'
 
 Updating client side translation 

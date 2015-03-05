@@ -35,7 +35,7 @@ define(
         initialize: function() {
           var that = this;
 
-          /* receive update info user from server side */
+          // receive update info user from server side
           socket.on("infoUser", function(infoUser) {
             if (infoUser != {}) {
               var user = that.get(infoUser.uri);
@@ -47,18 +47,11 @@ define(
                 }
               }
 
-              /*
-              that.fetch({
-                success: function() {
-                  views.users.render(true);
-                }
-              });*/
             }
-            // var model = that.get(infoUser.sip_url);
-            // user.status = that.priorityStatus(user.status);
-            // if (model) model.set(infoUser);
-            // that.trigger("reOrder");
+
           });
+
+          // Message receive from the server //
 
           socket.on("addDestinationSip", function(uri) {
             var user = that.get(uri);
@@ -66,14 +59,12 @@ define(
             user.add_tab();
           });
 
-          //receive when user remove destination SIP of the Tab SIP
           socket.on("removeDestinationSip", function(destinationSip) {
             var user = that.get(destinationSip);
             user.set('in_tab', false);
             user.trigger('destroyDestinationMatrix', user, that);
           });
 
-          //receive when user is delete of the list Contacts
           socket.on("removeUser", function(uri) {
             var model = that.get(uri);
             model.trigger('destroy', model, that);
@@ -85,7 +76,6 @@ define(
           var users = [];
 
           _.each(results, function(user, id) {
-            //user.status = that.priorityStatus(user.status);
             user["id"] = id;
             users.push(user);
           });
@@ -131,7 +121,7 @@ define(
               cb(null);
             });
           }
-          /** Initialization of the Logger Collection */
+
       });
 
     return CollectionUsers;

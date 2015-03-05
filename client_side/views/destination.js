@@ -109,7 +109,7 @@ define(
           var call = this.model.get('send_status') == "disconnected" ? "send" : "hang-up";
           socket.emit('invoke', 'sipquid', call, [this.model.get('uri')], function(err) {
             if (err) return views.global.notification('error', err);
-            views.global.notification("valid", "successfully called " + that.model.get('name'));
+            views.global.notification("valid", $.t("successfully called ") + that.model.get('name'));
           });
         },
         /* Called when the click event is on the button remove destination */

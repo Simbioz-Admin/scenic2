@@ -12,7 +12,7 @@ define(
     'backbone',
     'jquery',
     'i18n',
-    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
     'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
   ],
@@ -22,7 +22,7 @@ define(
     Backbone,
     $,
     i18n,
-    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
 
@@ -77,12 +77,6 @@ define(
           collections.destinationsRtp = new CollectionDestinationsRtp();
           collections.destinationsRtp.fetch();
 
-          //collections.destinationsSip = new CollectionDestinationsSip();
-          //collections.destinationsSip.fetch();
-
-          //collections.users = new CollectionUsers();
-
-
           collections.tables = new CollectionTables();
 
           collections.quidds.fetch({
@@ -90,9 +84,6 @@ define(
               console.log("error", err);
             },
             success: function() {
-              console.log("quidds Loaded");
-
-
 
               collections.destinationProperties = new CollectionDestinationsProperties();
               collections.destinationProperties.fetch();
@@ -117,9 +108,6 @@ define(
               views.users = new ViewUsers({
                 collection: collections.users
               });
-
-              /* generate view for manage users */
-              //collections.users.fetch();
             }
           });
 

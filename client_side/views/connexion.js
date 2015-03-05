@@ -7,10 +7,10 @@ define(
   [
     'underscore',
     'backbone',
-    'text!../../templates/connexion.html'
+    // 'text!../../templates/connexion.html'
   ],
 
-  function(_, Backbone, ConnexionTemplate) {
+  function(_, Backbone) {
     /** 
      *	@constructor
      *  @requires Underscore
@@ -23,7 +23,7 @@ define(
        *	@lends module: Views/connexion~ConnexionView.prototype
        */
       {
-        template: ConnexionTemplate,
+        // template: ConnexionTemplate,
         events: {},
 
         /* Called when the view ConnexionView is initialized */

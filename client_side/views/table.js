@@ -172,7 +172,7 @@ define(
           if (this.model.get("id") == "transferRtp") {
             /* if already connect */
             if (box.hasClass("active")) return socket.emit("remove_connection", path, destination, function(ok) {});
-            box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
+            box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='"+$.t('specify an even port')+"'></div>");
           }
 
           /* if transferSip we ask to add shmdata to the user */
@@ -202,7 +202,7 @@ define(
                       socket.emit("invoke", destination, "connect", [path], function(data) {});
                     });
                   } else {
-                    views.global.notification('error', 'you have reached the maximum connection. The limit is ' + maxReader);
+                    views.global.notification('error', $.t('you have reached the maximum connection. The limit is ') + maxReader);
                   }
                 }
 
@@ -268,7 +268,7 @@ define(
             });
             $(element.target).after(template);
           } else {
-            views.global.notification("error", "you need to create source before to add a property");
+            views.global.notification("error", $.t("you need to create source before to add a property"));
           }
         },
 

@@ -35,8 +35,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
         cb(null, quiddInfo);
 
       } else {
-        log.error("failed to create a quiddity class ", className);
-        cb("failed to create " + className + " maybe this name is already used?");
+        var msgError = i18n.t("failed to create __className__ maybe this name is already used?", { className : className });
+        log.error(msgError);
+        cb(msgError);
       }
 
     }

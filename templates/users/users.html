@@ -6,7 +6,7 @@
 	<input type="text" name="" value="" placeholder="Rechercher un utilisateur...">
 </div> -->
 	<div class="content_users">
-		<input type="text" id="add-user" value="" placeholder="+ user uri...">
+		<input type="text" id="add-user" value="" data-i18n="[placeholder]Add user" placeholder="Add user">
 		<% if (typeof(listStatus) != "undefined") { %>
 			<% _.each(listStatus, function(status){ %>
 				<div data-status="<%=status.name.toLowerCase()%>" class="status-<%=status.value%> list"></div>

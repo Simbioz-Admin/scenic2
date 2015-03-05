@@ -25,6 +25,8 @@ define(
     }, function() {
       log.debug("Translation Init : ", i18n.lng());
 
+
+      //get name and category from switcher
       var classesDoc = JSON.parse(switcher.get_classes_doc()).classes;
       _.each(classesDoc, function(classDoc) {
         i18n.t(classDoc['long name']);
@@ -46,16 +48,6 @@ define(
         }
       });
     });
-
-    // i18n.setLocale("en");
-    // log.debug("Initialization i18n", i18n.getLocale());
-    // i18n.configure({
-    //     locales: ['fr'],
-    //     directory: require.toUrl('.')+'/locales'
-    // });
-
-    // i18n.__("patate");
-
 
 
   }

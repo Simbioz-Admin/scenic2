@@ -113,7 +113,7 @@ define(
               $('.add_destinationSip', that.el).removeClass('add_table').addClass('call');
             });
           } else {
-            views.global.notification("error", "this user is already in destinations SIP");
+            views.global.notification("error", $.t("this user is already in destinations SIP"));
           }
         },
         connections: function() {
@@ -131,14 +131,14 @@ define(
           var that = this;
           socket.emit('invoke', 'sipquid', 'call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
-            views.global.notification("valid","successfully called " + that.model.get('name'));
+            views.global.notification("valid", $.t("successfully called ") + that.model.get('name'));
           });
         },
         hangUpContact: function() {
           var that = this;
           socket.emit('invoke', 'sipquid', 'hang-up', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
-            views.global.notification("valid","successfully hang up " + that.model.get('name'));
+            views.global.notification("valid",$.t("successfully hang up ") + that.model.get('name'));
           });
         },
         removeView: function() {

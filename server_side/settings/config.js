@@ -4,6 +4,7 @@ interfaces = os.networkInterfaces(),
 addresses = [],
 scenicHomePath = process.env.HOME + "/.scenic2";
 
+console.log('PATH HOME', process.env.HOME);
 for (k in interfaces) {
   for (k2 in interfaces[k]) {
     var address = interfaces[k][k2];

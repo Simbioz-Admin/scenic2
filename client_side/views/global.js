@@ -297,8 +297,8 @@ define(
          */
 
         load_file: function(e) {
-
-          socket.emit("load", $(e.target).html(), function(ok) {
+          var name = $(e.target).data('name');
+          socket.emit("load", name, function(ok) {
             if (ok) {
 
               collections.destinationsRtp.fetch({

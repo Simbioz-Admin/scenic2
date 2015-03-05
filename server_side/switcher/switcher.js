@@ -362,7 +362,7 @@ define(
     }
 
     function load(name, cb) {
-      log.debug("loading a scenic file", name);
+      log.debug("loading a scenic file", config.scenicSavePath + name);
       var load = switcher.load_history_from_scratch(config.scenicSavePath + name);
       cb(load);
     }

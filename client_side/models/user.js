@@ -73,7 +73,6 @@ define(
 
               });
               //remove from the user SIP
-
               //socket.emit("invoke", "defaultrtp", "remove_destination", [that.get("name")], function(ok) {});
             }
           });

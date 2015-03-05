@@ -95,7 +95,7 @@ define(
           socket.emit("checkPort", dataFormConfig.portSoap,
             function(SoapOk) {
               if (!SoapOk) {
-                alert("The port " + dataFormConfig.portSoap + " is already used. Please change value of port Soap");
+                alert("The port " + dataFormConfig.portSoap +" "+ $.t("is already used. Please change value of port Soap"));
                 verificationOk = false;
               }
 

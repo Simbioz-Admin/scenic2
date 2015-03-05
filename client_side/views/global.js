@@ -261,13 +261,13 @@ define(
             that = this;
 
           if (nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
-            that.notification("error", "the name is not correct (ex : save_202) ");
+            that.notification("error", $.t("the name is not correct (ex : save_202) "));
             return;
           }
 
           console.log("ask for saving ", nameFile);
           socket.emit("save", nameFile + ".scenic", function(ok) {
-            views.global.notification("info", nameFile + " is successfully saved", ok);
+            views.global.notification("info", nameFile + " "+ $.t("is successfully saved"));
             $(".panelBox").remove();
           })
         },
@@ -315,7 +315,7 @@ define(
 
                 }
               });
-              views.global.notification("info", $(e.target).html() + " is loaded");
+              views.global.notification("info", $(e.target).html() +" "+ $.t("is loaded"));
             }
           });
           $("#panelFiles").remove();

@@ -61,8 +61,6 @@ define(
               that.renderLogin();
               localStorage["usersPanelClose"] = true;
             }
-            //Fetch collection users
-            // that.collection.fetch();
           });
         },
 

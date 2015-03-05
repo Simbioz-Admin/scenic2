@@ -88,8 +88,6 @@ define(
             });
           }
 
-
-          //$(".total", this.el).html(Math.round(info.cpu.cpu.total * 10000) / 100 + "%");
         }, 
         renderMem: function(info) {
           var percentUsedMemory = 100-Math.round(100*(parseInt(info.cached)+parseInt(info.buffers)+parseInt(info.free))/parseInt(info.total));

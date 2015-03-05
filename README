@@ -43,8 +43,22 @@ Translation
 
 Updating translation files: 
 $ npm install i18next-parser
-$ i18next -l fr -r --directoryFilter '!node_modules, !.git, !assets' -f '$.t, i18n.t'
+$ i18next -l fr --directoryFilter '!node_modules, !.git, !assets' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n translation_client -k :: -s :::
+
 
 Updating client side translation 
 - in jquery
 - or inside a template, add 'data-i18n' inside the mark up containing the term to be translated, for instance data-i18n="value"
+
+
+Added translation : 
+
+Terms of switcher:
+terms from switcher are added from the /server_side/settings/i18n.js file. At the launch of the server names and categories are automatically added to /locales/fr/translation.json if there are not existing file.
+
+Terms of Interface:
+The terms for the client interface and messages from the server nodejs are scanned using the command above.
+How to add translations:
+1. Run the command above
+2. recover the complete translations present in the /locales/en/translation_client
+3. Add the translations in the file /locales/fr/translation.json CAUTION: Do not delete those that come from switcher.

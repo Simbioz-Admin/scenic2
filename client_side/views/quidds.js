@@ -153,16 +153,7 @@ define(
           clearTimeout(this.delayAutoDetect);
         },
 
-        /* Called each time we receive signal for vumter */
-
-        // updateVuMeter: function(quiddName, value) {
-        //     var shmdata = quiddName.replace("vumeter_", "");
-        //     if (value > 0) $("[data-path='" + shmdata + "']").removeClass("inactive").addClass("active");
-        //     else $("[data-path='" + shmdata + "']").removeClass("active").addClass("inactive");
-        // },
-
         /* called when a quiddity type previe audio video is removed for remove class active to icon Preview */
-
         removePreviewIcon: function(quidd) {
           var shmdata = quidd.split('_');
           shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];

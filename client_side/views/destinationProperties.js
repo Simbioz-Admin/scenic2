@@ -96,7 +96,7 @@ define(
               }
             }).focus();
           } else {
-            views.global.notification("error", "you need to create source before adding a property");
+            views.global.notification("error", $.t("you need to create source before adding a property"));
           }
         },
 
@@ -114,7 +114,7 @@ define(
           nameQuidd = "mapper_" + quiddSource + "_" + propertySource + "_" + $(element.target).data("nameandproperty");
 
 
-          if (!quiddSource || !propertySource || !destination || !nameQuidd) return views.global.notification("error", "missing info !");
+          if (!quiddSource || !propertySource || !destination || !nameQuidd) return views.global.notification("error", $.t("missing info !"));
           socket.emit("create", "property-mapper", nameQuidd, function(err, infoQuidd) {
             // var model = collections.quidds.create(infoQuidd);
             socket.emit("invoke", infoQuidd.name, "set-source-property", [quiddSource, propertySource], function(ok) {});

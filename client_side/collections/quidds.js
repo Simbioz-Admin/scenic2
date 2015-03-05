@@ -70,18 +70,15 @@ define(
 
           /** Event called when the shmdatas of specific quidd is created */
           socket.on("updateShmdatas", function(qname, shmdatas) {
-            console.log('update shmdatas', qname);
             that.updateShmdatas(qname, shmdatas);
           });
 
           /* Event called when a new shmdata is added */
           socket.on('addShmdata', function(qname, shmdata) {
-            console.log('add shmdata', qname);
             that.addShmdata(qname, shmdata);
           });
 
           socket.on('removeShmdata', function(qname, shmdata) {
-            console.log('removeShmdata', qname);
 
             //If the shmdata is a type reader (connection) we refresh shmdata source
             if (shmdata.type == 'reader') {
@@ -102,7 +99,6 @@ define(
 
           /** Event called when the shmdatas readers is updated */
           socket.on("update_shmdatas_readers", function(name, shmdatas) {
-            console.log('update smdatas readers');
             /* we parse connection for add or remove */
             // var shmdatas = $.parseJSON(shmdatas);
             $("[data-destination='" + name + "']").each(function(index, box) {
@@ -126,9 +122,8 @@ define(
           var model = this.get(quiddInfo);
           if (model) {
             model.trigger('destroy', model);
-            console.log(model);
             if (quiddInfo.class != "sip") {
-              views.global.notification("info", quiddInfo + "  has deleted");
+              views.global.notification("info", quiddInfo + " " + $.t('was deleted'));
             }
           }
         },
@@ -144,7 +139,8 @@ define(
           var model = new QuiddModel(quiddInfo);
           this.add(model);
           if (quiddInfo.class != "sip") {
-            views.global.notification("info", model.get("name") + " (" + model.get("class") + ") is created");
+
+            views.global.notification("info", model.get("name") + " (" + model.get("class") + ") "+$.t('is created'));
           }
           return model;
         },
@@ -276,7 +272,6 @@ define(
 
         findQuiddByShmdata: function(shmdataPath, cb) {
           collections.quidds.each(function(quidd) {
-            //console.log(quidd.get('name'));
             var shmdatasCollection = quidd.get("shmdatasCollection");
             var shm = shmdatasCollection.get(shmdataPath);
             if (shm) {

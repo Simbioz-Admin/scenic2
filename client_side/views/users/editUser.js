@@ -62,7 +62,7 @@ define(
         removeUser: function(e) {
           e.preventDefault();
           var that = this;
-          var result = views.global.confirmation("Are you sure?", function(ok) {
+          var result = views.global.confirmation($.t("Are you sure?"), function(ok) {
             if (ok) {
               socket.emit("removeUser", that.model.get("uri"), function(err, msg) {
                 if (err) return views.global.notification("error", err);

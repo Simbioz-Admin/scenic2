@@ -121,9 +121,7 @@ define(
               });
             }
 
-
             /* ViewSourceProperty it's a entry source for the table control */
-
             if (that.get("class") == "midisrc") {
               that.set("view", new ViewSourceProperty({
                 model: that,
@@ -131,9 +129,7 @@ define(
               }));
             }
 
-
             /* ViewMapper it's the connection between the source and destination in table control */
-
             if (that.get("category") == "mapper") {
               console.log("model mapper");
               that.set("view", new ViewMapper({
@@ -143,9 +139,7 @@ define(
               // that.get("view").render();
             }
 
-
             var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-
             if (!PreviewQuidd.test(that.get("name"))) {
               views.quidds.addPreviewIcon(that.get("name"));
             }
@@ -154,7 +148,7 @@ define(
           });
         },
         updateProperties: function() {
-          console.log("update properties");
+          // console.log("update properties");
         },
 
         /**
@@ -231,33 +225,6 @@ define(
           });
 
         },
-
-        /*
-         *  Get information about the quiddity and show on the interface.
-         *  the information is present in vumeter quiddity created with each quiddity soruce
-         */
-
-        // info: function(element) {
-        //     var shmdata = $(element.target).closest('tr').data("path");
-        //     var that = this;
-        //     collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-        //         val = val.replace(/,/g, "<br>");
-        //         var template = _.template(infoTemplate, {
-        //             info: val,
-        //             shmdata: shmdata
-        //         });
-        //         $("#info").remove();
-        //         $("body").prepend(template);
-        //         $("#info").css({
-        //             top: element.pageY,
-        //             left: element.pageX
-        //         }).show();
-        //         $(".panelInfo").draggable({
-        //             cursor: "move",
-        //             handle: "#title"
-        //         });
-        //     });
-        // },
 
         /*
          *  Set the property value of the quiddity
@@ -353,8 +320,8 @@ define(
 
         addMethod: function(method) {
           var that = this;
-          socket.emit("get_method_description", this.get("name"), method, function(err,description) {
-            if(err) return views.global.notification('error', err);
+          socket.emit("get_method_description", this.get("name"), method, function(err, description) {
+            if (err) return views.global.notification('error', err);
             that.get("methods")[method] = description;
             /* Warned the view that the method has been added */
             that.trigger("add:method", method);

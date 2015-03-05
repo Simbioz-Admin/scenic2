@@ -157,7 +157,6 @@ define(
             templateMeth = _.template(TemplateQuiddMethod, {
               method: meth
             });
-          console.log("***** collected methods", meth.name);
           this.addWithPositionWeight(meth["position weight"], templateMeth);
         },
 
@@ -246,7 +245,7 @@ define(
             this.model.setMethod(method, methodArguments, function(ok) {});
           } else {
             console.log('a');
-            views.global.notification("error", "Missing some arguments of your method");
+            views.global.notification("error", $.t("Missing some arguments of your method"));
           }
         }
       });

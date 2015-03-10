@@ -1,39 +1,39 @@
 define(
 
-	/** 
-	 *	Model Logger
-	 *	Represent one message log provide by the server
-	 *	@exports Models/Logger
-	 */
+  /** 
+   *	Model Logger
+   *	Represent one message log provide by the server
+   *	@exports Models/Logger
+   */
 
-	[
-		'underscore',
-		'backbone',
-	],
+  [
+    'underscore',
+    'backbone',
+  ],
 
-	function(_, Backbone) {
+  function(_, Backbone) {
 
-		/** 
-		 *	@constructor
-		 *  @requires Underscore
-		 *  @requires Backbone
-		 *  @augments module:Backbone.Model
-		 */
+    /** 
+     *	@constructor
+     *  @requires Underscore
+     *  @requires Backbone
+     *  @augments module:Backbone.Model
+     */
 
-		var LoggerModel = Backbone.Model.extend(
+    var LoggerModel = Backbone.Model.extend(
 
-			/**
-			 *	@lends module: Models/Logger~LoggerModel.prototype
-			 */
+      /**
+       *	@lends module: Models/Logger~LoggerModel.prototype
+       */
 
-			{
-				defaults: {
-					"date": null,
-					"type": null,
-					"from": null,
-					"message": null
-				}
-			});
+      {
+        defaults: {
+          "date": null,
+          "type": null,
+          "from": null,
+          "message": null
+        }
+      });
 
-		return LoggerModel;
-	})
+    return LoggerModel;
+  })

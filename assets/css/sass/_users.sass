@@ -1,4 +1,4 @@
-s/* scrollbar Custom */
+f/* scrollbar Custom */
 ::-webkit-scrollbar
 	width: 8px
 	cursor : scrollbar
@@ -13,11 +13,46 @@ div.users
 	width : 220px
 	background : #222
 	position : fixed
-	top : 51px
+	top : 61px
 	bottom : 0
-	right : -300px
-	z-index : 2000
+	right : 0px
 	.itsMe.user
+		input
+			background : none
+			padding : 0
+			margin : 0
+			height : inherit
+			border : none
+			color : white
+			display : inline
+			width : 50%
+			float : left
+
+		#currentStatus
+			position : relative
+			color : white
+			float : left
+			margin : 2px 10px 0 0
+			&:before
+				content : "▾"
+				margin-right : 5px
+			ul
+				display : none
+				position : absolute
+				z-index: 12
+				background : #222
+				padding-top : 5px
+				margin : 0 0 0 -5px
+				li
+					padding : 5px 10px 5px 5px
+					border-bottom : 1px solid #555
+					&:hover
+						background : #111
+					&:last-child
+						border : none
+			&:hover ul
+				display : block
+
 		.status
 			width : 15px
 			height : 15px
@@ -27,7 +62,7 @@ div.users
 		.information
 			// border : none
 			background : #222
-			border-top : 1px solid #1a1a1a
+			//border-top : 1px solid #1a1a1a
 			border-left-color : #01b101
 		.logout
 			position : absolute
@@ -75,7 +110,7 @@ div.users
 		padding : 0 17px
 		position : relative
 		&:hover
-			background : #be2620
+			//background : #be2620
 
 	#add-user
 		+border-radius(0)
@@ -86,14 +121,13 @@ div.users
 
 	.user
 		position : relative
-		z-index: 0
 		border-bottom : 1px solid #2c2c2c
 		.information
 			padding : 10px
 			border-left : 2px solid grey
 			cursor : pointer
 			position : relative
-			z-index: 2
+			// z-index: 2
 			background : #333
 			h3
 				padding : 0px
@@ -112,7 +146,7 @@ div.users
 				color : #999
 				font-size: 11px
 				height : 13px
-				overflow: hidden
+				// overflow: hidden
 
 		// &:nth-child(odd) .information
 		// 	background : #333
@@ -125,7 +159,7 @@ div.users
 			left : 0
 			background : #2a2a2a
 			color : white
-			z-index : 1
+			// z-index : 1
 			.action
 				width : 70px
 				height : 100%
@@ -140,18 +174,39 @@ div.users
 					opacity : 1
 					background-color : #111
 					cursor : pointer
+			.call, .hangUp
+				position : relative
+				//background : url(../../images/iconePhone.png) center center no-repeat
+				&:before
+					content : ''
+					position : absolute
+					width : 100%
+					height : 100%
+					background : url(../../images/iconePhone.png) center center no-repeat
+					left : 0
+			.hangUp
+				background-color : #be2520
+				&:hover
+					background-color : #be2520
+				&:before
+					margin : 3px 0
+					+transform(rotate(137deg))
+
 			.add_table
 				background : url(../../images/bgBox.png) center center no-repeat
-			.chat
-				background : url(../../images/icon_chat.png) center center no-repeat
+			.edit_user
+				background : url(../../images/settings.png) center center no-repeat
+				//background : url(../../images/icon_chat.png) center center no-repeat
+				&:hover
+					text-decoration: none
 
-		&[data-status='0'] .information, &[data-status='0'] .status
+		&[data-statusUser='online'] .information, &[data-status='0'] .status
 			border-color : #01b101
-		&[data-status='1'] .information
+		&[data-statusUser='busy'] .information
 			border-color : #be2620
-		&[data-status='2'] .information
+		&[data-statusUser='away'] .information
 			border-color : orange
-		&[data-status='3'] .information
+		&[data-statusUser='offline'] .information
 			border-color : #555	
 
 
@@ -194,3 +249,14 @@ div.users
 			cursor : pointer
 			&:hover
 				background : #333
+
+.editUser
+	//Edit user
+	.remove
+		background : none
+		color : white
+		border : none
+		cursor : pointer
+		float : right
+		&:hover
+			color : red

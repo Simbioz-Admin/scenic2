@@ -1,7 +1,5 @@
-define(
-  ['config', 'switcher', 'log', 'underscore', 'jquery'],
-  function(config, switcher, log, _, $) {
-
+define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
+  function(config, switcher, log, _, $, i18n) {
 
     var io;
 
@@ -9,6 +7,7 @@ define(
       log.debug("init Receiver for get Io");
       io = socketIo;
     }
+
 
     /**
      *  @function create
@@ -36,8 +35,9 @@ define(
         cb(null, quiddInfo);
 
       } else {
-        log.error("failed to create a quiddity class ", className);
-        cb("failed to create " + className + " maybe this name is already used?");
+        var msgError = i18n.t("failed to create __className__ maybe this name is already used?", { className : className });
+        log.error(msgError);
+        cb(msgError);
       }
 
     }
@@ -117,7 +117,7 @@ define(
         var ok = switcher.set_property_value(quiddName, property, String(value));
         if (ok) {
           log.debug("the porperty " + property + " of " + quiddName + "is set to " + value);
-          cb(property, value);
+          cb(null, property, value);
 
         } else {
           log.error("failed to set the property " + property + " of " + quiddName);
@@ -199,25 +199,30 @@ define(
     }
 
 
-    function get_methods_description(quiddName, callback) {
+    function get_methods_description(quiddName, cb) {
       var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
       if (!methods) {
-        var msg = "failed to get methods description " + quiddName;
-        cb(msg);
-        log.error(msg);
+        var msg = i18n.t("failed to get methods description __quiddName__", {
+          quiddName: quiddName
+        });
         return;
       }
+
       var methods_to_send = {};
       _.each(methods, function(method) {
         methods_to_send[method.name] = method;
       });
-      callback(null, methods_to_send);
+
+      cb(null, methods_to_send);
     }
 
-    function get_method_description(quiddName, method, callbackcb) {
+    function get_method_description(quiddName, method, cb) {
       var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
       if (!descriptionJson) {
-        var msg = "failed to get " + method + " method description" + quiddName;
+        var msg = i18n.t("failed to get __method__ method description __quiddName", {
+          method: method,
+          quiddName: quiddName
+        });
         cb(msg, err);
         log.error(msg);
         return;
@@ -228,41 +233,37 @@ define(
 
 
     function get_property_value(quiddName, property, cb) {
-      var property_value = "";
       log.debug("Get property value", quiddName, property);
       if (quiddName && property) {
         try {
-          log.debug("trying to get property value")
-          // property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
-          property_value = switcher.get_property_value(quiddName, property);
-          console.log("property value in try", property_value);
+          var property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
         } catch (e) {
-          log.error("Error", e.stack)
-          console.log(e.stack)
-          property_value = switcher.get_property_value(quiddName, property);
-          console.log("property_value in catch", property_value);
-          log.debug("error getting property value", e);
+          var property_value = switcher.get_property_value(quiddName, property);
         }
-        log.debug("getting property value seems successfull", property_value);
       } else {
-        var msg = "failed o get property value (quiddity: " + quiddName + " property: " + property;
+        var msg = i18n.t("failed to get property value (quiddity __quiddName__ -  property __property__", {
+          quiddName: quiddName,
+          property: property
+        });
         cb(msg);
         log.error(msg);
         return;
       }
-      log.debug("got this property value: ", property_value);
       cb(null, property_value);
     }
 
-
-    function invoke(quiddName, method, parameters, callback) {
+    function invoke(quiddName, method, parameters, cb) {
       var invoke = switcher.invoke(quiddName, method, parameters);
       log.debug("the method " + method + " of " + quiddName + " is invoked with " + parameters);
       if (!invoke) {
-        log.error("failed to invoke " + quiddName + " method " + method);
-        return;
+        var msgError = i18n.t("failed to invoke __quiddName__ method __method__", {
+          quiddName: quiddName,
+          method: method
+        });
+        log.error(msgError);
+        return cb(msgError);
       }
-      if (callback) callback(invoke);
+      if (cb) cb(null, invoke);
 
       if (method == "remove_udp_stream_to_dest")
         io.sockets.emit("remove_connection", invoke, quiddName, parameters);
@@ -298,16 +299,17 @@ define(
     }
 
     function removeConrolByQuiddParent(quiddParent) {
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read",[ 'controlProperties']));
+
+      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", ['controlProperties']));
       _.each(currentValuesDicoProperty, function(control) {
         if (control.quiddName == quiddParent) {
           remove_property_value_of_dico("controlProperties", control.name);
         }
       })
-        }
+    }
 
     function remove_property_value_of_dico(property, name) {
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico","read", property));
+      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", property));
       var newValuesDico = [];
       _.each(currentValuesDicoProperty, function(value) {
         if (value.name != name)
@@ -328,7 +330,7 @@ define(
 
       log.debug("Remove property", property, name);
 
-      switcher.invoke("dico", "update", [ property, JSON.stringify(newValuesDico)]);
+      switcher.invoke("dico", "update", [property, JSON.stringify(newValuesDico)]);
       io.sockets.emit("removeValueOfPropertyDico", property, name);
     }
 
@@ -342,7 +344,7 @@ define(
       get_info: get_info,
       get_properties_description: get_properties_description,
       get_methods_description: get_methods_description,
-      get_methods_description: get_methods_description,
+      get_method_description: get_method_description,
       get_properties_values: get_properties_values,
       get_property_value: get_property_value,
       set_property_value: set_property_value,
@@ -354,5 +356,4 @@ define(
       set_property_value_of_dico: set_property_value_of_dico,
       remove_property_value_of_dico: remove_property_value_of_dico
     }
-
   });

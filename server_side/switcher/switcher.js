@@ -7,10 +7,11 @@ define(
     './server_side/switcher/receivers',
     'log',
     'underscore',
-    'jquery'
+    'jquery',
+    'i18next'
   ],
 
-  function(config, switcher, sip, quidds, receivers, log, _, $) {
+  function(config, switcher, sip, quidds, receivers, log, _, $, i18n) {
 
     var io;
 
@@ -67,13 +68,14 @@ define(
 
         /* Create a dico for destinationsSIP */
         // switcher.create("dico", "destinationsSip");
-        
+
       }
 
 
       /* log of switcher */
 
       switcher.register_log_callback(function(msg) {
+        //var msgT = i18n.t(msg);
         log.switcher(msg);
       });
 
@@ -92,26 +94,11 @@ define(
         }
 
 
-        /* ************ PROP - SHMDATA-WRITERS ************ */
+        /* ************ PROP - SIPQUID ************ */
 
-        // if (qprop == "shmdata-writers") {
-        //     /* if the quidd have shmdata we create view meter */
-        //     if (JSON.parse(pvalue).shmdata_writers.length > 0) createVuMeter(qname);
-
-        //       Send to all users informing the creation of shmdatas for a specific quiddity 
-        //     var shmdatas = JSON.parse(pvalue).shmdata_writers;
-        //     log.debug("send Shmdatas for ", qname);
-        //     io.sockets.emit("updateShmdatas", qname, shmdatas);
-
-        // }
-
-
-        /* ************ PROP - SHMDATA-READERS ************ */
-
-        // if (qprop == "shmdata-readers") {
-        //   io.sockets.emit("update_shmdatas_readers", qname, pvalue);
-        // }
-
+        if (qprop == "sip-registration" && qname == "sipquid") {
+          log.debug("Sip Registration", pvalue);
+        }
 
         /* ************ PROP - STARTED ************ */
 
@@ -120,6 +107,7 @@ define(
           log.debug("remove shmdata of", qname);
           var destinations = switcher.get_property_value("dico", "destinations"),
           destinations = JSON.parse(destinations);
+
           _.each(destinations, function(dest) {
             _.each(dest.data_streams, function(stream) {
               log.debug(stream.quiddName, qname);
@@ -158,7 +146,7 @@ define(
       switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
         if (qname != "systemusage") {
-          log.debug('signal : ', qname, ' ', qsignal, ' ', pvalue);
+          log.switcher('signal : ', qname, ' ', qsignal, ' ', pvalue);
         }
 
         /* manage callback fro SIP quidd  */
@@ -198,12 +186,11 @@ define(
           }
 
           /* sipquidd */
-          if(qname == "sipquid")
-            log.debug("on-tree-grafted", qname, pvalue[0], qsignal);
-          
-          if(qname == "sipquid" && pvalue[0].indexOf(".presence") >= 0){
-            var infoUser = JSON.parse(switcher.get_info(qname, pvalue[0]));
-            console.log("user Info Sip Quidd", infoUser);
+
+          if (qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0) {
+            //TODO : Get Better method for get information about user without split value
+            var idUser = pvalue[0].split(".")[2];
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
             io.sockets.emit('infoUser', infoUser);
           }
 
@@ -214,12 +201,12 @@ define(
         /* ON TREE PRUNED */
 
         if (qname != "systemusage" && qsignal == "on-tree-pruned") {
-          
+
           //Shmdata Writer
           if (pvalue[0].indexOf(".shmdata.writer") >= 0) { //writer
             var shmdata = {
-              path : pvalue[0].replace(".shmdata.writer.", ""),
-              type : 'writer'
+              path: pvalue[0].replace(".shmdata.writer.", ""),
+              type: 'writer'
             }
             console.log("on-tree-pruned removing Shmdata writer", qname, shmdata);
             io.sockets.emit("removeShmdata", qname, shmdata);
@@ -228,11 +215,17 @@ define(
           //Shmdata Reader
           if (pvalue[0].indexOf(".shmdata.reader") >= 0) { //writer
             var shmdata = {
-              path : pvalue[0].replace(".shmdata.reader.", ""),
-              type : 'reader'
+              path: pvalue[0].replace(".shmdata.reader.", ""),
+              type: 'reader'
             }
-            console.log("on-tree-pruned removing Shmdata reader", qname, shmdata);
+
             io.sockets.emit("removeShmdata", qname, shmdata);
+          }
+
+          if (qname == "sipquid") {
+            var idUser = pvalue[0].split(".")[2];
+            var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
+            io.sockets.emit('infoUser', infoUser);
           }
         }
 
@@ -369,7 +362,7 @@ define(
     }
 
     function load(name, cb) {
-      log.debug("loading a scenic file", name);
+      log.debug("loading a scenic file", config.scenicSavePath + name);
       var load = switcher.load_history_from_scratch(config.scenicSavePath + name);
       cb(load);
     }

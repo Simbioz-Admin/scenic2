@@ -1,21 +1,20 @@
 <h2>Contacts</h2>
 <% if(!loginForm){ %>
-<div class="itsMe user">
-	<div class="information">
-		<h3>Pachesnel</h3>
-		<div class="last_message">No message</div>
-		<a href="#" class="logout">disconnect</a>
-	</div>
-</div>
+<div class="itsMe user"></div>
 <% } %>
 <!-- <div class="search">
 	<input type="text" name="" value="" placeholder="Rechercher un utilisateur...">
 </div> -->
 	<div class="content_users">
-		<input type="text" id="add-user" value="" placeholder="+ user uri...">
-		<div class="status-0 list"></div>
-		<div class="status-1 list"></div>
-		<div class="status-2 list"></div>
-		<div class="status-3 list"></div>
-		<div class="status-4 list"></div>
+		<input type="text" id="add-user" value="" data-i18n="[placeholder]Add user" placeholder="Add user">
+		<% if (typeof(listStatus) != "undefined") { %>
+			<% _.each(listStatus, function(status){ %>
+				<div data-status="<%=status.name.toLowerCase()%>" class="status-<%=status.value%> list"></div>
+			<% }); %>
+				<div data-status="offline" class="status-offline list"></div>
+				<div data-status="online" class="status-online list"></div>
+				<div data-status="unknown" class="status-unknown list"></div>
+
+		<% } %>
+		
 	</div>

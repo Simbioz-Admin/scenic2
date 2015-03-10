@@ -1,73 +1,59 @@
 define(
 
+  /** 
+   *  Manage all interaction between the server/views with a specific quiddity
+   *  @exports Models/Shmdata
+   */
+
+  [
+    'underscore',
+    'backbone',
+    'views/shmdata'
+  ],
+
+  function(_, Backbone, ViewShmdata) {
+
     /** 
-     *	Manage all interaction between the server/views with a specific quiddity
-     *	@exports Models/Shmdata
+     *  @constructor
+     *  @requires Underscore
+     *  @augments module:Backbone.Model
      */
 
-    [
-        'underscore',
-        'backbone',
-        'views/shmdata'
-    ],
+    var ShmdataModel = Backbone.Model.extend(
 
-    function(_, Backbone, ViewShmdata) {
+      /**
+       *  @lends module:Models/quidd~ShmdataModel.prototype
+       */
 
-        /** 
-         *	@constructor
-         *  @requires Underscore
-         *  @augments module:Backbone.Model
+      {
+        idAttribute: "path",
+        defaults: {
+          path: null,
+          quidd: null,
+          byteRate: 0,
+          category: null,
+          type: null
+        },
+
+        /**
+         *  Function executed when the model quiddity is created
+         *  It's used for created a view associate to the model
+         *  This view need to know if it's in table controler or transfer and if it's a source or destination
          */
 
-        var ShmdataModel = Backbone.Model.extend(
+        initialize: function() {
 
-            /**
-             *	@lends module:Models/quidd~ShmdataModel.prototype
-             */
+          /* listen if the quidd is removed */
+          if (this.get("quidd")) {
+            collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);
+          }
+        },
 
-            {
-                idAttribute: "path",
-                defaults: {
-                    path: null,
-                    quidd: null,
-                    byteRate: 0,
-                    category: null,
-                    type : null
-                },
-
-
-                /**
-                 *	Function executed when the model quiddity is created
-                 *	It's used for created a view associate to the model
-                 *	This view need to know if it's in table controler or transfer and if it's a source or destination
-                 */
-
-                initialize: function() {
-                        // this.on('destroy', this.remove);
-                        // var type = this.get("path").split("_")[3];
-                        // if (type.indexOf("video") >= 0) this.set("type", "video");
-                        // if (type.indexOf("audio") >= 0) this.set("type", "audio");
-                        // if (type.indexOf("osc") >= 0) this.set("type", "osc");
-
-                        /* listen if the quidd is removed */
-                        if(this.get("quidd")){
-                            collections.quidds.get(this.get("quidd")).on("remove", this.removeModel, this);
-                        }
-
-
-                },
-                /*createViewForTable: function(table) {
-                    console.log("createViewForTable", this.get('type'));
-                    new ViewShmdata({
-                        model: this,
-                        table: table
-                    })
-                },*/
-                removeModel: function() {
-                    console.log("Remove Shmdata");
-                    this.trigger("destroy", this);
-                }
-            }
-        );
-        return ShmdataModel;
-    });
+        removeModel: function() {
+          console.log("Remove Shmdata");
+          this.trigger("destroy", this);
+        }
+      }
+    );
+    return ShmdataModel;
+  });

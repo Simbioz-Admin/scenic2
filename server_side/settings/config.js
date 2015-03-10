@@ -4,6 +4,7 @@ interfaces = os.networkInterfaces(),
 addresses = [],
 scenicHomePath = process.env.HOME + "/.scenic2";
 
+console.log('PATH HOME', process.env.HOME);
 for (k in interfaces) {
   for (k2 in interfaces[k]) {
     var address = interfaces[k][k2];
@@ -23,6 +24,7 @@ var pickAddress
 
 var config = {
   version: "2.0.24",
+  lang : 'en',
   host: addresses[0],
   port: {
     soap: 8085,
@@ -30,7 +32,8 @@ var config = {
   },
   sip: {
     port: 5060,
-    address: "scenic.sat.qc.ca"
+    //address: "scenic.sat.qc.ca"
+    address : "10.10.30.235"
   },
   rtpsession: "defaultrtp",
   logLevel: "warn",

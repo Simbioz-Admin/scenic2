@@ -39,10 +39,10 @@ define(
           "change input.property, select.property": "setProperty",
           "click .setMethod": "setMethod",
           "click input": "selectFocus",
-          "click #form-quidd, #title" : "handlePropagation"
+          "click #form-quidd, #title": "handlePropagation"
         },
 
-        properties_exlude : ['devices-json','shmdata-writers','shmdata-readers'],
+        properties_exlude: ['devices-json', 'shmdata-writers', 'shmdata-readers'],
         methods_exclude: ['connect', 'disconnect', 'disconnect-all', 'can-sink-caps'],
 
         /* Called when the view is initialized */
@@ -68,14 +68,14 @@ define(
           //add properties
           _.each(this.model.get("properties"), function(property) {
             //Exclude some properties
-            if(!_.contains( that.properties_exlude, property.name)){
+            if (!_.contains(that.properties_exlude, property.name)) {
               that.addProperty(property.name);
             }
           });
 
           //add methods
           _.each(this.model.get("methods"), function(method) {
-            if(!_.contains( that.methods_exclude, method.name)){
+            if (!_.contains(that.methods_exclude, method.name)) {
               that.addMethod(method.name);
             }
           });
@@ -88,7 +88,7 @@ define(
         handlePropagation: function handlePropagation(element) {
           element.stopPropagation();
         },
-        
+
         selectFocus: function selectFocus() {
           event.target.select();
         },
@@ -99,11 +99,11 @@ define(
 
 
           var prop = this.model.get("properties")[property],
-          that = this,
-          templateProp = _.template(TemplateQuiddProperty, {
-            property: prop
-          });
-          
+            that = this,
+            templateProp = _.template(TemplateQuiddProperty, {
+              property: prop
+            });
+
           /* check position weight for place the property added */
           //temporary add negative weight for started (need to be always on top)
           if (prop.name == "started") prop["position weight"] = -1000;
@@ -148,14 +148,15 @@ define(
         },
 
 
-        /* Called when a new method is added to the quiddity */
+
+        /*Called when a property is removed to the quiddity */
+
 
         addMethod: function(method) {
           var meth = this.model.get("methods")[method],
-          templateMeth = _.template(TemplateQuiddMethod, {
-            method: meth
-          });
-          console.log("***** collected methods", meth.name);
+            templateMeth = _.template(TemplateQuiddMethod, {
+              method: meth
+            });
           this.addWithPositionWeight(meth["position weight"], templateMeth);
         },
 
@@ -187,10 +188,9 @@ define(
         /* Called for set the value of a property */
 
         setProperty: function(element) {
-
           var that = this,
-          property = (element.target ? element.target.name : element.name),
-          value = (element.target ? element.target.value : element.value);
+            property = (element.target ? element.target.name : element.name),
+            value = (element.target ? element.target.value : element.value);
 
           if ($(element.target).hasClass("checkbox"))
             value = String(element.target.checked);
@@ -229,19 +229,27 @@ define(
 
 
         /* Called for set a method  */
-
         setMethod: function(element) {
           var that = this,
-          method = $(element.target).attr("id"),
-          valueMethod = $("[name='" + method + "']").val();
+            method = $(element.target).attr("id"),
+            methodArguments = [],
+            nbArguments = $("[name='" + method + "']").length;
 
-          if (method && valueMethod) {
-            this.model.setMethod(method, [valueMethod], function(ok) {});
+          $.each($("[name='" + method + "']"), function(i, method) {
+            if ($(method).val()) methodArguments.push($(method).val());
+          });
+
+          console.log(nbArguments, methodArguments.length);
+
+          if (nbArguments == methodArguments.length) {
+            this.model.setMethod(method, methodArguments, function(ok) {});
           } else {
-            views.global.notification("error", "error with set method value");
+            console.log('a');
+            views.global.notification("error", $.t("Missing some arguments of your method"));
           }
         }
       });
+
 
     return ViewQuiddEdit;
   })

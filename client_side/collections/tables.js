@@ -7,10 +7,11 @@ define(
 
   [
     'underscore',
+    'jquery',
     'backbone',
     'models/table'
   ],
-  function(_, Backbone, ModelTable) {
+  function(_, $, Backbone, ModelTable) {
 
     /** 
      *  @constructor
@@ -34,34 +35,32 @@ define(
         /** Execute when the collection is initialized
          *  We declare all events for receive information about quiddities
          */
-
         initialize: function() {
 
           /* Create a table for manage Audio device and connexion */
           var shmdataMatrix = {
-            name: 'Sink',
+            name: $.t('Sink'),
             type: 'sink',
             id :"sink",
             description: "Manage audio device and connexion audio",
             menus: [{
-              name: "source",
+              name: "Source",
               type: "sources"
             }, {
-              name: "sink",
+              name: $.t("Sink"),
               type: "destinations"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
+              select: ["sip","src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
             },
             destinations: {
               select: ["sink"],
               exclude: ["monitor"]
             }
           }
-
           /* Create a table for managing shmdatas transmission throught RTP/SDP  */
           var RTPtransferMatrix = {
-            name: "transfer",
+            name:  $.t('Transfer'),
             type: "transfer",
             id: "transferRtp",
             description: "manage connexion with destination type host",
@@ -74,22 +73,22 @@ define(
               id: "create_receiver"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+              select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
             collectionDestinations: collections.destinationsRtp
           }
 
           /* Create matrix for manage connection between properties values and midi quiddity */
           var controlMatrix = {
-            name: "control",
+            name: $.t("Control"),
             type: "control",
             id: "control",
             description: "Control properties of quiddities with device",
             menus: [{
-              name: "midi control",
+              name: $.t("midi control"),
               type: "sources"
             }, {
-              name: "properties",
+              name: $.t("properties"),
               type: "destinations",
               id: "get_properties"
             }],
@@ -110,15 +109,16 @@ define(
               type: "sources"
             }],
             sources: {
-              select: ["src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+              select: ["sip","src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
-            collectionDestinations: collections.destinationsSip
+            collectionDestinations: collections.users
+            
           }
 
           this.add(controlMatrix);
           this.add(shmdataMatrix);
           this.add(RTPtransferMatrix);
-          //this.add(SIPtransferMatrix);
+          this.add(SIPtransferMatrix);
 
         }
       });

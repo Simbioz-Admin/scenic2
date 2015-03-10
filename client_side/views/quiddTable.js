@@ -1,41 +1,41 @@
 define(
 
+  /** 
+   *  View Source
+   *  The source view is for each source type quiddity create whatsoever to control or transfer table
+   *  @exports Views/Launch
+   */
+
+  [
+    'underscore',
+    'backbone'
+  ],
+
+  function(_, Backbone) {
+
     /** 
-     *  View Source
-     *  The source view is for each source type quiddity create whatsoever to control or transfer table
-     *  @exports Views/Launch
+     *  @constructor
+     *  @requires Underscore
+     *  @requires Backbone
      */
 
-    [
-        'underscore',
-        'backbone'
-    ],
+    var SourceView = Backbone.View.extend(
 
-    function(_, Backbone) {
+      /**
+       *  @lends module: Views/source~SourceView.prototype
+       */
 
-        /** 
-         *  @constructor
-         *  @requires Underscore
-         *  @requires Backbone
-         */
+      {
+        events: {},
 
-        var SourceView = Backbone.View.extend(
+        /* Called when en new source quiddity is created */
 
-            /**
-             *  @lends module: Views/source~SourceView.prototype
-             */
-
-            {
-                events: {},
-
-                /* Called when en new source quiddity is created */
-
-                initialize: function(options) {
+        initialize: function(options) {
 
 
-                },
+        },
 
-            });
+      });
 
-        return SourceView;
-    })
+    return SourceView;
+  })

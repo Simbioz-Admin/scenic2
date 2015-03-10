@@ -58,15 +58,15 @@ define(
          */
 
         initialize: function() {
-          var that = this;
 
+          var that = this;
           var ShmdataCollection = Backbone.Collection.extend({
             model: ModelShmdata
           });
+
           this.set("shmdatasCollection", new ShmdataCollection());
 
           socket.emit("get_info", this.get("name"), ".shmdata", function(shmdatas) {
-
 
             /* When no shmdata error = no path */
             if (!shmdatas.error && shmdatas.reader) {
@@ -121,9 +121,7 @@ define(
               });
             }
 
-
             /* ViewSourceProperty it's a entry source for the table control */
-
             if (that.get("class") == "midisrc") {
               that.set("view", new ViewSourceProperty({
                 model: that,
@@ -131,9 +129,7 @@ define(
               }));
             }
 
-
             /* ViewMapper it's the connection between the source and destination in table control */
-
             if (that.get("category") == "mapper") {
               console.log("model mapper");
               that.set("view", new ViewMapper({
@@ -143,15 +139,16 @@ define(
               // that.get("view").render();
             }
 
-
             var PreviewQuidd = new RegExp('^((?!(gtkvideosink|pulsesink)).)*$');
-
             if (!PreviewQuidd.test(that.get("name"))) {
               views.quidds.addPreviewIcon(that.get("name"));
             }
 
 
           });
+        },
+        updateProperties: function() {
+          // console.log("update properties");
         },
 
         /**
@@ -230,64 +227,19 @@ define(
         },
 
         /*
-         *  Get information about the quiddity and show on the interface.
-         *  the information is present in vumeter quiddity created with each quiddity soruce
-         */
-
-        // info: function(element) {
-        //     var shmdata = $(element.target).closest('tr').data("path");
-        //     var that = this;
-        //     collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-        //         val = val.replace(/,/g, "<br>");
-        //         var template = _.template(infoTemplate, {
-        //             info: val,
-        //             shmdata: shmdata
-        //         });
-        //         $("#info").remove();
-        //         $("body").prepend(template);
-        //         $("#info").css({
-        //             top: element.pageY,
-        //             left: element.pageX
-        //         }).show();
-        //         $(".panelInfo").draggable({
-        //             cursor: "move",
-        //             handle: "#title"
-        //         });
-        //     });
-        // },
-
-        /*
          *  Set the property value of the quiddity
          *  @param {string} property The name of the property
          *  @param {string} value The value of the property
          *  @param {function} callback Confirms that the property defined
+         *  @TODO : REMOVE THIS FUNCTION FOR CALL DIRECTLY
          */
 
-        setPropertyValue: function(property, value, callback) {
+        setPropertyValue: function(property, value, cb) {
           var that = this;
-          socket.emit("set_property_value", this.get("name"), property, value, function(property, value) {
-            //that.get("properties")[property] = value;
-            callback("ok");
+          socket.emit("set_property_value", this.get("name"), property, value, function(err) {
+            if (err) return views.global.notification("error", err);
+            if (cb) cb("ok");
           });
-        },
-
-
-        /*
-         *  Set in client side the vaolue of a property
-         *  This function is called when the server send a new value of a property
-         *  @param {string} property The name of the property
-         *  @param {string} value The value of the property
-         *  @TODO Find better place for see value midi because this interact whit view (find type prop : string, enum etc.. for focus )
-         */
-
-        setLocalpropertyValue: function(property, value) {
-          _.each(this.get("properties"), function(property) {
-            if (property.name == property) property.value = value;
-          });
-
-          if (property == "last-midi-value" && $("#last_midi_event_to_property").length > 0) {
-            $(".preview-value").html("<div class='content-value'>" + value + "</div>");
-          }
         },
 
 
@@ -318,7 +270,6 @@ define(
         },
 
 
-
         /*
          *  Add a specific property
          *  This function is called by the server when a property is added
@@ -333,21 +284,6 @@ define(
             that.trigger("add:property", property);
           });
         },
-
-
-        /*
-         *  Get the property Value of the quiddity
-         *  @param {string} property The name of the property
-         *
-         */
-
-        // getPropertyValue: function(property, callback) {
-        //     var that = this;
-        //     socket.emit("get_property_value", this.get("name"), property, function(err, propertyValue) {
-        //         callback(propertyValue);
-        //     });
-        // },
-
 
         /*
          *  Get description of all methods of the quiddity
@@ -384,10 +320,11 @@ define(
 
         addMethod: function(method) {
           var that = this;
-          socket.emit("get_method_description", this.get("name"), method, function(description) {
+          socket.emit("get_method_description", this.get("name"), method, function(err, description) {
+            if (err) return views.global.notification('error', err);
             that.get("methods")[method] = description;
             /* Warned the view that the method has been added */
-            that.trigget("add:method", method);
+            that.trigger("add:method", method);
           });
         },
 

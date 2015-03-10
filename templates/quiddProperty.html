@@ -7,7 +7,9 @@
 	<% var valueField = property["default value"]; %>
 
 	<% var moreInfo =  property.minimum ? "Min : "+property.minimum+" &nbsp; Max : "+property.maximum : "";  %>
-	<h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
+	<% var description =  $.i18n.t(property['short description']) + "<br>"+moreInfo; %>
+	<% var name = $.i18n.t(property['long name']); %>
+	<h3 class="info" title="<%=description%>" ><%=name%></h3>
 
 	<!-- Type input for float / int and bool -->
 	<% if(property.type == "float" || property.type == "int" || property.type == "double" || property.type == "uint"){ %>

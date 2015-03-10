@@ -51,7 +51,6 @@ define(
          */
         initialize: function() {
 
-
           this.model.on("trigger:menu", this.getClasses, this);
           this.model.on("addCategoryFilter", this.addCategoryFilter, this);
           this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
@@ -69,9 +68,8 @@ define(
             }
           });
 
-          btnTable.append("<div class='content'></div>");
+          btnTable.append("<div class='content'><div class='name'>"+this.model.get('name')+"</div></div>");
           $("#panelTables").prepend(btnTable);
-
 
           /* generate the table */
           var template = _.template(TemplateTable, {
@@ -86,7 +84,8 @@ define(
 
           /* add to the default panel */
           $("#panelLeft").append(this.el);
-
+          //translation
+          $(this.el).i18n();
 
         },
 
@@ -101,6 +100,7 @@ define(
 
           /* get the quiddity classes authorized on this table */
           var classes = this.model.selectByCategory(shmdataType);
+
           /* we not load classes if nothing is return */
           if (classes && classes.length == 0) return;
 
@@ -116,6 +116,7 @@ define(
 
           $("#listSources", this.el).remove();
           $(".table.active [data-type='" + shmdataType + "']").after(template);
+          $('#listSources',this.el).i18n();
 
           // /* here we listen select for call views.quidds.defineName */
           // $("#subMenu").menu({
@@ -163,33 +164,28 @@ define(
         },
 
         toggle_connection: function(e) {
-
+          console.log('toggle_connection');
           var box = $(e.target),
             destination = box.data("destination"),
-            id = box.data("id"),
             path = box.parent().data("path");
 
           /* if transfer we ask port for connect to the receiver */
           if (this.model.get("id") == "transferRtp") {
             /* if already connect */
-            if (box.hasClass("active")) return socket.emit("remove_connection", path, id, function(ok) {});
-            box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='specify an even port'></div>");
+            if (box.hasClass("active")) return socket.emit("remove_connection", path, destination, function(ok) {});
+            box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='"+$.t('specify an even port')+"'></div>");
           }
 
           /* if transferSip we ask to add shmdata to the user */
           if (this.model.get("id") == "transferSip") {
-            console.log(destination, id, path);
             var attach = box.hasClass("active") ? false : true;
-
-            socket.emit("attachShmdataToContact", destination, path, attach, function(err, msg){
+            socket.emit("attachShmdataToUser", destination, path, attach, function(err, msg){
               if(err) return views.global.notification("error", err);
               views.global.notification("valid", msg);
             });
-
           }
 
           if (this.model.get("id") == "sink") {
-
             /* Find information about the number of connection possible */
             if (box.hasClass("active")) {
               socket.emit("invoke", destination, "disconnect", [path], function(data) {});
@@ -198,7 +194,7 @@ define(
               socket.emit('get_info', destination, 'shmdata', function(shmdata) {
                 var nbConnectionExisting = (shmdata.reader != 'null') ? _.size(shmdata.reader) : 0;
                 var maxReader = parseInt(shmdata.max_reader);
-                if (maxReader > nbConnectionExisting) {
+                if (maxReader > nbConnectionExisting  || maxReader == 0) {
                   socket.emit("invoke", destination, "connect", [path], function(data) {});
 
                 } else {
@@ -207,7 +203,7 @@ define(
                       socket.emit("invoke", destination, "connect", [path], function(data) {});
                     });
                   } else {
-                    views.global.notification('error', 'you have reached the maximum connection. The limit is ' + maxReader);
+                    views.global.notification('error', $.t('you have reached the maximum connection. The limit is ') + maxReader);
                   }
                 }
 
@@ -225,7 +221,7 @@ define(
           if (e.which == 13) //touch enter
           {
             var box = $(e.target).parent(),
-              id = $(e.target).closest("td").data("id"),
+              id = $(e.target).closest("td").data("destination"),
               path = $(e.target).closest("tr").data("path"),
               quiddName = $(e.target).closest("tr").data("quiddname"),
               port = $(e.target).val(),
@@ -273,7 +269,7 @@ define(
             });
             $(element.target).after(template);
           } else {
-            views.global.notification("error", "you need to create source before to add a property");
+            views.global.notification("error", $.t("you need to create source before to add a property"));
           }
         },
 

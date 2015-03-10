@@ -1,5 +1,5 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery'],
-  function(config, switcher, log, _, $) {
+define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18n'],
+  function(config, switcher, log, _, $, i18n) {
 
     var io;
 
@@ -28,7 +28,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
           name: destination.name
         });
 
-      console.log("DESTI", destinations);
       /* check if already in the colletion */
       if (exist) {
         return cb({
@@ -62,7 +61,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       var addToRtpSession = switcher.invoke("defaultrtp", "add_destination", [destination.id, destination.hostName]);
 
       if (!addToRtpSession) {
-        var msg = "Failed to add the destination to the quidd RTPSession";
+        var msg = i18n.t("Failed to add the destination to the quidd RTPSession");
         log.error(msg);
         return cb({
           error: msg
@@ -83,7 +82,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
           createSoapClient = switcher.create("SOAPcontrolClient", "soapControlClient-" + destination.id);
 
         if (!createSoapClient) {
-          var msg = "Failed to create Quiddity " + destination.id;
+          var msg = i18n.t("Failed to create Quiddity ") + destination.id;
           log.error(msg);
           return cb({
             error: msg
@@ -94,7 +93,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
         var setUrl = switcher.invoke("soapControlClient-" + destination.id, "set_remote_url_retry", [addressClient]);
         if (!setUrl) {
-          var msg = "Failed to set the method set_remote_url_retry for " + destination.id;
+          var msg = i18n.t("Failed to set the method set_remote_url_retry for ") + destination.id;
           log.error(msg);
           return cb({
             error: msg
@@ -196,7 +195,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
 
       /* 1. remove the association between shmdata and destination */
       var remove = switcher.invoke("defaultrtp", "remove_udp_stream_to_dest", [path, id]);
-      if (!remove) return cb("Error to remove udp stream to destination");
+      if (!remove) return cb(i18n.t("Error to remove udp stream to destination"));
 
       /* 2. we remove data stream to the dico destination */
       var destinations_rtp = JSON.parse(switcher.get_property_value("defaultrtp", "destinations-json")).destinations;
@@ -313,7 +312,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       var removeToRtp = switcher.invoke("defaultrtp", "remove_destination", [id]);
 
       if (!removeToRtp) {
-        var msg = "Failed to remove destination " + id;
+        var msg = i18n.t("Failed to remove destination ") + id;
         log.error(msg);
         return cb({
           error: msg
@@ -336,7 +335,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       });
       var setDicoWithout = switcher.invoke("dico", "update", ["destinationsRtp", JSON.stringify(destinationsWhitout)]);
       if (!setDicoWithout) {
-        var msg = "Failed to set destination ",
+        var msg = i18n.t("Failed to set destination "),
           id;
         log.error(msg);
         return cb({
@@ -346,7 +345,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery'],
       }
 
       cb({
-        sucess: "sucess remove destination"
+        sucess: i18n.t("sucess remove destination")
       });
       /* Alert all destination has been removed */
       io.sockets.emit("remove_destination", id);

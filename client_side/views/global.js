@@ -1,9 +1,9 @@
 define(
 
   /** 
-   *	View Global
-   *	Manage interaction with the Destination Model (quiddity)
-   *	@exports Views/Gobal
+   *  View Global
+   *  Manage interaction with the Destination Model (quiddity)
+   *  @exports Views/Gobal
    */
   [
     'underscore',
@@ -14,23 +14,23 @@ define(
     'text!../../templates/panelSaveFile.html',
     'text!../../templates/confirmation.html',
     'text!../../templates/createReceiver.html',
-    'app'
+    'app',
   ],
 
   function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
     /** 
-     *	@constructor
+     *  @constructor
      *  @requires Underscore
      *  @requires Backbone
-     *	@requires quiddTemplate
-     *	@requires panelInfoTemplate
-     *	@requires confirmationTemplate
+     *  @requires quiddTemplate
+     *  @requires panelInfoTemplate
+     *  @requires confirmationTemplate
      *  @augments module:Backbone.View
      */
 
     var GlobalView = Backbone.View.extend(
       /**
-       *	@lends module: Views/Gobal~GlobalView.prototype
+       *  @lends module: Views/Gobal~GlobalView.prototype
        */
 
       {
@@ -56,7 +56,8 @@ define(
           "click #add-receiver": "add_receiver",
           "click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
           #btnSave, #quiddName, #panelSave, #btnGetFiles,\
-          #device, .edit": "preventPropagation"
+          #device, .edit": "preventPropagation",
+          "click .lang" : "changeLang"
         },
 
         /* Called when the view is initialized */
@@ -82,6 +83,9 @@ define(
           });
 	  $(document).tooltip();
 
+          //show current language in header
+          $("#langs [data-lang='"+$.cookie('lang')+"']").addClass("active");    
+
         },
 
         /* 
@@ -94,16 +98,15 @@ define(
         /* Function called for show a specific message in the interface */
 
         notification: function(type, msg) {
+
           var speed = 500;
           $("#msgHighLight").remove();
           $("body").append("<div id='msgHighLight' class='" + type + "'>" + msg + "</div>");
-          $("#msgHighLight").animate({
-            top: "50"
-          }, speed, function() {
-            $(this).delay(4000).animate({
-              top: "-50"
-            }, speed);
-          });
+          setTimeout(function(){
+            $('#msgHighLight').addClass('active').delay(4000).queue(function(next){
+                $(this).removeClass("active");
+            });
+          },0)
 
           $("#msgHighLight").click(function() {
             $(this).remove();
@@ -153,7 +156,7 @@ define(
           $("#panelRight").data("quiddName", "");
           /* we unsubscribe to the quiddity */
 
-          if($("#quiddName").val()){
+          if ($("#quiddName").val()) {
             socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.socket.sessionid);
           }
         },
@@ -226,8 +229,8 @@ define(
         },
 
 
-        /* 	Called for all checkbox changed
-         *	To dynamically change its value
+        /*  Called for all checkbox changed
+         *  To dynamically change its value
          */
 
         stateCheckbox: function() {
@@ -249,33 +252,34 @@ define(
         },
 
         /* 
-         *	Called for saving the current state of scenic
+         *  Called for saving the current state of scenic
          */
 
         save: function(e) {
           e.preventDefault();
           var nameFile = $("#name_file").val(),
-          that = this;
+            that = this;
 
           if (nameFile.indexOf(".scenic") >= 0 || nameFile == "") {
-            that.notification("error", "the name is not correct (ex : save_202) ");
+            that.notification("error", $.t("the name is not correct (ex : save_202) "));
             return;
           }
 
           console.log("ask for saving ", nameFile);
           socket.emit("save", nameFile + ".scenic", function(ok) {
-            views.global.notification("info", nameFile + " is successfully saved", ok);
+            views.global.notification("info", nameFile + " "+ $.t("is successfully saved"));
             $(".panelBox").remove();
           })
         },
 
         /* 
-         *	Called for get files saved on the server
+         *  Called for get files saved on the server
          */
 
         get_save_file: function() {
           var that = this;
           socket.emit('get_save_file', function(saveFiles) {
+
             if ($("#panelFiles").length == 0) {
               $(".panelBox").remove();
               var template = _.template(panelLoadtemplate, {
@@ -289,12 +293,12 @@ define(
         },
 
         /*
-         *	Called for loading the state saved of scenic without the current state
+         *  Called for loading the state saved of scenic without the current state
          */
 
         load_file: function(e) {
-
-          socket.emit("load", $(e.target).html(), function(ok) {
+          var name = $(e.target).data('name');
+          socket.emit("load", name, function(ok) {
             if (ok) {
 
               collections.destinationsRtp.fetch({
@@ -305,12 +309,13 @@ define(
                   collections.quidds.fetch({
                     success: function() {
                       collections.destinationProperties.fetch();
+                      views.users.render();
                     }
                   });
 
                 }
               });
-              views.global.notification("info", $(e.target).html() + " is loaded");
+              views.global.notification("info", $(e.target).html() +" "+ $.t("is loaded"));
             }
           });
           $("#panelFiles").remove();
@@ -331,11 +336,11 @@ define(
           var that = this;
           if (!this.statePanelLog) {
             $("#log").animate({
-              "right": 0
-            },
-                              function() {
-                                that.statePanelLog = true;
-                              });
+                "right": 0
+              },
+              function() {
+                that.statePanelLog = true;
+              });
           } else {
             $("#log").animate({
               "right": -$("#log").width() - 61
@@ -378,19 +383,30 @@ define(
         /* Called for switcher between the different table (control and tranfer) */
 
         showTable: function(event) {
-          var table = $(event.target).parent().data("id");
+          var table = $(event.currentTarget).data("id");
           /* add to the local storage */
           localStorage['currentTable'] = table;
           collections.tables.currentTable = table;
           $(".tabTable").removeClass("active");
-          $(event.target).parent().addClass("active");
+          $(event.currentTarget).addClass("active");
           var target = $(event.target).attr('class')
-          // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
-          //   $("#htop").remove();
-          // }
+            // if (!((target == "cpus") || (target == "cpu_info") || (target == "tabTable"))) {
+            //   $("#htop").remove();
+            // }
           $(".table").removeClass("active");
           $("#" + table).addClass("active");
+        },
+
+        changeLang : function(e){
+          var currentLang = $.cookie('lang');
+          var lang = $(e.currentTarget).data('lang');
+          if(lang != currentLang){
+            $.cookie('lang', lang);
+            location.reload();
+          }
+
         }
+
       });
 
     return GlobalView;

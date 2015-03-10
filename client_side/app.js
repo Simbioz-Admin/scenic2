@@ -11,7 +11,8 @@ define(
     'underscore',
     'backbone',
     'jquery',
-    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/destinationsSip', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
+    'i18n',
+    'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
     'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
 
   ],
@@ -20,7 +21,8 @@ define(
     _,
     Backbone,
     $,
-    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionDestinationsSip, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+    i18n,
+    CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
     ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
   ) {
 
@@ -31,7 +33,7 @@ define(
      * @requires CollectionTables
      * @requires CollectionClassesDoc
      * @requires CollectionDestinationsRtp
-     * @requires CollectionQuidds
+     * @requires CollectionQuidds 
      * @requires CollectionDestinationsProperties
      * @requires CollectionLoggers
      * @requires CollectionIrcs
@@ -47,6 +49,16 @@ define(
 
     var initialize = function() {
       "use strict";
+
+
+      //init translation
+      i18n.init({
+        lngWhitelist : ['en-US', 'en', 'fr', 'fr-FR'],
+        cookieName : 'lang',
+        ns: 'translation'
+      }).done(function() {
+          $('body').i18n();
+      });
 
       $("#currentUser").html(config.nameComputer);
 
@@ -65,12 +77,6 @@ define(
           collections.destinationsRtp = new CollectionDestinationsRtp();
           collections.destinationsRtp.fetch();
 
-          collections.destinationsSip = new CollectionDestinationsSip();
-          collections.destinationsSip.fetch();
-
-          collections.users = new CollectionUsers();
-
-
           collections.tables = new CollectionTables();
 
           collections.quidds.fetch({
@@ -78,9 +84,6 @@ define(
               console.log("error", err);
             },
             success: function() {
-              console.log("quidds Loaded");
-
-
 
               collections.destinationProperties = new CollectionDestinationsProperties();
               collections.destinationProperties.fetch();
@@ -102,13 +105,8 @@ define(
               });
 
 
-              /* generate view for manage users */
-              collections.users.fetch({
-                success: function() {
-                  views.users = new ViewUsers({
-                    collection: collections.users
-                  });
-                }
+              views.users = new ViewUsers({
+                collection: collections.users
               });
             }
           });

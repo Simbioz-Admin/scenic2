@@ -1,122 +1,119 @@
-    define(
+define(
+
+  /** 
+   *  View SourceProperty
+   *  The SourcePorperty manages the source view of the properties added to the control panel
+   *  @exports Views/SourceProperty
+   */
+
+  [
+    'underscore',
+    'backbone',
+    'text!../../templates/sourceProperty.html',
+    'text!../../templates/source.html',
+  ],
+
+  function(_, Backbone, TemplateSourceProperty, TemplateSource) {
 
     /** 
-     *	View SourceProperty
-     *	The SourcePorperty manages the source view of the properties added to the control panel
-     *	@exports Views/SourceProperty
+     *  @constructor
+     *  @requires Underscore
+     *  @requires Backbone
+     *  @requires TemplateSourceProperty
+     *  @augments module:Backbone.View
      */
 
-    [
-        'underscore',
-        'backbone',
-        'text!../../templates/sourceProperty.html',
-        'text!../../templates/source.html',
-    ],
+    var SourcePropertyView = Backbone.View.extend(
 
-    function(_, Backbone, TemplateSourceProperty, TemplateSource) {
+      /**
+       *  @lends module: Views/sourceProperty~SourcePropertyView.prototype
+       */
 
-        /** 
-         *	@constructor
-         *  @requires Underscore
-         *  @requires Backbone
-         *	@requires TemplateSourceProperty
-         *  @augments module:Backbone.View
-         */
+      {
+        tagName: 'table',
+        className: 'source',
+        table: null,
+        events: {
+          "click .edit-source": "edit",
+          "click .remove-source": "removeClick",
+          "click .preview": "preview",
+          'click .info': 'info',
+        },
 
-        var SourcePropertyView = Backbone.View.extend(
+        initialize: function(options) {
 
-            /**
-             *	@lends module: Views/sourceProperty~SourcePropertyView.prototype
-             */
+          /* subscribe to the modification of model link to this view */
+          this.model.on('remove', this.removeView, this);
+          this.model.on('add:property', this.render, this);
+          this.model.on('remove:property', this.render, this);
 
-            {
-                tagName: 'table',
-                className: 'source',
-                table: null,
-                events: {
-                    "click .edit-source": "edit",
-                    "click .remove-source": "removeClick",
-                    "click .preview": "preview",
-                    'click .info': 'info',
-                },
+          this.table = options.table;
 
-                initialize: function(options) {
+          //here we define were go the source (local or remote)
+          if (this.model.get("class") == "httpsdpdec") {
+            $("#" + this.table + " #remote-sources").prepend($(this.el));
+          } else {
+            $("#" + this.table + " #local-sources").prepend($(this.el));
+          }
 
-                    /* subscribe to the modification of model link to this view */
-                    this.model.on('remove', this.removeView, this);
-                    this.model.on('add:property', this.render, this);
-                    this.model.on('remove:property', this.render, this);
+          var quiddTpl = _.template(TemplateSource, {
+            name: this.model.get("name")
+          });
+          $(this.el).append(quiddTpl);
 
-                    this.table = options.table;
+          this.render();
 
-                    //here we define were go the source (local or remote)
-                    if (this.model.get("class") == "httpsdpdec") {
-                        $("#" + this.table + " #remote-sources").prepend($(this.el));
-                    } else {
-                        $("#" + this.table + " #local-sources").prepend($(this.el));
-                    }
+        },
 
-                    var quiddTpl = _.template(TemplateSource, {
-                        name: this.model.get("name")
-                    });
-                    $(this.el).append(quiddTpl);
+        /* called when a new source in table control is created or when existing is updated (add or remove property) */
 
-                    this.render();
+        render: function() {
+          /* remove all properties */
+          $(".shmdatas", this.el).html("");
 
-                },
-
-                /* called when a new source in table control is created or when existing is updated (add or remove property) */
-
-                render: function() {
-                    /* remove all properties */
-                    $(".shmdatas", this.el).html("");
-
-                    var that = this,
-                        properties = this.model.get("properties"),
-                        destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
-                        countProperty = 0;
+          var that = this,
+            properties = this.model.get("properties"),
+            destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
+            countProperty = 0;
 
 
-                    _.each(properties, function(property, index) {
-                        if (property.name != "device" 
-                            && property.name != "devices-json" 
-                            && property.name != "shmdata-writers" 
-                            && property.name != "shmdata-readers" 
-                            && property.name != "started") {
-                            var propertyTpl = _.template(TemplateSourceProperty, {
-                                property: property,
-                                destinations: destinations
-                            });
-                            // $(propertyTpl).attr("data-propertyname", property.name);
-                            $(".shmdatas", that.el).append(propertyTpl);
-                        }
-                    });
-                   
-                    //check if mapper exist for the 
-                    collections.quidds.each(function(quidd) {
-                        if (quidd.get("category") == "mapper" && quidd.get("view") != null) {
-                            quidd.get("view").render();
-                        }
-                    });
+          _.each(properties, function(property, index) {
+            if (property.name != "device" && property.name != "devices-json" && property.name != "shmdata-writers" && property.name != "shmdata-readers" && property.name != "started") {
+              var propertyTpl = _.template(TemplateSourceProperty, {
+                property: property,
+                destinations: destinations
+              });
+              // $(propertyTpl).attr("data-propertyname", property.name);
+              $(".shmdatas", that.el).append(propertyTpl);
+              $(that.el).i18n();
+            }
+          });
+
+          //check if mapper exist for the 
+          collections.quidds.each(function(quidd) {
+            if (quidd.get("category") == "mapper" && quidd.get("view") != null) {
+              quidd.get("view").render();
+            }
+          });
 
 
-                },
-                edit: function() {
-                    this.model.edit();
-                },
-                removeClick: function() {
-                    this.model.askDelete();
-                },
-                removeView: function() {
-                    this.remove();
-                },
-                preview: function(element) {
-                    this.model.preview(element);
-                },
-                info: function(element) {
-                    this.model.info(element);
-                }
-            });
+        },
+        edit: function() {
+          this.model.edit();
+        },
+        removeClick: function() {
+          this.model.askDelete();
+        },
+        removeView: function() {
+          this.remove();
+        },
+        preview: function(element) {
+          this.model.preview(element);
+        },
+        info: function(element) {
+          this.model.info(element);
+        }
+      });
 
-        return SourcePropertyView;
-    })
+    return SourcePropertyView;
+  })

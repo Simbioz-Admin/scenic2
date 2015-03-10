@@ -103,8 +103,8 @@ define(
           }
         })
 
-        //************************* QUIDDS ****************************//
 
+        //************************* QUIDDS ****************************//
         socket.on("create", switcher.quidds.create);
         socket.on("get_quiddity_description", switcher.quidds.get_description);
         socket.on("get_info", switcher.quidds.get_info);
@@ -139,9 +139,12 @@ define(
         socket.on("sip_logout", switcher.sip.logout);
         socket.on("sip_login", switcher.sip.login);
         socket.on("addUser", switcher.sip.addUser);
-        socket.on("addDestinationSip", switcher.sip.addDestinationSip);
-        socket.on("removeDestinationSip", switcher.sip.removeDestinationSip);
-        socket.on("attachShmdataToContact", switcher.sip.attachShmdataToContact);
+        socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
+        socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
+        socket.on("attachShmdataToUser", switcher.sip.attachShmdataToUser);
+        socket.on("getListStatus", switcher.sip.getListStatus);
+        socket.on("removeUser", switcher.sip.removeUser);
+
 
         //************************* SAVE ****************************//
 

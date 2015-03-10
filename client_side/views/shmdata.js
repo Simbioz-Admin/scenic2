@@ -82,6 +82,7 @@ define(
         renderConnections: function() {
           var that = this;
           $("td", that.el).remove();
+
           _.defer(function(){
             that.table.get("collectionDestinations").each(function(destination) {
               that.connectionForDestination(destination, that.table.get("type"));
@@ -89,44 +90,65 @@ define(
           });
         },
 
-        connectionForDestination: function(destination, tableType){
+        connectionForDestination: function(destination, tableType) {
           /* check if the connexion existing between source and destination */
           var that = this;
-          var active = '';
+          var active = null;
           var port = '';
+
+
+          var destinationId = (!destination.get("uri")) ? destination.get("name") : destination.get("uri");
           /* Render for Tab transfer */
-          if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
+          if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destinationId + '"]', that.el).length == 0 && destination.get('in_tab')) {
+
             _.each(destination.get("data_streams"), function(stream) {
               if (stream.path == that.model.get("path")) {
                 active = "active";
                 port = stream.port;
               }
+
             });
-            $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
+
+            if (destination.get('connection')) {
+
+              _.each(destination.get('connection'), function(connection) {
+                if (that.model.get("path") == connection) {
+                  active = "active";
+                }
+              });
+            }
+
+            $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destinationId + '">' + port + '</td>');
           }
-          
+
           /* Render for Tab Sink */
           if (tableType == "sink" && that.table.get("type") == tableType) {
 
             /* Check if we can create a connexion between shmdata and sink */
-            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(canSink){
-              if($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0){
-                if(canSink == "true"){
+            socket.emit("invoke", destination.get("name"), "can-sink-caps", [that.model.get("caps")], function(err, canSink) {
 
-                  /* Check if already connected */
-                  var shmdata_readers = null;
-                  var shmdatasReaders = destination.get("shmdatasCollection").where({type : 'reader'});
+              if ($('[data-destination="' + destination.get("name") + '"]', that.el).length == 0) {
 
-                  if(shmdatasReaders){
-                    _.each(shmdatasReaders,function(shm) {
-                      if (shm.get('path') == that.model.get("path")) active = "active";
-                    });
-                  }
+                /* Check if already connected */
+                var shmdata_readers = null;
+                var shmdatasReaders = destination.get("shmdatasCollection").where({
+                  type: 'reader'
+                });
 
-                  $(that.el).append('<td class="box ' + active + " " + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '">' + port + '</td>');
-                } else {
-                  $(that.el).append('<td class="box_disabled ' + that.table.get("name") + '" data-destination="' + destination.get("name") + '" data-id="' + destination.get("name") + '"></td>');
+                if (shmdatasReaders) {
+                  _.each(shmdatasReaders, function(shm) {
+                    if (shm.get('path') == that.model.get("path")) active = "active";
+                  });
                 }
+                if (canSink == "true" || active) {
+                  //console.log(that.model.get('path'), canSink);
+                  var statusBox = 'box';
+                } else {
+                  var statusBox = "box_disabled";
+                }
+
+                $(that.el).append('<td class="' + statusBox + ' ' + active + '" data-destination="' + destinationId + '"></td>');
+
               }
             });
 
@@ -146,23 +168,19 @@ define(
         infoShmdata: function(element) {
           var shmdata = this.model.get("path");
           var that = this;
-          console.log("vumeter_(!))" + shmdata + " is this")
           collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-            console.log("property returned is ", val);
-            val = val.replace(/,/g, "\n");
+            val = val.replace(/,/g, "<br>");
             var template = _.template(infoTemplate, {
               info: val,
               shmdata: shmdata
             });
             $("#info").remove();
             $("body").prepend(template);
-            $("#info")
-              .css({
-                top: element.pageY,
-                left: element.pageX
-              })
-              .draggable()
-              .show();
+            $("#info").css({
+              top: element.pageY,
+              left: element.pageX
+            }).show();
+
             $(".panelInfo").draggable({
               cursor: "move",
               handle: "#title"
@@ -183,3 +201,4 @@ define(
 
     return ShmdataView;
   })
+

@@ -9,10 +9,12 @@ require.config({
         util: 'libs/util',
         jquery: 'libs/jquery-min',
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
+        tripledes: 'libs/tripledes',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',
         smartMenu: 'libs/smartmenus/jquery.smartmenus.min',
-        d3: 'libs/d3.min'
+        d3: 'libs/d3.min',
+        i18n : '/i18next.min'
     },
     shim: {
         underscore: {
@@ -36,6 +38,10 @@ require.config({
         smartMenu: {
             deps: ['jquery'],
             exports: 'smartMenu'
+        },
+        i18n : {
+            deps: ['jquery'],
+            exports : 'i18n'
         }
     }
 });
@@ -46,19 +52,23 @@ require([
     'launch',
     'util',
     'punch',
+    'collections/users',
     'jqueryCookie',
     collections = [],
     views = [],
     socket = io.connect(),
-    config = {}
-], function(app, launch, util, socket) {
+    config = {},
+], function(app, launch, util, socket, CollectionUsers  ) {
 
     var socket = io.connect();
-
+    
     //recovery config information from the server
     socket.emit("getConfig", function(configServer) {
         config = configServer;
     });
+
+    collections.users = new CollectionUsers();
+
 
     if (localStorage["oldId"]) {
         socket.emit("returnRefresh", localStorage["oldId"], socket.socket.sessionid);

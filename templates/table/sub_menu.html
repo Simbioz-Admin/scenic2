@@ -4,7 +4,7 @@
   <h3 class="menuHeading">
     <%=name%>
   </h3>
-  <div>
+  <div class="menuButtons">
     <% _.each(category, function(clas){ %>
     <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
     <button class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" data-quiddname="<%=clas['long name']%>">

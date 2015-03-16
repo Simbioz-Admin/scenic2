@@ -1,4 +1,4 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypto-js', '../settings/i18n'],
+define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypto-js', 'i18next'],
 
   function(config, switcher, log, _, $, portastic, cryptoJS, i18n) {
 

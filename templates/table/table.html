@@ -4,17 +4,15 @@
 
 
 <div id="headerTable">
-  <ul class="menuTable headerMenu" >
+  <div class="menuTable headerMenu" >
     <% _.each(menus, function(menu){ %>
-    <li>
-      <a href="#" class="contextMenu" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>" ><%=menu.name%></a>
-    </li>
+    <div class="contextMenu" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>" ><%=menu.name%></div>
     <% }); %>
-  </ul>
-  <div class="filter" title="filter">
-    <select name="" class="dropdown_filter">
-      <option value="" data-i18n>Show all categories</option>
-    </select>
+    <div class="filter" title="filter">
+      <select name="" class="dropdown_filter">
+        <option value="" data-i18n>Show all categories</option>
+      </select>
+    </div>
   </div>
 </div><!-- headerTable -->
 

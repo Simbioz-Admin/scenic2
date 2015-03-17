@@ -20,9 +20,10 @@
     // border-bottom : 1px solid #d3d3d3
     // +box-shadow(rgba(white, 0.4)  0px -7px 0px -6px inset)
     cursor : move
-    .headerMenu > li div
+    .headerMenu > div
       margin-right : 10px
       font-size : 1.2em
+      float: left
       +background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
       +box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
       +border-radius(3px)
@@ -82,3 +83,34 @@
 
 // #control
 //  background : #ddd
+
+#sourceMenu 
+  position: absolute
+  width: 150px
+  float: left
+  //height: auto
+  margin-right : 10px
+  // padding: 2px
+  font-size : 1.2em
+  // +background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
+  +box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
+  //+border-radius(3px)
+  border: none
+  color : #333
+  text-transform: uppercase
+  div
+    // background: #22f
+    //height: auto
+    padding: 0px
+
+  &:hover
+    //+background-image(linear-gradient(rgba(255,255,255, 1), rgba(255,255,255, 0.7)))
+  a
+    text-decoration: none
+  h3
+    display: block
+    background: #222
+  .menuButtons
+    width: 180px
+    height: auto
+    margin: 1px

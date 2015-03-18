@@ -506,8 +506,9 @@ div.users #login_sip input[type=submit]:hover {
 .table #headerTable {
   position: relative;
   z-index: 100;
-  height: 60px;
+  height: 40px;
   margin: 10px;
+  background: #333333;
   padding: 0;
   cursor: move;
 }
@@ -516,45 +517,33 @@ div.users #login_sip input[type=submit]:hover {
   margin-right: 10px;
   font-size: 1.2em;
   float: left;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(255, 255, 255, 0.7)), color-stop(100%, rgba(255, 255, 255, 0.3)));
-  background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
-  background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
-  background-image: -o-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
-  background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+  background: #444444;
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 26px -8px;
   -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 26px -8px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 26px -8px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
   border: none;
-  color: #333333;
+  color: #cccccc;
   text-transform: uppercase;
   width: auto;
 }
-/* line 34, ../sass/_menus.sass */
+/* line 35, ../sass/_menus.sass */
 .table #headerTable .headerMenu > div:hover {
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0.7)));
-  background-image: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0.7));
-  background-image: -moz-linear-gradient(#ffffff, rgba(255, 255, 255, 0.7));
-  background-image: -o-linear-gradient(#ffffff, rgba(255, 255, 255, 0.7));
-  background-image: linear-gradient(#ffffff, rgba(255, 255, 255, 0.7));
+  color: white;
+  background: #484848;
 }
-/* line 37, ../sass/_menus.sass */
+/* line 40, ../sass/_menus.sass */
 .table #headerTable .filter {
   padding: 0;
   width: 160px;
   float: left;
   opacity: 0.5;
 }
-/* line 42, ../sass/_menus.sass */
+/* line 45, ../sass/_menus.sass */
 .table #headerTable .filter:hover {
   opacity: 1;
   cursor: pointer;
 }
-/* line 45, ../sass/_menus.sass */
+/* line 48, ../sass/_menus.sass */
 .table #headerTable .filter select {
   width: 100%;
   background: #444444;
@@ -564,12 +553,12 @@ div.users #login_sip input[type=submit]:hover {
   padding: 10px 5px 9px;
   margin: 0;
 }
-/* line 53, ../sass/_menus.sass */
+/* line 56, ../sass/_menus.sass */
 .table #headerTable .filter select option {
   cursor: pointer;
   border: none;
 }
-/* line 56, ../sass/_menus.sass */
+/* line 59, ../sass/_menus.sass */
 .table #titleOut {
   position: absolute;
   left: 0;
@@ -584,11 +573,11 @@ div.users #login_sip input[type=submit]:hover {
   -o-border-radius: 2px;
   border-radius: 2px;
 }
-/* line 67, ../sass/_menus.sass */
+/* line 70, ../sass/_menus.sass */
 .table #titleHeader {
   padding: 0;
 }
-/* line 69, ../sass/_menus.sass */
+/* line 72, ../sass/_menus.sass */
 .table #titleIn {
   position: absolute;
   background: #be2620;
@@ -605,12 +594,12 @@ div.users #login_sip input[type=submit]:hover {
   -o-border-radius: 2px;
   border-radius: 2px;
 }
-/* line 81, ../sass/_menus.sass */
+/* line 84, ../sass/_menus.sass */
 .table.active {
   display: block;
 }
 
-/* line 87, ../sass/_menus.sass */
+/* line 90, ../sass/_menus.sass */
 #sourceMenu {
   position: absolute;
   width: 150px;
@@ -624,24 +613,32 @@ div.users #login_sip input[type=submit]:hover {
   color: #333333;
   text-transform: uppercase;
 }
-/* line 101, ../sass/_menus.sass */
+/* line 104, ../sass/_menus.sass */
 #sourceMenu div {
   padding: 0px;
 }
-/* line 108, ../sass/_menus.sass */
+/* line 109, ../sass/_menus.sass */
+#sourceMenu:hover {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ff01ff), color-stop(100%, rgba(255, 255, 255, 0.7)));
+  background-image: -webkit-linear-gradient(#ff01ff, rgba(255, 255, 255, 0.7));
+  background-image: -moz-linear-gradient(#ff01ff, rgba(255, 255, 255, 0.7));
+  background-image: -o-linear-gradient(#ff01ff, rgba(255, 255, 255, 0.7));
+  background-image: linear-gradient(#ff01ff, rgba(255, 255, 255, 0.7));
+}
+/* line 111, ../sass/_menus.sass */
 #sourceMenu a {
   text-decoration: none;
 }
-/* line 110, ../sass/_menus.sass */
+/* line 113, ../sass/_menus.sass */
 #sourceMenu h3 {
   display: block;
   background: #222222;
 }
-/* line 113, ../sass/_menus.sass */
+/* line 116, ../sass/_menus.sass */
 #sourceMenu .menuButtons {
   width: 180px;
   height: auto;
-  margin: 1px;
+  margin: 2px;
 }
 
 /* line 10, ../sass/screen.sass */
@@ -1069,7 +1066,7 @@ header .btn {
   padding: 6px 15px 5px 25px;
   margin-right: 10px;
   display: inline-block;
-  color: #cccccc;
+  color: #222222;
   line-height: 25px;
   font-family: "Irma Light";
   cursor: pointer;

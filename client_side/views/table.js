@@ -46,9 +46,12 @@ define(
           "change .dropdown_filter": "filter_quiddities",
         },
 
+        // FIXME: separate the menus views and shmdata/connections table and handle view events properly
+
         /* 
          * Called on initialization of the table (control / transfer)
          */
+
         initialize: function() {
 
           this.model.on("trigger:menu", this.getClasses, this);

@@ -47,7 +47,6 @@ define(
           this.model.on("change:byteRate", this.updateByteRate, this);
           this.model.on("renderConnection", this.renderConnections, this);
           this.table = options.table;
-          // this.render();
 
         },
 
@@ -80,6 +79,7 @@ define(
         },
 
         renderConnections: function() {
+          
           var that = this;
           $("td", that.el).remove();
           _.defer(function() {

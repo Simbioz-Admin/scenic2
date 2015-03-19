@@ -49,9 +49,19 @@ define(
           this.model.on('updateShmdatas', this.render, this);
           this.model.on('updateConnexions', this.updateConnexions, this);
           this.model.on("toggleShow", this.toggleShow, this);
-
+          var that = this
           // this.model.on('updateByteRate', this.updateByteRateAndPreview);
           this.table = options.table;
+          // FIXME: properly handle renders from views rather than passing through socket.io
+          socket.on("remove_connection", function(path, id) {
+            // console.log("views->source remove_connection", that, path, id);
+            that.render();
+          });
+          socket.on("add_connection", function(quiddName, path, port, id) {
+            // console.log("views->source add_connection", that, quiddName, path, port, id);
+            that.render();
+          });
+
 
           $("#" + this.table.get("id") + " .sources").append(this.el);
 

@@ -5,7 +5,6 @@ EXECFILES := scenic2 \
 SRCFILES := package.json \
 	server.js \
 	index.html \
-	login.html \
 	npm-verify.js
 ALTFILES := COPYING \
 	INSTALL \

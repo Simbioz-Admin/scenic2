@@ -5,8 +5,8 @@ body {
 
 /* line 14, ../sass/black.sass */
 h3 {
-  color: #aaaaaa;
-  border-bottom-color: #333333;
+  color: #aaa;
+  border-bottom-color: #333;
 }
 
 /* line 18, ../sass/black.sass */
@@ -16,23 +16,23 @@ h3 {
 
 /* line 22, ../sass/black.sass */
 .table #headerTable .headerMenu > li div, .tableScenic tr .groupSource, td.active {
-  background: #333333;
-  color: #aaaaaa;
+  background: #333;
+  color: #aaa;
 }
 /* line 25, ../sass/black.sass */
 .table #headerTable .headerMenu > li div:hover, .tableScenic tr .groupSource:hover, td.active:hover {
-  background: #222222;
+  background: #222;
 }
 
 /* line 28, ../sass/black.sass */
 .tableScenic tr .groupSource {
-  border: 1px solid #222222;
+  border: 1px solid #222;
 }
 
 /* line 32, ../sass/black.sass */
 #panelRight .content {
-  background: #222222;
-  color: #aaaaaa;
+  background: #222;
+  color: #aaa;
 }
 
 /* line 36, ../sass/black.sass */
@@ -43,41 +43,41 @@ h3 {
 /* line 39, ../sass/black.sass */
 .tableScenic .nameInOut, .scenic2 .destinations .nameInOut {
   background: #3a3a3a;
-  border-color: #333333;
-  color: #aaaaaa;
+  border-color: #333;
+  color: #aaa;
 }
 /* line 43, ../sass/black.sass */
 .tableScenic .nameInOut a, .scenic2 .destinations .nameInOut a {
-  color: #aaaaaa;
+  color: #aaa;
 }
 
 /* line 46, ../sass/black.sass */
 td.active {
-  background: #222222;
+  background: #222;
 }
 
 /* line 51, ../sass/black.sass */
 .box {
-  background: #333333;
-  border-color: #333333;
+  background: #333;
+  border-color: #333;
 }
 
 /* line 55, ../sass/black.sass */
 #panelRight input[type=text], .panelInfoSource input[type=text] {
   background: #3b3b3b;
   border-color: #3b3b3b;
-  outline-color: #dddddd;
+  outline-color: #ddd;
   color: white;
 }
 
 /* line 61, ../sass/black.sass */
 input[type=submit] {
-  background: #111111;
+  background: #111;
 }
 
 /* line 65, ../sass/black.sass */
 .actions .action {
-  background: #222222;
+  background: #222;
 }
 /* line 67, ../sass/black.sass */
 .actions .action .edit {
@@ -89,7 +89,7 @@ input[type=submit] {
 }
 /* line 71, ../sass/black.sass */
 .actions .action .remove {
-  background: #aaaaaa;
+  background: #aaa;
   color: #3b3b3b;
 }
 /* line 75, ../sass/black.sass */
@@ -109,5 +109,5 @@ input[type=submit] {
 
 /* line 91, ../sass/black.sass */
 .close {
-  background: #333333;
+  background: #333;
 }

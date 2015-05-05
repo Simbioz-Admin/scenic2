@@ -7,8 +7,9 @@
   <div class="menuButtons">
     <% _.each(category, function(clas){ %>
     <%  var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]);	%>
-    <button class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" data-quiddname="<%=clas['long name']%>">
-      <%=clas["long name"]%></button>
+    <a class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" data-quiddname="<%=clas['long name']%>">
+      <%=clas["long name"]%>
+    </a>
 <% }); %>
   </div>
   <% }) %>

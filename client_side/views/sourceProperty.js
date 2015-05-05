@@ -76,7 +76,6 @@ define(
             destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
             countProperty = 0;
 
-
           _.each(properties, function(property, index) {
             if (property.name != "device" && property.name != "devices-json" && property.name != "shmdata-writers" && property.name != "shmdata-readers" && property.name != "started") {
               var propertyTpl = _.template(TemplateSourceProperty, {

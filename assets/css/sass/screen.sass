@@ -317,7 +317,7 @@ header
 .headerMenu
   .active
     display : block!important
-  .contextMenu , .channel
+  .channel
     padding : 6px 15px 5px 25px
     margin-right : 10px
     //border-left : 1px solid #555
@@ -332,16 +332,6 @@ header
   &:hover
     background : #be2620
     // +background-image(linear-gradient(#333 10%, #222 90%))
-  &:before
-    content : ""
-    width: 0
-    height: 0
-    border-left: 4px solid transparent
-    border-right: 4px solid transparent
-    border-top: 4px solid white
-    position : absolute
-    left : 10px
-    top : 16px
   a
     text-decoration: none
   .ui-menu a
@@ -961,21 +951,6 @@ th:last-child
 td
   min-width : 118px
   position : relative
-
-
-a
-  &.createQuidd
-    position: relative
-    display: block
-    color: #b3b3b3
-    margin: 1px
-    padding: 1px
-    background: #323232
-    border: 0
-    &:hover
-      background: #b33232
-    .ui-button-text
-      font-size: 10px
  
 // .destinations
 //  .actions
@@ -1022,6 +997,7 @@ a
   //display : none
   min-height : 110px
   min-width : 420px
+
 
 
 
@@ -2443,8 +2419,6 @@ $colorBorder : #3a3a3a
 #transfer
   .vignette.local-sources
     margin-top : -35px
-  .destinations
-    //height : 50px
 
 #audio .shmdata .preview
   display : none

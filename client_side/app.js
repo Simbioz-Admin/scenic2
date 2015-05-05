@@ -13,7 +13,7 @@ define(
     'jquery',
     'i18n',
     'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
-    'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/sysmon', 'views/systemusage/Systemusage'
+    'views/destinations', 'views/global', 'views/quidds', 'views/destinationProperties', 'views/loggers', 'views/users/users', 'views/ircs', 'views/systemusage/Systemusage'
 
   ],
 
@@ -23,7 +23,7 @@ define(
     $,
     i18n,
     CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
-    ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSysmon, ViewSystemUsage
+    ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs, ViewSystemUsage
   ) {
 
     /** 
@@ -43,8 +43,7 @@ define(
      * @requires ViewDestinationProperties
      * @requires ViewLoggers
      * @requires ViewIrcs
-     * @requires ViewSysmon
-     *  @augments module:Backbone.View
+     * @augments module:Backbone.View
      */
 
     var initialize = function() {
@@ -94,7 +93,6 @@ define(
               });
 
               views.global = new ViewGlobal();
-              //views.sysmon = new ViewSysmon();
               views.htop = new ViewSystemUsage();
 
               collections.irc = new CollectionIrcs();

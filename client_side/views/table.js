@@ -141,7 +141,9 @@ define(
             //   at: "right-2 top-2"
             // }
             collapsible: true,
-            active: false
+            active: false,
+            heightStyle: "content",
+            icons: false
             });
           // $(".subMenu").menu({
           //   select: function(event, ui) {

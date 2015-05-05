@@ -37,8 +37,8 @@ define(
         events: {
           "click #create-quiddsProperties": "getMenuProperties",
           "click #create-midi": "getMenuMidiDevice",
-          "click .contextMenu": 'getClasses',
-          "mouseleave #sourceMenu": 'leaveSubMenu',
+          "click .contextMenu .menuButton": 'getClasses',
+          "mouseleave #subMenu": 'leaveSubMenu',
           "click body.scenic2": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -65,7 +65,7 @@ define(
           var btnTable = $("<div></div>", {
             text: "",
             class: "tabTable " + this.model.get("type") + " " + active,
-	    title: this.model.get("description"),
+            title: this.model.get("description"),
             data: {
               id: this.model.get("id"),
             }
@@ -98,8 +98,8 @@ define(
          * The list of quiddity source is get when source word appear in name Class quiddity
          */
         getClasses: function(e) {
-          $("#sourceMenu").remove();
-          var shmdataType = e.target ? $(e.target).data("type") : e;
+          $("#subMenu").remove();
+          var shmdataType = e.target ? $(e.target ).parent().data("type") : e;
 
           /* get the quiddity classes authorized on this table */
           var classes = this.model.selectByCategory(shmdataType);
@@ -117,7 +117,7 @@ define(
           });
 
           $("#listSources", this.el).remove();
-          $(".table.active [data-type='" + shmdataType + "']").after(template);
+          $( e.target ).after(template);
           $('#listSources',this.el).i18n();
 
           // /* here we listen select for call views.quidds.defineName */
@@ -136,15 +136,14 @@ define(
           //   }
           // }).focus();
 
-          $("#sourceMenu").accordion({
-            // position: {
-            //   at: "right-2 top-2"
-            // }
+          $("#subMenu").accordion({
             collapsible: true,
             active: false,
             heightStyle: "content",
-            icons: false
-            });
+            icons: false,
+            animate: 125
+          });
+
           // $(".subMenu").menu({
           //   select: function(event, ui) {
           //     console.log("menu. item. selected", ui);
@@ -162,9 +161,7 @@ define(
         },
 
         leaveSubMenu: function(e) {
-          console.log("leave submenu");
-          $("#sourceMenu").remove();
-          // $("#subMenu").remove();
+          $("#subMenu").remove();
         },
 
         toggle_connection: function(e) {

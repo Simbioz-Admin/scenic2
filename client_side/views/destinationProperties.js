@@ -31,9 +31,10 @@ define(
       {
         el: 'body',
         events: {
-          "click .create-ControlProperty": "createControlProperty",
+          "click .createControlProperty": "createControlProperty",
           "click .connect-properties": "connectProperties",
-          "mouseenter #get_properties": "show_properties"
+          "click #get_properties .menuButton": "show_properties",
+          "mouseleave #subMenu": 'leaveSubMenu',
         },
 
 
@@ -45,13 +46,15 @@ define(
         /*  Called when a property is selected on the dropdown menu in table controler (add destination) */
 
         createControlProperty: function(element) {
-          console.log("Properties!");
-          var property = $(element.target).data("property"),
+          var property = $(element.currentTarget).data("property"),
           that = this,
-          quiddName = $(element.target).closest("ul").data("quiddname");
+          quiddName = $(element.currentTarget).closest("div").data("quiddname");
+
+          console.log( "Creating property", property, "for quidd", quiddName );
 
           this.collection.create(quiddName, property, function(quiddName) {
-            $(element.target).remove();
+            //TODO: Use a filtered collection to manage these lists
+            $(element.currentTarget).remove();
           });
         },
 
@@ -76,7 +79,6 @@ define(
             }
           });
 
-
           if (!$.isEmptyObject(quidds)) {
             var template = _.template(TemplateSubMenu, {
               type: "QuiddsAndProperties",
@@ -84,20 +86,24 @@ define(
             });
 
             $(e.target).after(template);
-            $("#subMenu").menu({
-              delay: 1500,
-              // position: {
-              //   at: "right-2 top-2"
-              // }
-            }, {
-              select: function(event, ui) {
-                event.preventDefault();
-                views.quidds.defineName(ui.item);
-              }
-            }).focus();
+
+            $("#subMenu").accordion({
+              collapsible: true,
+              active: false,
+              heightStyle: "content",
+              icons: false,
+              animate: 125
+            });
+
+            $(".createControlProperty" ).button();
+
           } else {
             views.global.notification("error", $.t("you need to create source before adding a property"));
           }
+        },
+
+        leaveSubMenu: function(e) {
+          $("#subMenu").remove();
         },
 
         /* Called when choose to create a connection between a quiddity control (midi) and a destination */

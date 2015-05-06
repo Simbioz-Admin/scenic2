@@ -96,7 +96,6 @@ define(
           var active = null;
           var port = '';
 
-
           var destinationId = (!destination.get("uri")) ? destination.get("name") : destination.get("uri");
           /* Render for Tab transfer */
           if (tableType == "transfer" && that.table.get("type") == tableType && $('[data-destination="' + destinationId + '"]', that.el).length == 0 && destination.get('in_tab')) {

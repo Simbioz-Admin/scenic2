@@ -184,11 +184,17 @@ define(
 
           /** if it's byte-rate we update directly the status of viewmeter */
           if (prop == "byte-rate") {
-            var quiddNameArray = quiddName.split("_"),
-              quiddNameFakeSink = quiddName,
-              shmdata = quiddName.replace("vumeter_", "");
+            var quiddNameArray = quiddName.split("_");
+            var shmdata = quiddName.replace("vumeter_", "");
 
             quiddName = quiddNameArray[quiddNameArray.length - 2];
+
+            // Check if referencing a SIP quiddity, temporary measure until next version of shmdata
+            // vumeters for SIP quiddities are named as sipquid-<USER>, "sipquid" is defined in the server's sip.js
+            var sipPrefix = 'sipquid-';
+            if ( quiddName.indexOf(sipPrefix) == 0 ) {
+              quiddName = quiddName.substr( 0, sipPrefix.length - 1 );
+            }
 
             if (quiddName && collections.quidds.get(quiddName)) {
               var shmdatasCollection = collections.quidds.get(quiddName).get("shmdatasCollection");

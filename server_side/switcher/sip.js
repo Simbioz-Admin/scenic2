@@ -11,7 +11,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      *  @function addListUser
      *  @description add to the array listUsers a new users
      */
-
     function addUser(URI, name, cb) {
       log.debug("User sip connected");
       var addBuddy = switcher.invoke(quiddSipName, "add_buddy", [URI]);
@@ -33,7 +32,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      *  @function createSip
      *  @description set the connection with the server sip. This function is called a initialization of switcher
      */
-
     function createSip(name, password, address, port, cb) {
       log.debug("Create Sip Server ", name, address, port);
       //@TODO : Encrypt client side and decrypt server side the password
@@ -113,7 +111,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        *  @function initialize
        *  @description initialize for get socket.io accessible
        */
-
       initialize: function(socketIo) {
         log.info("initialize sip");
         io = socketIo;
@@ -123,7 +120,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        *  @function getListUsers
        *  @description Return the list of users Sip (for create collection client side)
        */
-
       getListUsers: function() {
 
         var users = $.parseJSON(switcher.get_info(quiddSipName, "."));
@@ -144,12 +140,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
         }
       },
 
-
       /*
        *  @function login
        *  @description Log user to the server sip
        */
-
       login: function(sip, cb) {
         log.debug("Ask for login Sip Server", parseInt(sip.port));
         /* set information config */
@@ -160,12 +154,10 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
         });
       },
 
-
       /*
        *  @function logout
        *  @description logout from the server SIP
        */
-
       logout: function(cb) {
         log.debug("ask for logout to the server sip");
         var unregister = switcher.invoke(quiddSipName, "unregister", []);
@@ -185,7 +177,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        *  @function addUser
        *  @description Add a new user in the dico and server sip
        */
-
       addUser: function(uri, cb) {
         log.debug("ask to add user ", uri);
         addUser(uri, uri, function(err, info) {
@@ -196,7 +187,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
       /*
        *  @function addDestinationSip
        */
-
       addUserToDestinationMatrix: function(uri, cb) {
         log.debug("ask to add ", uri, " to the destinationSip");
 

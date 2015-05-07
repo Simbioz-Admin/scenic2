@@ -54,10 +54,12 @@ define(
         render: function() {
           var nameShm = this.model.get("path").split('_')[3];
           var pathShm = this.model.get("path").split("/");
-          // var fullNameShm = pathShm[pathShm.length - 1];
-          //nameShm = ST.mask(fullNameShm);
+
+          var sipUserName = this.model.getSipUser();
+
           templateShmdata = _.template(TemplateShmdata, {
             name: nameShm,
+            user: sipUserName, //UBALD: Added to sort sipquidd shmdatas bu user, sketchy for the moment
             nameQuidd: this.model.get("quidd"),
             tableType: this.table.get("type")
           });

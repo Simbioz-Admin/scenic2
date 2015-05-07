@@ -2259,14 +2259,21 @@ $colorBorder : #3a3a3a
     border-left : 1px solid $colorBorder
     border-bottom : 1px solid $colorBorder
     // height : 45px
-  .shmdata:last-child td
-    border-bottom : none!important
-  .shmdata th
+  .shmdata:last-child
+    td, th
+      border-bottom : none!important
+  .shmdata > th
     cursor : help
-    //background : #222
     .shmdata-name
       padding : 15px 25px
       width : 54px
+    &.sip
+      .user
+        font-weight: bold
+        background-color: #2c2c2c
+        padding: 5px 25px
+      .shmdata-name
+        padding: 8px 25px
   th:after
     content : ""
     position: absolute

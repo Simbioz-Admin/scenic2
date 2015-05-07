@@ -4,7 +4,6 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
     var listUsers = [];
     var io;
-    var quiddSipName = "sipquid";
     var secretString = 'Les patates sont douces!';
 
     /*
@@ -13,9 +12,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      */
     function addUser(URI, name, cb) {
       log.debug("User sip connected");
-      var addBuddy = switcher.invoke(quiddSipName, "add_buddy", [URI]);
+      var addBuddy = switcher.invoke(config.sip.quiddName, "add_buddy", [URI]);
       if (!addBuddy) return cb("Error add " + name + " to the sip server");
-      var setName = switcher.invoke(quiddSipName, "name_buddy", [name, URI]);
+      var setName = switcher.invoke(config.sip.quiddName, "name_buddy", [name, URI]);
       if (!setName) return cb("Error set name " + name);
 
       /* Insert a new entry in the dico users */
@@ -33,21 +32,21 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      *  @description set the connection with the server sip. This function is called a initialization of switcher
      */
     function createSip(name, password, address, port, cb) {
-      log.debug("Create Sip Server ", name, address, port);
+      log.debug("Create Sip Server", name, address, port);
       //@TODO : Encrypt client side and decrypt server side the password
 
       /* Create the server SIP */
-      quiddSipName = switcher.create("sip", quiddSipName);
-      if (!quiddSipName) {
+      config.sip.quiddName = switcher.create("sip", config.sip.quiddName);
+      if (!config.sip.quiddName) {
         var msgError = i18n.t("Error create sip quiddity");
         log.error(msgError);
         return cb(msgError);
       }
-      switcher.subscribe_to_property(quiddSipName, 'sip-registration');
-      switcher.invoke(quiddSipName, "unregister", []);
+      switcher.subscribe_to_property(config.sip.quiddName, 'sip-registration');
+      switcher.invoke(config.sip.quiddName, "unregister", []);
 
       /* Define port for Sip Server */
-      var port = switcher.set_property_value(quiddSipName, "port", port);
+      var port = switcher.set_property_value(config.sip.quiddName, "port", port);
       if (!port) return log.error("Error set port ", port, " for sip quiddity");
 
       /* Connect to the server SIP */
@@ -55,12 +54,12 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       var decrypted = cryptoJS.AES.decrypt(password, secretString).toString(cryptoJS.enc.Utf8);
 
-      var register = switcher.invoke(quiddSipName, "register", [name + "@" + address, decrypted]);
+      var register = switcher.invoke(config.sip.quiddName, "register", [name + "@" + address, decrypted]);
       if (!register) return log.error(i18n.t("Error when try login to the server SIP"));
 
       /* subscribe to the modification on this quiddity */
-      switcher.subscribe_to_signal(quiddSipName, "on-tree-grafted");
-      switcher.subscribe_to_signal(quiddSipName, "on-tree-pruned");
+      switcher.subscribe_to_signal(config.sip.quiddName, "on-tree-grafted");
+      switcher.subscribe_to_signal(config.sip.quiddName, "on-tree-pruned");
 
       /* Add user connected to the sip quiddity */
       addUser(name + "@" + address, name, function(err) {
@@ -122,7 +121,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        */
       getListUsers: function() {
 
-        var users = $.parseJSON(switcher.get_info(quiddSipName, "."));
+        var users = $.parseJSON(switcher.get_info(config.sip.quiddName, "."));
         /* get users added to the tab Sip */
         var destinationSip = $.parseJSON(switcher.get_info("destinationsSip", ".dico"));
         var keys = _.keys(destinationSip);
@@ -147,7 +146,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
       login: function(sip, cb) {
         log.debug("Ask for login Sip Server", parseInt(sip.port));
         /* set information config */
-        switcher.remove(quiddSipName);
+        switcher.remove(config.sip.quiddName);
         createSip(sip.name, sip.password, sip.address, sip.port, function(err) {
           if (err) return cb(err);
           return cb(null, sip);
@@ -160,9 +159,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        */
       logout: function(cb) {
         log.debug("ask for logout to the server sip");
-        var unregister = switcher.invoke(quiddSipName, "unregister", []);
+        var unregister = switcher.invoke(config.sip.quiddName, "unregister", []);
         console.log("unregister", unregister);
-        if (switcher.remove(quiddSipName)) {
+        if (switcher.remove(config.sip.quiddName)) {
           listUsers = [];
           return cb(null, true);
         } else {
@@ -217,7 +216,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
         cb(null, i18n.t("successfully remove destination ") + uri);
 
         /* hang up client if called */
-        var call = switcher.invoke(quiddSipName, 'hang-up', [uri]);
+        var call = switcher.invoke(config.sip.quiddName, 'hang-up', [uri]);
         if (!call) {
           var msg = i18n.t('error called uri : ') + uri;
           log.error(msg);
@@ -230,7 +229,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        */
       attachShmdataToUser: function(user, path, attach, cb) {
         log.debug("Shmdata to contact", user, path, attach);
-        var attachShm = switcher.invoke(quiddSipName, "attach_shmdata_to_contact", [path, user, String(attach)]);
+        var attachShm = switcher.invoke(config.sip.quiddName, "attach_shmdata_to_contact", [path, user, String(attach)]);
         var type = (attach) ? "attach" : "detach";
 
         if (!attachShm) {
@@ -245,7 +244,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       callUser: function(uri, cb) {
         log.debug('Ask to call contact URI ', uri);
-        var call = switcher.invoke(quiddSipName, 'call', [uri]);
+        var call = switcher.invoke(config.sip.quiddName, 'call', [uri]);
         if (!call) {
           var msg = 'error called uri : ' + uri;
           log.error(msg);
@@ -257,7 +256,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       hangUpUser: function(uri, cb) {
         log.debug('Ask to hang up contact URI ', uri);
-        var call = switcher.invoke(quiddSipName, 'hang-up', [uri]);
+        var call = switcher.invoke(config.sip.quiddName, 'hang-up', [uri]);
         if (!call) {
           var msg = 'error called uri : ' + uri;
           log.error(msg);
@@ -271,7 +270,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
         if (name) {
           log.debug('Update name of the uri ' + uri + ' by ' + name);
-          var updateName = switcher.invoke(quiddSipName, "name_buddy", [name, uri]);
+          var updateName = switcher.invoke(config.sip.quiddName, "name_buddy", [name, uri]);
           if (!updateName) {
             var msgError = "Error update name " + name;
             log.error(msgError)
@@ -280,11 +279,11 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
         }
 
         if (statusText) {
-          var setStatusNote = switcher.set_property_value(quiddSipName, 'status-note', statusText);
+          var setStatusNote = switcher.set_property_value(config.sip.quiddName, 'status-note', statusText);
         }
 
         if (status) {
-          var setStatus = switcher.set_property_value(quiddSipName, 'status', status);
+          var setStatus = switcher.set_property_value(config.sip.quiddName, 'status', status);
         }
 
         /* Update name user of dico Users and save */
@@ -297,7 +296,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       removeUser: function(uri, cb) {
         log.debug("remove User " + uri);
-        var removeBuddy = switcher.invoke(quiddSipName, "del_buddy", [uri]);
+        var removeBuddy = switcher.invoke(config.sip.quiddName, "del_buddy", [uri]);
         if (!removeBuddy) return cb(i18n.t("Error remove __name__ to the sip server", {name:name}));
 
         /* Remove entry in the dico users */
@@ -314,7 +313,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       getListStatus: function(cb) {
         log.debug('ask get list users');
-        var listStatus = switcher.get_property_description(quiddSipName, "status");
+        var listStatus = switcher.get_property_description(config.sip.quiddName, "status");
         if (listStatus != "") {
           cb(null, JSON.parse(listStatus).values);
         } else {

@@ -106,7 +106,7 @@ define(
         sendToUserSip: function() {
           var that = this;
           var call = this.model.get('send_status') == "disconnected" ? "send" : "hang-up";
-          socket.emit('invoke', 'sipquid', call, [this.model.get('uri')], function(err) {
+          socket.emit('invoke', config.sip.quiddName, call, [this.model.get('uri')], function(err) {
             if (err) return views.global.notification('error', err);
             views.global.notification("valid", $.t("successfully called ") + that.model.get('name'));
           });

@@ -61,7 +61,18 @@ define(
 
           var that = this;
           var ShmdataCollection = Backbone.Collection.extend({
-            model: ModelShmdata
+            model: ModelShmdata,
+            comparator: function( a, b ) {
+              var aSip = a.getSipUser();
+              var bSip = b.getSipUser();
+              if ( aSip != bSip ) {
+                return aSip != null ? aSip.localeCompare(bSip) : bSip.localeCompare(aSip) * -1;
+              } else {
+                var aPath = a.get('path');
+                var bPath = b.get('path');
+                return aPath != null ? aPath.localeCompare(bPath) : bPath.localeCompare(aPath) * -1;
+              }
+            }
           });
 
           this.set("shmdatasCollection", new ShmdataCollection());

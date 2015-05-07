@@ -1,4 +1,4 @@
-
-<th>
+<th <% if ( user != null ) { %>class="sip"<% } %>>
+	<% if ( user != null ) { %><div class="user"><%=user%></div><% } %>
 	<div class="shmdata-name"><%=name%></div>
 </th>

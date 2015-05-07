@@ -33,7 +33,8 @@ var config = {
   sip: {
     port: 5060,
     //address: "scenic.sat.qc.ca"
-    address : "10.10.30.235"
+    address : "10.10.30.235",
+    quiddName: 'SIP'
   },
   rtpsession: "defaultrtp",
   logLevel: "warn",

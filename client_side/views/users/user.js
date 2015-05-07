@@ -81,13 +81,13 @@ define(
 
         setStatus : function(e){
           var status = $(e.target).data("status");
-          socket.emit("set_property_value", "sipquid", 'status', String(status), function(err) {
+          socket.emit("set_property_value", config.sip.quiddName, 'status', String(status), function(err) {
             if (err) return views.global.notification("error", err);
           });
         },
         setStatusText: function(e) {
           var statusText = $(e.target).val();
-          socket.emit("set_property_value", "sipquid", 'status-note', statusText, function(err) {
+          socket.emit("set_property_value", config.sip.quiddName, 'status-note', statusText, function(err) {
             if (err) return views.global.notification("error", err);
           });
         },
@@ -129,14 +129,14 @@ define(
         callContact: function() {
           return console.log("CALLL");
           var that = this;
-          socket.emit('invoke', 'sipquid', 'call', [this.model.get('uri')] , function(err) {
+          socket.emit('invoke', config.sip.quiddName, 'call', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
             views.global.notification("valid", $.t("successfully called ") + that.model.get('name'));
           });
         },
         hangUpContact: function() {
           var that = this;
-          socket.emit('invoke', 'sipquid', 'hang-up', [this.model.get('uri')] , function(err) {
+          socket.emit('invoke', config.sip.quiddName, 'hang-up', [this.model.get('uri')] , function(err) {
             if (err) return views.global.notification('error', err);
             views.global.notification("valid",$.t("successfully hang up ") + that.model.get('name'));
           });

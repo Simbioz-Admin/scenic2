@@ -191,7 +191,7 @@ define(
 
             // Check if referencing a SIP quiddity, temporary measure until next version of shmdata
             // vumeters for SIP quiddities are named as sipquid-<USER>, "sipquid" is defined in the server's sip.js
-            var sipPrefix = 'sipquid-';
+            var sipPrefix = config.sip.quiddName + '-';
             if ( quiddName.indexOf(sipPrefix) == 0 ) {
               quiddName = quiddName.substr( 0, sipPrefix.length - 1 );
             }

@@ -52,7 +52,7 @@ define(
           var uri = this.model.get('uri');
 
           if(name){
-            socket.emit('invoke', 'sipquid', 'name_buddy', [name, uri], function(err, msg){
+            socket.emit('invoke', config.sip.quiddName, 'name_buddy', [name, uri], function(err, msg){
               if (err) return views.global.notification('error', err);
               views.global.closePanel();
             });

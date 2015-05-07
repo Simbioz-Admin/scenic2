@@ -54,7 +54,7 @@ define(
           $("#transferSip").append($(this.el));
 
           //Check if quiddity sipQuid is created
-          socket.emit('get_info', 'sipquid','.buddy', function(infoQuidd){
+          socket.emit('get_info', config.sip.quiddName,'.buddy', function(infoQuidd){
             if(!infoQuidd.error){
               that.render();
             }else{
@@ -143,9 +143,9 @@ define(
           var that = this;
           //e.preventDefault();
 
-          socket.emit('invoke', 'sipquid', 'unregister',  [], function(err) {
+          socket.emit('invoke', config.sip.quiddName, 'unregister',  [], function(err) {
             if(err) return views.global.notification("error", err);
-            socket.emit('remove', 'sipquid');
+            socket.emit('remove', config.sip.quiddName);
             /* if successfully logout we remove all information about users for showing form login */
             $(that.el).html("");
             collections.users.reset();

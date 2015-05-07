@@ -96,7 +96,7 @@ define(
 
         /* ************ PROP - SIPQUID ************ */
 
-        if (qprop == "sip-registration" && qname == "sipquid") {
+        if (qprop == "sip-registration" && qname == config.sip.quiddName) {
           log.debug("Sip Registration", pvalue);
         }
 
@@ -187,7 +187,7 @@ define(
 
           /* sipquidd */
 
-          if (qname == "sipquid" && pvalue[0].indexOf(".buddy") >= 0) {
+          if (qname == config.sip.quiddName && pvalue[0].indexOf(".buddy") >= 0) {
             //TODO : Get Better method for get information about user without split value
             var idUser = pvalue[0].split(".")[2];
             var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
@@ -222,7 +222,7 @@ define(
             io.sockets.emit("removeShmdata", qname, shmdata);
           }
 
-          if (qname == "sipquid") {
+          if (qname == config.sip.quiddName) {
             var idUser = pvalue[0].split(".")[2];
             var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
             io.sockets.emit('infoUser', infoUser);

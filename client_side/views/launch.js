@@ -11,11 +11,12 @@ define(
     'underscore',
     'backbone',
     'jqueryui',
+    'spin',
     'text!../../templates/launch.html',
     'text!../../templates/users/form_login.html'
   ],
 
-  function(App, _, Backbone, ui, templateLaunch, TemplateLoginForm) {
+  function(App, _, Backbone, ui, Spinner, templateLaunch, TemplateLoginForm) {
 
     /** 
      *  @constructor
@@ -108,10 +109,12 @@ define(
         launchScenic: function(dataFormConfig, dataFormSip) {
           var self = this;
 
+          this.spinner = new Spinner( { length: 8, width: 2, radius: 6, color: '#ff0000' } ).spin( $('#form-config .status' ).get(0) );
+
           socket.emit("startScenic", dataFormConfig, function(configUpdated) {
             config = configUpdated;
 
-            // Check if we need to connec tto SIP server before continuing
+            // Check if we need to connect to SIP server before continuing
             if (dataFormSip.name && dataFormSip.password) {
               console.info("Logging in to SIP server");
               collections.users.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
@@ -129,6 +132,7 @@ define(
         },
 
         scenicLaunched: function() {
+          this.spinner.stop();
           $("#bgLightBox, #lightBox").fadeOut(200, function() {
             $("#bgLightBox, #lightBox").remove();
           });

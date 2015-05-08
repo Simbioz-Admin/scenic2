@@ -3,6 +3,8 @@ define(
 
   function(winston, config) {
 
+    console.log("Initializing Logger...");
+
     var customLevels = {
       levels: {
         switcher: 0,
@@ -30,30 +32,29 @@ define(
       })
     }
 
-
-    winston.addColors(customLevels.colors);
     var log = new(winston.Logger)({
       levels: customLevels.levels,
       transports: [
         new(winston.transports.Console)({
-          'colorize': true,
+          colorize: true,
           level: config.logLevel
         }),
         new(winston.transports.File)({
           filename: config.pathLogs + 'logging-file.log'
-          //filename: '/tmp/scenic.log'
         })
       ]
     });
 
+    winston.addColors(customLevels.colors);
+
+    log.debug("Logger initialized.");
 
     var logger_info_old = log.error;
     log.error = function(msg) {
       var fileAndLine = traceCaller(1);
       return logger_info_old.call(this, fileAndLine + ": " + msg);
-    }
+    };
 
-    log.debug("Init log.js");
     /**
      * examines the call stack and returns a string indicating
      * the file and line number of the n'th previous ancestor call.

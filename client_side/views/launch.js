@@ -77,23 +77,15 @@ define(
 
           //impossible to trig the form sip with submit. Instead we listen keyup on 
           //field SIP and verification is used only if its the enter key
-          if (e.which &&  e.which !== 13 ) return;  
+          if (e.which && e.which !== 13 ) return;
 
-          var dataFormConfig = $('#form-config').serializeObject(),
-            dataFormSip = $('#login_sip').serializeObject(),
-            verificationOk = true,
-            that = this;
-
-          if (dataFormSip.name && dataFormSip.password) {
-            console.log("ask connect server SIP", dataFormSip);
-            collections.users.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
-              if (err) return console.error(err);
-            });
-          }
+          var dataFormConfig = $('#form-config').serializeObject();
+          var dataFormSip = $('#login_sip').serializeObject();
+          var verificationOk = true;
+          var that = this;
 
           //check if port soap is available
-          socket.emit("checkPort", dataFormConfig.portSoap,
-            function(SoapOk) {
+          socket.emit("checkPort", dataFormConfig.portSoap, function(SoapOk) {
               if (!SoapOk) {
                 alert("The port " + dataFormConfig.portSoap +" "+ $.t("is already used. Please change value of port Soap"));
                 verificationOk = false;
@@ -101,13 +93,11 @@ define(
 
               /* Check the password */
               if (dataFormConfig.pass != dataFormConfig.confirmPass) {
-                alert("the password are not the same");
+                alert("Passwords do not match.");
                 verificationOk = false;
               }
 
-              if (verificationOk) that.launchScenic(dataFormConfig);
-
-
+              if (verificationOk) that.launchScenic(dataFormConfig, dataFormSip);
             });
 
           return false;
@@ -115,18 +105,37 @@ define(
 
         /* Called when the parameters are ok */
 
-        launchScenic: function(dataFormConfig) {
+        launchScenic: function(dataFormConfig, dataFormSip) {
+          var self = this;
+
           socket.emit("startScenic", dataFormConfig, function(configUpdated) {
             config = configUpdated;
-            $("#bgLightBox, #lightBox").fadeOut(200, function() {
-              $("#bgLightBox, #lightBox").remove();
 
-            });
-            App.initialize();
+            // Check if we need to connec tto SIP server before continuing
+            if (dataFormSip.name && dataFormSip.password) {
+              console.info("Logging in to SIP server");
+              collections.users.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
+                if (err) {
+                  //TODO: Actually make something useful for the EU out of this error
+                  return console.error(err);
+                } else {
+                  self.scenicLaunched();
+                }
+              });
+            } else {
+              self.scenicLaunched();
+            }
           });
+        },
+
+        scenicLaunched: function() {
+          $("#bgLightBox, #lightBox").fadeOut(200, function() {
+            $("#bgLightBox, #lightBox").remove();
+          });
+          App.initialize();
         }
 
       });
 
     return LaunchView;
-  })
+  });

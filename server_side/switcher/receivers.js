@@ -4,7 +4,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     var io;
 
     var initialize = function(socketIo) {
-      log.debug("init Receiver for get Io");
+      log.info("Initializing Receivers...");
       io = socketIo;
     }
 

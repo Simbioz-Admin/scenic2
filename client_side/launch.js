@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'views/launch',
+  'views/launch'
 ], function(_, Backbone, $, launchView) {
   var initialize = function() {
     "use strict";

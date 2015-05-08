@@ -10,6 +10,7 @@ require.config({
         jqueryCookie: 'libs/jquery.cookie',
         smartMenu: 'libs/smartmenus/jquery.smartmenus.min',
         d3: 'libs/d3.min',
+        spin: 'libs/spin.min',
         i18n : '/i18next.min'
     },
     shim: {

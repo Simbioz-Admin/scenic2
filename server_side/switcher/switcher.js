@@ -17,71 +17,61 @@ define(
 
     function initialize(socketIo) {
 
-      log.debug("Init Switcher");
+      log.info("Initializing Switcher...");
       io = socketIo;
-      /* Init Receiver */
-      sip.initialize(io);
-      receivers.initialize(io);
-      quidds.initialize(io);
 
-
-      /* create the default quiddities necessary for use switcher */
-      switcher.create("rtpsession", config.rtpsession);
-      switcher.create("SOAPcontrolServer", "soap");
-
-
-      /* ************ SYSTEM USAGE ************ */
-
-      /* create quiddity systemusage for get information about the CPU usage */
-      switcher.create("systemusage", 'systemusage');
-      switcher.set_property_value("systemusage", "period", config.systemusagePeriod);
-      /*subscribe to the modification on this quiddity systemusage*/
-      switcher.subscribe_to_signal('systemusage', "on-tree-grafted");
-      switcher.subscribe_to_signal('systemusage', "on-tree-pruned");
-
-
-      /* check if when the server is started the launcher define a save file */
-      if (config.loadFile) {
-        var load = switcher.load_history_from_scratch(config.loadFile);
-        if (load == "true") {
-          log.info("the file ", config.loadFile, "is loaded");
-        } else {
-          log.error("the file " + config.loadFile + "is not found!");
-        }
-      } else {
-
-        /* check size of the port soap and call method invoke for set quiddity soap port */
-        if (typeof config.port.soap == "number" && config.port.soap.toString().length >= 4) {
-          switcher.invoke("soap", "set_port", [config.port.soap]);
-        } else {
-          log.error("The soap port is not valid" + config.port.soap);
-          process.exit();
-        }
-
-        /* create default dico for stock information */
-        var dico = switcher.create("dico", "dico");
-
-        /* create the properties controlProperties for stock properties of quidds for control */
-        switcher.invoke(dico, "update", ["controlProperties", "[]"]);
-        switcher.invoke(dico, "update", ["destinationsRtp", "[]"]);
-        // switcher.set_property_value("dico", "destinationsRtp", '[]');
-
-        /* Create a dico for destinationsSIP */
-        // switcher.create("dico", "destinationsSip");
-
-      }
-
-
-      /* log of switcher */
-
+      // Register logger first
       switcher.register_log_callback(function(msg) {
         //var msgT = i18n.t(msg);
         log.switcher(msg);
       });
 
+      // SOAP Control
+      switcher.create("SOAPcontrolServer", "soap");
 
-      /* signals for modification properties
-       * here we define action when a property of quidd is modified
+      // Receivers
+      sip.initialize(io);
+      receivers.initialize(io);
+      quidds.initialize(io);
+
+      // Create the default quiddities necessary to use switcher
+      log.debug( 'Creating RTP Session...' );
+      switcher.create("rtpsession", config.rtpsession);
+
+      // Create quiddity systemusage to get information about the CPU usage
+      log.debug( 'Creating System Usage...' );
+      switcher.create("systemusage", 'systemusage');
+      switcher.set_property_value("systemusage", "period", config.systemusagePeriod);
+      switcher.subscribe_to_signal('systemusage', "on-tree-grafted");
+      switcher.subscribe_to_signal('systemusage', "on-tree-pruned");
+
+      // Check if we have a save file to load
+      if (config.loadFile) {
+        log.info("Loading save file " + config.loadFile);
+        var load = switcher.load_history_from_scratch(config.loadFile);
+        if (load == "true") {
+          log.info("Save file loaded.");
+        } else {
+          log.error("Save file not found!");
+        }
+      } else {
+        // Validate SOAP port and configure quiddity, otherwise fail
+        if (typeof config.port.soap == "number" && config.port.soap.toString().length >= 4) {
+          switcher.invoke("soap", "set_port", [config.port.soap]);
+        } else {
+          log.error("Invalid SOAP port.", config.port.soap);
+          process.exit();
+        }
+
+        // Create default dico
+        log.debug( 'Creating Dictionaries...' );
+        var dico = switcher.create("dico", "dico");
+        switcher.invoke(dico, "update", ["controlProperties", "[]"]);
+        switcher.invoke(dico, "update", ["destinationsRtp", "[]"]);
+      }
+
+      /**
+       * Property callback
        */
 
       switcher.register_prop_callback(function(qname, qprop, pvalue) {
@@ -137,11 +127,11 @@ define(
           }
         });
 
-      }); /** END REGISTER PROP CALLBACK **/
+      });
 
-
-
-      /* ************ SIGNAL - CALLBACK ************ */
+      /**
+       * Signal callback
+       */
 
       switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
@@ -324,7 +314,7 @@ define(
 
       });
 
-      log.debug("scenic is now initialized");
+      log.info("Scenic initialized.");
     }
 
 

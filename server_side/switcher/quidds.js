@@ -4,7 +4,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     var io;
 
     function initialize(socketIo) {
-      log.debug("init Receiver for get Io");
+      log.info("Initializing Quiddities...");
       io = socketIo;
     }
 
@@ -130,13 +130,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
 
     function get_info(quiddName, path, cb) {
-      log.debug("try get info of " + quiddName);
+      log.debug("Getting quiddity information for: " + quiddName);
       var info = $.parseJSON(switcher.get_info(quiddName, path));
       return cb(info);
     }
 
     function get_property_by_class(className, propertyName, callback) {
-      log.debug("try get property by class", className, propertyName);
+      log.debug("Getting property by class", className, propertyName );
       var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
 
       if (propertyByClass && propertyByClass.error) {

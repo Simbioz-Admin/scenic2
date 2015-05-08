@@ -55,6 +55,8 @@ define(
 
           if (!config.scenicStart) {
 
+            log.info("Starting Scenic server...");
+
             config.nameComputer = params.username;
             config.port.soap = parseInt(params.portSoap);
 
@@ -67,14 +69,19 @@ define(
                 authRealm: "Private area.",
                 authList: [params.username + ':' + params.pass]
               });
-              log.debug("info", "password has set");
+              log.info("    - Scenic will start with password protection");
             }
+
             switcher.initialize(socketio);
+
             config.scenicStart = true;
+
+            log.info("Scenic server started.");
+
             //resend configuration updated
             callback(config);
           } else {
-            log.warn("the server scenic2 is already started");
+            log.warn("Scenic server already started!");
           }
         });
 

@@ -11,20 +11,21 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      *  @description add to the array listUsers a new users
      */
     function addUser(URI, name, cb) {
-      log.debug("User sip connected");
+      log.debug("Adding SIP user...");
       var addBuddy = switcher.invoke(config.sip.quiddName, "add_buddy", [URI]);
-      if (!addBuddy) return cb("Error add " + name + " to the sip server");
+      if (!addBuddy) return cb("Error adding SIP user " + URI );
       var setName = switcher.invoke(config.sip.quiddName, "name_buddy", [name, URI]);
-      if (!setName) return cb("Error set name " + name);
+      if (!setName) return cb("Error setting SIP user name to " + name + " for " + URI);
 
       /* Insert a new entry in the dico users */
       var newEntry = switcher.invoke("usersSip", "update", [URI, name]);
 
       /* save the dico users */
-      var saveDicoUsers = switcher.invoke("usersSip", "save", [config.scenicSavePath + "/users.json"]);
-      if (!saveDicoUsers) return cb("error saved dico users");
+      var usersSavePath = config.scenicSavePath + "users.json";
+      var saveDicoUsers = switcher.invoke("usersSip", "save", [usersSavePath]);
+      if (!saveDicoUsers) return cb("Error saving usersSip dictionary to " + usersSavePath );
 
-      cb(null, i18n.t("User __URI__ successfully added", {URI : URI }));
+      cb(null, "Successfully added SIP user " + URI );
     }
 
     /*
@@ -32,13 +33,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
      *  @description set the connection with the server sip. This function is called a initialization of switcher
      */
     function createSip(name, password, address, port, cb) {
-      log.debug("Create Sip Server", name, address, port);
+      log.debug("Creating SIP quiddity", {name: name, address: address, port: port });
       //@TODO : Encrypt client side and decrypt server side the password
 
       /* Create the server SIP */
       config.sip.quiddName = switcher.create("sip", config.sip.quiddName);
       if (!config.sip.quiddName) {
-        var msgError = i18n.t("Error create sip quiddity");
+        var msgError = i18n.t("Error creating SIP quiddity");
         log.error(msgError);
         return cb(msgError);
       }
@@ -47,15 +48,15 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       /* Define port for Sip Server */
       var port = switcher.set_property_value(config.sip.quiddName, "port", port);
-      if (!port) return log.error("Error set port ", port, " for sip quiddity");
+      if (!port) return log.error("Error setting SIP quiddity port to " + port );
 
       /* Connect to the server SIP */
-      log.debug("Ask connect to server sip", name + "@" + address, password);
+      log.debug("Attempting SIP server connection", { name: name + "@" + address, password: password });
 
       var decrypted = cryptoJS.AES.decrypt(password, secretString).toString(cryptoJS.enc.Utf8);
 
       var register = switcher.invoke(config.sip.quiddName, "register", [name + "@" + address, decrypted]);
-      if (!register) return log.error(i18n.t("Error when try login to the server SIP"));
+      if (!register) return log.error(i18n.t("SIP server authentication failed"));
 
       /* subscribe to the modification on this quiddity */
       switcher.subscribe_to_signal(config.sip.quiddName, "on-tree-grafted");
@@ -68,15 +69,15 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
 
       /* Create dico for DestinationsSip */
       var destinationsSip = switcher.create('dico', 'destinationsSip');
-      if (!destinationsSip) return log.error("error create dico destinationsSip");
+      if (!destinationsSip) return log.error("Error creating destinationsSip dictionary");
 
       /* Create a dico for Users Save */
       var usersDico = switcher.create("dico", "usersSip");
-      if (!usersDico) return log.error("error create dico Users");
+      if (!usersDico) return log.error("Error creating usersSip dictionary");
 
       /* Try load file users dico */
       var loadUsers = switcher.invoke("usersSip", "load", [config.scenicSavePath + "/users.json"]);
-      if (!loadUsers) log.warn("No files existing for dico users");
+      if (!loadUsers) log.warn("No saved file exists for usersSip dictionary");
 
       if (loadUsers) {
         /* Load Dico Users in quiddity SIP */
@@ -93,7 +94,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
       }
 
       if (register == "false") {
-        var msgErr = i18n.t("Error register quid sip");
+        var msgErr = i18n.t("Error registering SIP quiddity");
         log.error(msgErr);
         return cb(msgErr, null);
       }
@@ -111,7 +112,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        *  @description initialize for get socket.io accessible
        */
       initialize: function(socketIo) {
-        log.info("initialize sip");
+        log.info("Initializing SIP...");
         io = socketIo;
       },
 
@@ -144,9 +145,12 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        *  @description Log user to the server sip
        */
       login: function(sip, cb) {
-        log.debug("Ask for login Sip Server", parseInt(sip.port));
-        /* set information config */
+        log.debug("SIP login attempt: " + sip.name + '@' + sip.address + ':' + sip.port );
+
+        // Remove potential previous SIP quiddity
         switcher.remove(config.sip.quiddName);
+
+        // Create new SIP quiddity
         createSip(sip.name, sip.password, sip.address, sip.port, function(err) {
           if (err) return cb(err);
           return cb(null, sip);

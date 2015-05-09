@@ -1,11 +1,15 @@
 @import compass/reset
 @import compass/css3
+@import compass/utilities/general/clearfix
 
 // import custom definitions
 @import "variables"
 @import "users"
 @import "systemusage"
 @import "menus"
+
+*
+  box-sizing: border-box
 
 html
   height : 100%
@@ -534,7 +538,7 @@ header
     //+box-shadow(-4px 0px 7px -5px black inset)
     opacity : 0.8
     //background : url(../../images/bgTable.png)
-    +border-radius(2px 0 0 2px)
+    //+border-radius(2px 0 0 2px)
     color : #ccc
 
     .content
@@ -559,7 +563,7 @@ header
       opacity : 1
       color : #eee
       border-left : 2px solid #be2620
-      +box-shadow(-4px 0px 7px -5px black inset)
+      //+box-shadow(-4px 0px 7px -5px black inset)
       &.transfer .content
         background : url(../../icons/732-cloud-upload-selected.png) no-repeat center 10px
       &.control .content
@@ -647,7 +651,7 @@ header
 
 #panelLeft
   float : left
-  margin : 5px 0 0 45px
+  margin : 60px 0 0 70px
   //width : 100%
   height : 100%
 
@@ -686,7 +690,7 @@ input[type=checkbox]
   //+border-radius(5px)
   color : white
   +box-shadow(inset 0 0 20px rgba(0,0,0,.1),0 0 10px rgba(146,196,245,.4))
-  width : 35px
+  width : 55px
   text-align: right
   +transition(0.5s)
   &:after
@@ -1003,13 +1007,7 @@ td
 .tableScenic
   float : left
   display : block
-  //padding : 10px 0 0 20px
-  font-size : 1.2em
   table-layout : fixed
-  //background : rgba(255,255,255, 0.3)
-  //+background-image(linear-gradient(rgba(255,255,255, 0.7), rgba(255,255,255, 0.3)))
-  //+box-shadow(rgba(black, 0.5) 0px 0px 26px -8px)
-  //display : none
   min-height : 110px
   min-width : 420px
 
@@ -1024,20 +1022,13 @@ td
   th,td
     text-align: center
     position : relative
-    width : 80px
-    //max-width : 110px
-    width : 119px
-    // overflow : hidden
+    width : 125px
     height : 40px
-    // padding : 0 9px
-    // border-right : 1px solid #292929
 
     .mapper
       background : #222
       width : 100%
       height : 100%
-      // padding : 0 10px
-      // margin : 0 0 0 -10px
       &:hover .actions
         display : table
         opacity : 1
@@ -2262,7 +2253,7 @@ html[xmlns] .clearfix
   //+box-shadow(rgba(0,0,0,0.3) 0px 3px 1px -1px)
 
   .name
-    width : 100px
+    width : 125px
     color : white
     position : absolute
     padding : 0 10px
@@ -2275,7 +2266,7 @@ $colorBorder : #3a3a3a
   float : left
   // min-height: 50px
   color : #eee
-  margin-left : 120px
+  margin-left : 125px
   .shmdata td
     border-left : 1px solid $colorBorder
     border-bottom : 1px solid $colorBorder
@@ -2287,7 +2278,7 @@ $colorBorder : #3a3a3a
     cursor : help
     .shmdata-name
       padding : 15px 25px
-      width : 54px
+      width : 125px
     &.sip
       .user
         font-weight: bold
@@ -2325,7 +2316,7 @@ $colorBorder : #3a3a3a
     opacity : 0
 
 .destinations
-  margin : 0 0 10px 235px
+  margin : 0 0 10px 260px
   float : left
   min-height : 40px
   width : 100%
@@ -2336,7 +2327,7 @@ $colorBorder : #3a3a3a
     background : none
     float : left
     .content
-      width : 120px
+      width : 125px
       height : 100%
       background : #333
       position : relative

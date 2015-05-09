@@ -10,11 +10,10 @@ define(
     'underscore',
     'backbone',
     'text!../../../templates/systemusage/preview_systemusage.html',
-    'd3',
-    // 'views/systemusage/Htop'
+    'text!../../../templates/systemusage/network_usage.html'
   ],
 
-  function(_, Backbone, previewUsageTemplate, d3) {
+  function(_, Backbone, previewUsageTemplate, networkUsageTemplate) {
 
     /** 
      *	@constructor
@@ -44,22 +43,24 @@ define(
         /* Called when the view ConnexionView is initialized */
 
         initialize: function() {
-          var that = this;
-          var info = null;
-          socket.on("systemusage", function(info) {
-            info = $.parseJSON(info);
-            delete info.cpu.cpu;
-            that.renderCpu(info.cpu);
-            that.renderMem(info.mem);
-            that.renderNetwork(info.net.eth0);
-          });
-
           // $("#menu_header").after(this.el);
           $("#panelTables").append(this.el);
+
           var template = _.template(previewUsageTemplate);
           $(this.el).html(template);
           $(this.el).i18n();
 
+          this.$net = $('.content_network');
+          console.log(this.$net);
+
+          var self = this;
+          socket.on("systemusage", function(info) {
+            info = $.parseJSON(info);
+            delete info.cpu.cpu;
+            self.renderCpu(info.cpu);
+            self.renderMem(info.mem);
+            self.renderNetwork(info.net);
+          });
         },
 
         renderCpu: function (info) {
@@ -94,15 +95,13 @@ define(
           $(".memory .content_memory").html(percentUsedMemory+"%");
         },
         renderNetwork:function(info){
-          var rxRate = this.convertBytes(info.rx_rate);
-          var txRate = this.convertBytes(info.tx_rate);
 
-          //console.log(unitRx, unitTx);
-          $('.network .receive').html("rx: " + rxRate);
-          $('.network .transfer').html("tx: " + txRate);
-          
-          //console.log(rxRate,unitRx, txRate, unitTx);
-
+          var html = '';
+          for ( ifaceName in info ) {
+            var iface = info[ifaceName];
+            html += _.template(networkUsageTemplate, { name: ifaceName, iface: iface });
+          }
+          this.$net.html(html);
         },
         convertBytes: function(bytes) {
           var bytes = parseFloat(bytes);

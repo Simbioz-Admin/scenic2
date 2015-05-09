@@ -64,7 +64,7 @@ define(
           var active = (currentTable == this.model.get("id") ? "active" : "");
           var btnTable = $("<div></div>", {
             text: "",
-            class: "tabTable " + this.model.get("type") + " " + active,
+            class: "tabTable " + this.model.get("type") + " " + this.model.get("name" ).toLowerCase() + " " + active,
             title: this.model.get("description"),
             data: {
               id: this.model.get("id"),

@@ -536,6 +536,20 @@ header
     //background : url(../../images/bgTable.png)
     +border-radius(2px 0 0 2px)
     color : #ccc
+
+    .content
+      width : 100%
+      height : 100%
+
+    &.transfer .content
+      background : url(../../icons/732-cloud-upload.png) no-repeat center 10px
+    &.control .content
+      background : url(../../icons/1060-switches.png) no-repeat center 10px
+    &.sink .content
+      background : url(../../icons/725-airplay.png) no-repeat center 10px
+    &.sip .content
+      background : url(../../icons/779-users.png) no-repeat center 10px
+
     &:hover
       cursor : pointer
       opacity : 1
@@ -546,16 +560,17 @@ header
       color : #eee
       border-left : 2px solid #be2620
       +box-shadow(-4px 0px 7px -5px black inset)
-    .content
-      width : 100%
-      height : 100%
+      &.transfer .content
+        background : url(../../icons/732-cloud-upload-selected.png) no-repeat center 10px
+      &.control .content
+        background : url(../../icons/1060-switches-selected.png) no-repeat center 10px
+      &.sink .content
+        background : url(../../icons/725-airplay-selected.png) no-repeat center 10px
+      &.sip .content
+        background : url(../../icons/779-users-selected.png) no-repeat center 10px
 
-    &.transfer .content
-      background : url(../../images/iconeTransmission.png) no-repeat center 10px
-    &.control .content
-      background : url(../../images/iconeControle.png) no-repeat center 10px
-    &.sink .content
-      background : url(../../images/iconeSink.png) no-repeat center 10px
+
+
 
     .name
       position : absolute

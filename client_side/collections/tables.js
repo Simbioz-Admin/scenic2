@@ -63,7 +63,7 @@ define(
             name:  $.t('Transfer'),
             type: "transfer",
             id: "transferRtp",
-            description: "manage connexion with destination type host",
+            description: "Manage connexion with destination type host",
             menus: [{
               name: "source",
               type: "sources"
@@ -103,7 +103,7 @@ define(
             name: "SIP",
             type: "transfer",
             id : "transferSip",
-            description: " Manage transfer of shmdatas to the sip destination",
+            description: "Manage transfer of shmdatas to the sip destination",
             menus: [{
               name: "source",
               type: "sources"

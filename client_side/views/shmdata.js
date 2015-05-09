@@ -170,7 +170,7 @@ define(
           var shmdata = this.model.get("path");
           var that = this;
           collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
-            val = val.replace(/,/g, "<br>");
+            val = val.replace(/, /g, "\n" );
             var template = _.template(infoTemplate, {
               info: val,
               shmdata: shmdata

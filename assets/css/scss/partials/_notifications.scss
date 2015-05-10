@@ -1,0 +1,28 @@
+#msgHighLight {
+  width: 310px;
+  position: fixed;
+  left: 50%;
+  right: 50%;
+  top: -50px;
+  margin-left: -125px;
+  z-index: 1;
+  //+border-radius(0 0 3px 3px)
+  color: white;
+  font-size: 1.6em;
+  text-align: center;
+  padding: 12px 20px;
+  @include box-shadow(rgba(black, 0.3) 0px 3px 12px);
+  cursor: pointer;
+  transition: all 0.5s;
+  //display : none
+  word-wrap: break-word;
+  &.error {
+    background: $colorSat;
+  }
+  &.valid, &.info {
+    background: green;
+  }
+  &.active {
+    top: 60px;
+  }
+}

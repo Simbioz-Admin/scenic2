@@ -1,0 +1,146 @@
+header {
+  width: 100%;
+  height: $heightHeader;
+  background: #333;
+  position: fixed;
+  top: 0;
+  z-index: 20000;
+  .btn {
+    margin-top: 3px;
+  }
+}
+
+#logoScenic {
+  width: 70px;
+  height: $heightHeader;
+  float: left;
+  text-align: center;
+  line-height: 95px;
+  color: white;
+  background: $colorSat url(../../images/logo_sat.png) no-repeat center 10px;
+}
+
+#menu_header {
+  float: right;
+  margin: 10px;
+}
+
+.menu_list {
+  color: white;
+  li {
+    display: inline-block;
+    padding: 15px 10px;
+    text-transform: uppercase;
+    background: #2c2c2c;
+    border-right: none;
+    float: left;
+    margin: 0 0 0 5px;
+    &:first-child {
+      @include border-radius(2px 0 0 2px);
+    }
+    &:last-child {
+      @include border-radius(0 2px 2px 0);
+    }
+    &:hover {
+      cursor: pointer;
+      background: #222;
+      @include box-shadow(0px 2px -2px 2px black inset);
+    }
+  }
+  #langs {
+    padding: 0;
+    button.lang {
+      font-size: 10px;
+      padding: 5px 5px 4px;
+      margin: 0;
+      display: block;
+      background: #2c2c2c;
+      color: white;
+      border: none;
+      &.active {
+        color: $colorSat;
+      }
+      &:hover {
+        background: #222;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.panelBox {
+  width: 250px;
+  padding: 15px 20px 10px;
+  background: #2a2a2a;
+  position: absolute;
+  top: 60px;
+  color: white;
+  font-size: 1.3em;
+  @include box-shadow(0px 9px 25px -10px #2a2a2a);
+  //+border-radius(3px)
+  &:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 7px solid #2a2a2a;
+    position: absolute;
+    top: -7px;
+    right: 10px;
+  }
+  .infoTitle {
+    font-weight: bold;
+  }
+  .info {
+    width: 100px;
+  }
+}
+
+#panelInfo {
+  right: 106px;
+  div {
+    width: 90px;
+    float: left;
+    margin: 0 0 10px 0;
+  }
+}
+
+#panelSave {
+  right: 60px;
+  padding: 5px 10px 2px;
+  input[type=text] {
+    height: 35px;
+    background: none;
+    @include border-radius(0);
+    border: 1px solid #444;
+    color: white;
+  }
+}
+
+#panelFiles {
+  right: 17px;
+  .file {
+    cursor: pointer;
+    display: inline-block;
+    border-bottom: 1px solid #444;
+    margin: 0 0 2px 0;
+    width: 220px;
+    padding: 4px;
+    position: relative;
+    font-size: 16px;
+    &:hover {
+      background: $colorSat;
+    }
+  }
+  .remove_save {
+    display: inline-block;
+    border-bottom: 1px solid #444;
+    padding: 4px;
+    font-size: 18px;
+    &:hover {
+      background: $colorSat;
+      cursor: pointer;
+    }
+  }
+}

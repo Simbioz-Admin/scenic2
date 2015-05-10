@@ -1,0 +1,136 @@
+#bgLightBox {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+  display: none;
+}
+
+#lightBox {
+  width: 400px;
+  background: #FCFCFC;
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 30%;
+  margin: (-100px) 0 0 -190px;
+  padding: 20px;
+  @include border-radius(2px);
+  @include box-shadow(rgba(0, 0, 0, 0.5) 0px 20px 30px);
+  display: none;
+}
+
+#launch {
+  width: 300px;
+  font-size: 1.9em;
+  color: #888;
+  margin: 0 auto;
+  .status {
+    float: right;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+  }
+  h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #555;
+  }
+  #loginSip {
+    padding-top: 0;
+  }
+  .ui-icon-triangle-1-e {
+    width: 14px;
+    height: 14px;
+    margin: (-8px) 0 0 10px;
+    &:before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 6px solid #555;
+      position: absolute;
+    }
+  }
+  .ui-icon-triangle-1-s {
+    width: 14px;
+    height: 14px;
+    margin: (-4px) 0 0 6px;
+    &:before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #555;
+      position: absolute;
+    }
+  }
+  label {
+    font-size: 0.8em;
+    margin: 5px 0;
+    display: block;
+  }
+  .info {
+    font-size: 0.7em;
+  }
+  .identification {
+    position: relative;
+    float: left;
+    width: 100%;
+    margin: 0 0 20px;
+  }
+  input[type=password], input[type=text] {
+    float: left;
+    width: 100%;
+    font-size: 0.8em;
+    border: 1px #ddd solid;
+    padding: 0 10px;
+    margin: 0 8px 10px 0;
+    height: 30px;
+    line-height: 30px;
+    @include border-radius(3px);
+    opacity: 0.9;
+    @include box-shadow(rgba(black, 0.5) 0px 0px 8px -3px);
+  }
+  input[type=submit] {
+    float: right;
+    width: inherit;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 20px;
+    margin: 0px 30px 0 0;
+    @include box-shadow(rgba(black, 0.5) 0px 0px 8px -3px);
+    @include transition(0.3s);
+    &:hover {
+      background: $colorSat;
+      cursor: pointer;
+    }
+  }
+  input[type=text] {
+    width: 100%;
+  }
+  .parameters {
+    float: left;
+    border-top: 1px dotted #ddd;
+    padding-top: 10px;
+    margin: 10px 0 0;
+    .half {
+      float: left;
+      width: 150px;
+      input {
+        width: 120px;
+      }
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+}

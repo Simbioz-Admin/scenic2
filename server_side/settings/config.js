@@ -4,7 +4,8 @@ interfaces = os.networkInterfaces(),
 addresses = [],
 scenicHomePath = process.env.HOME + "/.scenic2";
 
-console.log('PATH HOME', process.env.HOME);
+console.log('Scenic home path: ' + scenicHomePath);
+
 for (k in interfaces) {
   for (k2 in interfaces[k]) {
     var address = interfaces[k][k2];
@@ -22,22 +23,46 @@ var config = {
   version: "2.0.24",
   lang : 'en',
   host: addresses[0],
-  port: {
-    soap: 8085,
-    scenic: 8095
+
+  // Scenic Configuration
+  scenic: {
+    ports: {
+      min: 8095,
+      max: 8099,
+      retrieve: 1
+    },
+    port: null //Automatic
   },
+
+  // SOAP Configuration
+  soap: {
+    ports: {
+      min: 8085,
+      max: 8089,
+      retrieve: 1
+    },
+    port: null //Automatic
+  },
+
+  // SIP Configuration
   sip: {
-    port: 5060,
+    ports: {
+      min: 5060,
+      max: 5069,
+      retrieve: 1
+    },
+    port: null,
     //address: "scenic.sat.qc.ca"
     address : "10.10.30.235",
     quiddName: 'SIP'
   },
+
   rtpsession: "defaultrtp",
   logLevel: "warn",
   logSocketIo: false,
   standalone: false,
   scenicStart: false,
-  configSet: false,
+  configSet: true,
   passSet: null,
   loadFile: false,
   nameComputer: os.hostname(),

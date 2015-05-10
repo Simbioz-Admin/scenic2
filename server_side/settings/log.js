@@ -3,8 +3,6 @@ define(
 
   function(winston, config) {
 
-    console.log("Initializing Logger...");
-
     var customLevels = {
       levels: {
         switcher: 0,
@@ -46,8 +44,6 @@ define(
     });
 
     winston.addColors(customLevels.colors);
-
-    log.debug("Logger initialized.");
 
     var logger_info_old = log.error;
     log.error = function(msg) {

@@ -21,7 +21,6 @@ define(
 
       // Register logger first
       switcher.register_log_callback(function(msg) {
-        //var msgT = i18n.t(msg);
         log.switcher(msg);
       });
 
@@ -55,10 +54,10 @@ define(
         }
       } else {
         // Validate SOAP port and configure quiddity, otherwise fail
-        if (typeof config.port.soap == "number" && config.port.soap.toString().length >= 4) {
-          switcher.invoke("soap", "set_port", [config.port.soap]);
+        if (typeof config.soap.port == "number" && config.soap.port.toString().length >= 4) {
+          switcher.invoke("soap", "set_port", [config.soap.port]);
         } else {
-          log.error("Invalid SOAP port.", config.port.soap);
+          log.error("Invalid SOAP port.", config.soap.port);
           process.exit();
         }
 
@@ -381,7 +380,9 @@ define(
 
     function close() {
       log.info("Server scenic is now closed");
-      io.sockets.emit("shutdown", true);
+      if ( io ) {
+        io.sockets.emit( "shutdown", true );
+      }
       switcher.close();
     }
 

@@ -57,7 +57,7 @@ define(
 
           var template = _.template(templateLaunch)( {
             username: config.nameComputer,
-            soap: config.port.soap,
+            soap: config.soap.port,
             sip: config.sip
           });
           $(this.el).append(template);

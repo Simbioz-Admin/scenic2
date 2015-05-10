@@ -9,16 +9,9 @@ define(
 
   function(log, config, portastic, switcher, auth) {
 
-    var socketio;
-
-    var getSocketIo = function() {
-      return socketio;
-    };
-
     var initialize = function(io) {
 
-      socketio = io;
-      log.debug("Set Socket.io");
+      log.debug("Initializing ScenicIO...");
 
       io.sockets.on('connection', function(socket) {
 
@@ -57,7 +50,7 @@ define(
             log.info("Starting Scenic server...");
 
             config.nameComputer = params.username;
-            config.port.soap = parseInt(params.portSoap);
+            config.soap.port = parseInt(params.portSoap);
 
             // config.sip.address = params.sipAddress;
             // config.sip.port = params.sipPort;
@@ -71,7 +64,7 @@ define(
               log.info("    - Scenic will start with password protection");
             }
 
-            switcher.initialize(socketio);
+            switcher.initialize(io);
 
             config.scenicStart = true;
 
@@ -95,6 +88,7 @@ define(
           delete config.subscribe_quidd_info[socket.id];
           refreshTimeout = setTimeout(function() {
             if (config.masterSocketId == socket.id && config.standalone == false) {
+              log.info('Last window closed, exiting...');
               process.exit();
             }
           }, 2000);
@@ -116,7 +110,7 @@ define(
         socket.on("get_info", switcher.quidds.get_info);
         socket.on("get_properties_description", switcher.quidds.get_properties_description);
         socket.on("get_methods_description", switcher.quidds.get_methods_description);
-                socket.on("get_method_description", switcher.quidds.get_method_description);
+        socket.on("get_method_description", switcher.quidds.get_method_description);
         socket.on("get_property_description", switcher.quidds.get_property_description);
         socket.on("get_property_value", switcher.quidds.get_property_value);
         socket.on("set_property_value", switcher.quidds.set_property_value);
@@ -163,12 +157,10 @@ define(
 
 
       });
-
     };
 
     return {
-      initialize: initialize,
-      getSocketIo: getSocketIo
+      initialize: initialize
     }
   }
 );

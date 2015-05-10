@@ -25,8 +25,8 @@ define(
             message += leftColumn('-n, -nogui     ') + "launch scenic2 without app interface\n";
             message += leftColumn('-l, --log     ') + "Set the level of log (default : info) (switcher - debug)\n";
             message += leftColumn('-w, --withoutconf') + 'launch scenic2 without the interface for pre-configuration\n';
-            message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.port.scenic + ")\n";
-            message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.port.soap + ")\n";
+            message += leftColumn('-g, --guiport  ') + "port for GUI scenic2 (default is " + config.scenic.port + ")\n";
+            message += leftColumn('-s, --soapport ') + "port SOAP (default is " + config.soap.port + ")\n";
             message += leftColumn('-i, --identification ') + "name of identification (default is " + config.nameComputer + ")\n";
             message += leftColumn('-r, --rtpsession ') + "name of rtpsession (default is " + config.rtpsession + ")\n";
             message += leftColumn('--sip') + "parameters for server sip (ex : --sip name=1010 port=" + config.sip.port + " address=" + config.sip.address + "\n";
@@ -55,7 +55,7 @@ define(
         //argument for set mode debug
         if (argv.l || argv.log) {
             config.logLevel = (argv.l ? argv.l : argv.log);
-            console.log("The level log is set to", config.logLevel);
+            console.log("Log level: " + config.logLevel);
         }
 
         //argument for set mode debug
@@ -73,18 +73,18 @@ define(
         //argument for define the port of gui scenic
         if (argv.g || argv.guiport) {
             var port = (argv.g ? argv.g : argv.guiport);
-            config.port.scenic = port;
+            config.scenic.port = port;
         }
 
         //Launch scenic2 wihtout pre-configuration
-        if (argv.w || argv.withoutconfi) {
+        if (argv.w || argv.withoutconf) {
             config.configSet = true;
         }
 
         //argument for define port soap
         if (argv.s || argv.soapport) {
             var port = (argv.s ? argv.s : argv.soapport);
-            config.port.soap = port;
+            config.soap.port = port;
         }
 
         //argument for identification
@@ -99,25 +99,16 @@ define(
         }
 
         //launch scenic2 without interface
+        var message = null;
         if (argv.n || argv.nogui) {
             config.standalone = true;
             // config.scenicStart = true;
-            var message = '\nScenic2 is launch in standalone mode\n';
-            message += "------------------------------------------------\n";
-            message += leftColumn(" GUI scenic2") + "http://" + config.host + ":" + config.port.scenic + "\n";
-            message += leftColumn(" Port SOAP") + config.port.soap + "\n";
-            message += leftColumn(" Name RTPsession") + config.rtpsession + "\n";
-            message += leftColumn(" Identification") + config.nameComputer + "\n\n";
-
-            message += "SIP information\n";
-            message += "------------------------------------------------\n";
-            message += leftColumn(" Address") + config.sip.address + "\n";
-            message += leftColumn(" Port") + config.sip.port + "\n";
-            message += leftColumn(" Username") + config.sip.name + "\n";
-            message += "------------------------------------------------\n";
-            console.log(message);
+            message = '\nScenic2 launching in standalone mode\n';
+        } else {
+            message = '\nScenic2 launching in GUI mode\n';
         }
-
+        message += "------------------------------------------------\n";
+        console.log(message);
 
         return argv;
 

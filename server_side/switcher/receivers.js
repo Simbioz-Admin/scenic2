@@ -17,8 +17,6 @@ define(['settings/config', 'switcher', 'settings/log', 'underscore', 'i18next'],
      *  or an error message
      **/
 
-    // var io = scenicIo.getSocketIo();
-
     var create_destination = function(destination, cb) {
 
       /* Get the destinations existing stock in dico (propety destinations) */
@@ -240,7 +238,7 @@ define(['settings/config', 'switcher', 'settings/log', 'underscore', 'i18next'],
 
 
       io.sockets.emit("remove_connection", path, id);
-      //var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
+      //var url = 'http://' + config.host + ':' + config.soap.port + '/sdp?rtpsession=defaultrtp&destination=' + id;
       //var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
       if (cb) return cb(null, remove);
     }
@@ -363,7 +361,7 @@ define(['settings/config', 'switcher', 'settings/log', 'underscore', 'i18next'],
 
       /* need wait 1sec for update url rtp to the ControlClient */
       setTimeout(function() {
-        var url = 'http://' + config.host + ':' + config.port.soap + '/sdp?rtpsession=defaultrtp&destination=' + id;
+        var url = 'http://' + config.host + ':' + config.soap.port + '/sdp?rtpsession=defaultrtp&destination=' + id;
         log.debug("refresh httpsdpdec of", url);
         var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
         if (!updateShm) return cb("error updateShm");

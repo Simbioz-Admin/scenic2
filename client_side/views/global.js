@@ -363,7 +363,7 @@ define(
             var template = _.template(panelInfoTemplate)( {
               username: config.nameComputer,
               host: config.host,
-              soap: config.port.soap
+              soap: config.soap.port
             });
             $("#btn-info").after(template);
           } else {

@@ -8,6 +8,7 @@ define( [
     'underscore',
     'module'
   ], function(config, express,i18next, path, nodeSwitcher, switcher, _, module) {
+
     // get the installation root path
     var pwd = path.dirname(module.uri)
     var rootPath = pwd.split('/').slice(0, -2).join('/');
@@ -18,41 +19,32 @@ define( [
     app.use(locale(supported));
     app.use(express.cookieParser());
 
-    //param necessary for access file and use authentification
+    //param necessary for access file and use authentication
     app.use(express.static(rootPath));
     app.use('/assets', express.static("../assets"));
     app.use('/client_side', express.static("../client_side"));
     app.use('/templates', express.static("../templates"));
+
     app.get('/', function(req, res) {
 
-    //Define language for interface
-    var lang = req.cookies.lang ;
-    //if the language is not define in cookie we take the language of the system
-    if(!_.contains(supported, lang)) lang = req.locale;
-    
-    i18next.setLng(lang, function(){
-      res.cookie('lang',lang);
-    });
+      //Define language for interface
+      var lang = req.cookies.lang ;
+      //if the language is not define in cookie we take the language of the system
+      if(!_.contains(supported, lang)) lang = req.locale;
 
-    // if(langSystem.indexOf(''))
+      i18next.setLng(lang, function(){
+        res.cookie('lang',lang);
+      });
+
       if (!config.passSet) {
-        // res.sendfile('index.html', {'root': rootPath});
         res.sendfile(rootPath + '/template.html');
       } else {
         config.passSet.apply(req, res, function(username) {
-          // res.sendfile('index.html', {'root': rootPath});
           res.sendfile(rootPath + '/template.html');
         });
       }
 
     });
-
-    //load file of translation i18next-client
-      //UBALD: Replaced by bower component
-    /*app.get('/i18next.min.js', function(re,res){
-      res.sendfile(rootPath + '/node_modules/i18next-client/i18next.min.js');
-    });*/
-
 
     app.get('/classes_doc/:className?/:type?/:value?', function(req, res) {
 

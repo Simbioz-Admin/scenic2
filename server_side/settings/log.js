@@ -1,5 +1,5 @@
 define(
-  ['winston', 'config'],
+  ['winston', 'settings/config'],
 
   function(winston, config) {
 

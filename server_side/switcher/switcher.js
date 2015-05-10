@@ -1,17 +1,16 @@
 define(
   [
-    'config',
+    'settings/config',
     'switcher',
-    './server_side/switcher/sip',
-    './server_side/switcher/quidds',
-    './server_side/switcher/receivers',
-    'log',
+    'switcher/sip',
+    'switcher/quidds',
+    'switcher/receivers',
+    'settings/log',
     'underscore',
-    'jquery',
     'i18next'
   ],
 
-  function(config, switcher, sip, quidds, receivers, log, _, $, i18n) {
+  function(config, switcher, sip, quidds, receivers, log, _, i18n) {
 
     var io;
 
@@ -328,8 +327,8 @@ define(
     function createVuMeter(quiddName) {
       log.debug("create vuMeter for " + quiddName);
 
-      var shmdatas = $.parseJSON(switcher.get_info(quiddName, ".shmdata.writer"));
-      $.each(shmdatas, function(shmdata, info) {
+      var shmdatas = JSON.parse(switcher.get_info(quiddName, ".shmdata.writer"));
+      _.each(shmdatas, function(shmdata) {
 
         var vumeter = switcher.create("fakesink", "vumeter_" + shmdata);
 

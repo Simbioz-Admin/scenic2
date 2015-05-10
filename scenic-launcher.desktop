@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=scenic2
-#Exec=sh -c "node /home/pacman/src/scenic2/server.js & PID=`echo $!` sleep 1 && chromium-browser --app="http://localhost:8090/" --app-window-size=960,700 kill -n 2 $PID"
+#Exec=sh -c "node /home/pacman/src/scenic2/server_side/server.js & PID=`echo $!` sleep 1 && chromium-browser --app="http://localhost:8090/" --app-window-size=960,700 kill -n 2 $PID"
 #Exec=/usr/bin/chromium-browser --app=http://localhost:8090
 Exec=scenic2
 Terminal=false

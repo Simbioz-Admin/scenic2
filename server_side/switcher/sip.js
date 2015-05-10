@@ -1,6 +1,6 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypto-js', 'i18next'],
+define(['settings/config', 'switcher', 'settings/log', 'underscore', 'portastic', 'crypto-js', 'i18next'],
 
-  function(config, switcher, log, _, $, portastic, cryptoJS, i18n) {
+  function(config, switcher, log, _, portastic, cryptoJS, i18n) {
 
     var listUsers = [];
     var io;
@@ -122,9 +122,9 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'portastic', 'crypt
        */
       getListUsers: function() {
 
-        var users = $.parseJSON(switcher.get_info(config.sip.quiddName, "."));
+        var users = JSON.parse(switcher.get_info(config.sip.quiddName, "."));
         /* get users added to the tab Sip */
-        var destinationSip = $.parseJSON(switcher.get_info("destinationsSip", ".dico"));
+        var destinationSip = JSON.parse(switcher.get_info("destinationsSip", ".dico"));
         var keys = _.keys(destinationSip);
         _.each(users.buddy, function(user, i) {
           if (_.contains(keys, user.uri)) {

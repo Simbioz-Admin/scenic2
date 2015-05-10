@@ -1,5 +1,5 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
-  function(config, switcher, log, _, $, i18n) {
+define(['settings/config', 'switcher', 'settings/log', 'underscore', 'i18next'],
+  function(config, switcher, log, _, i18n) {
 
     var io;
 
@@ -31,7 +31,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
         log.debug("quiddity " + quiddName + " (" + className + ") created.");
 
         config.listQuiddsAndSocketId[quiddName] = socketId;
-        var quiddInfo = $.parseJSON(switcher.get_quiddity_description(quiddName));
+        var quiddInfo = JSON.parse(switcher.get_quiddity_description(quiddName));
         cb(null, quiddInfo);
 
       } else {
@@ -61,7 +61,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
     function removeElementsAssociateToQuiddRemoved(quiddName) {
       log.debug("remove quidds associate to quidd removed", quiddName);
-      var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+      var quidds = JSON.parse(switcher.get_quiddities_description()).quiddities;
 
       if (!quidds) return log.error("failed remove quiddity " + quiddName);
 
@@ -80,7 +80,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     function get_description(quiddName, cb) {
       log.debug("get Description quidd", quiddName);
 
-      var quiddDescription = $.parseJSON(switcher.get_quiddity_description(quiddName));
+      var quiddDescription = JSON.parse(switcher.get_quiddity_description(quiddName));
       log.debug(quiddDescription);
       if (quiddDescription.error) {
         cb(quiddDescription.error);
@@ -95,17 +95,17 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
       if (property == "started" && value == "false") {
 
         //remove vumemeter associate with quiddity
-        var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers"));
+        var shmdatas = JSON.parse(switcher.get_property_value(quiddName, "shmdata-writers"));
         if (shmdatas && !shmdatas.error) {
           shmdatas = shmdatas.shmdata_writers;
-          $.each(shmdatas, function(index, shmdata) {
+          _.each(shmdatas, function(shmdata, index) {
             log.debug("remove vumeter : vumeter_" + shmdata.path);
             switcher.remove('vumeter_' + shmdata.path);
           });
         }
 
         //remove shmdata of rtp
-        var shmdatas = $.parseJSON(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
+        var shmdatas = JSON.parse(switcher.get_property_value(quiddName, "shmdata-writers")).shmdata_writers;
         _.each(shmdatas, function(shmdata) {
           // console.log("remove data stream", shmdata.path);
           //var remove = switcher.invoke("defaultrtp","remove_data_stream", [shmdata.path]);  
@@ -131,13 +131,13 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
     function get_info(quiddName, path, cb) {
       log.debug("Getting quiddity information for: " + quiddName);
-      var info = $.parseJSON(switcher.get_info(quiddName, path));
+      var info = JSON.parse(switcher.get_info(quiddName, path));
       return cb(info);
     }
 
     function get_property_by_class(className, propertyName, callback) {
       log.debug("Getting property by class", className, propertyName );
-      var propertyByClass = $.parseJSON(switcher.get_property_description_by_class(className, propertyName));
+      var propertyByClass = JSON.parse(switcher.get_property_description_by_class(className, propertyName));
 
       if (propertyByClass && propertyByClass.error) {
         log.error(propertyByClass.error + "(property : " + propertyName + ", class : " + className + ")");
@@ -149,7 +149,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
     function get_property_description(quiddName, property, callback) {
 
-      var property_description = $.parseJSON(switcher.get_property_description(quiddName, property));
+      var property_description = JSON.parse(switcher.get_property_description(quiddName, property));
       if (property_description && property_description.error) {
         log.error(property_description.error + "(property : " + property + ", quiddity : " + quiddName + ")");
         return;
@@ -165,12 +165,12 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
         return;
       }
 
-      propertiesQuidd = $.parseJSON(propertiesQuidd).properties;
+      propertiesQuidd = JSON.parse(propertiesQuidd).properties;
 
       //recover the value set for the properties
-      $.each(propertiesQuidd, function(index, property) {
+      _.each(propertiesQuidd, function(property, index) {
         var valueOfproperty = switcher.get_property_value(quiddName, property.name);
-        if (property.name == "shmdata-writers") valueOfproperty = $.parseJSON(valueOfproperty);
+        if (property.name == "shmdata-writers") valueOfproperty = JSON.parse(valueOfproperty);
         propertiesQuidd[index].value = valueOfproperty;
       });
 
@@ -181,7 +181,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
     function get_properties_description(quiddName, cb) {
 
-      var properties_description = $.parseJSON(switcher.get_properties_description(quiddName)).properties,
+      var properties_description = JSON.parse(switcher.get_properties_description(quiddName)).properties,
       properties_to_send = {};
 
       if (properties_description && properties_description.error) {
@@ -200,7 +200,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
 
     function get_methods_description(quiddName, cb) {
-      var methods = $.parseJSON(switcher.get_methods_description(quiddName)).methods;
+      var methods = JSON.parse(switcher.get_methods_description(quiddName)).methods;
       if (!methods) {
         var msg = i18n.t("failed to get methods description __quiddName__", {
           quiddName: quiddName
@@ -217,7 +217,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     }
 
     function get_method_description(quiddName, method, cb) {
-      var descriptionJson = $.parseJSON(switcher.get_method_description(quiddName, method));
+      var descriptionJson = JSON.parse(switcher.get_method_description(quiddName, method));
       if (!descriptionJson) {
         var msg = i18n.t("failed to get __method__ method description __quiddName", {
           method: method,
@@ -236,7 +236,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
       log.debug("Get property value", quiddName, property);
       if (quiddName && property) {
         try {
-          var property_value = $.parseJSON(switcher.get_property_value(quiddName, property));
+          var property_value = JSON.parse(switcher.get_property_value(quiddName, property));
         } catch (e) {
           var property_value = switcher.get_property_value(quiddName, property);
         }
@@ -286,7 +286,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     //************************ DICO *****************************************//
 
     function set_property_value_of_dico(property, value, callback) {
-      var currentValueDicoProperty = $.parseJSON(switcher.invoke("dico", "read", [property]));
+      var currentValueDicoProperty = JSON.parse(switcher.invoke("dico", "read", [property]));
       if (currentValueDicoProperty)
         currentValueDicoProperty[currentValueDicoProperty.length] = value;
       else
@@ -300,7 +300,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
     function removeConrolByQuiddParent(quiddParent) {
 
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", ['controlProperties']));
+      var currentValuesDicoProperty = JSON.parse(switcher.invoke("dico", "read", ['controlProperties']));
       _.each(currentValuesDicoProperty, function(control) {
         if (control.quiddName == quiddParent) {
           remove_property_value_of_dico("controlProperties", control.name);
@@ -309,7 +309,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
     }
 
     function remove_property_value_of_dico(property, name) {
-      var currentValuesDicoProperty = $.parseJSON(switcher.invoke("dico", "read", property));
+      var currentValuesDicoProperty = JSON.parse(switcher.invoke("dico", "read", property));
       var newValuesDico = [];
       _.each(currentValuesDicoProperty, function(value) {
         if (value.name != name)
@@ -318,7 +318,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
       if (property == "controlProperties") {
         /* parse all quidds for remove mapper associate */
-        var quidds = $.parseJSON(switcher.get_quiddities_description()).quiddities;
+        var quidds = JSON.parse(switcher.get_quiddities_description()).quiddities;
 
         /* Remove quiddity sink base on quidd removed */
         _.each(quidds, function(quidd) {

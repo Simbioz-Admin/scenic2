@@ -2,22 +2,21 @@ define(
   [
     'child_process',
     'sys',
-    'argv',
-    'log',
-    './settings/express',
-    'config',
+    'settings/optimist',
+    'settings/log',
+    'settings/express',
+    'settings/config',
     'http',
     'portastic',
-    'node_switcher',
+    'switcher/switcher',
     'socket.io',
-    'scenicIo',
-    './settings/irc',
-    './settings/i18n'
+    'settings/scenic-io',
+    'settings/i18n'
   ],
 
-  function(child_process, sys, argv, log, app, config, http, portastic, switcher, socketIo, scenicIo, irc, i18n) {
+  function(child_process, sys, argv, log, express, config, http, portastic, switcher, socketIo, scenicIo, i18n) {
     
-    /* Check validity of port */
+    // Check port
     portastic.test(config.port.scenic, function(err, data) {
 
       var error = false;
@@ -36,47 +35,58 @@ define(
         error = true;
       }
 
-      if (error) return process.exit();
+      if (error) {
+        return process.exit();
+      } else {
+        launch();
+      }
+    });
 
-      var server = http.createServer(app);
+    function launch() {
+
+      // Express HTTP Server
+      var server = http.createServer(express);
       server.listen(config.port.scenic);
-      var io = socketIo.listen(server, {
-        log: false
-      });
+
+      // Socket.io Server
+      var io = socketIo.listen(server, { log: false });
       scenicIo.initialize(io);
 
 
-      /* initialize IRC for discussion */
-      irc.initialize(io);
+      // IRC Client
+      //FIXME: IRC is not enabled in this version >> irc.initialize(io);
 
-      /* if the user ask to launch scenic without preconfiguration */
+      // Switcher
       if (!config.scenicStart && config.configSet) {
         switcher.initialize(io);
         config.scenicStart = true;
       }
 
-      /* if user ask to launch with interface (no -g in terminal) */
+      // GUI, unless -g is used on the command line, it will launch a chrome instance
       if (!config.standalone) {
         var exec = child_process.exec;
-        //*** Open scenic2 with chromium browser ***//
         function puts(error, stdout, stderr) {
           sys.puts(stdout)
         }
-        exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts+" --no-borders --no-tabs")
+        exec("chromium-browser --app=http://" + config.host + ":" + config.port.scenic, puts+" --no-borders --no-tabs");
         log.debug("scenic2 is going to open in your default browser: http://" + config.host + ":" + config.port.scenic);
       }
-    });
+    }
 
-    //process for exit server
-
+    /**
+     * close switcher when process exits
+     */
     process.on('exit', function() {
       switcher.close();
     });
 
+    /**
+     * Gracefully exit when interrupting process
+     */
     process.on('SIGINT', function() {
       // switcher.close();
       process.exit(0);
     });
 
-    return app;
+    return express;
   });

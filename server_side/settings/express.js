@@ -1,16 +1,13 @@
-define(
-  [
-    'config',
+define( [
+    'settings/config',
     'express',
     'i18next',
     'path',
     'switcher',
-    'node_switcher',
+    'switcher/switcher',
     'underscore',
-    'jquery',
     'module'
-  ],
-  function(config, express,i18next, path, nodeSwitcher, switcher, _, $, module) {
+  ], function(config, express,i18next, path, nodeSwitcher, switcher, _, module) {
     // get the installation root path
     var pwd = path.dirname(module.uri)
     var rootPath = pwd.split('/').slice(0, -2).join('/');
@@ -23,9 +20,9 @@ define(
 
     //param necessary for access file and use authentification
     app.use(express.static(rootPath));
-    app.use('/assets', express.static("assets"));
-    app.use('/client_side', express.static("client_side"));
-    app.use('/templates', express.static("templates"));
+    app.use('/assets', express.static("../assets"));
+    app.use('/client_side', express.static("../client_side"));
+    app.use('/templates', express.static("../templates"));
     app.get('/', function(req, res) {
 
     //Define language for interface
@@ -59,42 +56,42 @@ define(
     app.get('/classes_doc/:className?/:type?/:value?', function(req, res) {
 
       if (req.params.type == "properties") {
-        if (req.params.value) res.send($.parseJSON(nodeSwitcher.get_property_description_by_class(req.params.className, req.params.value)));
-        else res.send($.parseJSON(nodeSwitcher.get_properties_description_by_class(req.params.className)));
+        if (req.params.value) res.send(JSON.parse(nodeSwitcher.get_property_description_by_class(req.params.className, req.params.value)));
+        else res.send(JSON.parse(nodeSwitcher.get_properties_description_by_class(req.params.className)));
       } else if (req.params.type == "methods") {
-        if (req.params.value) res.send($.parseJSON(nodeSwitcher.get_method_description_by_class(req.params.className, req.params.value)));
-        else res.send($.parseJSON(nodeSwitcher.get_methods_description_by_class(req.params.className)));
+        if (req.params.value) res.send(JSON.parse(nodeSwitcher.get_method_description_by_class(req.params.className, req.params.value)));
+        else res.send(JSON.parse(nodeSwitcher.get_methods_description_by_class(req.params.className)));
       } else if (req.params.className) {
-        res.send($.parseJSON(nodeSwitcher.get_class_doc(req.params.className)));
+        res.send(JSON.parse(nodeSwitcher.get_class_doc(req.params.className)));
       } else {
-        res.send($.parseJSON(nodeSwitcher.get_classes_doc()));
+        res.send(JSON.parse(nodeSwitcher.get_classes_doc()));
       }
     });
 
     app.get('/get_info/:quiddName/:path', function(req, res){
       var info = nodeSwitcher.get_info(req.params.quiddName, req.params.path);
-      res.send($.parseJSON(info));
+      res.send(JSON.parse(info));
     });
 
     app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res) {
       if (req.params.val) {
-        res.send($.parseJSON(nodeSwitcher.get_property_value(req.params.quiddName, req.params.value)))
+        res.send(JSON.parse(nodeSwitcher.get_property_value(req.params.quiddName, req.params.value)))
       } else if (req.params.type == "properties") {
-        if (req.params.value) res.send($.parseJSON(nodeSwitcher.get_property_description(req.params.quiddName, req.params.value)));
-        else res.send($.parseJSON(nodeSwitcher.get_properties_description(req.params.quiddName)));
+        if (req.params.value) res.send(JSON.parse(nodeSwitcher.get_property_description(req.params.quiddName, req.params.value)));
+        else res.send(JSON.parse(nodeSwitcher.get_properties_description(req.params.quiddName)));
       } else if (req.params.type == "methods") {
-        if (req.params.value) res.send($.parseJSON(nodeSwitcher.get_method_description(req.params.quiddName, req.params.value)));
-        else res.send($.parseJSON(nodeSwitcher.get_methods_description(req.params.quiddName)));
+        if (req.params.value) res.send(JSON.parse(nodeSwitcher.get_method_description(req.params.quiddName, req.params.value)));
+        else res.send(JSON.parse(nodeSwitcher.get_methods_description(req.params.quiddName)));
       } else if (req.params.quiddName) {
-        res.send($.parseJSON(nodeSwitcher.get_quiddity_description(req.params.quiddName)));
+        res.send(JSON.parse(nodeSwitcher.get_quiddity_description(req.params.quiddName)));
       } else {
         //return the quidds without the excludes
-        var quidds = $.parseJSON(nodeSwitcher.get_quiddities_description()).quiddities;
+        var quidds = JSON.parse(nodeSwitcher.get_quiddities_description()).quiddities;
         var quiddsFiltered = [];
         _.each(quidds, function(quidd, index) {
           if (!_.contains(config.quiddExclude, quidd.class)) {
             var properties = switcher.quidds.get_properties_values(quidd.name);
-            var methods = $.parseJSON(nodeSwitcher.get_methods_description(quidd.name)).methods;
+            var methods = JSON.parse(nodeSwitcher.get_methods_description(quidd.name)).methods;
             quidds[index]["properties"] = properties;
             quidds[index]["methods"] = methods;
             quiddsFiltered.push(quidds[index]);
@@ -128,9 +125,9 @@ define(
       res.contentType('application/json');
       var listUsers = switcher.sip.getListUsers();
       res.send(listUsers);
-    })
+    });
 
     return app;
 
   }
-)
+);

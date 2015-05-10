@@ -1,13 +1,9 @@
-define(
-  [
+define( [
     'i18next',
-    'log',
+    'settings/log',
     'switcher',
     'underscore'
-  ],
-
-  function(i18n, log, switcher, _) {
-
+  ], function(i18n, log, switcher, _) {
     i18n.init({
       // lng: "fr",
       saveMissing: true,
@@ -24,8 +20,6 @@ define(
       debug: true
     }, function() {
       log.debug("Translation Init : ", i18n.lng());
-
-
       //get name and category from switcher
       var classesDoc = JSON.parse(switcher.get_classes_doc()).classes;
       _.each(classesDoc, function(classDoc) {
@@ -35,10 +29,8 @@ define(
         try {
           var propertiesByClass = JSON.parse(switcher.get_properties_description_by_class(className)).properties;
           _.each(propertiesByClass, function(prop) {
-
             i18n.t(prop['long name']);
             i18n.t(prop['short description']);
-
             if(prop['short description'].indexOf('port pairs with destinations') >= 0){
               // console.log(prop);
             }
@@ -48,9 +40,5 @@ define(
         }
       });
     });
-
-
   }
-
-
 );

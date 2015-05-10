@@ -1,7 +1,7 @@
 define(
-  ['jquery', 'log', 'config', 'irc'],
+  ['underscore','settings/log', 'settings/config', 'irc'],
 
-  function($, log, config, irc) {
+  function(_, log, config, irc) {
 
     var io, usersIrc = [],
       idChannelIrc = null,
@@ -98,7 +98,7 @@ define(
         client.addListener('names', function(channel, names) {
           log.debug(channel, names);
           var users = [];
-          $.each(names, function(name) {
+          _.each(names, function(name) {
             users.push(name)
           });
           log.debug("list-users-irc", users);

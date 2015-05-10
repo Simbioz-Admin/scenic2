@@ -1,20 +1,19 @@
 define(
   [
-    'http',
-    'log',
-    'config',
+    'settings/log',
+    'settings/config',
     'portastic',
-    'node_switcher',
+    'switcher/switcher',
     'http-auth'
   ],
 
-  function(http, log, config, portastic, switcher, auth) {
+  function(log, config, portastic, switcher, auth) {
 
     var socketio;
 
     var getSocketIo = function() {
       return socketio;
-    }
+    };
 
     var initialize = function(io) {
 
@@ -108,7 +107,7 @@ define(
             clearTimeout(refreshTimeout);
             config.masterSocketId = newSocketId;
           }
-        })
+        });
 
         //************************* QUIDDS ****************************//
 
@@ -165,7 +164,7 @@ define(
 
       });
 
-    }
+    };
 
     return {
       initialize: initialize,

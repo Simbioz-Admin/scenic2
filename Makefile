@@ -49,7 +49,7 @@ uninstall:
 
 clean:
 	@echo resetting paths in launch scripts
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server_side/server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 #	rm -fr node_modules
 

@@ -1,5 +1,5 @@
-define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
-  function(config, switcher, log, _, $, i18n) {
+define(['settings/config', 'switcher', 'settings/log', 'underscore', 'i18next'],
+  function(config, switcher, log, _, i18n) {
 
     var io;
 
@@ -23,7 +23,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
       /* Get the destinations existing stock in dico (propety destinations) */
       var destinations = switcher.invoke("dico", "read", ["destinationsRtp"]),
-        destinations = $.parseJSON(destinations),
+        destinations = JSON.parse(destinations),
         exist = _.findWhere(destinations, {
           name: destination.name
         });
@@ -135,7 +135,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
       log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
       /* 1. we need to check if the stream is already added to defaultrtp */
-      var shmdataDefaultrtp = $.parseJSON(switcher.get_info("defaultrtp", ".shmdata.reader"));
+      var shmdataDefaultrtp = JSON.parse(switcher.get_info("defaultrtp", ".shmdata.reader"));
       var pathAlreadyAdd = _.keys(shmdataDefaultrtp);
 
       /* add data stream to dest */
@@ -153,7 +153,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
       if (!addUdp) return cb("error add Udp");
 
       /* 3. we save data stream to the dico destination */
-      var destinations = $.parseJSON(switcher.invoke("dico", "read", ["destinationsRtp"]));
+      var destinations = JSON.parse(switcher.invoke("dico", "read", ["destinationsRtp"]));
       destinations = _.map(destinations, function(destination) {
 
         if (destination.id == id) {
@@ -329,7 +329,7 @@ define(['config', 'switcher', 'log', 'underscore', 'jquery', 'i18next'],
 
       /* remove destination of the dico */
 
-      var destinations = $.parseJSON(switcher.invoke("dico", "read", ["destinationsRtp"]));
+      var destinations = JSON.parse(switcher.invoke("dico", "read", ["destinationsRtp"]));
       var destinationsWhitout = _.reject(destinations, function(dest) {
         return dest.id == id;
       });

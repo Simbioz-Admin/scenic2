@@ -1,7 +1,7 @@
 define(
     [
         'optimist',
-        'config',
+        'settings/config',
         'underscore'
     ],
 

@@ -1,4 +1,4 @@
-require.config( {
+require( {
     packages: [
         {
             name:     'crypto-js',
@@ -16,7 +16,7 @@ require.config( {
         jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',
         punch:        '../bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min',
         spin:         '../bower_components/spin.js/spin',
-        i18n:         '../bower_components/i18next/i18next.min',
+        i18n:         '../bower_components/i18next/i18next.min'
     },
     shim:     {
         underscore:   {
@@ -42,9 +42,7 @@ require.config( {
             exports: 'i18n'
         }
     }
-} );
-
-require( [
+}, [
     // Load our app module and pass it to our definition function
     'app',
     'lib/util',
@@ -55,7 +53,6 @@ require( [
     'jqueryCookie',
     collections = [],
     views = [],
-    //socket = io.connect(),
     config = {}
 ], function ( app, util, punch, CollectionUsers, socket, LaunchView ) {
 

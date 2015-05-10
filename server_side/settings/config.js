@@ -78,15 +78,4 @@ var config = {
   systemusagePeriod: '1.0'
 };
 
-/* this part export config for requirejs */
-if (typeof module === "undefined") {
-  define([], function() {
-    return config;
-  })
-}
-/* this part export for scenic2-install */
-else {
-  module.exports = function(param) {
-    return config;
-  }
-}
+module.exports = config;

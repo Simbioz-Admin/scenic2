@@ -1,3 +1,5 @@
+"use strict";
+
 //  ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     ███████╗██████╗
 //  ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     ██╔════╝██╔══██╗
 //  ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     █████╗  ██████╔╝
@@ -23,19 +25,4 @@ if ( !fs.existsSync( process.env.HOME + "/.scenic2" ) ) {
 //  ███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╗██║  ██║
 //  ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝
 
-var requirejs = require( 'requirejs' );
-
-requirejs( {
-    paths:  {
-
-    },
-    config: {
-        nodeRequire: require,
-        baseUrl:     __dirname
-    }
-} );
-
-requirejs( ['./app', 'settings/scenic-io'],
-    function ( app, scenicIo ) {
-    }
-);
+var app = require('./app');

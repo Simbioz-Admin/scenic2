@@ -9,10 +9,11 @@ define(
   [
     'underscore',
     'backbone',
-    'models/destinationRtp',
+    'socket',
+    'models/destinationRtp'
   ],
 
-  function(_, Backbone, ModelDestinationRtp) {
+  function(_, Backbone, socket, ModelDestinationRtp) {
 
     /** 
      *  @constructor

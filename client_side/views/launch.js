@@ -10,13 +10,14 @@ define(
     'app',
     'underscore',
     'backbone',
+    'socket',
     'jqueryui',
     'spin',
     'text!../../templates/launch.html',
     'text!../../templates/users/form_login.html'
   ],
 
-  function(App, _, Backbone, ui, Spinner, templateLaunch, TemplateLoginForm) {
+  function(App, _, Backbone, socket, ui, Spinner, templateLaunch, TemplateLoginForm) {
 
     /** 
      *  @constructor

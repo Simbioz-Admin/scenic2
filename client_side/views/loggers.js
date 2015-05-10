@@ -1,8 +1,9 @@
 define([
     'underscore',
     'backbone',
+    'socket',
     'text!../../templates/logger.html'
-], function(_, Backbone, TemplateLogger) {
+], function(_, Backbone, socekt, TemplateLogger) {
 
     var ViewLogger = Backbone.View.extend({
         tagName: 'div',

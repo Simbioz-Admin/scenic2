@@ -9,10 +9,11 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'text!../../templates/table/sub_menu.html',
   ],
 
-  function(_, Backbone, TemplateSubMenu) {
+  function(_, Backbone, socket, TemplateSubMenu) {
 
     /** 
      *	@constructor

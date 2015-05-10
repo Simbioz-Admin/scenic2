@@ -9,10 +9,11 @@ define(
   [
     'underscore',
     'backbone',
+    'socket'
     // 'text!../../templates/createClient.html'
   ],
 
-  function(_, Backbone, templateCreateClient) {
+  function(_, Backbone, socket, templateCreateClient) {
 
     /** 
      *  @constructor

@@ -8,10 +8,11 @@ define(
     [
         'underscore',
         'backbone',
+        'socket',
         'models/class_doc'
     ],
 
-    function(_, Backbone, ClassDocModel) {
+    function(_, Backbone, socket, ClassDocModel) {
 
         /** 
          *	@constructor

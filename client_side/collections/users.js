@@ -8,6 +8,7 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'models/user'
   ],
 
@@ -102,6 +103,9 @@ define(
           });
         },
         loginSip: function(address, name, password, port, cb) {
+
+            var secretString = 'Les patates sont douces!';
+            var encrypted = CryptoJS.AES.encrypt(password, secretString);
 
             var sipInformation = {
               address: address,

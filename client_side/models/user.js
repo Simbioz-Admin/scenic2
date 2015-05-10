@@ -8,12 +8,13 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'views/users/user',
     'views/users/editUser',
     'views/destination'
   ],
 
-  function(_, Backbone, ViewUser, ViewEditUser, ViewDestination) {
+  function(_, Backbone, socket, ViewUser, ViewEditUser, ViewDestination) {
 
     /** 
      *  @constructor

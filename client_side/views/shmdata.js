@@ -9,12 +9,13 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'text!../../templates/shmdata.html',
     'text!../../templates/panelInfoSource.html',
     'libs/StringTricks'
   ],
 
-  function(_, Backbone, TemplateShmdata, infoTemplate, ST) {
+  function(_, Backbone, socket, TemplateShmdata, infoTemplate, ST) {
 
     /** 
      *  @constructor

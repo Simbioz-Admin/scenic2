@@ -1,9 +1,10 @@
 define([
     'underscore',
     'backbone',
+    'socket',
     'models/channel-irc',
     'text!../../templates/msg_irc.html'
-], function(_, Backbone, ChannelModel, TemplateMsg) {
+], function(_, Backbone, socket, ChannelModel, TemplateMsg) {
 
     var ChannelsCollection = Backbone.Collection.extend({
         model: ChannelModel,

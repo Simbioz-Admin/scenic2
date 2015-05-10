@@ -9,13 +9,14 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'models/quidd',
     'text!../../templates/createQuidd.html',
     'text!../../templates/quidd.html',
 
   ],
 
-  function(_, Backbone, QuiddModel, quiddCreateTemplate, quiddTemplate) {
+  function(_, Backbone, socket, QuiddModel, quiddCreateTemplate, quiddTemplate) {
 
     /** 
      *  @constructor

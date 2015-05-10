@@ -8,10 +8,11 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'models/quidd',
   ],
 
-  function(_, Backbone, QuiddModel) {
+  function(_, Backbone, socket, QuiddModel) {
 
     /** 
      *  @constructor

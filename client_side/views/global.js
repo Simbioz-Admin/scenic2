@@ -8,6 +8,7 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'text!../../templates/quidd.html',
     'text!../../templates/panelInfo.html',
     'text!../../templates/panelLoadFiles.html',
@@ -17,7 +18,7 @@ define(
     'app',
   ],
 
-  function(_, Backbone, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
+  function(_, Backbone, socket, quiddTemplate, panelInfoTemplate, panelLoadtemplate, panelSaveTemplate, confirmationTemplate, TemplateReceiver, app) {
     /** 
      *  @constructor
      *  @requires Underscore

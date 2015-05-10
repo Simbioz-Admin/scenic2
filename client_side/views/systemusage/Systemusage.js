@@ -9,11 +9,12 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'text!../../../templates/systemusage/preview_systemusage.html',
     'text!../../../templates/systemusage/network_usage.html'
   ],
 
-  function(_, Backbone, previewUsageTemplate, networkUsageTemplate) {
+  function(_, Backbone, socket, previewUsageTemplate, networkUsageTemplate) {
 
     /** 
      *	@constructor

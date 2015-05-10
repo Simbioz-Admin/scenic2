@@ -9,12 +9,13 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'views/connexion',
     'views/shmdata',
     'text!../../templates/source.html'
   ],
 
-  function(_, Backbone, ConnexionView, ViewShmdata, TemplateSource) {
+  function(_, Backbone, socket, ConnexionView, ViewShmdata, TemplateSource) {
 
     /** 
      *  @constructor

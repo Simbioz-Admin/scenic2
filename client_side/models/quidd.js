@@ -8,11 +8,12 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
     'text!../../templates/panelInfoSource.html'
   ],
 
-  function(_, Backbone, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata, infoTemplate) {
+  function(_, Backbone, socket, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata, infoTemplate) {
 
     /** 
      *  @constructor

@@ -9,10 +9,11 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'views/controlProperty'
   ],
 
-  function(_, Backbone, ViewControlProperty) {
+  function(_, Backbone, socket, ViewControlProperty) {
 
     /** 
      *    @constructor

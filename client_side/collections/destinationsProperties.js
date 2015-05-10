@@ -9,10 +9,11 @@ define(
 		'underscore',
 		'jquery',
 		'backbone',
+		'socket',
 		'models/control_property'
 	],
 
-	function(_, $, Backbone, ModelControlProperty) {
+	function(_, $, Backbone, socket, ModelControlProperty) {
 
 
 		/** 

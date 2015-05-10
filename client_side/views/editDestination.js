@@ -8,10 +8,11 @@ define(
   [
     'underscore',
     'backbone',
+    'socket',
     'text!../../templates/editDestinationRtp.html',
   ],
 
-  function(_, Backbone, TemplateEditDestinationRtp) {
+  function(_, Backbone, socket, TemplateEditDestinationRtp) {
     /** 
      *	@constructor
      *  @requires Underscore

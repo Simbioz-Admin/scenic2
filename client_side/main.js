@@ -2,11 +2,14 @@ require.config({
     paths: {
         underscore: '../bower_components/underscore/underscore-min',
         backbone: '../bower_components/backbone/backbone',
+        jquery: '../bower_components/jquery/dist/jquery.min',
+
+        socketio: '/socket.io/socket.io',
 
         //underscore: 'libs/underscore-min',
         //backbone: 'libs/backbone-min',
         util: 'libs/util',
-        jquery: 'libs/jquery-min',
+        //jquery: 'libs/jquery-min',
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
         punch: 'libs/punch',
         jqueryCookie: 'libs/jquery.cookie',
@@ -42,7 +45,10 @@ require.config({
             deps: ['jquery'],
             exports : 'i18n'
         }
-    }
+    },
+    deps: [
+        'socketio'
+    ]
 });
 
 require([
@@ -52,15 +58,14 @@ require([
     'util',
     'punch',
     'collections/users',
+    'socket',
     'jqueryCookie',
     collections = [],
     views = [],
-    socket = io.connect(),
-    config = {},
-], function(app, launch, util, socket, CollectionUsers  ) {
+    //socket = io.connect(),
+    config = {}
+], function(app, launch, util, punch, CollectionUsers, socket ) {
 
-    var socket = io.connect();
-    
     //recovery config information from the server
     socket.emit("getConfig", function(configServer) {
         config = configServer;

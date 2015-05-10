@@ -10,7 +10,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../../templates/users/user.html'
+    'text!../../templates/users/user.html'
   ],
 
   function(_, Backbone, socket, TemplateUser) {

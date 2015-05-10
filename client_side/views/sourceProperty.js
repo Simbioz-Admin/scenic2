@@ -9,8 +9,8 @@ define(
   [
     'underscore',
     'backbone',
-    'text!../../templates/sourceProperty.html',
-    'text!../../templates/source.html',
+    'text!../templates/sourceProperty.html',
+    'text!../templates/source.html',
   ],
 
   function(_, Backbone, TemplateSourceProperty, TemplateSource) {

@@ -13,8 +13,8 @@ define(
     'lib/socket',
     'jqueryui',
     'spin',
-    'text!../../templates/launch.html',
-    'text!../../templates/users/form_login.html'
+    'text!../templates/launch.html',
+    'text!../templates/users/form_login.html'
   ],
 
   function(App, _, Backbone, socket, ui, Spinner, templateLaunch, TemplateLoginForm) {

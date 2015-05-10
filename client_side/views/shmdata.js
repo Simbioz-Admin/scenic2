@@ -10,8 +10,8 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../templates/shmdata.html',
-    'text!../../templates/panelInfoSource.html'
+    'text!../templates/shmdata.html',
+    'text!../templates/panelInfoSource.html'
   ],
 
   function(_, Backbone, socket, TemplateShmdata, infoTemplate) {

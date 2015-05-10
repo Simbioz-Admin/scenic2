@@ -10,7 +10,7 @@ define( [
   ], function(config, express,i18next, path, nodeSwitcher, switcher, _, module) {
 
     // get the installation root path
-    var pwd = path.dirname(module.uri)
+    var pwd = path.dirname(module.uri);
     var rootPath = pwd.split('/').slice(0, -2).join('/');
     var locale = require("locale");
     var app = express();
@@ -20,10 +20,10 @@ define( [
     app.use(express.cookieParser());
 
     //param necessary for access file and use authentication
-    app.use(express.static(rootPath));
-    app.use('/assets', express.static("../assets"));
-    app.use('/client_side', express.static("../client_side"));
-    app.use('/templates', express.static("../templates"));
+    //app.use(express.static(rootPath));
+    app.use('/bower_components', express.static(rootPath + "/bower_components"));
+    app.use('/client', express.static(rootPath + "/client_side"));
+    app.use('/locales', express.static(rootPath + "/locales"));
 
     app.get('/', function(req, res) {
 

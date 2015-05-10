@@ -10,7 +10,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket'
-    // 'text!../../templates/createClient.html'
+    // 'text!../templates/createClient.html'
   ],
 
   function(_, Backbone, socket, templateCreateClient) {

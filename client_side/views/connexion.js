@@ -7,7 +7,7 @@ define(
   [
     'underscore',
     'backbone',
-    // 'text!../../templates/connexion.html'
+    // 'text!../templates/connexion.html'
   ],
 
   function(_, Backbone) {

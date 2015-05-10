@@ -2,7 +2,7 @@ define([
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../templates/logger.html'
+    'text!../templates/logger.html'
 ], function(_, Backbone, socekt, TemplateLogger) {
 
     var ViewLogger = Backbone.View.extend({

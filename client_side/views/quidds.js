@@ -11,8 +11,8 @@ define(
     'backbone',
     'lib/socket',
     'models/quidd',
-    'text!../../templates/createQuidd.html',
-    'text!../../templates/quidd.html',
+    'text!../templates/createQuidd.html',
+    'text!../templates/quidd.html',
 
   ],
 

@@ -9,7 +9,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../templates/editDestinationRtp.html',
+    'text!../templates/editDestinationRtp.html',
   ],
 
   function(_, Backbone, socket, TemplateEditDestinationRtp) {

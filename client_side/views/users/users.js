@@ -11,8 +11,8 @@ define(
     'backbone',
     'lib/socket',
     'views/users/user',
-    'text!../../../templates/users/users.html',
-    'text!../../../templates/users/form_login.html'
+    'text!../../templates/users/users.html',
+    'text!../../templates/users/form_login.html'
   ],
 
   function(_, Backbone, socket, ViewUser, TemplateUsers, TemplateLoginForm) {

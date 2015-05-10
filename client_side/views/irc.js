@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    "text!../../templates/channel-irc.html"
+    "text!../templates/channel-irc.html"
   ],
 
 

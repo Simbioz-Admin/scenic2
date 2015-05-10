@@ -10,7 +10,7 @@ define(
     'backbone',
     'lib/socket',
     'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
-    'text!../../templates/panelInfoSource.html'
+    'text!../templates/panelInfoSource.html'
   ],
 
   function(_, Backbone, socket, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata, infoTemplate) {

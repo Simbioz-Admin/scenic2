@@ -10,8 +10,8 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../../templates/systemusage/preview_systemusage.html',
-    'text!../../../templates/systemusage/network_usage.html'
+    'text!../../templates/systemusage/preview_systemusage.html',
+    'text!../../templates/systemusage/network_usage.html'
   ],
 
   function(_, Backbone, socket, previewUsageTemplate, networkUsageTemplate) {

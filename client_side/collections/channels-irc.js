@@ -3,7 +3,7 @@ define([
     'backbone',
     'lib/socket',
     'models/channel-irc',
-    'text!../../templates/msg_irc.html'
+    'text!../templates/msg_irc.html'
 ], function(_, Backbone, socket, ChannelModel, TemplateMsg) {
 
     var ChannelsCollection = Backbone.Collection.extend({

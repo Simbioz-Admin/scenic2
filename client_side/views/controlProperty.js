@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'text!../../templates/destination.html',
+    'text!../templates/destination.html',
   ],
 
   function(_, Backbone, TemplateDestination) {

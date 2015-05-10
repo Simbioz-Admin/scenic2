@@ -68,7 +68,7 @@ define(
           /* we check if the category of this quidd exist in filter table */
           this.table.trigger("addCategoryFilter", this.model.get("category"));
 
-          var quiddTpl = _.template(TemplateSource, {
+          var quiddTpl = _.template(TemplateSource)( {
             name: this.model.get("name")
           });
 

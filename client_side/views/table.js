@@ -75,7 +75,7 @@ define(
           $("#panelTables").prepend(btnTable);
 
           /* generate the table */
-          var template = _.template(TemplateTable, {
+          var template = _.template(TemplateTable)( {
             type: this.model.get("type"),
             menus: this.model.get("menus")
           });
@@ -111,7 +111,7 @@ define(
             return clas.category;
           });
 
-          var template = _.template(TemplateSubMenu, {
+          var template = _.template(TemplateSubMenu)( {
             type: "classes",
             classes: classesByCategory
           });
@@ -264,7 +264,7 @@ define(
 
           $("#listQuiddsProperties").remove();
           if (!$.isEmptyObject(quiddsMenu)) {
-            var template = _.template(TemplateSubMenu, {
+            var template = _.template(TemplateSubMenu)( {
               type: "QuiddsAndProperties",
               menus: quiddsMenu
             });
@@ -293,7 +293,7 @@ define(
               });
             });
 
-            var template = _.template(TemplateSubMenu, {
+            var template = _.template(TemplateSubMenu)( {
               type: "devicesMidi",
               menus: devicesMidi
             });
@@ -308,7 +308,7 @@ define(
           if (tableType == this.model.get("type")) {
             /* check if already exist */
             if ($("[data-type='" + type + "']", this.el).length == 0) {
-              var templateCatTable = _.template(TemplateCategory, {
+              var templateCatTable = _.template(TemplateCategory)( {
                 type: type
               });
               $(this.el).append(templateCatTable);

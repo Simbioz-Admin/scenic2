@@ -70,7 +70,7 @@ define(
 
           function openPanelDefineName(devices) {
 
-            var template = _.template(quiddCreateTemplate, {
+            var template = _.template(quiddCreateTemplate)( {
               title: "Define name for " + className,
               className: className,
               devices: devices

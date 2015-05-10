@@ -57,7 +57,7 @@ define(
 
           var sipUserName = this.model.getSipUser();
 
-          templateShmdata = _.template(TemplateShmdata, {
+          templateShmdata = _.template(TemplateShmdata)( {
             name: nameShm,
             user: sipUserName, //UBALD: Added to sort sipquidd shmdatas bu user, sketchy for the moment
             nameQuidd: this.model.get("quidd"),
@@ -169,7 +169,7 @@ define(
           var that = this;
           collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {
             val = val.replace(/, /g, "\n" );
-            var template = _.template(infoTemplate, {
+            var template = _.template(infoTemplate)( {
               info: val,
               shmdata: shmdata
             });

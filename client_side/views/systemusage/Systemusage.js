@@ -46,7 +46,7 @@ define(
           // $("#menu_header").after(this.el);
           $("#panelTables").append(this.el);
 
-          var template = _.template(previewUsageTemplate);
+          var template = _.template(previewUsageTemplate)();
           $(this.el).html(template);
           $(this.el).i18n();
 
@@ -99,7 +99,7 @@ define(
           var html = '';
           for ( ifaceName in info ) {
             var iface = info[ifaceName];
-            html += _.template(networkUsageTemplate, { name: ifaceName, iface: iface });
+            html += _.template(networkUsageTemplate)( { name: ifaceName, iface: iface });
           }
           this.$net.html(html);
         },

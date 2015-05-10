@@ -56,7 +56,7 @@ define(
           })
 
           //create box for message
-          var html = _.template(TemplateChannel, {
+          var html = _.template(TemplateChannel)( {
             channel: this.model.get("channel"),
             username: this.model.get("username")
           })

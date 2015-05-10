@@ -78,7 +78,7 @@ define(
 
             $(that.el).html("");
             /* add information about user connected */
-            var tpl = _.template(that.template, {
+            var tpl = _.template(that.template)( {
               loginForm: false,
               listStatus: collections.users.listStatus
             });
@@ -96,11 +96,11 @@ define(
          * @description Render in list user login form for connection sip server
          */
         renderLogin: function() {
-          var tpl = _.template(this.template, {
+          var tpl = _.template(this.template)( {
             loginForm: true
           });
           $(this.el).append(tpl);
-          var loginTpl = _.template(TemplateLoginForm, config);
+          var loginTpl = _.template(TemplateLoginForm)( config);
           $(this.el).append(loginTpl);
           
           //translation

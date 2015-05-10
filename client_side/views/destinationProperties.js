@@ -80,7 +80,7 @@ define(
           });
 
           if (!$.isEmptyObject(quidds)) {
-            var template = _.template(TemplateSubMenu, {
+            var template = _.template(TemplateSubMenu)( {
               type: "QuiddsAndProperties",
               menus: quidds
             });

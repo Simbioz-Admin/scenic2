@@ -54,7 +54,7 @@ define(
           });
 
 
-          var template = _.template(templateLaunch, {
+          var template = _.template(templateLaunch)( {
             username: config.nameComputer,
             soap: config.port.soap,
             sip: config.sip
@@ -62,7 +62,7 @@ define(
           $(this.el).append(template);
           $("body").append(this.el);
           $(this.el).i18n();
-          var tplLoginSip = _.template(TemplateLoginForm, config);
+          var tplLoginSip = _.template(TemplateLoginForm)( config);
           $('#loginSip', this.el).append(tplLoginSip);
           //Same form use for window user in scenic2 we remove submit and title
           $('#loginSip h1, #loginSip #submitSip', this.el).remove();

@@ -122,7 +122,7 @@ define(
             msg = "Are you sure?";
           }
 
-          var template = _.template(confirmationTemplate, {
+          var template = _.template(confirmationTemplate)( {
             msg: msg
           });
           $("body").prepend(template);
@@ -164,7 +164,7 @@ define(
 
         create_receiver: function(element) {
           //element.stopPropagation();
-          var template = _.template(TemplateReceiver);
+          var template = _.template(TemplateReceiver)();
           $("#panelRight .content").html(template);
           views.global.openPanel();
         },
@@ -244,7 +244,7 @@ define(
         save_file: function() {
           if ($("#panelSave").length == 0) {
             $(".panelBox").remove();
-            var template = _.template(panelSaveTemplate, {});
+            var template = _.template(panelSaveTemplate)( {});
             $("#btnSave").after(template);
           } else {
             $(".panelBox").remove();
@@ -282,7 +282,7 @@ define(
 
             if ($("#panelFiles").length == 0) {
               $(".panelBox").remove();
-              var template = _.template(panelLoadtemplate, {
+              var template = _.template(panelLoadtemplate)( {
                 files: saveFiles
               });
               $("#btnGetFiles").after(template);
@@ -359,7 +359,7 @@ define(
           // element.stopPropagation();
           if ($("#panelInfo").length == 0) {
             $(".panelBox").remove();
-            var template = _.template(panelInfoTemplate, {
+            var template = _.template(panelInfoTemplate)( {
               username: config.nameComputer,
               host: config.host,
               soap: config.port.soap

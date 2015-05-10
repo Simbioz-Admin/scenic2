@@ -58,7 +58,7 @@ define(
           this.model.on("update:value", this.updateValue, this);
 
           //generate template for receive properties and methods
-          var template = _.template(TemplateQuidd, {
+          var template = _.template(TemplateQuidd)( {
             title: "Set " + this.model.get("name"),
             quiddName: this.model.get("name"),
           });
@@ -100,7 +100,7 @@ define(
 
           var prop = this.model.get("properties")[property],
             that = this,
-            templateProp = _.template(TemplateQuiddProperty, {
+            templateProp = _.template(TemplateQuiddProperty)( {
               property: prop
             });
 
@@ -154,7 +154,7 @@ define(
 
         addMethod: function(method) {
           var meth = this.model.get("methods")[method],
-            templateMeth = _.template(TemplateQuiddMethod, {
+            templateMeth = _.template(TemplateQuiddMethod)( {
               method: meth
             });
           this.addWithPositionWeight(meth["position weight"], templateMeth);

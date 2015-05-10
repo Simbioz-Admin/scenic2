@@ -49,7 +49,7 @@ define(
         /* Displays the panel to create a new destination */
 
         openPanel: function() {
-          var template = _.template(templateCreateClient);
+          var template = _.template(templateCreateClient)();
           $("#panelRight .content").html(template);
           views.global.openPanel();
         },

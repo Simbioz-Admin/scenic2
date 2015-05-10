@@ -70,7 +70,7 @@ define(
         /* Called for render the view */
         render: function() {
           $(this.el).attr('data-idUser', this.model.get('uri'));
-          var tpl = _.template(TemplateUser, this.model.toJSON());
+          var tpl = _.template(TemplateUser)( this.model.toJSON());
 
           $(this.el).html(tpl);
           var status = this.model.get("status");

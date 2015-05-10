@@ -56,7 +56,7 @@ define(
             $("#" + this.table + " #local-sources").prepend($(this.el));
           }
 
-          var quiddTpl = _.template(TemplateSource, {
+          var quiddTpl = _.template(TemplateSource)( {
             name: this.model.get("name")
           });
           $(this.el).append(quiddTpl);
@@ -78,7 +78,7 @@ define(
 
           _.each(properties, function(property, index) {
             if (property.name != "device" && property.name != "devices-json" && property.name != "shmdata-writers" && property.name != "shmdata-readers" && property.name != "started") {
-              var propertyTpl = _.template(TemplateSourceProperty, {
+              var propertyTpl = _.template(TemplateSourceProperty)( {
                 property: property,
                 destinations: destinations
               });

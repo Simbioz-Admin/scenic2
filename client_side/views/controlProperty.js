@@ -44,7 +44,7 @@ define(
           console.log(this.model.toJSON());
           var name = this.model.get("name").replace("_", "<br>");
           var that = this,
-          template = _.template(TemplateDestination, this.model.toJSON());
+          template = _.template(TemplateDestination)( this.model.toJSON());
 
           $(this.el).append(template);
 

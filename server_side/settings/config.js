@@ -17,10 +17,6 @@ for (k in interfaces) {
     }
   }
 }
-/*
- * choose IP address
- */
-var pickAddress
 
 var config = {
   version: "2.0.24",
@@ -55,7 +51,7 @@ var config = {
   scenicSavePath: scenicHomePath + "/save_files/",
   pathLogs: scenicHomePath + '/logs/',
   systemusagePeriod: '1.0'
-}
+};
 
 /* this part export config for requirejs */
 if (typeof module === "undefined") {

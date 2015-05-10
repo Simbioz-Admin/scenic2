@@ -89,7 +89,7 @@ define([
                 msgNotView: channel.get("msgNotView") + 1
             });
 
-            var message = _.template(TemplateMsg, {
+            var message = _.template(TemplateMsg)( {
                 user: user,
                 msg: msg
             });

@@ -1,7 +1,10 @@
 require.config({
     paths: {
-        underscore: 'libs/underscore-min',
-        backbone: 'libs/backbone-min',
+        underscore: '../bower_components/underscore/underscore-min',
+        backbone: '../bower_components/backbone/backbone',
+
+        //underscore: 'libs/underscore-min',
+        //backbone: 'libs/backbone-min',
         util: 'libs/util',
         jquery: 'libs/jquery-min',
         jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',

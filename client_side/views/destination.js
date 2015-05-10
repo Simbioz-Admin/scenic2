@@ -80,7 +80,7 @@ define(
 
         render: function() {
           var that = this,
-          template = _.template(TemplateDestination, this.model.toJSON());
+          template = _.template(TemplateDestination)( this.model.toJSON());
           $(this.el).html(template);
           $(this.el).i18n();
         },

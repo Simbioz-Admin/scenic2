@@ -31,7 +31,7 @@ define([
         },
         render: function() {
 
-            var template = _.template(TemplateLogger);
+            var template = _.template(TemplateLogger)();
             $(this.el).attr("id", "log").html(template);
             $("body").append($(this.el));
             // this.show();

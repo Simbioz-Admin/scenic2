@@ -35,7 +35,7 @@ define(
         initialize: function() {
           var that = this;
           //generate template for receive information about destination
-          var template = _.template(TemplateEditDestinationRtp, {
+          var template = _.template(TemplateEditDestinationRtp)( {
             destination: that.model,
             listStatus: collections.users.listStatus
           });

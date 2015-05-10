@@ -48,7 +48,7 @@ define(
         /* Called for render the view */
         render: function() {
           var info = this.model.get("name").split("_");
-          var template = _.template(TemplateMapper);
+          var template = _.template(TemplateMapper)();
           var that = this;
           $(this.el).html(template);
 

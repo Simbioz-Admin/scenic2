@@ -1,7 +1,7 @@
 define([
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'text!../../templates/logger.html'
 ], function(_, Backbone, socekt, TemplateLogger) {
 

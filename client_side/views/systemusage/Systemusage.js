@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'text!../../../templates/systemusage/preview_systemusage.html',
     'text!../../../templates/systemusage/network_usage.html'
   ],
@@ -52,7 +52,6 @@ define(
           $(this.el).i18n();
 
           this.$net = $('.content_network');
-          console.log(this.$net);
 
           var self = this;
           socket.on("systemusage", function(info) {

@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'views/users/user',
     'text!../../../templates/users/users.html',
     'text!../../../templates/users/form_login.html'

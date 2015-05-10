@@ -10,7 +10,7 @@ define(
     'app',
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'jqueryui',
     'spin',
     'text!../../templates/launch.html',

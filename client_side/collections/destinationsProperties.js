@@ -9,7 +9,7 @@ define(
 		'underscore',
 		'jquery',
 		'backbone',
-		'socket',
+		'lib/socket',
 		'models/control_property'
 	],
 

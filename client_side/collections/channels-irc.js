@@ -1,7 +1,7 @@
 define([
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'models/channel-irc',
     'text!../../templates/msg_irc.html'
 ], function(_, Backbone, socket, ChannelModel, TemplateMsg) {

@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'views/connexion',
     'views/shmdata',
     'text!../../templates/source.html'

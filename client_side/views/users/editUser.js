@@ -8,7 +8,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'text!../../../templates/users/editUserSip.html',
   ],
 

@@ -8,7 +8,7 @@ define(
     [
         'underscore',
         'backbone',
-        'socket',
+        'lib/socket',
         'models/class_doc'
     ],
 

@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'models/quidd',
     'text!../../templates/createQuidd.html',
     'text!../../templates/quidd.html',

@@ -8,7 +8,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'views/users/user',
     'views/users/editUser',
     'views/destination'

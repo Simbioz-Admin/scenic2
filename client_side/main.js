@@ -1,100 +1,96 @@
-require.config({
-    paths: {
-        underscore: '../bower_components/underscore/underscore-min',
-        backbone: '../bower_components/backbone/backbone',
-        jquery: '../bower_components/jquery/dist/jquery.min',
-
-        socketio: '/socket.io/socket.io',
-
-        //underscore: 'libs/underscore-min',
-        //backbone: 'libs/backbone-min',
-        util: 'libs/util',
-        //jquery: 'libs/jquery-min',
-        jqueryui: 'libs/jqueryui/js/jquery-ui-1.10.2.custom.min',
-        punch: 'libs/punch',
-        jqueryCookie: 'libs/jquery.cookie',
-        smartMenu: 'libs/smartmenus/jquery.smartmenus.min',
-        //d3: 'libs/d3.min',
-        spin: 'libs/spin.min',
-        i18n : '/i18next.min'
+require.config( {
+    packages: [
+        {
+            name:     'crypto-js',
+            location: '../bower_components/crypto-js/',
+            main:     'index'
+        }
+    ],
+    paths:    {
+        text:         '../bower_components/requirejs-text/text',
+        socketio:     '/socket.io/socket.io',
+        underscore:   '../bower_components/underscore/underscore-min',
+        backbone:     '../bower_components/backbone/backbone',
+        jquery:       '../bower_components/jquery/dist/jquery.min',
+        jqueryCookie: '../bower_components/jquery.cookie/jquery.cookie',
+        jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',
+        punch:        '../bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min',
+        spin:         '../bower_components/spin.js/spin',
+        i18n:         '../bower_components/i18next/i18next.min',
     },
-    shim: {
-        underscore: {
+    shim:     {
+        underscore:   {
             exports: '_'
         },
-        backbone: {
-            deps: ["underscore", "jquery"],
+        backbone:     {
+            deps:    ["underscore", "jquery"],
             exports: "Backbone"
         },
-        jqueryui: {
-            deps: ["jquery"],
+        jqueryui:     {
+            deps:    ["jquery"],
             exports: "jqueryui"
         },
-        punch: {
+        punch:        {
             deps: ['jquery', 'jqueryui']
         },
         jqueryCookie: {
-            deps: ['jquery'],
+            deps:    ['jquery'],
             exports: 'jquerycookie'
         },
-        smartMenu: {
-            deps: ['jquery'],
-            exports: 'smartMenu'
-        },
-        i18n : {
-            deps: ['jquery'],
-            exports : 'i18n'
+        i18n:         {
+            deps:    ['jquery'],
+            exports: 'i18n'
         }
-    },
-    deps: [
-        'socketio'
-    ]
-});
+    }
+} );
 
-require([
+require( [
     // Load our app module and pass it to our definition function
     'app',
-    'launch',
-    'util',
+    'lib/util',
     'punch',
     'collections/users',
-    'socket',
+    'lib/socket',
+    'views/launch',
     'jqueryCookie',
     collections = [],
     views = [],
     //socket = io.connect(),
     config = {}
-], function(app, launch, util, punch, CollectionUsers, socket ) {
+], function ( app, util, punch, CollectionUsers, socket, LaunchView ) {
 
     //recovery config information from the server
-    socket.emit("getConfig", function(configServer) {
+    socket.emit( "getConfig", function ( configServer ) {
         config = configServer;
-    });
+    } );
 
     collections.users = new CollectionUsers();
 
 
-    if (localStorage["oldId"]) {
-        socket.emit("returnRefresh", localStorage["oldId"], socket.socket.sessionid);
+    if ( localStorage["oldId"] ) {
+        socket.emit( "returnRefresh", localStorage["oldId"], socket.socket.sessionid );
     }
 
 
     /* stock information of sessionid in localStorage when user refresh or quit interface. 
-       Use for know how close the interface */
-    $(window).bind('beforeunload', function() {
+     Use for know how close the interface */
+    $( window ).bind( 'beforeunload', function () {
         localStorage["oldId"] = socket.socket.sessionid;
-    });
+    } );
 
 
     /* When the server is closed or crash a message global is send for all user */
-    socket.on("shutdown", function() {
-        console.log("SHUTDOWN");
-        $("body").html("<div id='shutdown'>the server has turned off</div>");
-    });
+    socket.on( "shutdown", function () {
+        console.log( "SHUTDOWN" );
+        $( "body" ).html( "<div id='shutdown'>the server has turned off</div>" );
+    } );
 
     //check state of scenic for show page authentification or scenic2
-    socket.emit("scenicStart", function(stateScenic) {
-        if (!stateScenic) launch.initialize();
-        else app.initialize();
-    });
-});
+    socket.emit( "scenicStart", function ( stateScenic ) {
+        if ( !stateScenic ) {
+            views.launch = new LaunchView();
+        } else {
+            app.initialize();
+        }
+    } );
+} );

@@ -8,7 +8,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
     'text!../../templates/panelInfoSource.html'
   ],

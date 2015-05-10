@@ -9,7 +9,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'text!../../templates/table/table.html',
     'text!../../templates/table/category.html',
     'text!../../templates/table/sub_menu.html',

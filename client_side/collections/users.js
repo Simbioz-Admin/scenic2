@@ -8,11 +8,12 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
-    'models/user'
+    'lib/socket',
+    'models/user',
+    'crypto-js/aes'
   ],
 
-  function(_, Backbone, ModelUser) {
+  function(_, Backbone, socket, ModelUser, AES) {
 
     /** 
      *  @constructor
@@ -105,7 +106,7 @@ define(
         loginSip: function(address, name, password, port, cb) {
 
             var secretString = 'Les patates sont douces!';
-            var encrypted = CryptoJS.AES.encrypt(password, secretString);
+            var encrypted = AES.encrypt(password, secretString);
 
             var sipInformation = {
               address: address,

@@ -16,6 +16,10 @@ ALLFILES := $(PROJDIRS) $(SRCFILES)
 TARGETDIR := /share/scenic2
 ARCHIVE := scenic2_$(VERSION)
 
+setup:
+	npm install
+	bower install
+
 all:
 	@echo Now run sudo make install
 	@echo Scenic version $(VERSION)

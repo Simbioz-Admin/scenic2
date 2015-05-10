@@ -8,7 +8,7 @@ define(
   [
     'underscore',
     'backbone',
-    'socket',
+    'lib/socket',
     'text!../../templates/quidd.html',
     'text!../../templates/panelInfo.html',
     'text!../../templates/panelLoadFiles.html',

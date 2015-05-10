@@ -42,7 +42,7 @@ define(
         /* Called when the table is initialized and create a view */
 
         initialize: function() {
-          this.displayTitle();
+
         },
 
 
@@ -76,14 +76,6 @@ define(
             views.global.closePanel();
           });
 
-        },
-
-
-        /* Displays the title of destination */
-
-        displayTitle: function() {
-          if (this.collection.size() != 0) $("#titleOut").show();
-          else $("#titleOut").hide();
         },
 
         /* Show a box for set a connection between destination and source */

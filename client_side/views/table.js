@@ -154,7 +154,7 @@ define(
           //   }
           // });
           $(".createQuidd").button()
-            .click(function(){
+            .click(function(event){
               event.stopPropagation();
               views.quidds.defineName($(this));
             });

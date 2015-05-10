@@ -59,7 +59,7 @@ define(
           $('body').i18n();
       });
 
-      $("#currentUser").html(config.nameComputer);
+      //FIXME: There is nowhere to put this $("#currentUser").html(config.nameComputer);
 
       //loading the different collections
       collections.classesDoc = new CollectionClassesDoc();
@@ -87,10 +87,12 @@ define(
               collections.destinationProperties = new CollectionDestinationsProperties();
               collections.destinationProperties.fetch();
 
+              /* FIXME: New logger
               collections.loggers = new CollectionLoggers();
               views.logger = new ViewLoggers({
                 collection: collections.loggers
               });
+              */
 
               views.global = new ViewGlobal();
               views.htop = new ViewSystemUsage();

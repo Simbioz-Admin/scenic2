@@ -1,0 +1,134 @@
+.table {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  padding: 0;
+  float: left;
+  margin: 25px 0 0 25px;
+  display: none;
+  width: 100%;
+  @include border-radius(2px);
+  #headerTable {
+    border-bottom-color: black;
+    position: absolute;
+    left: 70px;
+    top: 0px;
+    z-index: 30000; //UBALD: Header is 20000 so I had to go higher
+    height: 40px;
+    margin: 10px;
+    background: #333;
+    padding: 0;
+    cursor: move;
+    .headerMenu > div {
+      margin-right: 10px;
+      font-size: 1.2em;
+      float: left;
+      background: #444;
+      @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
+      border: none;
+      color: #ccc;
+      text-transform: uppercase;
+      &:hover {
+        color: white;
+        background: #484848;
+      }
+    }
+    .filter {
+      padding: 0;
+      width: 160px;
+      float: left;
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+      select {
+        width: 100%;
+        background: #444;
+        border: #444;
+        color: white;
+        cursor: pointer;
+        height: 36px;
+        margin: 0;
+        option {
+          cursor: pointer;
+          border: none;
+        }
+      }
+    }
+  }
+  &.active {
+    display: block;
+  }
+}
+
+#subMenu {
+  position: absolute;
+  width: 180px;
+  float: left;
+  top: 36px;
+  background-color: #333;
+  margin-right: 10px;
+  @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
+  border: none;
+  color: #333;
+  text-transform: uppercase;
+  div {
+    padding: 0;
+  }
+  a {
+    text-decoration: none;
+  }
+  h3 {
+    display: block;
+    background: #222;
+  }
+  .menuButtons {
+    height: auto;
+    margin: 2px;
+  }
+}
+
+.contextMenu .menuButton {
+  padding: 6px 15px 5px 25px;
+  display: inline-block;
+  color: #ccc;
+  line-height: 25px;
+  font-family: "Irma Light", "Open Sans", sans-serif;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  &:hover {
+    color: white;
+    background: #484848;
+  }
+}
+
+// Drop Down Arrow
+.contextMenu .menuButton {
+  &:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid white;
+    position: relative;
+    left: -12px;
+    top: 10px;
+  }
+}
+
+#subMenu .menuButtons > a {
+  position: relative;
+  display: block;
+  color: #b3b3b3;
+  margin: 1px;
+  padding: 1px;
+  background: #323232;
+  border: 0;
+  &:hover {
+    background: #b33232;
+  }
+  .ui-button-text {
+    font-size: 10px;
+  }
+}

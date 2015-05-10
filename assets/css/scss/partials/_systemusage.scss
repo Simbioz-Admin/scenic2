@@ -1,0 +1,81 @@
+#preview_usagesystem {
+  color: white;
+  position: absolute;
+  width: 100%;
+  background: #222;
+  // float : right
+  bottom: 0;
+  .cpu_info {
+    height: 100%;
+    background: #1c1c1c;
+  }
+  .content {
+    margin: 5px 10px 10px 10px;
+  }
+  .info {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    float: left;
+    border-top: 1px solid #111;
+    .label {
+      font-size: 10px;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+  }
+  .cpus {
+    //background : blue
+    // height : 10px
+    .bar {
+      width: 5px;
+      height: 2%;
+      background: #555;
+      position: absolute;
+      bottom: 0;
+    }
+    .content_bar {
+      height: 22px;
+      width: 100%;
+      position: relative;
+    }
+  }
+  .alert {
+    background: $colorSat !important;
+  }
+  .memory {
+    .content {
+      margin-top: 8px;
+    }
+  }
+  .network {
+    padding-bottom: 3px;
+    font-size: 9px;
+    color: #ccc;
+    .iface {
+      padding-top: 4px;
+      .name {
+        background-color: #333;
+        font-weight: bold;
+        padding: 2px;
+        margin-bottom: 2px;
+      }
+      .receive, .transfer {
+        @include clearfix;
+        .lbl {
+          color: #aaa;
+          float: left;
+        }
+        .value {
+          float: right;
+        }
+      }
+    }
+  }
+  .total {
+    font-size: 14px;
+  }
+  .text {
+    font-size: 10px;
+  }
+}

@@ -3,7 +3,7 @@
 var log = require('./log');
 var config = require('./config');
 var portastic = require('portastic');
-var switcher = require('../switcher/switcher');
+var switcherControl = require('../switcher/switcher-control');
 var auth = require('http-auth');
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
             log.info("    - Scenic will start with password protection");
           }
 
-          switcher.initialize(io);
+          switcherControl.initialize(io);
 
           config.scenicStart = true;
 
@@ -101,55 +101,55 @@ module.exports = {
 
       //************************* QUIDDS ****************************//
 
-      socket.on("create", switcher.quidds.create);
-      socket.on("get_quiddity_description", switcher.quidds.get_description);
-      socket.on("get_info", switcher.quidds.get_info);
-      socket.on("get_properties_description", switcher.quidds.get_properties_description);
-      socket.on("get_methods_description", switcher.quidds.get_methods_description);
-      socket.on("get_method_description", switcher.quidds.get_method_description);
-      socket.on("get_property_description", switcher.quidds.get_property_description);
-      socket.on("get_property_value", switcher.quidds.get_property_value);
-      socket.on("set_property_value", switcher.quidds.set_property_value);
-      socket.on("get_property_by_class", switcher.quidds.get_property_by_class);
-      socket.on("remove", switcher.quidds.remove);
-      socket.on("invoke", switcher.quidds.invoke);
-      socket.on("subscribe_info_quidd", switcher.quidds.subscribe_info_quidd);
-      socket.on("unsubscribe_info_quidd", switcher.quidds.unsubscribe_info_quidd);
+      socket.on("create", switcherControl.quidds.create);
+      socket.on("get_quiddity_description", switcherControl.quidds.get_description);
+      socket.on("get_info", switcherControl.quidds.get_info);
+      socket.on("get_properties_description", switcherControl.quidds.get_properties_description);
+      socket.on("get_methods_description", switcherControl.quidds.get_methods_description);
+      socket.on("get_method_description", switcherControl.quidds.get_method_description);
+      socket.on("get_property_description", switcherControl.quidds.get_property_description);
+      socket.on("get_property_value", switcherControl.quidds.get_property_value);
+      socket.on("set_property_value", switcherControl.quidds.set_property_value);
+      socket.on("get_property_by_class", switcherControl.quidds.get_property_by_class);
+      socket.on("remove", switcherControl.quidds.remove);
+      socket.on("invoke", switcherControl.quidds.invoke);
+      socket.on("subscribe_info_quidd", switcherControl.quidds.subscribe_info_quidd);
+      socket.on("unsubscribe_info_quidd", switcherControl.quidds.unsubscribe_info_quidd);
 
 
       //************************* DICO ****************************//
 
-      socket.on("setPropertyValueOfDico", switcher.quidds.set_property_value_of_dico);
-      socket.on("removeValuePropertyOfDico", switcher.quidds.remove_property_value_of_dico);
+      socket.on("setPropertyValueOfDico", switcherControl.quidds.set_property_value_of_dico);
+      socket.on("removeValuePropertyOfDico", switcherControl.quidds.remove_property_value_of_dico);
 
 
       //************************* DESTINATION ****************************//
 
-      socket.on("create_destination", switcher.receivers.create_destination);
-      socket.on("update_destination", switcher.receivers.update_destination);
-      socket.on("remove_destination", switcher.receivers.remove_destination);
-      socket.on("connect_destination", switcher.receivers.connect_destination);
-      socket.on("remove_connection", switcher.receivers.remove_connection);
+      socket.on("create_destination", switcherControl.receivers.create_destination);
+      socket.on("update_destination", switcherControl.receivers.update_destination);
+      socket.on("remove_destination", switcherControl.receivers.remove_destination);
+      socket.on("connect_destination", switcherControl.receivers.connect_destination);
+      socket.on("remove_connection", switcherControl.receivers.remove_connection);
 
       //************************* SIP ****************************//
 
-      socket.on("sip_logout", switcher.sip.logout);
-      socket.on("sip_login", switcher.sip.login);
-      socket.on("addUser", switcher.sip.addUser);
-      socket.on("addUserToDestinationMatrix", switcher.sip.addUserToDestinationMatrix);
-      socket.on("removeUserToDestinationMatrix", switcher.sip.removeUserToDestinationMatrix);
-      socket.on("attachShmdataToUser", switcher.sip.attachShmdataToUser);
-      socket.on("callUser", switcher.sip.callUser);
-      socket.on("getListStatus", switcher.sip.getListStatus);
-      socket.on("hangUpUser", switcher.sip.hangUpUser);
-      socket.on("removeUser", switcher.sip.removeUser);
+      socket.on("sip_logout", switcherControl.sip.logout);
+      socket.on("sip_login", switcherControl.sip.login);
+      socket.on("addUser", switcherControl.sip.addUser);
+      socket.on("addUserToDestinationMatrix", switcherControl.sip.addUserToDestinationMatrix);
+      socket.on("removeUserToDestinationMatrix", switcherControl.sip.removeUserToDestinationMatrix);
+      socket.on("attachShmdataToUser", switcherControl.sip.attachShmdataToUser);
+      socket.on("callUser", switcherControl.sip.callUser);
+      socket.on("getListStatus", switcherControl.sip.getListStatus);
+      socket.on("hangUpUser", switcherControl.sip.hangUpUser);
+      socket.on("removeUser", switcherControl.sip.removeUser);
 
       //************************* SAVE ****************************//
 
-      socket.on("save", switcher.save);
-      socket.on("load", switcher.load);
-      socket.on("remove_save", switcher.remove_save);
-      socket.on("get_save_file", switcher.get_save_file);
+      socket.on("save", switcherControl.save);
+      socket.on("load", switcherControl.load);
+      socket.on("remove_save", switcherControl.remove_save);
+      socket.on("get_save_file", switcherControl.get_save_file);
     });
   }
 };

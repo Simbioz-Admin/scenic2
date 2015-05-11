@@ -73,7 +73,7 @@ function traceCaller(n) {
       break;
     }
   }
-  b = s.indexOf('\n', a + 1);
+  var b = s.indexOf('\n', a + 1);
   if (b < 0) b = s.length;
   a = Math.max(s.lastIndexOf(' ', b), s.lastIndexOf('/', b));
   b = s.lastIndexOf(':', b);

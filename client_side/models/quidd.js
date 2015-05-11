@@ -48,7 +48,7 @@ define(
           "encoder_category": null,
           "shmdatas": null,
           "shmdatasCollection": null,
-          "view": null,
+          "view": null
         },
 
 

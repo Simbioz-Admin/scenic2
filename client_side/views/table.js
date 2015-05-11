@@ -186,7 +186,6 @@ define(
               views.global.notification("valid", msg);
             });
           }
-
           if (this.model.get("id") == "sink") {
             /* Find information about the number of connection possible */
             if (box.hasClass("active")) {

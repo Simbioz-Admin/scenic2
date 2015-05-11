@@ -20,7 +20,7 @@ require('./bootstrap' )( function( err ) {
     var express = require('./settings/express');
     var scenicIo = require('./settings/scenic-io');
     var i18n = require('./settings/i18n');
-    var switcher = require('./switcher/switcher');
+    var switcherControl = require('./switcher/switcher-control');
 
     function checkPort( name, config, callback ) {
         if ( config.port ) {
@@ -109,7 +109,7 @@ require('./bootstrap' )( function( err ) {
 
             // Switcher
             if (!config.scenicStart && config.configSet) {
-                switcher.initialize(io);
+                switcherControl.initialize(io);
                 config.scenicStart = true;
             }
 
@@ -131,7 +131,7 @@ require('./bootstrap' )( function( err ) {
      * close switcher when process exits
      */
     process.on('exit', function() {
-        switcher.close();
+        switcherControl.close();
     });
 
     /**

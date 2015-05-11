@@ -324,15 +324,12 @@ function createVuMeter(quiddName) {
   log.debug("create vuMeter for " + quiddName);
 
   var shmdatas = JSON.parse(switcher.get_info(quiddName, ".shmdata.writer"));
-  _.each(shmdatas, function(shmdata) {
-
-    var vumeter = switcher.create("fakesink", "vumeter_" + shmdata);
-
+  _.each(shmdatas, function(shmdata, name) {
+    var vumeter = switcher.create("fakesink", "vumeter_" + name);
     if (vumeter) {
-      switcher.invoke(vumeter, "connect", [shmdata]);
+      switcher.invoke(vumeter, "connect", [name]);
       switcher.subscribe_to_property(vumeter, "byte-rate");
     }
-
   });
 }
 

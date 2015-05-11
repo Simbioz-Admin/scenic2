@@ -207,11 +207,13 @@ div.users {
         }
       }
       .add_table {
-        background: url(../../images/bgBox.png) center center no-repeat;
+        background: url(../../icons/plus.png) center center no-repeat;
+        &:hover {
+          background-color: #01b101;
+        }
       }
       .edit_user {
-        background: url(../../images/settings.png) center center no-repeat;
-        //background : url(../../images/icon_chat.png) center center no-repeat
+        background: url(../../icons/740-gear.png) center center no-repeat;
         &:hover {
           text-decoration: none;
         }

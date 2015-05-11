@@ -7,52 +7,32 @@ require('./bootstrap' )( function( err ) {
         console.error( err );
         return process.exit();
     }
+    // Require the minimum to display greeting message
+    var config = require('./settings/config');
+    var colors = require('colors/safe');
+
+    // Greeting message
+    console.log(colors.red.bold("Scenic " + config.version) + "\n");
+
+    // Parse command line
+    require('./lib/command-line').parse( config );
 
     // Start the application
-
     var http = require('http');
     var socketIo = require('socket.io');
-    var portastic = require('portastic');
+    var locale = require("locale");
     var async = require('async');
-    var config = require('./settings/config');
-    var argv = require('./settings/optimist');
-    var log = require('./settings/log');
-    var express = require('./settings/express');
-    var scenicIo = require('./settings/scenic-io');
-    var i18n = require('./settings/i18n');
+    var rpad = require('underscore.string/rpad');
+    var repeat = require('underscore.string/repeat');
+
+    var checkPort = require('./utils/check-port');
+    var log = require('./lib/logger');
+    var i18n = require('./lib/i18n');
+    var scenicIo = require('./lib/scenic-io');
+    var routes = require('./controller/routes');
     var switcherControl = require('./switcher/switcher-control');
 
-    function checkPort( name, config, callback ) {
-        if ( config.port ) {
-            // Sanity check
-            if (typeof config.port != "number" && config.port.toString().length < 4) {
-                return callback( 'Invalid ' + name + ' port: ' + config.port );
-            }
-            // Port test
-            portastic.test( config.port, function( err, data ) {
-                if (err) {
-                    return callback(err);
-                }
-                if (!data) {
-                    return callback( name + ' port ' + config.port + ' isn\'t available' );
-                }
-                callback( null, config.port );
-            } );
-        } else {
-            // Find port
-            portastic.find( config.ports, function( err, data ) {
-                if (err) {
-                    return callback(err);
-                }
-                if (!data) {
-                    return callback( 'No available ' + name + ' port found in the range ' + config.min + '-' + config.max );
-                }
-                config.port = data;
-                callback( null, config.port );
-            } );
-        }
-    }
-
+    // Autodetect ports
     async.parallel( [
         function( callback ) {
             checkPort( 'Scenic GUI', config.scenic, callback );
@@ -74,55 +54,84 @@ require('./bootstrap' )( function( err ) {
 
     function launch() {
 
-        function leftColumn(str) {
-            var n = (25 - str.length);
-            return str + require('underscore.string').repeat(' ', n);
+        var message = "\nConfiguration\n";
+        message += colors.gray(repeat('–', 50)) + '\n';
+        message += colors.yellow(rpad(" Home path",        25 )) + config.scenicDependenciesPath + "\n";
+        message += colors.yellow(rpad(" Scenic GUI",       25 )) + "http://" + config.host + ":" + config.scenic.port + "\n";
+        message += colors.yellow(rpad(" SOAP port",        25 )) + config.soap.port + "\n";
+        message += colors.yellow(rpad(" RTP session name", 25 )) + config.rtpsession + "\n";
+        message += colors.yellow(rpad(" Identification",   25 )) + config.nameComputer + "\n";
+        message += colors.yellow(rpad(" Log level",        25 )) + config.logLevel + "\n";
+        message += "\nSIP Information\n";
+        message += colors.gray(repeat('–', 50)) + '\n';
+        message += colors.yellow(rpad(" Address",  25 )) + config.sip.address + "\n";
+        message += colors.yellow(rpad(" Port",     25 )) + config.sip.port + "\n";
+        message += colors.yellow(rpad(" Username", 25 )) + config.sip.name + "\n";
+        message += colors.gray(repeat('–', 50)) + '\n';
+        message += "\n";
+        if ( config.standalone ) {
+            message += 'Launching in standalone mode\n';
+        } else {
+            message += 'Launching in GUI mode\n';
         }
-
-        var message = leftColumn(" GUI scenic2") + "http://" + config.host + ":" + config.scenic.port + "\n";
-        message += leftColumn(" Port SOAP") + config.soap.port + "\n";
-        message += leftColumn(" Name RTPsession") + config.rtpsession + "\n";
-        message += leftColumn(" Identification") + config.nameComputer + "\n\n";
-
-        message += "SIP information\n";
-        message += "------------------------------------------------\n";
-        message += leftColumn(" Address") + config.sip.address + "\n";
-        message += leftColumn(" Port") + config.sip.port + "\n";
-        message += leftColumn(" Username") + config.sip.name + "\n";
-        message += "------------------------------------------------\n";
         console.log(message);
 
-        // Translations
-        i18n.initialize();
+        var app;
+        var server;
 
-        // Express HTTP Server
-        var server = http.createServer(express);
-        server.listen( config.scenic.port, function() {
+        async.series( [
+            function( callback ) {
+                // Translations
+                i18n.initialize( callback );
+            },
+            function( callback ) {
+                // Server
+                log.debug( "Starting servers..." );
+                app = require('express')();
+                app.use(locale(config.locale.supported));
+                app.use(require('cookie-parser')());
+                routes( app, config );
 
-            // Socket.io Server
-            var io = socketIo.listen(server, { log: false });
-            scenicIo.initialize(io);
+                server = http.createServer(app);
+                server.listen( config.scenic.port, callback );
+            },
+            function( callback ) {
+                // Socket.io Server
+                log.debug( "Initializing sockets..." );
+                var io = socketIo(server, { log: true });
 
-            // IRC Client
-            //FIXME: IRC is not enabled in this version
-            //irc.initialize(io);
+                // Switcher
+                if (!config.scenicStart && config.configSet) {
+                    switcherControl.initialize(config, io);
+                    config.scenicStart = true;
+                }
 
-            // Switcher
-            if (!config.scenicStart && config.configSet) {
-                switcherControl.initialize(io);
-                config.scenicStart = true;
+                // ScenicIo Client
+                scenicIo.initialize(config, io);
+
+                // IRC Client
+                //FIXME: IRC is not enabled in this version
+                //irc.initialize(io);
+
+
+
+                // GUI, unless -g is used on the command line, it will launch a chrome instance
+                if (!config.standalone) {
+                    log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);
+                    var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
+                    chrome.stdout.on('data', function(data) {
+                        log.debug( 'chromium-browser:', data.toString().trim() );
+                    });
+                    chrome.stderr.on('data', function(data) {
+                        log.debug( 'chromium-browser:', 'error:', data.toString().trim() );
+                    });
+                }
+
+                callback();
             }
-
-            // GUI, unless -g is used on the command line, it will launch a chrome instance
-            if (!config.standalone) {
-                log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);
-                var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
-                chrome.stdout.on('data', function(data) {
-                    console.log( 'chromium-browser >> stdout: ' + data );
-                });
-                chrome.stderr.on('data', function(data) {
-                    console.error( 'chromium-browser >> stderr: ' + data );
-                });
+        ], function( err ) {
+            if ( err ) {
+                log.error( err );
             }
         });
     }

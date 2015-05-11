@@ -1,15 +1,16 @@
 "use strict";
 
-var config = require('../settings/config');
-var switcher = require('switcher');
-var log = require('../settings/log');
 var _ = require('underscore');
 var i18n = require('i18next');
+var switcher = require('switcher');
+var log = require('../lib/logger');
 
+var config;
 var io;
 
-var initialize = function(socketIo) {
-  log.info("Initializing Receivers...");
+var initialize = function(cfg, socketIo) {
+  log.debug("Initializing Receivers...");
+  config = cfg;
   io = socketIo;
 };
 
@@ -21,8 +22,7 @@ var initialize = function(socketIo) {
  *  @param {object} callback return informatin about the new destination and a message
  *  or an error message
  **/
-
-var create_destination = function(destination, cb) {
+function create_destination(destination, cb) {
 
   /* Get the destinations existing stock in dico (propety destinations) */
   var destinations = switcher.invoke("dico", "read", ["destinationsRtp"]),
@@ -40,7 +40,6 @@ var create_destination = function(destination, cb) {
   }
 
   /* define a id before create client side */
-  var uuid = require('node-uuid');
   destination["id"] = destination.name;
   destination['data_streams'] = [];
   destination.hostName = destination.hostName.replace("http://", "");
@@ -116,10 +115,9 @@ var create_destination = function(destination, cb) {
     success: "The destination " + destination.name + " is added"
   });
   /* Send all creation of destination */
-  io.sockets.emit("create_destination", destination);
+  io.emit("create_destination", destination);
 
 }
-
 
 /**
  *  Action to send a shmdata to a specific receiver. Checking presence of shmdata
@@ -132,8 +130,7 @@ var create_destination = function(destination, cb) {
   @param portSoap {int} Port soap remote server
   @param callback {object} return true if success or send message error
 */
-
-var connect_destination = function(quiddName, path, id, port, portSoap, cb) {
+function connect_destination(quiddName, path, id, port, portSoap, cb) {
 
   log.info("connect quiddity to receiver", quiddName, path, id, port, portSoap);
 
@@ -180,10 +177,9 @@ var connect_destination = function(quiddName, path, id, port, portSoap, cb) {
     if (err) return log.error("error on refresh httpsdpdec");
   });
 
-  io.sockets.emit("add_connection", quiddName, path, port, id);
+  io.emit("add_connection", quiddName, path, port, id);
   return cb(true);
 }
-
 
 /**
  *  Remove a receiver. Remove to dico destinations and check if nobody is
@@ -193,8 +189,7 @@ var connect_destination = function(quiddName, path, id, port, portSoap, cb) {
   @param id {String} id of receiver
   @param callback {object} if sucess return name true
 */
-
-var remove_connection = function(path, id, cb) {
+function remove_connection(path, id, cb) {
 
   /* 1. remove the association between shmdata and destination */
   var remove = switcher.invoke("defaultrtp", "remove_udp_stream_to_dest", [path, id]);
@@ -242,12 +237,11 @@ var remove_connection = function(path, id, cb) {
   if (!setPropertyValueOfDico) return cb("error when saving Destinations Dico");
 
 
-  io.sockets.emit("remove_connection", path, id);
+  io.emit("remove_connection", path, id);
   //var url = 'http://' + config.host + ':' + config.soap.port + '/sdp?rtpsession=defaultrtp&destination=' + id;
   //var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
   if (cb) return cb(null, remove);
 }
-
 
 /**
  *  Update destination. Currently remove the destination and create a new with the modification
@@ -257,8 +251,7 @@ var remove_connection = function(path, id, cb) {
   @param destination {json} Contain all information for create a new destination
   @param callback {object} if sucess return name message success {json}
 */
-
-var update_destination = function(oldId, destination, cb) {
+function update_destination(oldId, destination, cb) {
 
   var destinations = JSON.parse(switcher.invoke("dico", "read", ["destinationsRtp"])),
     data_streams = destination.data_streams;
@@ -308,9 +301,7 @@ var update_destination = function(oldId, destination, cb) {
 *  @param portSoap {string} Port Soap
 *  @param callback {object} return error or success message
 **/
-
-
-var remove_destination = function(id, portSoap, cb) {
+function remove_destination(id, portSoap, cb) {
 
   var removeToRtp = switcher.invoke("defaultrtp", "remove_destination", [id]);
 
@@ -351,7 +342,7 @@ var remove_destination = function(id, portSoap, cb) {
     sucess: i18n.t("sucess remove destination")
   });
   /* Alert all destination has been removed */
-  io.sockets.emit("remove_destination", id);
+  io.emit("remove_destination", id);
 
 }
 
@@ -360,9 +351,7 @@ var remove_destination = function(id, portSoap, cb) {
  *  @param id {string} Id of receiver
  *  @param callback {object} return an error if exist
  */
-
-
-var refresh_httpsdpdec = function(id, cb) {
+function refresh_httpsdpdec(id, cb) {
 
   /* need wait 1sec for update url rtp to the ControlClient */
   setTimeout(function() {
@@ -371,14 +360,13 @@ var refresh_httpsdpdec = function(id, cb) {
     var updateShm = switcher.invoke("soapControlClient-" + id, "invoke1", [config.nameComputer, 'to_shmdata', url]);
     if (!updateShm) return cb("error updateShm");
   }, 2000);
-};
+}
 
 module.exports = {
   initialize: initialize,
   create_destination: create_destination,
   remove_destination: remove_destination,
   connect_destination: connect_destination,
-  // reconnect_destination: reconnect_destination,
   update_destination: update_destination,
   remove_connection: remove_connection
 };

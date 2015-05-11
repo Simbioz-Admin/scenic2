@@ -1,13 +1,13 @@
 "use strict";
 
-var config = require('../settings/config');
-var switcher = require('switcher');
-var log = require('../settings/log');
 var portastic = require('portastic');
 var cryptoJS = require('crypto-js');
 var i18next = require('i18next');
+var switcher = require('switcher');
+var log = require('../lib/logger');
 
 var listUsers = [];
+var config;
 var io;
 var secretString = 'Les patates sont douces!';
 
@@ -107,17 +107,15 @@ function createSip(name, password, address, port, cb) {
   if (cb) cb(null);
 }
 
-
-
-
 module.exports = {
 
   /*
    *  @function initialize
    *  @description initialize for get socket.io accessible
    */
-  initialize: function(socketIo) {
-    log.info("Initializing SIP...");
+  initialize: function(cfg, socketIo) {
+    log.debug("Initializing SIP...");
+    config = cfg;
     io = socketIo;
   },
 
@@ -205,7 +203,7 @@ module.exports = {
       cb(err);
       return;
     }
-    io.sockets.emit("addDestinationSip", uri);
+    io.emit("addDestinationSip", uri);
     cb(null, "successfully added destination " + uri);
   },
 
@@ -221,7 +219,7 @@ module.exports = {
       cb(err);
       return;
     }
-    io.sockets.emit("removeDestinationSip", uri);
+    io.emit("removeDestinationSip", uri);
     cb(null, i18n.t("successfully remove destination ") + uri);
 
     /* hang up client if called */
@@ -247,7 +245,7 @@ module.exports = {
       return cb(err);
     }
 
-    // io.sockets.emit("addShmdataToUserSip", )
+    // io.emit("addShmdataToUserSip", )
     cb(null, "successfully " + type + " Shmdata to the destination SIP");
   },
 
@@ -316,7 +314,7 @@ module.exports = {
     if (!saveDicoUsers) return cb(i18n.t("error saved dico users"));
 
     cb(null, i18n.t("User __uri__ successfully removed", {uri : uri }));
-    io.sockets.emit("removeUser", uri);
+    io.emit("removeUser", uri);
 
   },
 

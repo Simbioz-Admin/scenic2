@@ -65,14 +65,14 @@ require( {
 
 
     if ( localStorage["oldId"] ) {
-        socket.emit( "returnRefresh", localStorage["oldId"], socket.socket.sessionid );
+        socket.emit( "returnRefresh", localStorage["oldId"], socket.id );
     }
 
 
     /* stock information of sessionid in localStorage when user refresh or quit interface. 
      Use for know how close the interface */
     $( window ).bind( 'beforeunload', function () {
-        localStorage["oldId"] = socket.socket.sessionid;
+        localStorage["oldId"] = socket.id;
     } );
 
 

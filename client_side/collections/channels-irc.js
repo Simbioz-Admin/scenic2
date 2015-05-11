@@ -29,7 +29,7 @@ define([
 
                 //at the first connection in memories the id.socket for identification on server
                 // if(!$.cookie('id_client')){
-                //   console.log("we memories id.socket", socket.socket.sessionid);
+                //   console.log("we memories id.socket", socket.id);
                 // }
 
 

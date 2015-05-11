@@ -158,7 +158,7 @@ define(
           /* we unsubscribe to the quiddity */
 
           if ($("#quiddName").val()) {
-            socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.socket.sessionid);
+            socket.emit("unsubscribe_info_quidd", $("#quiddName").val(), socket.id);
           }
         },
 

@@ -2,7 +2,10 @@
   "name": "Scenic",
   "version": "2.0.22",
   "authors": [
-    "Ubald <ubald@ubaldesign.com>"
+    "François Ubald Brien <ubald@ubaldesign.com>",
+    "Nicolas Bouillot",
+    "Michal Seta",
+    "Pierre-Antoine Chesnel"
   ],
   "license": "GPL",
   "ignore": [

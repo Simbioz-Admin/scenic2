@@ -1,14 +1,16 @@
 "use strict";
 
-var i18n = require('i18next');
-var log = require('./log');
-var switcher = require('switcher');
 var _ = require('underscore');
+var i18n = require('i18next');
+var switcher = require('switcher');
+var log = require('./logger');
 
 module.exports = {
-  initialize: function () {
+  initialize: function ( callback ) {
+    log.debug( "Initializing translations..." );
+
     i18n.init( {
-      // lng: "fr",
+      //lng: "fr",
       saveMissing:   true,
       // cookieName : 'lang',
       // useCookie : true,
@@ -20,10 +22,14 @@ module.exports = {
       sendMissingTo: 'fallback',
       keyseparator:  "::",
       nsseparator:   ':::',
-      debug:         true
+      debug:         false
     }, function () {
-      log.debug( "Initializing translations for language: ", i18n.lng() );
-      //get name and category from switcher
+      log.debug( "Parsing quiddities and properties translations..." );
+
+      // Graying out error generated while getting properties
+      process.stdout.write( '\n\u001b[90m');
+
+      //Get names and categories from switcher
       var classesDoc = JSON.parse( switcher.get_classes_doc() ).classes;
       _.each( classesDoc, function ( classDoc ) {
         i18n.t( classDoc['long name'] );
@@ -34,14 +40,16 @@ module.exports = {
           _.each( propertiesByClass, function ( prop ) {
             i18n.t( prop['long name'] );
             i18n.t( prop['short description'] );
-            if ( prop['short description'].indexOf( 'port pairs with destinations' ) >= 0 ) {
-              // console.log(prop);
-            }
           } );
         } catch ( e ) {
 
         }
       } );
+
+      // End the graying out
+      process.stdout.write('\u001b[39m\n');
+
+      callback();
     } );
   }
 };

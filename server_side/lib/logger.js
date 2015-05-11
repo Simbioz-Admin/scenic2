@@ -1,7 +1,8 @@
 "use strict";
 
 var winston = require('winston');
-var config = require('./config');
+var colors = require('colors/safe');
+var config = require('../settings/config');
 
 var customLevels = {
   levels: {
@@ -12,10 +13,10 @@ var customLevels = {
     error: 4
   },
   colors: {
-    switcher: 'blue',
-    debug: 'white',
-    info: 'green',
-    warn: 'orange',
+    switcher: 'magenta',
+    debug: 'gray',
+    info: 'blue',
+    warn: 'yellow',
     error: 'red'
   }
 };
@@ -35,21 +36,48 @@ var log = new(winston.Logger)({
   transports: [
     new(winston.transports.Console)({
       colorize: true,
+      prettyPrint: true,
       level: config.logLevel
     }),
     new(winston.transports.File)({
-      filename: config.pathLogs + 'logging-file.log'
+      filename: config.pathLogs + 'logging-file.log',
+      prettyPrint: true,
+      level: 'error'
     })
   ]
 });
 
-winston.addColors(customLevels.colors);
+// Add line numbers to errors
+log.addFilter( function(msg, meta, level) {
+  if ( level == 'error' ) {
+    msg = traceCaller( 1 ) + ": " + msg;
+  } else if ( level == 'switcher' ) {
+    var prefix = msg.split(':')[0];
+    switch( prefix.split('-' ).pop() ) {
+      case 'erorr':
+        msg = colors.red( msg );
+        break;
+      case 'warn':
+      case 'warning':
+        msg = colors.yellow( msg );
+        break;
+      case 'info':
+        msg = colors.blue( msg );
+        break;
+      case 'message':
+      case 'notice':
+      case 'log':
+        //noop
+        break;
+      case 'debug':
+        msg = colors.gray( msg );
+        break;
+    }
+  }
+  return { msg: msg, meta: meta, level: level };
+});
 
-var logger_info_old = log.error;
-log.error = function(msg) {
-  var fileAndLine = traceCaller(1);
-  return logger_info_old.call(this, fileAndLine + ": " + msg);
-};
+winston.addColors(customLevels.colors);
 
 /**
  * examines the call stack and returns a string indicating

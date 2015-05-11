@@ -6,8 +6,6 @@ interfaces = os.networkInterfaces(),
 addresses = [],
 scenicHomePath = process.env.HOME + "/.scenic2";
 
-console.log('Scenic home path: ' + scenicHomePath);
-
 for (var k in interfaces) {
   for (var k2 in interfaces[k]) {
     var address = interfaces[k][k2];
@@ -57,6 +55,10 @@ var config = {
     //address: "scenic.sat.qc.ca"
     address : "10.10.30.235",
     quiddName: 'SIP'
+  },
+
+  locale: {
+    supported: ['en', 'fr']
   },
 
   rtpsession: "defaultrtp",

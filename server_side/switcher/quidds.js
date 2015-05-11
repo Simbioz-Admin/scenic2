@@ -1,18 +1,18 @@
 "use strict";
 
-var config = require('../settings/config');
-var switcher = require('switcher');
-var log = require('../settings/log');
 var _ = require('underscore');
 var i18n = require('i18next');
+var switcher = require('switcher');
+var log = require('../lib/logger');
 
+var config;
 var io;
 
-function initialize(socketIo) {
-  log.info("Initializing Quiddities...");
+function initialize(cfg, socketIo) {
+  log.debug("Initializing Quiddities...");
+  config = cfg;
   io = socketIo;
 }
-
 
 /**
  *  @function create
@@ -21,10 +21,7 @@ function initialize(socketIo) {
  *  @param {string} quiddName The name (id) of the quiddity
  *  @param {string} socketId Id Socket (socket.io) of the user ask to create the quiddity
  */
-
 function create(className, quiddName, socketId, cb) {
-
-
   if (!cb) cb = socketId; //its not always a user ask for create a quidd
 
   quiddName = (quiddName ? switcher.create(className, quiddName) : switcher.create(className));
@@ -47,13 +44,11 @@ function create(className, quiddName, socketId, cb) {
 
 }
 
-
 /**
  *  @function remove
  *  @description removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
  *  @param {string} quiddName The name (id) of the quiddity
  */
-
 function remove(quiddName) {
 
   if (switcher.remove(quiddName)) {
@@ -62,7 +57,6 @@ function remove(quiddName) {
     log.error("failed to remove " + quiddName);
   }
 }
-
 
 function removeElementsAssociateToQuiddRemoved(quiddName) {
   log.debug("remove quidds associate to quidd removed", quiddName);
@@ -77,10 +71,7 @@ function removeElementsAssociateToQuiddRemoved(quiddName) {
     if (quidd.name.indexOf(quiddName + "-sink") != -1) switcher.remove(quidd.name);
     if (quidd.name.indexOf("vumeter_") >= 0 && quidd.name.indexOf(quiddName) >= 0) switcher.remove(quidd.name);
   });
-
-
 }
-
 
 function get_description(quiddName, cb) {
   log.debug("get Description quidd", quiddName);
@@ -133,7 +124,6 @@ function set_property_value(quiddName, property, value, cb) {
   }
 }
 
-
 function get_info(quiddName, path, cb) {
   log.debug("Getting quiddity information for: " + quiddName);
   var info = JSON.parse(switcher.get_info(quiddName, path));
@@ -151,9 +141,7 @@ function get_property_by_class(className, propertyName, callback) {
   callback(propertyByClass);
 }
 
-
 function get_property_description(quiddName, property, callback) {
-
   var property_description = JSON.parse(switcher.get_property_description(quiddName, property));
   if (property_description && property_description.error) {
     log.error(property_description.error + "(property : " + property + ", quiddity : " + quiddName + ")");
@@ -163,7 +151,6 @@ function get_property_description(quiddName, property, callback) {
 }
 
 function get_properties_values(quiddName) {
-
   var propertiesQuidd = switcher.get_properties_description(quiddName);
   if (propertiesQuidd == "") {
     log.error("failed to get properties description of" + quiddName);
@@ -180,12 +167,9 @@ function get_properties_values(quiddName) {
   });
 
   return propertiesQuidd;
-
-
 }
 
 function get_properties_description(quiddName, cb) {
-
   var properties_description = JSON.parse(switcher.get_properties_description(quiddName)).properties,
   properties_to_send = {};
 
@@ -202,7 +186,6 @@ function get_properties_description(quiddName, cb) {
   });
   cb(null, properties_to_send);
 }
-
 
 function get_methods_description(quiddName, cb) {
   var methods = JSON.parse(switcher.get_methods_description(quiddName)).methods;
@@ -234,8 +217,6 @@ function get_method_description(quiddName, method, cb) {
   }
   cb(null, descriptionJson);
 }
-
-
 
 function get_property_value(quiddName, property, cb) {
   log.debug("Get property value", quiddName, property);
@@ -271,9 +252,9 @@ function invoke(quiddName, method, parameters, cb) {
   if (cb) cb(null, invoke);
 
   if (method == "remove_udp_stream_to_dest")
-    io.sockets.emit("remove_connection", invoke, quiddName, parameters);
+    io.emit("remove_connection", invoke, quiddName, parameters);
 
-  //io.sockets.emit("invoke", invoke, quiddName, method, parameters);
+  //io.emit("invoke", invoke, quiddName, method, parameters);
 }
 
 function subscribe_info_quidd(quiddName, socketId) {
@@ -287,9 +268,6 @@ function unsubscribe_info_quidd(quiddName, socketId) {
   delete config.subscribe_quidd_info[socketId];
 }
 
-
-//************************ DICO *****************************************//
-
 function set_property_value_of_dico(property, value, callback) {
   var currentValueDicoProperty = JSON.parse(switcher.invoke("dico", "read", [property]));
   if (currentValueDicoProperty)
@@ -298,13 +276,11 @@ function set_property_value_of_dico(property, value, callback) {
     var currentValueDicoProperty = [value];
 
   switcher.set_property_value("dico", property, JSON.stringify(currentValueDicoProperty));
-  io.sockets.emit("setDicoValue", property, value);
+  io.emit("setDicoValue", property, value);
   callback("ok");
-
 }
 
 function removeConrolByQuiddParent(quiddParent) {
-
   var currentValuesDicoProperty = JSON.parse(switcher.invoke("dico", "read", ['controlProperties']));
   _.each(currentValuesDicoProperty, function(control) {
     if (control.quiddName == quiddParent) {
@@ -336,7 +312,7 @@ function remove_property_value_of_dico(property, name) {
   log.debug("Remove property", property, name);
 
   switcher.invoke("dico", "update", [property, JSON.stringify(newValuesDico)]);
-  io.sockets.emit("removeValueOfPropertyDico", property, name);
+  io.emit("removeValueOfPropertyDico", property, name);
 }
 
 module.exports = {

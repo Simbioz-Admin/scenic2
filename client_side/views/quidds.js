@@ -100,7 +100,7 @@ define(
             quiddName = $("#quiddName").val(),
             deviceDetected = $("#device").val();
           /* Ask to the server create a new quiddity with className and name quiddity*/
-          socket.emit("create", className, quiddName, socket.socket.sessionid, function(err, quiddInfo) {
+          socket.emit("create", className, quiddName, socket.id, function(err, quiddInfo) {
             if (err) return views.global.notification('error', err);
             var model = collections.quidds.create(quiddInfo);
             //check if autoDetect it's true if yes we set the value device with device selected

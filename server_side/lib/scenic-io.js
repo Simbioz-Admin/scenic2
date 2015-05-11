@@ -1,16 +1,16 @@
 "use strict";
 
-var log = require('./log');
-var config = require('./config');
-var portastic = require('portastic');
-var switcherControl = require('../switcher/switcher-control');
 var auth = require('http-auth');
+var portastic = require('portastic');
+
+var log = require('./logger');
+var switcherControl = require('../switcher/switcher-control');
 
 module.exports = {
-  initialize: function(io) {
-    log.debug("Initializing ScenicIO...");
-    io.sockets.on('connection', function(socket) {
+  initialize: function(config, io) {
+    log.debug("Initializing Scenic Io...");
 
+    io.on('connection', function(socket) {
 
       /* At the first launch interface the client ask state of scenic, launch or not */
       socket.on("scenicStart", function(callback) {
@@ -60,7 +60,7 @@ module.exports = {
             log.info("    - Scenic will start with password protection");
           }
 
-          switcherControl.initialize(io);
+          switcherControl.initialize(config, io);
 
           config.scenicStart = true;
 

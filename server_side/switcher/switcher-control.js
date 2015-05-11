@@ -1,20 +1,27 @@
 "use strict";
 
-var config = require('../settings/config');
+var _ = require('underscore');
+var i18n = require('i18next');
 var switcher = require('switcher');
 var sip = require('./sip');
 var quidds = require('./quidds');
 var receivers = require('./receivers');
-var log = require('../settings/log');
-var _ = require('underscore');
-var i18n = require('i18next');
+var log = require('../lib/logger');
 
+var config;
 var io;
 
-function initialize(socketIo) {
+function initialize(cfg, socketIo) {
 
-  log.info("Initializing Switcher...");
+  log.debug("Initializing Switcher...");
+
+  config = cfg;
   io = socketIo;
+
+  // Receivers
+  sip.initialize(config, io);
+  receivers.initialize(config, io);
+  quidds.initialize(config, io);
 
   // Register logger first
   switcher.register_log_callback(function(msg) {
@@ -23,11 +30,6 @@ function initialize(socketIo) {
 
   // SOAP Control
   switcher.create("SOAPcontrolServer", "soap");
-
-  // Receivers
-  sip.initialize(io);
-  receivers.initialize(io);
-  quidds.initialize(io);
 
   // Create the default quiddities necessary to use switcher
   log.debug( 'Creating RTP Session...' );
@@ -75,7 +77,7 @@ function initialize(socketIo) {
     if (qprop != "byte-rate" && qprop != "caps") {
       log.debug('...PROP...: ', qname, ' ', qprop, ' ', pvalue);
     } else {
-      io.sockets.emit("signals_properties_value", qname, qprop, pvalue);
+      io.emit("signals_properties_value", qname, qprop, pvalue);
     }
 
 
@@ -131,7 +133,7 @@ function initialize(socketIo) {
   switcher.register_signal_callback(function(qname, qsignal, pvalue) {
 
     if (qname != "systemusage") {
-      log.switcher('signal : ', qname, ' ', qsignal, ' ', pvalue);
+      log.debug('signal:', qname, qsignal, pvalue);
     }
 
     /* manage callback fro SIP quidd  */
@@ -157,7 +159,7 @@ function initialize(socketIo) {
         shmdatasInfo['quidd'] = qname;
         shmdatasInfo['type'] = "writer";
         createVuMeter(qname);
-        io.sockets.emit("addShmdata", qname, shmdatasInfo);
+        io.emit("addShmdata", qname, shmdatasInfo);
       }
 
       /* Shmdata reader */
@@ -167,7 +169,7 @@ function initialize(socketIo) {
         shmdatasInfo["path"] = pvalue[0].replace(".shmdata.reader.", "");
         shmdatasInfo['type'] = "reader";
         shmdatasInfo['quidd'] = qname;
-        io.sockets.emit("addShmdata", qname, shmdatasInfo);
+        io.emit("addShmdata", qname, shmdatasInfo);
       }
 
       /* sipquidd */
@@ -176,7 +178,7 @@ function initialize(socketIo) {
         //TODO : Get Better method for get information about user without split value
         var idUser = pvalue[0].split(".")[2];
         var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
-        io.sockets.emit('infoUser', infoUser);
+        io.emit('infoUser', infoUser);
       }
 
 
@@ -194,7 +196,7 @@ function initialize(socketIo) {
           type: 'writer'
         }
 
-        io.sockets.emit("removeShmdata", qname, shmdata);
+        io.emit("removeShmdata", qname, shmdata);
       }
 
       //Shmdata Reader
@@ -204,13 +206,13 @@ function initialize(socketIo) {
           type: 'reader'
         }
 
-        io.sockets.emit("removeShmdata", qname, shmdata);
+        io.emit("removeShmdata", qname, shmdata);
       }
 
       if (qname == config.sip.quiddName) {
         var idUser = pvalue[0].split(".")[2];
         var infoUser = JSON.parse(switcher.get_info(qname, '.buddy.' + idUser));
-        io.sockets.emit('infoUser', infoUser);
+        io.emit('infoUser', infoUser);
       }
     }
 
@@ -220,7 +222,7 @@ function initialize(socketIo) {
     if (qname == "systemusage" && qsignal == "on-tree-grafted") {
       var info = switcher.get_info(qname, pvalue[0]);
       // log.debug("systemusage info", switcher.get_info(qname, pvalue[0]));
-      io.sockets.emit("systemusage", info);
+      io.emit("systemusage", info);
     }
 
 
@@ -246,24 +248,26 @@ function initialize(socketIo) {
         var properties = JSON.parse(switcher.get_properties_description(pvalue[0])).properties;
         _.each(properties, function(property) {
           switcher.subscribe_to_property(pvalue[0], property.name);
-          log.switcher("subscribe to ", pvalue[0], property.name);
+          log.debug("Subscribed to", pvalue[0], property.name);
         });
       } catch (e) {
-        log.error("error get properties", e);
+        log.error("Error getting properties", e);
       }
 
 
       /* cehck if the quiddity is created by interface and send all except user created this */
+      //FIXME: socket.io removed except in 1.0
       var socketIdCreatedThisQuidd = false;
-      _.each(config.listQuiddsAndSocketId, function(socketId, quiddName) {
+      /*_.each(config.listQuiddsAndSocketId, function(socketId, quiddName) {
         if (quiddName == pvalue[0])
           socketIdCreatedThisQuidd = socketId;
         delete config.listQuiddsAndSocketId[quiddName];
-      });
+      });*/
       if (socketIdCreatedThisQuidd) {
-        io.sockets.except(socketIdCreatedThisQuidd).emit("create", quiddClass);
+        console.log( io.sockets.clients() );
+        io.except(socketIdCreatedThisQuidd).emit("create", quiddClass);
       } else {
-        io.sockets.emit("create", quiddClass);
+        io.emit("create", quiddClass);
       }
     }
 
@@ -272,7 +276,7 @@ function initialize(socketIo) {
     /* Emits to users a quiddity is removed */
     if (qsignal == "on-quiddity-removed") {
 
-      io.sockets.emit("remove", pvalue);
+      io.emit("remove", pvalue);
       log.debug("the quiddity " + pvalue + " is removed");
       quidds.removeElementsAssociateToQuiddRemoved(pvalue[0]);
     }
@@ -282,8 +286,7 @@ function initialize(socketIo) {
       log.debug("subscribe List", config.subscribe_quidd_info);
       _.each(config.subscribe_quidd_info, function(quiddName, socketId) {
         if (quiddName == qname) {
-          log.switcher("send to sId (" + socketId + ") " + qsignal + " : " + pvalue);
-          //log.debug(io);
+          log.debug("Sending to socket", socketId, qsignal, pvalue);
           var socket = io.sockets.sockets[socketId];
           if (socket) socket.emit('signals_properties_info', qsignal, qname, pvalue);
         }
@@ -295,14 +298,14 @@ function initialize(socketIo) {
 
     /* subscribe to the property added */
     if (qsignal == "on-property-added") {
-      log.switcher("Subscribe ", qname, pvalue[0]);
+      log.debug("Subscribing to property", qname, pvalue[0]);
       switcher.subscribe_to_property(qname, pvalue[0]);
     }
 
     /* ************ SIGNAL - ON PROPERTY REMOVED ************ */
 
     if (qsignal == "on-property-removed") {
-      log.switcher("Unsubscribe ", qname, pvalue[0]);
+      log.debug("Unsubscribing from property", qname, pvalue[0]);
       switcher.unsubscribe_to_property(qname, pvalue[0]);
     }
 
@@ -375,7 +378,7 @@ function get_save_file(cb) {
 function close() {
   log.info("Server scenic is now closed");
   if ( io ) {
-    io.sockets.emit( "shutdown", true );
+    io.emit( "shutdown", true );
   }
   switcher.close();
 }

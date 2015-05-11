@@ -2,28 +2,21 @@
   "name": "scenic2",
   "version": "2.0.24",
   "description": "UI for interaction design with switcher",
-  "main": "app.sh",
   "dependencies": {
-    "express": "~3.3.3",
-    "xmlhttprequest": "~1.6.0",
-    "underscore": "~1.5.1",
-    "backbone": "~1.0.0",
-    "irc": "~0.3.6",
-    "passport-http": "~0.2.2",
-    "passport": "~0.1.17",
-    "jsdom": "~0.7.0",
-    "portchecker": "~0.1.2",
-    "http-auth": "~1.2.7",
-    "winston": "~0.7.2",
-    "optimist": "~0.6.0",
+    "async": "~0.9.0",
+    "underscore.string": "~3.0.3",
+    "colors": "~1.1.0",
+    "winston": "~1.0.0",
+    "socket.io": "~1.3.5",
+    "locale": "0.0.20",
+    "underscore": "~1.8.3",
+    "optimist": "~0.6.1",
+    "crypto-js": "~3.1.4",
     "portastic": "0.0.1",
-    "underscore.string": "~2.3.3",
-    "node-uuid": "~1.4.1",
-    "socket.io": "~0.9.16",
-    "crypto-js": "~3.1.2-5",
-    "i18next": "~1.7.4",
-    "locale": "~0.0.20",
-    "async": "~0.9.0"
+    "express": "~4.12.3",
+    "i18next": "~1.7.10",
+    "http-auth": "~2.2.5",
+    "cookie-parser": "~1.3.4"
   },
   "devDependencies": {
     "bower": "~1.4.1"
@@ -42,7 +35,6 @@
     "switcher",
     "routing"
   ],
-  "author": "Nicolas Bouillot, Pierre-Antoine Chesnel",
-  "license": "GPL",
-  "gitHead": "ec52edd4f881924bdf90126cd5b77117dc96ab43"
+  "author": "François Ubald Brien, Nicolas Bouillot, Michal Seta, Pierre-Antoine Chesnel",
+  "license": "GPL"
 }

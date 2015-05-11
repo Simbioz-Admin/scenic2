@@ -178,7 +178,7 @@ define(
                 model: that
               });
               //subscribe for have information about modification on quidd
-              socket.emit("subscribe_info_quidd", that.get("name"), socket.socket.sessionid);
+              socket.emit("subscribe_info_quidd", that.get("name"), socket.id);
             });
           });
         },

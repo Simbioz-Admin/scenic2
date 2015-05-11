@@ -47,7 +47,12 @@ define(
 
           /** Event called when the server has created a quiddity */
           socket.on("create", function(quiddInfo, socketId) {
-            that.create(quiddInfo);
+            var quiddity = that.findWhere({name: quiddInfo.name});
+            if ( quiddity ) {
+              quiddity.set( quiddInfo );
+            } else {
+              that.create( quiddInfo );
+            }
           });
 
           /** Event called when the server has removed a quiddity */
@@ -140,7 +145,6 @@ define(
           var model = new QuiddModel(quiddInfo);
           this.add(model);
           if (quiddInfo.class != "sip") {
-
             views.global.notification("info", model.get("name") + " (" + model.get("class") + ") "+$.t('is created'));
           }
           return model;

@@ -1,5 +1,5 @@
 var npm = require("npm");
-var config = require("./server_side/settings/config.js")('npm-verify');
+var config = require("./server_side/settings/config.js");
 var scenicDependenciesPath = config.scenicDependenciesPath;
 var scenicSavePath = config.scenicSavePath;
 var fs = require('fs');

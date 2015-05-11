@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require('underscore');
 var optimist = require('optimist');
 var config = require('./config');

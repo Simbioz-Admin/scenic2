@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('./config');
 var express = require('express');
 var i18next = require('i18next');

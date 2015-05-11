@@ -1,3 +1,5 @@
+"use strict";
+
 var i18n = require('i18next');
 var log = require('./log');
 var switcher = require('switcher');

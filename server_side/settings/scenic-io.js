@@ -1,3 +1,5 @@
+"use strict";
+
 var log = require('./log');
 var config = require('./config');
 var portastic = require('portastic');
@@ -80,7 +82,7 @@ module.exports = {
       socket.on('disconnect', function() {
         //remove subscribe of information modification quidd
         delete config.subscribe_quidd_info[socket.id];
-        refreshTimeout = setTimeout(function() {
+        this.refreshTimeout = setTimeout(function() {
           if (config.masterSocketId == socket.id && config.standalone == false) {
             log.info('Last window closed, exiting...');
             process.exit();
@@ -92,7 +94,7 @@ module.exports = {
 
       socket.on("returnRefresh", function(oldSocketId, newSocketId) {
         if (oldSocketId == config.masterSocketId) {
-          clearTimeout(refreshTimeout);
+          clearTimeout(this.refreshTimeout);
           config.masterSocketId = newSocketId;
         }
       });

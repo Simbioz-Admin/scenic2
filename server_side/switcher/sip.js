@@ -1,3 +1,5 @@
+"use strict";
+
 var config = require('../settings/config');
 var switcher = require('switcher');
 var log = require('../settings/log');

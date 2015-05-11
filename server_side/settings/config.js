@@ -1,3 +1,5 @@
+"use strict";
+
 //*** Get local address of the host ***//
 var os = require('os'),
 interfaces = os.networkInterfaces(),
@@ -6,8 +8,8 @@ scenicHomePath = process.env.HOME + "/.scenic2";
 
 console.log('Scenic home path: ' + scenicHomePath);
 
-for (k in interfaces) {
-  for (k2 in interfaces[k]) {
+for (var k in interfaces) {
+  for (var k2 in interfaces[k]) {
     var address = interfaces[k][k2];
     if (address.family == 'IPv4') {
       if (!address.internal){

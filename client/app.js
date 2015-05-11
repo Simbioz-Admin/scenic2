@@ -49,7 +49,6 @@ define(
     var initialize = function() {
       "use strict";
 
-
       //init translation
       i18n.init({
         lngWhitelist : ['en-US', 'en', 'fr', 'fr-FR'],

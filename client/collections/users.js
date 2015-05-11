@@ -10,10 +10,10 @@ define(
     'backbone',
     'lib/socket',
     'models/user',
-    'crypto-js/aes'
+    'crypto-js'
   ],
 
-  function(_, Backbone, socket, ModelUser, AES) {
+  function(_, Backbone, socket, ModelUser, CryptoJS) {
 
     /** 
      *  @constructor
@@ -106,13 +106,12 @@ define(
         loginSip: function(address, name, password, port, cb) {
 
             var secretString = 'Les patates sont douces!';
-            var encrypted = AES.encrypt(password, secretString);
 
             var sipInformation = {
               address: address,
               uri: name + '@' + address,
               name: name,
-              password: password,
+              password: CryptoJS.AES.encrypt( password, secretString ).toString(),
               port: port
             };
 
@@ -120,7 +119,10 @@ define(
             localStorage["userSip"] = JSON.stringify(sipInformation);
 
             socket.emit("sip_login", sipInformation, function(err, configSip) {
-              if (err) return views.global.notification("error", err);
+              if (err) {
+                return alert("SIP login error:\n\n" + err + "\n\nFIX GLOBAL VIEWS BEFORE APP LAUNCH TO GET BETTER NOTIFICATION THAT THIS");
+                //return views.global.notification("error", err);
+              }
               views.global.notification("valid", "success login server sip");
               $("#login_sip", this.el).remove();
               cb(null);

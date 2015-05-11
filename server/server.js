@@ -113,8 +113,6 @@ require('./bootstrap' )( function( err ) {
                 //FIXME: IRC is not enabled in this version
                 //irc.initialize(io);
 
-
-
                 // GUI, unless -g is used on the command line, it will launch a chrome instance
                 if (!config.standalone) {
                     log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);

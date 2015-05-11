@@ -7,3 +7,4 @@ save_files/*
 npm-debug.log
 bower_components
 *.css.map
+.idea/workspace.xml

@@ -18,15 +18,15 @@ function initialize(cfg, socketIo) {
   config = cfg;
   io = socketIo;
 
-  // Receivers
-  sip.initialize(config, io);
-  receivers.initialize(config, io);
-  quidds.initialize(config, io);
-
   // Register logger first
   switcher.register_log_callback(function(msg) {
     log.switcher(msg);
   });
+
+  // Receiver
+  sip.initialize(config, io);
+  receivers.initialize(config, io);
+  quidds.initialize(config, io);
 
   // SOAP Control
   switcher.create("SOAPcontrolServer", "soap");

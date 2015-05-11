@@ -66,7 +66,7 @@ var config = {
   logSocketIo: false,
   standalone: false,
   scenicStart: false,
-  configSet: true,
+  configSet: false,
   passSet: null,
   loadFile: false,
   nameComputer: os.hostname(),

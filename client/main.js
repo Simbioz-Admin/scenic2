@@ -52,7 +52,7 @@ require( {
     'views/launch',
     'jqueryCookie',
     collections = [],
-    views = [],
+    views = {},
     config = {}
 ], function ( app, util, punch, CollectionUsers, socket, LaunchView ) {
 

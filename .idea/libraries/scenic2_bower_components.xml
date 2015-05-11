@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="scenic2 bower_components" type="javaScript">
+    <properties>
+      <option name="frameworkName" value="bower_components" />
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/bower_components" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/bower_components" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

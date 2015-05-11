@@ -13,7 +13,7 @@ module.exports = function( app, config ) {
     var rootPath = pwd.split('/').slice(0, -1).join('/');
 
     app.use('/bower_components', express.static(rootPath + "/bower_components"));
-    app.use('/client', express.static(rootPath + "/client_side"));
+    app.use('/client', express.static(rootPath + "/client"));
     app.use('/locales', express.static(rootPath + "/locales"));
 
     app.get('/', function(req, res) {
@@ -28,10 +28,10 @@ module.exports = function( app, config ) {
         });
 
         if (!config.passSet) {
-            res.sendfile(rootPath + '/server_side/templates/index.html');
+            res.sendFile(rootPath + '/server/templates/index.html');
         } else {
             config.passSet.apply(req, res, function(username) {
-                res.sendfile(rootPath + '/server_side/templates/index.html');
+                res.sendFile(rootPath + '/server/templates/index.html');
             });
         }
 

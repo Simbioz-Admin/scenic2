@@ -54,7 +54,7 @@ Updating client side translation
 Added translation : 
 
 Terms of switcher:
-terms from switcher are added from the /server_side/settings/i18n.js file. At the launch of the server names and categories are automatically added to /locales/fr/translation.json if there are not existing file.
+terms from switcher are added from the /server/settings/i18n.js file. At the launch of the server names and categories are automatically added to /locales/fr/translation.json if there are not existing file.
 
 Terms of Interface:
 The terms for the client interface and messages from the server nodejs are scanned using the command above.

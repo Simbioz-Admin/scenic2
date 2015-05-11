@@ -23,7 +23,9 @@ module.exports = {
       keyseparator:  "::",
       nsseparator:   ':::',
       debug:         false
-    }, function () {
+    }, function() { callback() } );
+
+    /*function () {
       log.debug( "Parsing quiddities and properties translations..." );
 
       // Graying out error generated while getting properties
@@ -36,6 +38,7 @@ module.exports = {
         i18n.t( classDoc['category'] );
         var className = classDoc['class name'];
         try {
+          console.log(className);
           var propertiesByClass = JSON.parse( switcher.get_properties_description_by_class( className ) ).properties;
           _.each( propertiesByClass, function ( prop ) {
             i18n.t( prop['long name'] );
@@ -50,6 +53,6 @@ module.exports = {
       process.stdout.write('\u001b[39m\n');
 
       callback();
-    } );
+    } );*/
   }
 };

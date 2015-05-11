@@ -60,7 +60,7 @@ define(
           //generate template for receive properties and methods
           var template = _.template(TemplateQuidd)( {
             title: "Set " + this.model.get("name"),
-            quiddName: this.model.get("name"),
+            quiddName: this.model.get("name")
           });
 
           $(this.el).append(template);
@@ -96,7 +96,6 @@ define(
         /* Called when a new method is added to the quiddity */
 
         addProperty: function(property) {
-
 
           var prop = this.model.get("properties")[property],
             that = this,

@@ -1,8 +1,8 @@
 "use strict";
 
-var portastic = require('portastic');
+var _ = require('underscore');
+var i18n = require('i18next');
 var cryptoJS = require('crypto-js');
-var i18next = require('i18next');
 var switcher = require('switcher');
 var log = require('../lib/logger');
 
@@ -56,11 +56,14 @@ function createSip(name, password, address, port, cb) {
   if (!port) return log.error("Error setting SIP quiddity port to " + port );
 
   /* Connect to the server SIP */
-  log.debug("Attempting SIP server connection", { name: name + "@" + address, password: password });
-
   var decrypted = cryptoJS.AES.decrypt(password, secretString).toString(cryptoJS.enc.Utf8);
 
+  log.debug("Attempting SIP server connection", { name: name + "@" + address, password: decrypted });
+
   var register = switcher.invoke(config.sip.quiddName, "register", [name + "@" + address, decrypted]);
+
+  console.log( register, config.sip.quiddName, name, address, decrypted );
+
   if (!register) return log.error(i18n.t("SIP server authentication failed"));
 
   /* subscribe to the modification on this quiddity */

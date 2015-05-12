@@ -55,7 +55,7 @@
     &.active {
       opacity: 1;
       color: #eee;
-      border-left: 2px solid $colorSat;
+      border-left: 2px solid $satColor;
       padding-left: 0;
       .content .icon {
         opacity: 1;
@@ -220,7 +220,7 @@ td.active {
   cursor: pointer;
   position: relative;
   &:hover {
-    background: $colorSat url(../../icons/x.png) no-repeat center center !important;
+    background: $satColor url(../../icons/x.png) no-repeat center center !important;
   }
   .inactive {
     background: #ddd;
@@ -286,7 +286,7 @@ td.active {
       bottom: 0;
       z-index: 10;
       &.disconnected {
-        background: $colorSat;
+        background: $satColor;
       }
       &.wait {
         background: orange;
@@ -380,7 +380,7 @@ td.active {
     top: 0;
     bottom: 0;
     width: 2px;
-    background: $colorSat;
+    background: $satColor;
   }
   .active th:after {
     background: #008000;
@@ -420,7 +420,7 @@ td.active {
     }
     &.remove {
       &:hover {
-        background: $colorSat;
+        background: $satColor;
       }
       .icon {
         background: url(../../icons/711-trash.png) center center no-repeat;

@@ -17,7 +17,7 @@
   //display : none
   word-wrap: break-word;
   &.error {
-    background: $colorSat;
+    background: $satColor;
   }
   &.valid, &.info {
     background: green;

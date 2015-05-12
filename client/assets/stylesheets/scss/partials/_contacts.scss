@@ -68,7 +68,7 @@ div.users {
       color: white;
       text-decoration: none;
       &:hover {
-        color: $colorSat;
+        color: $satColor;
       }
     }
   }
@@ -223,7 +223,7 @@ div.users {
       border-color: #01b101;
     }
     &[data-statusUser='busy'] .information {
-      border-color: $colorSat;
+      border-color: $satColor;
     }
     &[data-statusUser='away'] .information {
       border-color: orange;

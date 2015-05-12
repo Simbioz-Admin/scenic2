@@ -17,7 +17,7 @@ header {
   text-align: center;
   line-height: 95px;
   color: white;
-  background: $colorSat url(../../images/logo_sat.png) no-repeat center 10px;
+  background: $satColor url(../../images/logo_sat.png) no-repeat center 10px;
 }
 
 #menu_header {
@@ -58,7 +58,7 @@ header {
       color: white;
       border: none;
       &.active {
-        color: $colorSat;
+        color: $satColor;
       }
       &:hover {
         background: #222;
@@ -130,7 +130,7 @@ header {
     position: relative;
     font-size: 16px;
     &:hover {
-      background: $colorSat;
+      background: $satColor;
     }
   }
   .remove_save {
@@ -139,7 +139,7 @@ header {
     padding: 4px;
     font-size: 18px;
     &:hover {
-      background: $colorSat;
+      background: $satColor;
       cursor: pointer;
     }
   }

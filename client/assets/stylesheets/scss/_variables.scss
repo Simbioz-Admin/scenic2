@@ -4,7 +4,7 @@ $base-line-height: 12px;
 $heightHeader: 60px;
 $grey1: #f1f1f1;
 $grey2: #333;
-$colorSat: #be2620;
+$satColor: #be2620;
 $colorBorder: #3a3a3a;
 $colorText: #aaa;
 $backgroundColor: #333;
@@ -12,32 +12,7 @@ $backgroundColorDark: #3b3b3b;
 $backgroundColorDarker: #222;
 $active: #222;
 
-// Transition shortcut
-@mixin transition($transition) {
-  -webkit-transition: $transition;
-  -moz-transition: $transition;
-  -ms-transition: $transition;
-  -o-transition: $transition;
-  transition: $transition;
-}
-
-@mixin boxShadow {
-  @include box-shadow(rgba(black, 0.5) 0px 0px 8px -3px inset);
-}
-
-@mixin borderStyle {
-  @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
-  background: #333;
-  &:before {
-    content: "";
-    position: absolute;
-    display: inline-block;
-    z-index: -100;
-    width: 100%;
-    height: 100%;
-    margin: (-8px) 0 0 -8px;
-    padding: 8px;
-    @include box-shadow(rgba(black, 0.5) 0px 0px 8px -3px inset);
-    @include border-radius(3px);
-  }
+@mixin shadow1 {
+  @include box-shadow( rgba(black, 0.25) 0px 0px 24px);
+  @include box-shadow( rgba(black, 0.5) 0px 0px 6px);
 }

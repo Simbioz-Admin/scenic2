@@ -67,7 +67,7 @@
   font-size: 1.4em;
   cursor: pointer;
   &:hover {
-    background: $colorSat;
+    background: $satColor;
   }
 }
 
@@ -101,18 +101,18 @@
   font-weight: bold;
   &:hover {
     cursor: pointer;
-    color: $colorSat;
+    color: $satColor;
   }
 }
 
 .delete {
-  color: $colorSat;
+  color: $satColor;
   float: left;
   margin: 5px 0;
   font-size: 1.2em;
   text-decoration: none;
   &:hover {
-    border-bottom: 1px $colorSat dashed;
+    border-bottom: 1px $satColor dashed;
   }
 }
 

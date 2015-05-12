@@ -1,6 +1,6 @@
 {
-  "name": "scenic2",
-  "version": "2.0.24",
+  "name": "Scenic",
+  "version": "2.1.0",
   "description": "UI for interaction design with switcher",
   "dependencies": {
     "async": "~0.9.0",

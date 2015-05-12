@@ -4,7 +4,7 @@
 var os = require('os'),
 interfaces = os.networkInterfaces(),
 addresses = [],
-scenicHomePath = process.env.HOME + "/.scenic2";
+scenicHomePath = process.env.HOME + "/.scenic";
 
 for (var k in interfaces) {
   for (var k2 in interfaces[k]) {

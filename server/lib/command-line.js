@@ -20,7 +20,7 @@ exports.parse = function( config ) {
         message += rpad( '-n, -nogui', 25 ) + "Launch Scenic without app interface\n";
         message += rpad( '-l, --log', 25 ) + "Set the log level (default: info) [switcher|debug]\n";
         message += rpad( '-w, --withoutconf', 25 ) + 'Launch Scenic without with pre-configuration (GUI will not ask for startup configuration)\n';
-        message += rpad( '-g, --guiport', 25 ) + "GUI port for Scenic2 (default is " + config.scenic.ports.min + ")\n";
+        message += rpad( '-g, --guiport', 25 ) + "GUI port for Scenic (default is " + config.scenic.ports.min + ")\n";
         message += rpad( '-s, --soapport', 25 ) + "SOAP port (default is " + config.soap.ports.min + ")\n";
         message += rpad( '-i, --identification', 25 ) + "Identification name (default is " + config.nameComputer + ")\n";
         message += rpad( '-r, --rtpsession', 25 ) + "RTP session name (default is " + config.rtpsession + ")\n";
@@ -47,7 +47,7 @@ exports.parse = function( config ) {
      */
     if ( argv.v || argv.version ) {
         var version = (argv.v ? argv.v : argv.version);
-        console.log( "Scenic2 version " + config.version );
+        console.log( "Scenic version " + config.version );
         process.exit();
     }
 

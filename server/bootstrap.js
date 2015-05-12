@@ -65,8 +65,8 @@ module.exports = function( callback ) {
                 try {
                     var notify = spawn( "notify-send", [
                         "--icon=" + cwd + "/client/assets/images/logo_sat.png",
-                        "Scenic2",
-                        "Downloading and installing dependencies. Scenic2 will start automatically."
+                        "Scenic",
+                        "Downloading and installing dependencies. Scenic will start automatically."
                     ] );
                 } catch ( e ) {
                     console.log( "Could not display notification message, an error occured", e );

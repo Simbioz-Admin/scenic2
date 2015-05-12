@@ -65,7 +65,7 @@ define(
           $(this.el).i18n();
           var tplLoginSip = _.template(TemplateLoginForm)( config);
           $('#loginSip', this.el).append(tplLoginSip);
-          //Same form use for window user in scenic2 we remove submit and title
+          //Same form use for window user in scenic we remove submit and title
           $('#loginSip h1, #loginSip #submitSip', this.el).remove();
           $('#accordion', this.el).accordion({
             heightStyle: "content"

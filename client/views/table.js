@@ -40,7 +40,7 @@ define(
           "click #create-midi": "getMenuMidiDevice",
           "click .contextMenu .menuButton": 'getClasses',
           "mouseleave #subMenu": 'leaveSubMenu',
-          "click body.scenic2": 'leaveSubMenu',
+          "click body.scenic": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
           "blur #port_destination": "removeInputDestination",

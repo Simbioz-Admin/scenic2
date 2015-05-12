@@ -82,7 +82,7 @@ require( {
         $( "body" ).html( "<div id='shutdown'>the server has turned off</div>" );
     } );
 
-    //check state of scenic for show page authentification or scenic2
+    //check state of scenic for show page authentification or scenic
     socket.emit( "scenicStart", function ( stateScenic ) {
         if ( !stateScenic ) {
             views.launch = new LaunchView();

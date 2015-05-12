@@ -64,7 +64,7 @@ var usersDico = switcher.create( "dico", "users");
 
 /* Load from files users */
 var file = "users.json";
-var loadUsers = switcher.invoke("users", "load", [process.env.HOME + "/.scenic2/save_files/"+file]);
+var loadUsers = switcher.invoke("users", "load", [process.env.HOME + "/.scenic/save_files/"+file]);
 
 console.log("loadUsers",loadUsers);
 
@@ -89,7 +89,7 @@ var users = [
 
 //var setPropertyUsers = switcher.set_property_value("users", "list-users", JSON.stringify(users));
 
-var saveUsers = switcher.invoke("users", "save", [process.env.HOME + "/.scenic2/save_files/"+file]);
+var saveUsers = switcher.invoke("users", "save", [process.env.HOME + "/.scenic/save_files/"+file]);
 
 //console.log("setPropertyUsers", setPropertyUsers);
 console.log("properties", switcher.get_properties_description("users"));

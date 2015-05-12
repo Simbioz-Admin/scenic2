@@ -1,0 +1,26 @@
+<form id="login_sip" disabled>
+	 <div class="parameters">
+        <h1 data-i18n>Login to sip</h1>
+
+        <label data-i18n>Address</label>
+        <input type="text" width="100%" name="address" value="<%=sip.address%>" >
+
+        <div class="">
+            <label data-i18n>Username</label>
+            <input type="text" class='inputSip' name="name" value="" autofocus>
+
+        </div>
+        <div class="">
+            <label data-i18n>Password </label>
+            <input type="password"  class='inputSip' name="password" value="">
+        </div>
+        <div class="">
+            <label data-i18n>Port SIP </label>
+             <input type="text" class='inputSip' name="port" value="<%=sip.port%>">
+        </div>
+        
+    </div>
+    <input type="submit" id='submitSip' data-i18n="[value]login" value="login" >
+
+	
+</form>

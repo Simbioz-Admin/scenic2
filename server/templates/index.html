@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Scenic2 - SAT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="shortcut icon" href="http://sat.qc.ca/sites/default/files/sat_icon.png" type="image/png"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css"/>
+    <link href="/client/assets/stylesheets/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css"/>
+</head>
+<body class="scenic2">
+    <div id="container">
+        <header id="header">
+            <div id="logoScenic">SCENIC 2</div>
+            <div id="currentUser"></div>
+            <ul class="menu_list" id="menu_header">
+                <li class="btn" id="btn-info">?</li>
+                <li class="btn" id="btnSave" data-i18n>save</li>
+                <li class="btn" id="btnGetFiles" data-i18n>load</li>
+                <li class="btn" id="langs">
+                    <button class="lang" data-lang="fr">FR</button>
+                    <button class="lang" data-lang="en">EN</button>
+                </li>
+            </ul>
+        </header>
+
+        <div id="panelTables"></div>
+        <div id="panelLeft"></div>
+        <div id="panelRight">
+            <class class="content clearfix ui-widget-content"></class>
+        </div>
+
+        <!--<div id="chat">
+            <div class="close close-irc">X</div>
+            <div class="title"></div>
+            <ul class="headerMenu"></ul>F
+            <div id="login">
+                <form >
+                    <div class="info" data-i18n >You need to discuss about scenic? Connect you on IRC public just here!</div>
+                    <input type="text" placeholder="username" id="username-chat"><br>
+                    <input type="text" placeholder="channel" id="channel-chat">
+                    <input type="submit" value="go to chat !" id="submit-chat">
+                </form>
+            </div>
+            <div id="channels" ></div>
+        </div>-->
+    </div>
+
+    <script data-main="/client/main.js" src="/bower_components/requirejs/require.js"></script>
+</body>
+</html>
+

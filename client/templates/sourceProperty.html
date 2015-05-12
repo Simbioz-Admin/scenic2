@@ -1,0 +1,7 @@
+<tr class="shmdata" data-propertyname="<%=property.name%>">
+	<th><%=property['long name']%></th>
+	<% _.each(destinations, function(destination){
+		var active = false;  %>
+		<td class="box connect-properties<% if(active){ %> active <% } %>"  data-nameAndProperty="<%=destination.name%>"></td>
+	<% }); %>
+</tr>

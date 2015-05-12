@@ -1,0 +1,298 @@
+div.users {
+  width: 220px;
+  background: #222;
+  position: fixed;
+  top: 61px;
+  bottom: 0;
+  right: 0px;
+  .itsMe.user {
+    input {
+      background: none;
+      padding: 0;
+      margin: 0;
+      height: inherit;
+      border: none;
+      color: white;
+      display: inline;
+      width: 50%;
+      float: left;
+    }
+    #currentStatus {
+      position: relative;
+      color: white;
+      float: left;
+      margin: 2px 10px 0 0;
+      &:before {
+        content: "▾";
+        margin-right: 5px;
+      }
+      ul {
+        display: none;
+        position: absolute;
+        z-index: 12;
+        background: #222;
+        padding-top: 5px;
+        margin: 0 0 0 -5px;
+        li {
+          padding: 5px 10px 5px 5px;
+          border-bottom: 1px solid #555;
+          &:hover {
+            background: #111;
+          }
+          &:last-child {
+            border: none;
+          }
+        }
+      }
+      &:hover ul {
+        display: block;
+      }
+    }
+    .status {
+      width: 15px;
+      height: 15px;
+      background: green;
+      position: absolute;
+      left: 5px;
+    }
+    .information {
+      // border : none
+      background: #222;
+      //border-top : 1px solid #1a1a1a
+      border-left-color: #01b101;
+    }
+    .logout {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      color: white;
+      text-decoration: none;
+      &:hover {
+        color: $colorSat;
+      }
+    }
+  }
+  .content_users {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    top: 85px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .current_user {
+    color: #eee;
+    background: none;
+    padding: 16px 15px;
+    font-family: "Irma Light";
+    font-size: 18px;
+    text-align: right;
+  }
+  .search {
+    border-bottom: 1px solid #444;
+    // padding : 4px 10px 0 5px
+    background: #333;
+    input[type=text] {
+      background: none;
+      border: none;
+      color: white;
+      height: 25px;
+    }
+  }
+  h2 {
+    color: #eee;
+    font-size: 12px;
+    font-family: "Irma Light";
+    background: #222;
+    height: 34px;
+    line-height: 34px;
+    padding: 0 0 0 10px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0 17px;
+    position: relative;
+    &:hover {
+      //background : $colorSat
+
+    }
+  }
+  #add-user {
+    @include border-radius(0);
+    background: #333;
+    color: white;
+    margin: 0;
+    border-color: #444;
+  }
+  .user {
+    position: relative;
+    border-bottom: 1px solid #2c2c2c;
+    .information {
+      padding: 10px;
+      border-left: 2px solid grey;
+      cursor: pointer;
+      position: relative;
+      // z-index: 2
+      background: #333;
+      h3 {
+        padding: 0px;
+        border: none;
+        cursor: default;
+        margin: 0 0 5px 0;
+        color: #fefefe;
+        font-size: 12px;
+      }
+      // &.status-0, &.status-online
+      // 	border-color : #01b101
+      // &.status-1
+      // 	border-color : orange
+      // &.status-2, &.status-offline
+      // 	border-color : #555
+      .last_message {
+        color: #999;
+        font-size: 11px;
+        height: 13px;
+        // overflow: hidden
+
+      }
+    }
+    // &:nth-child(odd) .information
+    // 	background : #333
+    // &:nth-child(even) .information
+    // 	background : #393939
+    .actionsOnUser {
+      height: 100%;
+      position: absolute;
+      left: 0;
+      background: #2a2a2a;
+      color: white;
+      // z-index : 1
+      .action {
+        width: 70px;
+        height: 100%;
+        position: relative;
+        text-align: center;
+        float: left;
+        opacity: 0.5;
+        border-right: 1px #444 solid;
+        &:last-child {
+          border-right: none;
+        }
+        &:hover {
+          opacity: 1;
+          background-color: #111;
+          cursor: pointer;
+        }
+      }
+      .call, .hangUp {
+        position: relative;
+        //background : url(../../images/iconePhone.png) center center no-repeat
+        &:before {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: url(../../images/iconePhone.png) center center no-repeat;
+          left: 0;
+        }
+      }
+      .hangUp {
+        background-color: #be2520;
+        &:hover {
+          background-color: #be2520;
+        }
+        &:before {
+          margin: 3px 0;
+          @include transform(rotate(137deg));
+        }
+      }
+      .add_table {
+        background: url(../../icons/plus.png) center center no-repeat;
+        &:hover {
+          background-color: #01b101;
+        }
+      }
+      .edit_user {
+        background: url(../../icons/740-gear.png) center center no-repeat;
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+    &[data-statusUser='online'] .information, &[data-status='0'] .status {
+      border-color: #01b101;
+    }
+    &[data-statusUser='busy'] .information {
+      border-color: $colorSat;
+    }
+    &[data-statusUser='away'] .information {
+      border-color: orange;
+    }
+    &[data-statusUser='offline'] .information {
+      border-color: #555;
+    }
+  }
+  /* LOGIN FORM */
+  #login_sip {
+    background: #222;
+    padding: 20px;
+    color: white;
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    .parameters {
+      display: inline-block;
+    }
+    h1 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 14px;
+    }
+    input {
+      background: #111;
+      color: white;
+      border-color: #222;
+    }
+    .half {
+      width: 47%;
+      float: left;
+      position: relative;
+      margin-right: 7px;
+      input {
+        width: 95%;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+    input[type=submit] {
+      background: #111;
+      width: inherit;
+      margin: 5px 0;
+      line-height: 30px;
+      height: 30px;
+      font-size: 14px;
+      padding: 0 10px;
+      cursor: pointer;
+      &:hover {
+        background: #333;
+      }
+    }
+  }
+}
+
+.editUser {
+  //Edit user
+  .remove {
+    background: none;
+    color: white;
+    border: none;
+    cursor: pointer;
+    float: right;
+    &:hover {
+      color: red;
+    }
+  }
+}

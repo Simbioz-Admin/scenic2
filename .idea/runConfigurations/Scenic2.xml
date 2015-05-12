@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Scenic2" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="/usr/bin/node" path-to-js-file="server.js" application-parameters="-n -l switcher" working-dir="$PROJECT_DIR$">
+    <envs>
+      <env name="NODE_PATH" value="NODE_PATH=$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs" />
+    </envs>
+    <browser start="true" with-js-debugger="true" url="http://localhost:8095" />
+    <method />
+  </configuration>
+</component>

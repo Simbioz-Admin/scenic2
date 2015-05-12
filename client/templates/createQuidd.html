@@ -1,0 +1,15 @@
+<div class="close" id="close-panelRight">X</div>
+<div id="title"><%=title%></div>
+
+<form id="form-quidd"  data-classname="" onsubmit="return(false)">
+	<input type="hidden" id="className"  value="<%=className%>"/>
+	<input type="text" id="quiddName" data-i18n="[placeholder]choose a name, if empty a default name has been defined" placeholder="" value=""/>
+	<% if(devices){ %>
+		<select id="device">
+			<% _.each(devices, function(device) { %>
+				<option value="<%=device.value%>"><%=device.name%></option>
+			<% }) %>
+		</select>
+	<% } %>
+	<input type="submit" class="btn btn-large" data-i18n="[value]create" value="create" id="create"/>
+</form>

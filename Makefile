@@ -1,5 +1,5 @@
 VERSION := $(shell ./scenic2 -v | cut -d ' ' -f3)
-PROJDIRS := client_side server_side templates assets 
+PROJDIRS := client server templates assets
 EXECFILES := scenic2 \
 	scenic2-installer
 SRCFILES := package.json \
@@ -15,6 +15,10 @@ ALTFILES := COPYING \
 ALLFILES := $(PROJDIRS) $(SRCFILES)
 TARGETDIR := /share/scenic2
 ARCHIVE := scenic2_$(VERSION)
+
+setup:
+	npm install
+	bower install
 
 all:
 	@echo Now run sudo make install
@@ -49,7 +53,7 @@ uninstall:
 
 clean:
 	@echo resetting paths in launch scripts
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > scenic2
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server/server.js \$$@" > scenic2
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic2/node_modules node npm-verify.js" > scenic2-installer
 #	rm -fr node_modules
 

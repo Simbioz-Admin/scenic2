@@ -150,9 +150,40 @@
 
 .box {
   width: 125px;
-  background: rgba(white, 0.2);
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid $backgroundColor;
   text-align: center;
+  vertical-align: top;
+  .icon {
+    opacity: 0.25;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  &.enabled {
+    cursor: pointer;
+    background: $backgroundColorDark;
+    &.active {
+      background: $backgroundColorDarker;
+      &:hover {
+        background: $red url(../../icons/x.png) no-repeat center;
+      }
+      .icon {
+        background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
+      }
+    }
+    &.inactive {
+      background: $backgroundColorDark;
+      &:hover {
+        cursor: pointer;
+        background: $green url(../../icons/plus.png) center no-repeat;
+      }
+    }
+  }
+
+  &.disabled {
+    background: $disabled;
+  }
+
   input[type=text] {
     @include border-radius(0px);
     margin: 0;
@@ -176,16 +207,6 @@
   .box:hover {
     background: none;
   }
-}
-
-.box_disabled {
-  background: #3e3e3e;
-  border-bottom: 1px solid #333;
-}
-
-.box:hover {
-  cursor: pointer;
-  background: #01b101 url(../../icons/plus.png) center center no-repeat;
 }
 
 .content-port-destination {
@@ -213,23 +234,6 @@
   display: table-cell;
   vertical-align: middle;
   color: white;
-}
-
-td.active {
-  color: white;
-  cursor: pointer;
-  position: relative;
-  &:hover {
-    background: $satColor url(../../icons/x.png) no-repeat center center !important;
-  }
-  .inactive {
-    background: #ddd;
-    color: #aaa;
-    cursor: pointer;
-    &:hover {
-      background: #ddd !important;
-    }
-  }
 }
 
 #control {
@@ -270,10 +274,9 @@ td.active {
 
     }
     .name {
-      width: 100px;
+      width: 100%;
       color: white;
-      position: absolute;
-      padding: 15px 10px 0;
+      padding: 13px 0;
       text-align: center;
       white-space: normal;
       overflow: hidden;
@@ -327,12 +330,11 @@ td.active {
   background: #333;
   float: left;
   margin: 0 0 10px;
-  //+box-shadow(rgba(0,0,0,0.3) 0px 3px 1px -1px)
   .name {
     width: 125px;
     color: white;
     position: absolute;
-    padding: 0 10px;
+    height: 100%;
     text-align: center;
     float: left;
     line-height: 40px;
@@ -341,20 +343,17 @@ td.active {
 
 .shmdatas {
   float: left;
-  // min-height: 50px
+  min-height: 40px;
   color: #eee;
   margin-left: 125px;
   .shmdata {
     th, td {
       border-left: 1px solid $colorBorder;
       border-bottom: 1px solid $colorBorder;
-      // height : 45px
     }
   }
   .shmdata:last-child {
-    td, th {
       border-bottom: none !important;
-    }
   }
   .shmdata > th {
     cursor: help;
@@ -384,9 +383,6 @@ td.active {
   }
   .active th:after {
     background: #008000;
-  }
-  .shmdata:first-child td.disabled {
-    border-top: 1px solid $colorBorder;
   }
   .shmdata td:last-child {
     border-right: none;
@@ -456,7 +452,7 @@ td.active {
 
 .table #headerTable .headerMenu > li div, .tableScenic tr .groupSource, td.active {
   background: $backgroundColor;
-  color: $colorText;
+  color: $textColor;
   &:hover {
     background: $backgroundColorDarker;
   }
@@ -469,20 +465,10 @@ td.active {
 .tableScenic .nameInOut, .scenic .destinations .nameInOut {
   background: #3a3a3a;
   border-color: $backgroundColor;
-  color: $colorText;
+  color: $textColor;
   a {
-    color: $colorText;
+    color: $textColor;
   }
-}
-
-
-td.active {
-  background: $active;
-}
-
-.box {
-  background: $backgroundColor;
-  border-color: $backgroundColor;
 }
 
 .actions .action {

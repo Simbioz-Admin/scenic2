@@ -9,8 +9,9 @@ require( {
     paths:    {
         text:         '../bower_components/requirejs-text/text',
         socketio:     '/socket.io/socket.io',
-        underscore:   '../bower_components/underscore/underscore-min',
+        underscore:   '../bower_components/underscore/underscore',
         backbone:     '../bower_components/backbone/backbone',
+        mutators:     '../bower_components/backbone.mutators/backbone.mutators.min',
         jquery:       '../bower_components/jquery/dist/jquery.min',
         jqueryCookie: '../bower_components/jquery.cookie/jquery.cookie',
         jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',

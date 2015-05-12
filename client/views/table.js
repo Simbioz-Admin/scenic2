@@ -44,7 +44,7 @@ define(
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
           "blur #port_destination": "removeInputDestination",
-          "change .dropdown_filter": "filter_quiddities",
+          "change .dropdown_filter": "filter_quiddities"
         },
 
         // FIXME: separate the menus views and shmdata/connections table and handle view events properly
@@ -167,7 +167,7 @@ define(
 
         toggle_connection: function(e) {
           console.log('toggle_connection');
-          var box = $(e.target),
+          var box = $(e.currentTarget),
             destination = box.data("destination"),
             path = box.parent().data("path");
 

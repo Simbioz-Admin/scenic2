@@ -43,7 +43,7 @@ define(
         events: {
           "keypress": "keyboardAction",
           "click #close-panelRight": "closePanel",
-          "click #close-panelInfoSource": "closePanelInfoSource",
+          "click #close-shmdata-info-panel": "closeShmdataInfoPanel",
           "change .checkbox": 'stateCheckbox',
           "click #btn-info": 'panelInfo',
           "click #btnSave": 'save_file',
@@ -74,7 +74,7 @@ define(
           });
 
           /* Define the panelRight draggable */
-          $("#panelRight .content, .panelInfoSource").draggable({
+          $("#panelRight .content, .shmdata-info-panel").draggable({
             cursor: "move",
             handle: "#title"
           });
@@ -374,8 +374,8 @@ define(
 
         /* Called for closing panel Info  */
 
-        closePanelInfoSource: function() {
-          $(".panelInfoSource").remove();
+        closeShmdataInfoPanel: function() {
+          $(".shmdata-info-panel").remove();
         },
         panelBoxRemove: function panelInfoRemove() {
           $(".panelBox").remove();

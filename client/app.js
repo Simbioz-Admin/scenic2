@@ -10,6 +10,7 @@ define(
   [
     'underscore',
     'backbone',
+    'mutators',
     'jquery',
     'i18n',
     'collections/tables', 'collections/classes_doc', 'collections/destinationsRtp', 'collections/quidds', 'collections/destinationsProperties', 'collections/loggers', 'collections/users', 'collections/channels-irc',
@@ -20,6 +21,7 @@ define(
   function(
     _,
     Backbone,
+    Mutators,
     $,
     i18n,
     CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp, CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,

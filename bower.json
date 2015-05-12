@@ -26,9 +26,8 @@
     "jquery.cookie": "~1.4.1",
     "jquery-ui": "~1.11.4",
     "jqueryui-touch-punch": "*",
-    "requirejs-text": "~2.0.14"
+    "requirejs-text": "~2.0.14",
+    "backbone.mutators": "~0.4.5"
   },
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }

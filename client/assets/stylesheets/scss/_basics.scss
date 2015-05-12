@@ -2,6 +2,7 @@
 
 * {
   box-sizing: border-box;
+  outline: none;
 }
 
 @include establish-baseline;
@@ -18,7 +19,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
-  background: $backgroundColorDark;
+  background: $backgroundColor;
   height: 100%;
   overflow-x: hidden;
 }
@@ -27,7 +28,7 @@ h3 {
   font-size: 1.4em;
   padding-bottom: 5px;
   margin: 10px 0;
-  color: $colorText;
+  color: $textColor;
   &:hover {
     cursor: help;
   }

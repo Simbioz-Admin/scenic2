@@ -2,15 +2,24 @@ $base-font-size: 10px;
 $base-line-height: 12px;
 
 $heightHeader: 60px;
-$grey1: #f1f1f1;
-$grey2: #333;
+$gray1: #f1f1f1;
+$gray2: #333;
 $satColor: #be2620;
 $colorBorder: #3a3a3a;
-$colorText: #aaa;
-$backgroundColor: #333;
-$backgroundColorDark: #3b3b3b;
-$backgroundColorDarker: #222;
-$active: #222;
+
+$textColor: #aaa;
+$textColorSubtle: #595959;
+$textColorSubtler: #404040;
+
+$backgroundColor: #3b3b3b;
+$backgroundColorDark: #333333;
+$backgroundColorDarker: #222222;
+
+$disabled: darken( $backgroundColor, 1% );
+$active: $backgroundColorDarker;
+
+$red: $satColor;
+$green: #01b101;
 
 @mixin shadow1 {
   @include box-shadow( rgba(black, 0.25) 0px 0px 24px);

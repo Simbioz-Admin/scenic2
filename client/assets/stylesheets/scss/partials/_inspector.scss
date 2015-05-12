@@ -2,7 +2,7 @@
   display: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   .content {
-    background: $colorBg3;
+    background: $backgroundColorDarker;
     color: $colorText;
     position: absolute;
     right: 20px;
@@ -28,7 +28,7 @@
   left: 400px;
   top: 200px;
   z-index: 10000;
-  background: $colorBg3;
+  background: $backgroundColorDarker;
   @include border-radius(6px);
   @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
   .content {
@@ -53,7 +53,7 @@
 }
 
 .close {
-  background: $colorBg1;
+  background: $backgroundColor;
   padding: 0 8px;
   height: 30px;
   line-height: 30px;
@@ -134,9 +134,12 @@
   background: #2a2a2a !important;
 }
 
-#panelRight input[type=text], .panelInfoSource input[type=text] {
-  background: $colorBg2;
-  border-color: $colorBg2;
-  outline-color: #ddd;
+#panelRight input[type=text],
+.panelInfoSource input[type=text] {
+  background: $backgroundColorDark;
+  border: none;
   color: white;
+  &:focus {
+    border: lighten($backgroundColorDark, 15%) solid 1px;
+  }
 }

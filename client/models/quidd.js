@@ -71,7 +71,7 @@ define(
               } else {
                 var aPath = a.get('path');
                 var bPath = b.get('path');
-                return aPath != null ? aPath.localeCompare(bPath) : bPath.localeCompare(aPath) * -1;
+                return aPath != null ? aPath.localeCompare(bPath) : ( bPath != null ? bPath.localeCompare(aPath) * -1 : 0 );
               }
             }
           });

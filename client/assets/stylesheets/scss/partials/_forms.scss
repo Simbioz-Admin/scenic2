@@ -29,9 +29,9 @@
   cursor: pointer;
   background: $colorSat;
   position: relative;
-  //+border-radius(5px)
+  @include border-radius(5px);
   color: white;
-  @include box-shadow(inset 0 0 20px rgba(0, 0, 0, 0.1), 0 0 10px rgba(146, 196, 245, 0.4));
+  //@include box-shadow(inset 0 0 20px rgba(0, 0, 0, 0.1), 0 0 10px rgba(146, 196, 245, 0.4));
   width: 55px;
   text-align: right;
   @include transition(0.5s);
@@ -48,8 +48,8 @@
     left: 1px;
     width: 15px;
     color: #FFF;
-    height: 22px;
-    //border-radius: 2px
+    height: 21px;
+    @include border-radius(4px);
     @include transition(0.2s);
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
   }
@@ -73,7 +73,6 @@
 }
 
 select {
-  //padding : 4px
   width: 100%;
   margin: 0 0 10px 0;
   border-radius: 3px;
@@ -87,7 +86,9 @@ select {
   }
 }
 
-input[type=text], input[type=password] {
+input[type=text],
+input[type=password] {
+  outline: none;
   border: 1px solid #ccc;
   padding: 0px 5px;
   margin: 5px 0 10px 0;
@@ -96,7 +97,8 @@ input[type=text], input[type=password] {
   width: 95%;
 }
 
-input[type=text].property.string, input[type=text].method {
+input[type=text].property.string,
+input[type=text].method {
   width: 73%;
 }
 
@@ -109,8 +111,6 @@ input[type=submit] {
   color: white;
   border: none;
   @include border-radius(3px);
-  height: 25px;
-  line-height: 25px;
   width: 200px;
   display: block;
   margin: 0 auto;

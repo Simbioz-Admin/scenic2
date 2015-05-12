@@ -18,14 +18,14 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
-  background: $colorBg2;
+  background: $backgroundColorDark;
   height: 100%;
   overflow-x: hidden;
 }
 
 h3 {
   font-size: 1.4em;
-  border-bottom: 1px $colorBg1 solid;
+  border-bottom: 1px $backgroundColor solid;
   padding-bottom: 5px;
   margin: 10px 0;
   color: $colorText;

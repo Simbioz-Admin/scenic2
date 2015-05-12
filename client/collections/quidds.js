@@ -9,7 +9,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'models/quidd',
+    'models/quidd'
   ],
 
   function(_, Backbone, socket, QuiddModel) {
@@ -36,6 +36,18 @@ define(
         parse: function(results, xhr) {
           return results;
         },
+
+        /*comparator: function( a, b ) {
+          var aName = a.get('name');
+          var bName = b.get('name');
+          var aSip = a.get('class') == 'sip';
+          var bSip = b.get('class') == 'sip';
+          if ( aSip != bSip ) {
+            return aSip ? -1 : 1;
+          } else {
+            return aName != null ? aName.localeCompare(bName) : ( bName != null ? bName.localeCompare(aName) * -1 : 0 );
+          }
+        },*/
 
 
         /** Initialization of the quidds Collection 

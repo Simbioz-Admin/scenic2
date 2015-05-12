@@ -57,7 +57,6 @@
       color: #eee;
       border-left: 2px solid $colorSat;
       padding-left: 0;
-      //+box-shadow(-4px 0px 7px -5px black inset)
       .content .icon {
         opacity: 1;
       }
@@ -169,7 +168,7 @@
   }
 }
 
-//TODO: Fix this, it doesn't detect mobile corectly
+//TODO: Fix this, it doesn't detect mobile correctly
 @media screen and (min-device-width: 320px) and (max-device-width: 1024px) {
   .box {
     -webkit-user-select: none;
@@ -345,11 +344,12 @@ td.active {
   // min-height: 50px
   color: #eee;
   margin-left: 125px;
-  .shmdata td {
-    border-left: 1px solid $colorBorder;
-    border-bottom: 1px solid $colorBorder;
-    // height : 45px
-
+  .shmdata {
+    th, td {
+      border-left: 1px solid $colorBorder;
+      border-bottom: 1px solid $colorBorder;
+      // height : 45px
+    }
   }
   .shmdata:last-child {
     td, th {
@@ -455,20 +455,20 @@ td.active {
 }
 
 .table #headerTable .headerMenu > li div, .tableScenic tr .groupSource, td.active {
-  background: $colorBg1;
+  background: $backgroundColor;
   color: $colorText;
   &:hover {
-    background: $colorBg3;
+    background: $backgroundColorDarker;
   }
 }
 
 .tableScenic tr .groupSource {
-  border: 1px solid $colorBg3;
+  border: 1px solid $backgroundColorDarker;
 }
 
 .tableScenic .nameInOut, .scenic2 .destinations .nameInOut {
   background: #3a3a3a;
-  border-color: $colorBg1;
+  border-color: $backgroundColor;
   color: $colorText;
   a {
     color: $colorText;
@@ -481,16 +481,16 @@ td.active {
 }
 
 .box {
-  background: $colorBg1;
-  border-color: $colorBg1;
+  background: $backgroundColor;
+  border-color: $backgroundColor;
 }
 
 .actions .action {
-  background: $colorBg3;
+  background: $backgroundColorDarker;
 }
 
 #panelTables .tabTable {
   &.active {
-    background: $colorBg2;
+    background: $backgroundColorDark;
   }
 }

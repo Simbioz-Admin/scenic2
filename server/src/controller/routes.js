@@ -12,8 +12,10 @@ module.exports = function( app, config, switcherController ) {
     var rootPath = pwd.split('/').slice(0, -2).join('/');
 
     app.use('/bower_components', express.static(rootPath + "/bower_components"));
-    app.use('/client', express.static(rootPath + "/client"));
+    app.use('/client', express.static(rootPath + "/client/src"));
     app.use('/locales', express.static(rootPath + "/locales"));
+    app.use('/assets', express.static(rootPath + "/client/assets"));
+    app.use('/templates', express.static(rootPath + "/client/templates"));
 
     app.get('/', function(req, res) {
 

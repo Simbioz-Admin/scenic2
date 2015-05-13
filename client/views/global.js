@@ -48,7 +48,7 @@ define(
           "click #btn-info": 'panelInfo',
           "click #btnSave": 'save_file',
           "submit #saveFile": 'save',
-          "click #btnGetFiles": 'get_save_file',
+          "click #btnGetFiles": 'get_save_file_list',
           'click #panelFiles .file': 'load_file',
           'click .remove_save': 'remove_save',
           "click .tabTable": 'showTable',
@@ -267,7 +267,7 @@ define(
           }
 
           console.log("ask for saving ", nameFile);
-          socket.emit("save", nameFile + ".scenic", function(ok) {
+          socket.emit("save", nameFile + ".scenic", function(result) {
             views.global.notification("info", nameFile + " "+ $.t("is successfully saved"));
             $(".panelBox").remove();
           })
@@ -277,9 +277,9 @@ define(
          *  Called for get files saved on the server
          */
 
-        get_save_file: function() {
+        get_save_file_list: function() {
           var that = this;
-          socket.emit('get_save_file', function(saveFiles) {
+          socket.emit('get_save_file_list', function(saveFiles) {
 
             if ($("#panelFiles").length == 0) {
               $(".panelBox").remove();
@@ -324,8 +324,10 @@ define(
 
         remove_save: function(e) {
           var name = $(e.target).data("name");
-          socket.emit("remove_save", name, function(ok) {
-            if (ok) {
+          socket.emit("remove_save", name, function(error) {
+            if (error) {
+              //TODO: Handle error
+            } else {
               $(e.target).parent().remove();
             }
           })

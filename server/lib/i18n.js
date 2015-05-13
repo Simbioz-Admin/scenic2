@@ -2,7 +2,7 @@
 
 var _ = require('underscore');
 var i18n = require('i18next');
-var switcher = require('switcher');
+//var switcher = require('switcher');
 var log = require('./logger');
 
 module.exports = {

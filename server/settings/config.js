@@ -63,10 +63,7 @@ var config = {
 
   rtpsession: "defaultrtp",
   logLevel: "warn",
-  logSocketIo: false,
   standalone: false,
-  scenicStart: false,
-  configSet: false,
   passSet: null,
   loadFile: false,
   nameComputer: os.hostname(),

@@ -19,7 +19,6 @@ exports.parse = function( config ) {
         message += rpad( '-f, --file', 25 ) + 'Load a Scenic file (ex : -f my_save.scenic)\n';
         message += rpad( '-n, -nogui', 25 ) + "Launch Scenic without app interface\n";
         message += rpad( '-l, --log', 25 ) + "Set the log level (default: info) [switcher|debug]\n";
-        message += rpad( '-w, --withoutconf', 25 ) + 'Launch Scenic without with pre-configuration (GUI will not ask for startup configuration)\n';
         message += rpad( '-g, --guiport', 25 ) + "GUI port for Scenic (default is " + config.scenic.ports.min + ")\n";
         message += rpad( '-s, --soapport', 25 ) + "SOAP port (default is " + config.soap.ports.min + ")\n";
         message += rpad( '-i, --identification', 25 ) + "Identification name (default is " + config.nameComputer + ")\n";
@@ -71,13 +70,6 @@ exports.parse = function( config ) {
     if ( argv.g || argv.guiport ) {
         var port           = (argv.g ? argv.g : argv.guiport);
         config.scenic.port = port;
-    }
-
-    /**
-     * Auto launch
-     */
-    if ( argv.w || argv.withoutconf ) {
-        config.configSet = true;
     }
 
     /**

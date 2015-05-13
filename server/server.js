@@ -30,29 +30,75 @@ require('./bootstrap' )( function( err ) {
     var i18n = require('./lib/i18n');
     var scenicIo = require('./lib/scenic-io');
     var routes = require('./controller/routes');
-    var switcherControl = require('./switcher/switcher-control');
+    var SwitcherController = require('./switcher/SwitcherController');
 
-    // Autodetect ports
-    async.parallel( [
+    var app;
+    var server;
+    var io;
+    var switcher;
+
+    async.series( [
+
         function( callback ) {
+            // Translations
+            i18n.initialize( callback );
+        },
+
+        function( callback ) {
+            // Server setup
+            log.debug( "Setting up server..." );
+
+            app = require('express')();
+            app.use(locale(config.locale.supported));
+            app.use(require('cookie-parser')());
+
+            server = http.createServer(app);
+
             checkPort( 'Scenic GUI', config.scenic, callback );
         },
-        function( callback ) {
-            checkPort( 'SOAP', config.soap, callback );
-        },
-        function( callback ) {
-            checkPort( 'SIP', config.sip, callback );
-        }
-    ], function( error, result ) {
-        if ( error ) {
-            log.error( error );
-            return process.exit();
-        } else {
-            launch();
-        }
-    });
 
-    function launch() {
+        function( callback ) {
+            // Socket.io
+            log.debug( "Setting up socket.io..." );
+            io = socketIo( server );
+            callback();
+        },
+
+        function(callback) {
+            // Switcher
+            switcher = new SwitcherController( config, io );
+            switcher.initialize( callback );
+        },
+
+        function(callback) {
+            // ScenicIo Client
+            scenicIo.initialize(config, io, switcher);
+
+            // IRC Client
+            //FIXME: IRC is not enabled in this version
+            //irc.initialize(io);
+
+            callback();
+        },
+
+        function( callback ) {
+            // Server startup
+            log.debug( "Starting server..." );
+            server.listen( config.scenic.port, callback );
+        },
+
+        function( callback ) {
+            // Routes
+            log.debug( "Setting up routes..." );
+            routes( app, config, switcher );
+            callback();
+        }
+
+    ], function( err ) {
+        if ( err ) {
+            log.error( err );
+            return process.exit();
+        }
 
         var message = "\nConfiguration\n";
         message += colors.gray(repeat('–', 50)) + '\n';
@@ -76,69 +122,24 @@ require('./bootstrap' )( function( err ) {
         }
         console.log(message);
 
-        var app;
-        var server;
-
-        async.series( [
-            function( callback ) {
-                // Translations
-                i18n.initialize( callback );
-            },
-            function( callback ) {
-                // Server
-                log.debug( "Starting servers..." );
-                app = require('express')();
-                app.use(locale(config.locale.supported));
-                app.use(require('cookie-parser')());
-                routes( app, config );
-
-                server = http.createServer(app);
-                server.listen( config.scenic.port, callback );
-            },
-            function( callback ) {
-                // Socket.io Server
-                log.debug( "Initializing sockets..." );
-                var io = socketIo(server, { log: true });
-
-                // Switcher
-                if (!config.scenicStart && config.configSet) {
-                    switcherControl.initialize(config, io);
-                    config.scenicStart = true;
-                }
-
-                // ScenicIo Client
-                scenicIo.initialize(config, io);
-
-                // IRC Client
-                //FIXME: IRC is not enabled in this version
-                //irc.initialize(io);
-
-                // GUI, unless -g is used on the command line, it will launch a chrome instance
-                if (!config.standalone) {
-                    log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);
-                    var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
-                    chrome.stdout.on('data', function(data) {
-                        log.debug( 'chromium-browser:', data.toString().trim() );
-                    });
-                    chrome.stderr.on('data', function(data) {
-                        log.debug( 'chromium-browser:', 'error:', data.toString().trim() );
-                    });
-                }
-
-                callback();
-            }
-        ], function( err ) {
-            if ( err ) {
-                log.error( err );
-            }
-        });
-    }
+        // GUI, unless -g is used on the command line, it will launch a chrome instance
+        if (!config.standalone) {
+            log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);
+            var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
+            chrome.stdout.on('data', function(data) {
+                log.debug( 'chromium-browser:', data.toString().trim() );
+            });
+            chrome.stderr.on('data', function(data) {
+                log.debug( 'chromium-browser:', 'error:', data.toString().trim() );
+            });
+        }
+    });
 
     /**
      * close switcher when process exits
      */
     process.on('exit', function() {
-        switcherControl.close();
+        switcher.close();
     });
 
     /**

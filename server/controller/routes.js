@@ -5,9 +5,8 @@ var path = require('path');
 var i18next = require('i18next');
 var express = require('express');
 var switcher = require('switcher');
-var switcherControl = require('../switcher/switcher-control');
 
-module.exports = function( app, config ) {
+module.exports = function( app, config, switcherController ) {
 
     var pwd = path.dirname(__dirname);
     var rootPath = pwd.split('/').slice(0, -1).join('/');
@@ -74,7 +73,7 @@ module.exports = function( app, config ) {
             var quiddsFiltered = [];
             _.each(quidds, function(quidd, index) {
                 if (!_.contains(config.quiddExclude, quidd.class)) {
-                    var properties = switcherControl.quidds.get_properties_values(quidd.name);
+                    var properties = switcherController.quiddityManager.get_properties_values(quidd.name);
                     var methods = JSON.parse(switcher.get_methods_description(quidd.name)).methods;
                     quidds[index]["properties"] = properties;
                     quidds[index]["methods"] = methods;
@@ -105,7 +104,7 @@ module.exports = function( app, config ) {
 
     app.get('/users', function(req, res) {
         res.contentType('application/json');
-        var listUsers = switcherControl.sip.getListUsers();
+        var listUsers = switcherController.sip.getListUsers();
         res.send(listUsers);
     });
 };

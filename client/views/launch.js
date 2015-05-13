@@ -1,10 +1,11 @@
+/*
 define(
 
-  /** 
+  /!**
    *  View Launch
    *  The Launch View to manage the interface scenic pre-configuration  when launched
    *  @exports Views/Launch
-   */
+   *!/
 
   [
     'app',
@@ -19,20 +20,20 @@ define(
 
   function(App, _, Backbone, socket, ui, Spinner, templateLaunch, TemplateLoginForm) {
 
-    /** 
+    /!**
      *  @constructor
      *  @requires app
      *  @requires Underscore
      *  @requires Backbone
      *  @requires TemplateLaunch
      *  @augments module:Backbone.View
-     */
+     *!/
 
     var LaunchView = Backbone.View.extend(
 
-      /**
+      /!**
        *  @lends module: Views/launch~LaunchView.prototype
-       */
+       *!/
 
       {
         tagName: 'div',
@@ -73,7 +74,7 @@ define(
           $("#bgLightBox, #lightBox").fadeIn(200);
         },
 
-        /* On click #submitParam we check parameters */
+        /!* On click #submitParam we check parameters *!/
 
         verification: function(e) {
 
@@ -93,7 +94,7 @@ define(
                 verificationOk = false;
               }
 
-              /* Check the password */
+              /!* Check the password *!/
               if (dataFormConfig.pass != dataFormConfig.confirmPass) {
                 alert("Passwords do not match.");
                 verificationOk = false;
@@ -105,7 +106,7 @@ define(
           return false;
         },
 
-        /* Called when the parameters are ok */
+        /!* Called when the parameters are ok *!/
 
         launchScenic: function(dataFormConfig, dataFormSip) {
           var self = this;
@@ -143,4 +144,4 @@ define(
       });
 
     return LaunchView;
-  });
+  });*/

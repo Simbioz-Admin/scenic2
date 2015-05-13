@@ -49,45 +49,26 @@ require( {
     'punch',
     'collections/users',
     'lib/socket',
-    'views/launch',
     'jqueryCookie',
     collections = [],
     views = {},
     config = {}
-], function ( app, util, punch, CollectionUsers, socket, LaunchView ) {
+], function ( app, util, punch, CollectionUsers, socket ) {
 
-    //recovery config information from the server
-    socket.emit( "getConfig", function ( configServer ) {
+    //Announce ourself and ecover config information from the server
+    socket.emit( "getConfig", localStorage["socketId"], socket.id, function ( configServer ) {
         config = configServer;
+        localStorage['socketId'] = socket.id;
     } );
 
     collections.users = new CollectionUsers();
 
-
-    if ( localStorage["oldId"] ) {
-        socket.emit( "returnRefresh", localStorage["oldId"], socket.id );
-    }
-
-
-    /* stock information of sessionid in localStorage when user refresh or quit interface. 
-     Use for know how close the interface */
-    $( window ).bind( 'beforeunload', function () {
-        localStorage["oldId"] = socket.id;
-    } );
-
-
-    /* When the server is closed or crash a message global is send for all user */
+    // When the server is closed or crashes shutdown the app
+    //TODO: Actually close the app
     socket.on( "shutdown", function () {
         console.log( "SHUTDOWN" );
         $( "body" ).html( "<div id='shutdown'>the server has turned off</div>" );
     } );
 
-    //check state of scenic for show page authentification or scenic
-    socket.emit( "scenicStart", function ( stateScenic ) {
-        if ( !stateScenic ) {
-            views.launch = new LaunchView();
-        } else {
-            app.initialize();
-        }
-    } );
+    app.initialize();
 } );

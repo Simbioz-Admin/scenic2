@@ -9,7 +9,7 @@ var switcher = require('switcher');
 module.exports = function( app, config, switcherController ) {
 
     var pwd = path.dirname(__dirname);
-    var rootPath = pwd.split('/').slice(0, -1).join('/');
+    var rootPath = pwd.split('/').slice(0, -2).join('/');
 
     app.use('/bower_components', express.static(rootPath + "/bower_components"));
     app.use('/client', express.static(rootPath + "/client"));
@@ -104,7 +104,7 @@ module.exports = function( app, config, switcherController ) {
 
     app.get('/users', function(req, res) {
         res.contentType('application/json');
-        var listUsers = switcherController.sip.getListUsers();
+        var listUsers = switcherController.sipManager.getListUsers();
         res.send(listUsers);
     });
 };

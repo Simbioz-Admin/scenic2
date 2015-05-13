@@ -119,9 +119,9 @@ define(
         },
         connections: function() {
           var that = this;
-          $('[data-destination="' + this.model.get('uri') + '"]').removeClass('active');
+          $('[data-destination="' + this.model.get('uri') + '"]').removeClass('active' ).addClass('inactive');
           _.each(this.model.get('connection'), function(connection) {
-            $('[data-path="' + connection + '"] [data-destination="' + that.model.get('uri') + '"]').addClass('active');
+            $('[data-path="' + connection + '"] [data-destination="' + that.model.get('uri') + '"]').removeClass('inactive' ).addClass('active');
           });
         },
         editUser: function() {
@@ -149,4 +149,4 @@ define(
       });
 
     return UserView;
-  })
+  });

@@ -42,7 +42,7 @@ define(
         //assocition between action on elements html and functions
         events: {
           "keypress": "keyboardAction",
-          "click #close-panelRight": "closePanel",
+          "click #close-inspector": "closePanel",
           "click #close-shmdata-info-panel": "closeShmdataInfoPanel",
           "change .checkbox": 'stateCheckbox',
           "click #btn-info": 'panelInfo',
@@ -74,9 +74,9 @@ define(
           });
 
           /* Define the panelRight draggable */
-          $("#panelRight .content, .shmdata-info-panel").draggable({
+          $(" .inspector-info-panel, .shmdata-info-panel").draggable({
             cursor: "move",
-            handle: "#title"
+            handle: ".title"
           });
 
           $(document).keyup(function(e) {
@@ -166,7 +166,7 @@ define(
         create_receiver: function(element) {
           //element.stopPropagation();
           var template = _.template(TemplateReceiver)();
-          $("#panelRight .content").html(template);
+          $("#panelRight .inspector-info-panel").html(template);
           views.global.openPanel();
         },
 

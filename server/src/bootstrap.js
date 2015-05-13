@@ -3,7 +3,7 @@
 var npm = require("npm");
 var fs = require('fs');
 var spawn = require( 'child_process' ).spawn;
-var pkg = require('../package.json');
+var pkg = require('../../package.json');
 
 var config = require("./settings/config.js");
 var cwd = __dirname;

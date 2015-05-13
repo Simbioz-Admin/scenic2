@@ -1,36 +1,9 @@
 .info-panel {
   background: $backgroundColorDarker;
   color: $textColor;
-  .content {
-    padding: 1em;
-    font-size: 1.3em;
-    line-height: 1.4em;
-  }
-}
-
-#panelRight {
-  display: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  .content {
-    position: absolute;
-    z-index: 1000;
-    width: 300px;
-    overflow: auto;
-    @include shadow1;
-    @include border-radius(6px);
-  }
-}
-
-.shmdata-info-panel {
-  display: none;
-  color: white;
   min-width: 300px;
   min-height: 100px;
   position: fixed;
-  left: 400px;
-  top: 200px;
-  z-index: 10000;
-  background: $backgroundColorDarker;
   @include border-radius(6px);
   @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
 
@@ -43,6 +16,48 @@
     white-space: nowrap;
     background: #2a2a2a;
   }
+
+  .content {
+    overflow: auto;
+    padding: 20px;
+    line-height: 1.4em;
+  }
+
+  .close {
+    background: $backgroundColor;
+    padding: 0 8px;
+    height: 30px;
+    line-height: 30px;
+    float: right;
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-weight: bold;
+    z-index: 100;
+    font-size: 1.4em;
+    cursor: pointer;
+    &:hover {
+      background: $satColor;
+    }
+  }
+}
+
+#panelRight {
+  display: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  .info-panel {
+    top: $heightHeader + 20px;
+    right: 20px;
+    width: 300px;
+  }
+}
+
+.shmdata-info-panel {
+  display: none;
+  left: 400px;
+  top: 200px;
+  z-index: 10000;
 
   .content {
     .name {
@@ -71,24 +86,7 @@
   }
 }
 
-.close {
-  background: $backgroundColor;
-  padding: 0 8px;
-  height: 30px;
-  line-height: 30px;
-  float: right;
-  color: white;
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-weight: bold;
-  z-index: 100;
-  font-size: 1.4em;
-  cursor: pointer;
-  &:hover {
-    background: $satColor;
-  }
-}
+
 
 .setMethod, .sendProperty {
   padding: 11px 10px;
@@ -113,7 +111,6 @@
 .removeModifier {
   float: right;
   font-size: 1.6em;
-  font-family: arial;
   width: 15px;
   height: 15px;
   margin: 0 0 5px 0;

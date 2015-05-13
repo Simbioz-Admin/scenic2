@@ -120,10 +120,10 @@ define(
             /* we parse connection for add or remove */
             // var shmdatas = $.parseJSON(shmdatas);
             $("[data-destination='" + name + "']").each(function(index, box) {
-              $(box).removeClass("active");
+              $(box).removeClass("active" ).addClass('inactive');
               var path = $(box).parent().data("path");
               _.each(shmdatas, function(shm, name) {
-                if (name == path) $(box).addClass("active");
+                if (name == path) $(box).removeClass('inactive' ).addClass("active");
               });
             });
           });

@@ -44,7 +44,7 @@ SipManager.prototype.bindClient = function ( socket ) {
  *  @function addListUser
  *  @description add to the array listUsers a new users
  */
-function addUser( URI, name, cb ) {
+SipManager.prototype._addUser = function( URI, name, cb ) {
     log.debug( "Adding SIP user..." );
     var addBuddy = this.switcher.invoke( this.config.sip.quiddName, "add_buddy", [URI] );
     if ( !addBuddy ) {
@@ -66,13 +66,13 @@ function addUser( URI, name, cb ) {
     }
 
     cb( null, "Successfully added SIP user " + URI );
-}
+};
 
 /*
- *  @function createSip
+ *  @function _createSip
  *  @description set the connection with the server sip. This function is called a initialization of switcher
  */
-function createSip( name, password, address, port, cb ) {
+SipManager.prototype._createSip = function( name, password, address, port, cb ) {
     log.debug( "Creating SIP quiddity", {name: name, address: address, port: port} );
     //@TODO : Encrypt client side and decrypt server side the password
 
@@ -110,7 +110,7 @@ function createSip( name, password, address, port, cb ) {
     this.switcher.subscribe_to_signal( this.config.sip.quiddName, "on-tree-pruned" );
 
     /* Add user connected to the sip quiddity */
-    addUser( name + "@" + address, name, function ( err ) {
+    this._addUser( name + "@" + address, name, function ( err ) {
         if ( err ) {
             return log.error( err );
         }
@@ -140,13 +140,13 @@ function createSip( name, password, address, port, cb ) {
 
         if ( !users.error ) {
             _.each( users, function ( username, key ) {
-                addUser( key, username, function ( err, info ) {
+                this._addUser( key, username, function ( err, info ) {
                     if ( err ) {
                         return log.error( err );
                     }
                     log.debug( info );
                 } );
-            } );
+            }, this );
         }
     }
 
@@ -159,7 +159,7 @@ function createSip( name, password, address, port, cb ) {
     if ( cb ) {
         cb( null );
     }
-}
+};
 
 
 /*
@@ -191,6 +191,8 @@ SipManager.prototype.getListUsers = function () {
  *  @description Log user to the server sip
  */
 SipManager.prototype.login = function ( sip, cb ) {
+    var self = this;
+
     log.debug( "SIP login attempt: " + sip.name + '@' + sip.address + ':' + sip.port );
 
     // Remove potential previous SIP quiddity
@@ -202,7 +204,7 @@ SipManager.prototype.login = function ( sip, cb ) {
             return cb( error );
         }
         // Create new SIP quiddity
-        createSip( sip.name, sip.password, sip.address, sip.port, function ( err ) {
+        self._createSip( sip.name, sip.password, sip.address, sip.port, function ( err ) {
             if ( err ) {
                 return cb( err );
             }
@@ -230,12 +232,12 @@ SipManager.prototype.logout = function ( cb ) {
 };
 
 /*
- *  @function addUser
+ *  @function _addUser
  *  @description Add a new user in the dico and server sip
  */
 SipManager.prototype.addUser = function ( uri, cb ) {
     log.debug( "ask to add user ", uri );
-    addUser( uri, uri, function ( err, info ) {
+    this._addUser( uri, uri, function ( err, info ) {
         return cb( err, info );
     } );
 };

@@ -77,12 +77,12 @@ define(
               devices: devices
             });
 
-            $("#panelRight .content").html(template);
-            $("#panelRight .content").i18n();
+            $("#panelRight .inspector-info-panel").html(template);
+            $("#panelRight .inspector-info-panel").i18n();
             views.global.openPanel();
             //timeout wait for loading correctly field and focusing
             setTimeout(function(){
-              $("#panelRight .content #quiddName").focus();
+              $("#panelRight .inspector-info-panel #quiddName").focus();
             },1);
 
           }
@@ -158,7 +158,7 @@ define(
         removePreviewIcon: function(quidd) {
           var shmdata = quidd.split('_');
           shmdata = shmdata[1] + "_" + shmdata[2] + "_" + shmdata[3] + "_" + shmdata[4];
-          $("[data-path='" + shmdata + "'] .preview").removeClass("active");
+          $("[data-path='" + shmdata + "'] .preview").removeClass("active" ).addClass('inactive');
         },
         addPreviewIcon: function(quidd) {
           var that = this
@@ -168,7 +168,7 @@ define(
           var IntervalPreviewExisting = setInterval(function() {
             if ($("[data-path='" + shmdata + "'] .preview").length > 0) {
               window.clearInterval(IntervalPreviewExisting);
-              $("[data-path='" + shmdata + "'] .preview").addClass("active");
+              $("[data-path='" + shmdata + "'] .preview").removeClass('inactive').addClass("active");
             }
           }, 500);
         }

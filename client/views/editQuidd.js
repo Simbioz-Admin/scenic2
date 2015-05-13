@@ -39,7 +39,7 @@ define(
           "change input.property, select.property": "setProperty",
           "click .setMethod": "setMethod",
           "click input": "selectFocus",
-          "click #form-quidd, #title": "handlePropagation"
+          "click #form-quidd, .title": "handlePropagation"
         },
 
         properties_exlude: ['devices-json', 'shmdata-writers', 'shmdata-readers'],
@@ -81,7 +81,7 @@ define(
           });
 
           $("#panelRight").data("quiddName", this.model.get("name"));
-          $("#panelRight .content").html($(this.el));
+          $("#panelRight .inspector-info-panel").html($(this.el));
           views.global.openPanel();
 
         },

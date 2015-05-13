@@ -55,7 +55,6 @@ define(
           $("#transferSip").append($(this.el));
 
           //Check if quiddity sipQuid is created
-          console.log(config);
           socket.emit('get_info', config.sip.quiddName,'.buddy', function(infoQuidd){
             if(!infoQuidd.error){
               that.render();

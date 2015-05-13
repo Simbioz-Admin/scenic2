@@ -22,12 +22,16 @@ module.exports = {
             var self = this;
 
             /**
+             * Bind client to controller
+             */
+            switcherController.bindClient( socket );
+
+            /**
              * Configuration
              */
             socket.on( "getConfig", function ( oldSocketId, newSocketId, callback ) {
 
                 if ( masterSocketId && oldSocketId == masterSocketId ) {
-                    console.log( self.refreshTimeout );
                     clearTimeout( self.refreshTimeout );
                     masterSocketId = newSocketId;
                 } else if ( !masterSocketId ) {
@@ -56,10 +60,6 @@ module.exports = {
 
             } );
 
-            /**
-             * Bind client to controller
-             */
-            switcherController.bindClient( socket );
         } );
     }
 };

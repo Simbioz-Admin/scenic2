@@ -92,16 +92,17 @@ define(
                 connectionForDestination: function ( destination, tableType ) {
                     /* check if the connexion existing between source and destination */
                     var that   = this;
-                    var active = null;
+                    var active = false;
                     var port   = '';
 
                     var destinationId = (!destination.get( "uri" )) ? destination.get( "name" ) : destination.get( "uri" );
                     /* Render for Tab transfer */
                     if ( tableType == "transfer" && that.table.get( "type" ) == tableType && $( '[data-destination="' + destinationId + '"]', that.el ).length == 0 && destination.get( 'in_tab' ) ) {
+                        active = false;
 
                         _.each( destination.get( "data_streams" ), function ( stream ) {
                             if ( stream.path == that.model.get( "path" ) ) {
-                                active = "active";
+                                active = true;
                                 port   = stream.port;
                             }
                         } );
@@ -110,12 +111,14 @@ define(
 
                             _.each( destination.get( 'connection' ), function ( connection ) {
                                 if ( that.model.get( "path" ) == connection ) {
-                                    active = "active";
+                                    active = true;
                                 }
                             } );
                         }
 
-                        $( that.el ).append( '<td class="box ' + active + " " + that.table.get( "name" ) + '" data-destination="' + destinationId + '">' + port + '</td>' );
+                        var statusBox = 'box enabled';
+                        statusBox += active ? ' active' : ' inactive';
+                        $( that.el ).append( '<td class="' + statusBox + " " + that.table.get( "name" ) + '" data-destination="' + destinationId + '">' + port + '</td>' );
                     }
 
                     /* Render for Tab Sink */
@@ -132,10 +135,12 @@ define(
                                     type: 'reader'
                                 } );
 
+                                active = false;
+
                                 if ( shmdatasReaders ) {
                                     _.each( shmdatasReaders, function ( shm ) {
                                       if ( shm.get( 'path' ) == that.model.get( "path" ) ) {
-                                        active = "active";
+                                        active = true;
                                       }
                                     } );
                                 }
@@ -195,7 +200,7 @@ define(
                     } ).show();
                     $( ".panelInfo" ).draggable( {
                         cursor: "move",
-                        handle: "#title"
+                        handle: ".title"
                     } );
 
                     /*collections.quidds.getPropertyValue("vumeter_" + shmdata, "caps", function(val) {

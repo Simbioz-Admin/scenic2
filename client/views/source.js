@@ -122,7 +122,7 @@ define(
               var type = (info[0].indexOf("video") >= 0 ? "gtkvideosink" : "pulsesink");
               //check if the quiddity have already a preview active
               socket.emit("get_quiddity_description", that.model.get("name") + type, function(quiddInfo) {
-                var active = (quiddInfo.name ? "active" : "");
+                var active = (quiddInfo.name ? "active" : "inactive");
                 $("[data-path='" + shmdata.path + "'] .nameInOut .short").append("<div class='preview " + active + "'></div>");
               });
             }
@@ -152,7 +152,7 @@ define(
         },
         preview: function(element) {
           this.model.preview(element);
-          $(element.target).toggleClass("active");
+          $(element.target).toggleClass('active').toggleClass('inactive');
         },
         info: function(element) {
           this.model.info(element);

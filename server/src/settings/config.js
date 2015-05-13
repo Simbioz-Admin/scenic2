@@ -62,6 +62,11 @@ var config = {
   },
 
   rtpsession: "defaultrtp",
+
+
+
+
+
   logLevel: "warn",
   standalone: false,
   passSet: null,
@@ -71,6 +76,7 @@ var config = {
   propertiesExclude: ["shmdata-readers", "shmdata-writers"],
   deviceAutoDetect: ["v4l2src", "pulsesrc", "midisrc"],
   defaultPanelTable: "transfer",
+
   listQuiddsAndSocketId: {},
   subscribe_quidd_info: {},
   scenicDependenciesPath: scenicHomePath,

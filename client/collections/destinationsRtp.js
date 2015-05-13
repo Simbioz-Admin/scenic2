@@ -66,7 +66,7 @@ define(
               path: path,
               port: port
             });
-            $("[data-path='" + path + "'] [data-id='" + id + "']").addClass("active");
+            $("[data-path='" + path + "'] [data-id='" + id + "']").removeClass('inactive').addClass("active");
             $("[data-path='" + path + "'] [data-id='" + id + "']").html(port);
           })
 
@@ -76,7 +76,7 @@ define(
             _.each(streamsModel, function(stream, i) {
               if (stream.path == path) streamsModel.splice(i, 1);
             });
-            $("[data-path='" + path + "'] [data-id='" + id + "']").removeClass("active");
+            $("[data-path='" + path + "'] [data-id='" + id + "']").removeClass("active" ).addClass('inactive');
             $("[data-path='" + path + "'] [data-id='" + id + "']").html("");
           })
 

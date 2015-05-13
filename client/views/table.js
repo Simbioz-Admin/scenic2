@@ -62,13 +62,13 @@ define(
           /* generate a btn for the table */
           var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
 
-          var active = (currentTable == this.model.get("id") ? "active" : "");
+          var active = (currentTable == this.model.get("id") ? "active" : "inactive");
           var btnTable = $("<div></div>", {
             text: "",
             class: "tabTable " + this.model.get("type") + " " + this.model.get("name" ).toLowerCase() + " " + active,
             title: this.model.get("description"),
             data: {
-              id: this.model.get("id"),
+              id: this.model.get("id")
             }
           });
 

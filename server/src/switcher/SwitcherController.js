@@ -316,46 +316,49 @@ SwitcherController.prototype.onSwitcherSignal = function ( qname, qsignal, pvalu
 
     /* ************ SIGNAL - ON QUIDDITY CREATED ************ */
 
-    var quiddClass = JSON.parse( switcher.get_quiddity_description( pvalue[0] ) );
-    if ( !_.contains( this.config.quiddExclude, quiddClass.class ) && qsignal == "on-quiddity-created" ) {
+    if ( qsignal == "on-quiddity-created" ) {
 
-        /* subscribe signal for properties add/remove and methods add/remove */
-        switcher.subscribe_to_signal( pvalue[0], "on-property-added" );
-        switcher.subscribe_to_signal( pvalue[0], "on-property-removed" );
-        switcher.subscribe_to_signal( pvalue[0], "on-method-added" );
-        switcher.subscribe_to_signal( pvalue[0], "on-method-removed" );
-        switcher.subscribe_to_signal( pvalue[0], "on-connection-tried" );
+        var quiddClass = JSON.parse( switcher.get_quiddity_description( pvalue[0] ) );
+        if ( !_.contains( this.config.quiddExclude, quiddClass.class ) ) {
 
-        /*subscribe to the modification on this quiddity systemusage*/
-        switcher.subscribe_to_signal( pvalue[0], "on-tree-grafted" );
-        switcher.subscribe_to_signal( pvalue[0], "on-tree-pruned" );
+            /* subscribe signal for properties add/remove and methods add/remove */
+            switcher.subscribe_to_signal( pvalue[0], "on-property-added" );
+            switcher.subscribe_to_signal( pvalue[0], "on-property-removed" );
+            switcher.subscribe_to_signal( pvalue[0], "on-method-added" );
+            switcher.subscribe_to_signal( pvalue[0], "on-method-removed" );
+            switcher.subscribe_to_signal( pvalue[0], "on-connection-tried" );
 
-        /* we subscribe all properties of quidd created */
-        try {
-            var propDecription = switcher.get_properties_description( pvalue[0] );
-            var properties     = JSON.parse( switcher.get_properties_description( pvalue[0] ) ).properties;
-            _.each( properties, function ( property ) {
-                switcher.subscribe_to_property( pvalue[0], property.name );
-                log.debug( "Subscribed to", pvalue[0], property.name );
-            } );
-        } catch ( e ) {
-            log.error( "Error getting properties", e );
-        }
+            /*subscribe to the modification on this quiddity systemusage*/
+            switcher.subscribe_to_signal( pvalue[0], "on-tree-grafted" );
+            switcher.subscribe_to_signal( pvalue[0], "on-tree-pruned" );
+
+            /* we subscribe all properties of quidd created */
+            try {
+                var propDecription = switcher.get_properties_description( pvalue[0] );
+                var properties     = JSON.parse( switcher.get_properties_description( pvalue[0] ) ).properties;
+                _.each( properties, function ( property ) {
+                    switcher.subscribe_to_property( pvalue[0], property.name );
+                    log.debug( "Subscribed to", pvalue[0], property.name );
+                } );
+            } catch ( e ) {
+                log.error( "Error getting properties", e );
+            }
 
 
-        /* cehck if the quiddity is created by interface and send all except user created this */
-        //FIXME: socket.io removed except in 1.0
-        var socketIdCreatedThisQuidd = false;
-        /*_.each(this.config.listQuiddsAndSocketId, function(socketId, quiddName) {
-         if (quiddName == pvalue[0])
-         socketIdCreatedThisQuidd = socketId;
-         delete this.config.listQuiddsAndSocketId[quiddName];
-         });*/
-        if ( socketIdCreatedThisQuidd ) {
-            console.log( this.io.sockets.clients() );
-            this.io.except( socketIdCreatedThisQuidd ).emit( "create", quiddClass );
-        } else {
-            this.io.emit( "create", quiddClass );
+            /* cehck if the quiddity is created by interface and send all except user created this */
+            //FIXME: socket.io removed except in 1.0
+            var socketIdCreatedThisQuidd = false;
+            /*_.each(this.config.listQuiddsAndSocketId, function(socketId, quiddName) {
+             if (quiddName == pvalue[0])
+             socketIdCreatedThisQuidd = socketId;
+             delete this.config.listQuiddsAndSocketId[quiddName];
+             });*/
+            if ( socketIdCreatedThisQuidd ) {
+                console.log( this.io.sockets.clients() );
+                this.io.except( socketIdCreatedThisQuidd ).emit( "create", quiddClass );
+            } else {
+                this.io.emit( "create", quiddClass );
+            }
         }
     }
 

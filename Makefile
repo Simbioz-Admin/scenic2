@@ -17,6 +17,7 @@ TARGETDIR := /share/scenic
 ARCHIVE := scenic_$(VERSION)
 
 setup:
+	npm install -g bower mocha
 	npm install
 	bower install
 
@@ -53,12 +54,14 @@ uninstall:
 
 clean:
 	@echo resetting paths in launch scripts
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server/server.js \$$@" > scenic
+	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server/src/server.js \$$@" > scenic
 	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic/node_modules node npm-verify.js" > scenic-installer
 #	rm -fr node_modules
 
-test:
-	@echo "node $(DESTDIR)$(TARGETDIR)" > scenic
+tests:
+	mocha server/test/**/*.test.js
+	mocha client/test/**/*.test.js
+	mocha test/**/*.test.js
 
 dist:
 	mkdir -p $(ARCHIVE)

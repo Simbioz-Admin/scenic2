@@ -51,7 +51,7 @@ define(
 
         openPanel: function() {
           var template = _.template(templateCreateClient)();
-          $("#panelRight .content").html(template);
+          $("#panelRight .inspector-info-panel").html(template);
           views.global.openPanel();
         },
 

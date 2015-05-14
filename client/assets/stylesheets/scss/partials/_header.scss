@@ -4,15 +4,12 @@
   background: #333;
   position: fixed;
   top: 0;
+  z-index: 1;
 
   .logo {
-    width: 70px;
-    height: $headerHeight;
-    padding-top: $headerHeight - 20px;
-    float: left;
-    text-align: center;
-    color: $textColorBrighter;
-    background: $satColor url(../../images/logo_sat.png) no-repeat center 10px;
+    position: absolute;
+    left: -8px;
+    top: -20px;
   }
 
   nav.menu {

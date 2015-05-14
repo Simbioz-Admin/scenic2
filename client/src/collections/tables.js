@@ -57,7 +57,8 @@ define(
               select: ["sink"],
               exclude: ["monitor"]
             }
-          }
+          };
+
           /* Create a table for managing shmdatas transmission throught RTP/SDP  */
           var RTPtransferMatrix = {
             name:  $.t('Transfer'),
@@ -76,7 +77,7 @@ define(
               select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
             },
             collectionDestinations: collections.destinationsRtp
-          }
+          };
 
           /* Create matrix for manage connection between properties values and midi quiddity */
           var controlMatrix = {
@@ -93,10 +94,10 @@ define(
               id: "get_properties"
             }],
             sources: {
-              select: ["midisrc"],
+              select: ["midisrc"]
             },
             collectionDestinations: collections.destinationsRtp
-          }
+          };
 
           /* Manage transfer of shmdatas to the sip destination */
           var SIPtransferMatrix = {
@@ -113,7 +114,7 @@ define(
             },
             collectionDestinations: collections.users
             
-          }
+          };
 
           this.add(controlMatrix);
           this.add(shmdataMatrix);
@@ -123,4 +124,4 @@ define(
         }
       });
     return CollectionTables;
-  })
+  });

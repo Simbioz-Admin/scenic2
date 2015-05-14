@@ -2,9 +2,9 @@
     <div class="menuTable headerMenu">
         <% _.each(menus, function(menu) { %>
             <div class="contextMenu" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>">
-        <div class="menuButton"><%=menu.name%></div>
-    </div>
-    <% }); %>
+                <div class="menuButton"><%=menu.name%></div>
+            </div>
+        <% }); %>
         <div class="filter" title="filter">
             <select name="" class="dropdown_filter">
                 <option value="" data-i18n>Show all categories</option>
@@ -14,24 +14,24 @@
 </div>
 
 <% if(type == "transfer" || type == "sink"){ %>
-<div class="destinations"></div>
-<div class="sources"></div>
+    <div class="destinations"></div>
+    <div class="sources"></div>
 <% } else if(type == "control"){ %>
-<table class="tableScenic" title="Control matrix">
-    <thead>
-    <tr class="destinations"></tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td colspan="7">
-            <div id="local-sources" class="sources"></div>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="7">
-            <div id="remote-sources" class="sources"></div>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <table class="tableScenic" title="Control matrix">
+        <thead>
+        <tr class="destinations"></tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="7">
+                <div id="local-sources" class="sources"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                <div id="remote-sources" class="sources"></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 <% } %>

@@ -1,12 +1,3 @@
-#tabs {
-  position: fixed;
-  width: $tabsWidth;
-  top: $headerHeight;
-  bottom: 0;
-  background: $backgroundColorDarker;
-  padding-top: 50px;
-}
-
 #main {
   position: absolute;
   left: $tabsWidth;

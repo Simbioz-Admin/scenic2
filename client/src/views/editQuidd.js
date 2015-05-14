@@ -80,8 +80,8 @@ define(
             }
           });
 
-          $("#panelRight").data("quiddName", this.model.get("name"));
-          $("#panelRight .inspector-info-panel").html($(this.el));
+          $("#inspector").data("quiddName", this.model.get("name"));
+          $("#inspector .inspector-info-panel").html($(this.el));
           views.global.openPanel();
 
         },

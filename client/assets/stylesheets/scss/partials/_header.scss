@@ -1,72 +1,83 @@
-header {
+#header {
   width: 100%;
-  height: $heightHeader;
+  height: $headerHeight;
   background: #333;
   position: fixed;
   top: 0;
-  z-index: 20000;
-  .btn {
-    margin-top: 3px;
-  }
-}
 
-#logoScenic {
-  width: 70px;
-  height: $heightHeader;
-  float: left;
-  text-align: center;
-  line-height: 95px;
-  color: white;
-  background: $satColor url(../../images/logo_sat.png) no-repeat center 10px;
-}
-
-#menu_header {
-  float: right;
-  margin: 10px;
-}
-
-.menu_list {
-  color: white;
-  li {
-    display: inline-block;
-    padding: 15px 10px;
-    text-transform: uppercase;
-    background: #2c2c2c;
-    border-right: none;
+  .logo {
+    width: 70px;
+    height: $headerHeight;
+    padding-top: $headerHeight - 20px;
     float: left;
-    margin: 0 0 0 5px;
-    &:first-child {
-      @include border-radius(2px 0 0 2px);
-    }
-    &:last-child {
-      @include border-radius(0 2px 2px 0);
-    }
-    &:hover {
-      cursor: pointer;
-      background: #222;
-      @include box-shadow(0px 2px -2px 2px black inset);
-    }
+    text-align: center;
+    color: $textColorBrighter;
+    background: $satColor url(../../images/logo_sat.png) no-repeat center 10px;
   }
-  #langs {
-    padding: 0;
-    button.lang {
-      font-size: 10px;
-      padding: 5px 5px 4px;
-      margin: 0;
-      display: block;
-      background: #2c2c2c;
-      color: white;
-      border: none;
-      &.active {
-        color: $satColor;
-      }
-      &:hover {
-        background: #222;
-        cursor: pointer;
+
+  nav.menu {
+    float: right;
+    margin: 10px;
+    ul {
+      color: $textColorBrighter;
+      li {
+        float: left;
+        &:not(:last-child) {
+          margin-right: 5px;
+        }
+        a {
+          display: block;
+          padding: 15px 10px;
+          background: #2c2c2c;
+          text-transform: uppercase;
+          cursor: pointer;
+          &:hover {
+            background: $backgroundColorDarker;
+          }
+        }
+        .lang {
+          font-size: 10px;
+          padding: 5px 5px 4px;
+          margin: 0;
+          display: block;
+          background: #2c2c2c;
+          color: white;
+          border: none;
+          &.active {
+            color: $satColor;
+          }
+          &:hover {
+            background: #222;
+            cursor: pointer;
+          }
+        }
       }
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .panelBox {
   width: 250px;

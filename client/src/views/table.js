@@ -73,7 +73,7 @@ define(
           });
 
           btnTable.append("<div class='content'><div class='icon'></div><div class='name'>"+this.model.get('name')+"</div></div>");
-          $("#panelTables").prepend(btnTable);
+          $("#tabs").prepend(btnTable);
 
           /* generate the table */
           var template = _.template(TemplateTable)( {
@@ -87,7 +87,7 @@ define(
 
 
           /* add to the default panel */
-          $("#panelLeft").append(this.el);
+          $("#main").append(this.el);
           //translation
           $(this.el).i18n();
 

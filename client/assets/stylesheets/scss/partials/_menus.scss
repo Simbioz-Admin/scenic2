@@ -8,10 +8,10 @@
   @include border-radius(2px);
   #headerTable {
     border-bottom-color: black;
-    position: absolute;
-    left: 70px;
+    position: fixed;
+    z-index: 1;
+    left: $tabsWidth;
     top: 0px;
-    z-index: 30000; //UBALD: Header is 20000 so I had to go higher
     height: 40px;
     margin: 10px;
     background: #333;

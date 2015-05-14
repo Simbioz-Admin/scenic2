@@ -45,19 +45,19 @@ define(
           "click #close-inspector": "closePanel",
           "click #close-shmdata-info-panel": "closeShmdataInfoPanel",
           "change .checkbox": 'stateCheckbox',
-          "click #btn-info": 'panelInfo',
-          "click #btnSave": 'save_file',
+          "click #header .menu .info": 'panelInfo',
+          "click #header .menu .save": 'save_file',
+          "click #header .menu .load": 'get_save_file_list',
           "submit #saveFile": 'save',
-          "click #btnGetFiles": 'get_save_file_list',
           'click #panelFiles .file': 'load_file',
           'click .remove_save': 'remove_save',
           "click .tabTable": 'showTable',
           "touchstart .tabTable": 'showTable',
           "click #create_receiver": "create_receiver",
           "click #add-receiver": "add_receiver",
-          "click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
+          /*"click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
           #btnSave, #quiddName, #panelSave, #btnGetFiles,\
-          #device, .edit": "preventPropagation",
+          #device, .edit": "preventPropagation",*/
           "click .lang" : "changeLang"
         },
 
@@ -73,7 +73,7 @@ define(
             that.notification(type, msg);
           });
 
-          /* Define the panelRight draggable */
+          /* Define the inspector draggable */
           $(" .inspector-info-panel, .shmdata-info-panel").draggable({
             cursor: "move",
             handle: ".title"
@@ -85,16 +85,16 @@ define(
 	  $(document).tooltip();
 
           //show current language in header
-          $("#langs [data-lang='"+localStorage.getItem('lang')+"']").addClass("active");
+          $(".lang[data-lang='"+localStorage.getItem('lang')+"']").addClass("active");
 
         },
 
         /* 
          * DOn't propagate events through visible elements
          */
-        preventPropagation: function preventPropagation(element) {
+        /*preventPropagation: function preventPropagation(element) {
           element.stopPropagation();
-        },
+        },*/
 
         /* Function called for show a specific message in the interface */
 
@@ -146,15 +146,15 @@ define(
         /* Called for open the panel Right (use for edit and create quiddity) */
 
         openPanel: function() {
-          $("#panelRight").show();
+          $("#inspector").show();
         },
 
 
         /* Called for close the panel Right  */
 
         closePanel: function(e) {
-          $("#panelRight").hide();
-          $("#panelRight").data("quiddName", "");
+          $("#inspector").hide();
+          $("#inspector").data("quiddName", "");
           /* we unsubscribe to the quiddity */
 
           if ($("#quiddName").val()) {
@@ -166,7 +166,7 @@ define(
         create_receiver: function(element) {
           //element.stopPropagation();
           var template = _.template(TemplateReceiver)();
-          $("#panelRight .inspector-info-panel").html(template);
+          $("#inspector .inspector-info-panel").html(template);
           views.global.openPanel();
         },
 
@@ -213,7 +213,7 @@ define(
 
           /* action on panel (close) */
           if (event.which == 27) {
-            /* Close panelRight */
+            /* Close inspector */
             this.closePanel();
 
             /* close confirmation message */
@@ -242,11 +242,11 @@ define(
         },
 
 
-        save_file: function() {
+        save_file: function(event) {
           if ($("#panelSave").length == 0) {
             $(".panelBox").remove();
             var template = _.template(panelSaveTemplate)( {});
-            $("#btnSave").after(template);
+            $(event.currentTarget).after(template);
           } else {
             $(".panelBox").remove();
           }

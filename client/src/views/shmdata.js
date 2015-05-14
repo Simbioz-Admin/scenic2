@@ -9,11 +9,12 @@ define(
         'underscore',
         'backbone',
         'lib/socket',
-        'text!../../templates/shmdata.html',
-        'text!../../templates/shmdata/info-panel.html'
+        'text!../../templates/table/source/shmdata.html',
+        'text!../../templates/table/source/shmdata/box.html',
+        'text!../../templates/table/source/shmdata/info-panel.html'
     ],
 
-    function ( _, Backbone, socket, TemplateShmdata, infoPanelTemplate ) {
+    function ( _, Backbone, socket, TemplateShmdata, BoxTemplate, infoPanelTemplate ) {
 
         /**
          *  @constructor
@@ -29,13 +30,11 @@ define(
              */
 
             {
-                tagName:   'tr',
+                tagName:   'div',
                 table:     null,
                 className: "shmdata",
                 events:    {
-                    "click th":      "infoShmdata",
-                    'click .edit':   "editQuidd",
-                    'click .remove': "removeQuidd"
+                    "click .controls .name": "infoShmdata"
                 },
 
                 /* called for each new mapper */
@@ -46,6 +45,7 @@ define(
                     this.model.on( "renderConnection", this.renderConnections, this );
                     this.table = options.table;
 
+                    this.boxTemplate = _.template( BoxTemplate );
                 },
 
                 /* Called for render the view */
@@ -64,6 +64,9 @@ define(
 
                     $( this.el ).append( templateShmdata );
                     $( this.el ).attr( "data-path", this.model.get( "path" ) );
+                    if ( sipUserName ) {
+                        this.$el.addClass('sip');
+                    }
 
                     /* insert view in the quidd associate to */
                     if ( this.table.get( "type" ) == "transfer" ) {
@@ -81,7 +84,7 @@ define(
                 renderConnections: function () {
 
                     var that = this;
-                    $( "td", that.el ).remove();
+                    $( ".box", that.el ).remove();
                     _.defer( function () {
                         that.table.get( "collectionDestinations" ).each( function ( destination ) {
                             that.connectionForDestination( destination, that.table.get( "type" ) );
@@ -116,9 +119,14 @@ define(
                             } );
                         }
 
-                        var statusBox = 'box enabled';
+                        var statusBox = 'enabled';
                         statusBox += active ? ' active' : ' inactive';
-                        $( that.el ).append( '<td class="' + statusBox + " " + that.table.get( "name" ) + '" data-destination="' + destinationId + '">' + port + '</td>' );
+                        $( '.boxes', that.el ).append( that.boxTemplate({
+                            status: statusBox,
+                            name: that.table.get('name'),
+                            destinationId: destinationId,
+                            port: port
+                        }) );
                     }
 
                     /* Render for Tab Sink */
@@ -147,7 +155,12 @@ define(
                                 var statusBox = 'box';
                                 statusBox += canSink == "true" ? ' enabled' : ' disabled';
                                 statusBox += active ? ' active' : ' inactive';
-                                $( that.el ).append( '<td class="' + statusBox +'" data-destination="' + destinationId + '"><div class="icon"></div></td>' );
+                                $( '.boxes', that.el ).append( that.boxTemplate( {
+                                    status: statusBox,
+                                    name: null,
+                                    destinationId: destinationId,
+                                    port: null
+                                }) );
 
                             }
                         } );
@@ -209,15 +222,8 @@ define(
                 },
 
                 removeView:  function () {
-
                     this.remove();
-                },
-                editQuidd:   function () {
-                    collections.quidds.get( this.model.get( "quidd" ) ).edit();
-                },
-                removeQuidd: function () {
-                    collections.quidds.get( this.model.get( "quidd" ) ).askDelete();
-                },
+                }
             } );
 
         return ShmdataView;

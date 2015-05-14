@@ -166,10 +166,11 @@ define(
         },
 
         toggle_connection: function(e) {
-          console.log('toggle_connection');
           var box = $(e.currentTarget),
             destination = box.data("destination"),
-            path = box.parent().data("path");
+            path = box.closest('.shmdata').data("path");
+
+          console.log('toggle_connection');
 
           /* if transfer we ask port for connect to the receiver */
           if (this.model.get("id") == "transferRtp") {

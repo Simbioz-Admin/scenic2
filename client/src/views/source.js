@@ -12,7 +12,7 @@ define(
     'lib/socket',
     'views/connexion',
     'views/shmdata',
-    'text!../../templates/source.html'
+    'text!../../templates/table/source.html'
   ],
 
   function(_, Backbone, socket, ConnexionView, ViewShmdata, TemplateSource) {

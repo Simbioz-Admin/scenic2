@@ -76,7 +76,7 @@ define( [
                  */
 
                 views.global = new ViewGlobal();
-                views.htop   = new SystemUsageView();
+                views.systemUsage   = new SystemUsageView();
 
                 collections.irc = new CollectionIrcs();
                 views.ircs      = new ViewIrcs();

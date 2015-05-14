@@ -31,7 +31,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-            $( "#panelTables" ).append( this.el );
+            $( "#tabs" ).append( this.el );
 
             var template = _.template( SystemUsageTemplate )();
             $( this.el ).html( template );

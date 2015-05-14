@@ -277,7 +277,7 @@ define(
          *  Called for get files saved on the server
          */
 
-        get_save_file_list: function() {
+        get_save_file_list: function(event) {
           var that = this;
           socket.emit('get_save_file_list', function(saveFiles) {
 
@@ -286,7 +286,7 @@ define(
               var template = _.template(panelLoadtemplate)( {
                 files: saveFiles
               });
-              $("#btnGetFiles").after(template);
+              $(event.currentTarget).after(template);
             } else {
               $(".panelBox").remove();
             }
@@ -358,7 +358,7 @@ define(
 
         /* Called for showing panel Info  */
 
-        panelInfo: function(element) {
+        panelInfo: function(event) {
           // element.stopPropagation();
           if ($("#panelInfo").length == 0) {
             $(".panelBox").remove();
@@ -367,7 +367,7 @@ define(
               host: config.host,
               soap: config.soap.port
             });
-            $("#btn-info").after(template);
+            $(event.currentTarget).after(template);
           } else {
             $("#panelInfo").remove();
           }

@@ -77,12 +77,12 @@ define(
               devices: devices
             });
 
-            $("#panelRight .inspector-info-panel").html(template);
-            $("#panelRight .inspector-info-panel").i18n();
+            $("#inspector .inspector-info-panel").html(template);
+            $("#inspector .inspector-info-panel").i18n();
             views.global.openPanel();
             //timeout wait for loading correctly field and focusing
             setTimeout(function(){
-              $("#panelRight .inspector-info-panel #quiddName").focus();
+              $("#inspector .inspector-info-panel #quiddName").focus();
             },1);
 
           }

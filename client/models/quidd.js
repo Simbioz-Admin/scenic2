@@ -198,7 +198,7 @@ define(
               $("[data-hostname='" + that.get("name") + "']").remove();
 
               /* check if the panel open is for the quiddity deleted */
-              if (that.get("name") == $("#panelRight").data('quiddName')) {
+              if (that.get("name") == $("#inspector").data('quiddName')) {
                 views.global.closePanel();
               }
             }

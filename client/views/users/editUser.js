@@ -43,7 +43,7 @@ define(
 
           $(this.el).append(template);
 
-          $("#panelRight .inspector-info-panel").html($(this.el));
+          $("#inspector .inspector-info-panel").html($(this.el));
           views.global.openPanel();
 
         },

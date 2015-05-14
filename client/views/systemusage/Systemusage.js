@@ -45,7 +45,7 @@ define(
 
         initialize: function() {
           // $("#menu_header").after(this.el);
-          $("#panelTables").append(this.el);
+          $("#tabs").append(this.el);
 
           var template = _.template(previewUsageTemplate)();
           $(this.el).html(template);

@@ -42,7 +42,7 @@ define(
 				 */
 
 				initialize: function() {
-					//$("#panelTables").append('<div id="btn-irc"><div class="content"></div></div>');
+					//$("#tabs").append('<div id="btn-irc"><div class="content"></div></div>');
 				},
 
 				/* Called when the user open the IRC interface */

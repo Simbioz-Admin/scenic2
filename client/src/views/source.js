@@ -10,12 +10,11 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'views/connexion',
     'views/shmdata',
     'text!../../templates/table/source.html'
   ],
 
-  function(_, Backbone, socket, ConnexionView, ViewShmdata, TemplateSource) {
+  function(_, Backbone, socket, ViewShmdata, TemplateSource) {
 
     /** 
      *  @constructor
@@ -39,7 +38,6 @@ define(
           "click .edit-source": "edit",
           "click .remove-source": "removeClick",
           "click .preview": "preview",
-          'click .info': 'info'
         },
 
         /* Called when en new source quiddity is created */
@@ -153,9 +151,6 @@ define(
         preview: function(element) {
           this.model.preview(element);
           $(element.target).toggleClass('active').toggleClass('inactive');
-        },
-        info: function(element) {
-          this.model.info(element);
         }
       });
 

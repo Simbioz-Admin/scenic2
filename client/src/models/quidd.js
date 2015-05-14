@@ -9,7 +9,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'views/source', 'views/sourceProperty', 'views/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
+    'views/source', 'views/sourceProperty', 'views/table/destination', 'views/mapper', 'views/editQuidd', 'models/shmdata',
   ],
 
   function(_, Backbone, socket, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd, ModelShmdata) {

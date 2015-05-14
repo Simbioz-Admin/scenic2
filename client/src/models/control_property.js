@@ -10,7 +10,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'views/controlProperty'
+    'views/control/controlProperty'
   ],
 
   function(_, Backbone, socket, ViewControlProperty) {

@@ -10,7 +10,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../templates/table/sub_menu.html',
+    'text!../../../templates/table/sub_menu.html'
   ],
 
   function(_, Backbone, socket, TemplateSubMenu) {
@@ -35,7 +35,7 @@ define(
           "click .createControlProperty": "createControlProperty",
           "click .connect-properties": "connectProperties",
           "click #get_properties .menuButton": "show_properties",
-          "mouseleave #subMenu": 'leaveSubMenu',
+          "mouseleave #subMenu": 'leaveSubMenu'
         },
 
 

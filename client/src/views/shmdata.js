@@ -34,7 +34,7 @@ define(
                 table:     null,
                 className: "shmdata",
                 events:    {
-                    "click .controls .name": "infoShmdata"
+                    "click .controls .info": "infoShmdata"
                 },
 
                 /* called for each new mapper */

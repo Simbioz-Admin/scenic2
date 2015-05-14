@@ -10,10 +10,11 @@ define(
     'underscore',
     'backbone',
     'text!../../templates/sourceProperty.html',
-    'text!../../templates/table/source.html'
+    'text!../../templates/table/source.html',
+    'text!../../templates/table/source/shmdata/box.html',
   ],
 
-  function(_, Backbone, TemplateSourceProperty, TemplateSource) {
+  function(_, Backbone, SourcePropertyTemplate, SourceTemplate, BoxTemplate) {
 
     /** 
      *  @constructor
@@ -37,7 +38,7 @@ define(
           "click .edit-source": "edit",
           "click .remove-source": "removeClick",
           "click .preview": "preview",
-          'click .info': 'info',
+          'click .info': 'info'
         },
 
         initialize: function(options) {
@@ -50,13 +51,13 @@ define(
           this.table = options.table;
 
           //here we define were go the source (local or remote)
-          if (this.model.get("class") == "httpsdpdec") {
-            $("#" + this.table + " #remote-sources").prepend($(this.el));
-          } else {
+          //if (this.model.get("class") == "httpsdpdec") {
+            $("#" + this.table + " .sources").prepend($(this.el));
+          /*} else {
             $("#" + this.table + " #local-sources").prepend($(this.el));
-          }
+          }*/
 
-          var quiddTpl = _.template(TemplateSource)( {
+          var quiddTpl = _.template(SourceTemplate)( {
             name: this.model.get("name")
           });
           $(this.el).append(quiddTpl);
@@ -76,14 +77,27 @@ define(
             destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
             countProperty = 0;
 
+
+          var boxTemplate = _.template( BoxTemplate );
+
           _.each(properties, function(property, index) {
             if (property.name != "device" && property.name != "devices-json" && property.name != "shmdata-writers" && property.name != "shmdata-readers" && property.name != "started") {
-              var propertyTpl = _.template(TemplateSourceProperty)( {
-                property: property,
-                destinations: destinations
+              var propertyTpl = _.template(SourcePropertyTemplate)( {
+                property: property
               });
-              // $(propertyTpl).attr("data-propertyname", property.name);
-              $(".shmdatas", that.el).append(propertyTpl);
+              var prop = $(".shmdatas", that.el).append(propertyTpl);
+console.log( 'cicasf');
+console.log( 'cicasf');
+              _.each(destinations, function(destination) {
+                var active = false;
+                prop.append( boxTemplate( {
+                  status:        active ? 'active' : '',
+                  name:          'connect-properties',
+                  destinationId: destination.name,
+                  port:          null
+                } ) );
+              });
+
               $(that.el).i18n();
             }
           });

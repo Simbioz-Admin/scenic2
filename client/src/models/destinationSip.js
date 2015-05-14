@@ -10,7 +10,7 @@ define(
     'underscore',
     'backbone',
     'lib/socket',
-    'views/destination',
+    'views/table/destination',
     'views/editDestination'
   ],
 

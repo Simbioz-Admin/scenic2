@@ -7,7 +7,7 @@ define(
    */
 
   [
-    'underscore',
+    '../bower_components/underscore/underscore',
     'backbone',
     'lib/socket'
     // 'text!../../templates/createClient.html'

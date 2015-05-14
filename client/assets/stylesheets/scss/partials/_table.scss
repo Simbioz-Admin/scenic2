@@ -11,6 +11,7 @@ $leftHeaderWidth: 125px;
 $leftHeaderMinHeight: 40px;
 $boxWidth: $leftHeaderWidth;
 $boxMinHeight: $leftHeaderMinHeight;
+$quiddityGap: 2px;
 
 .table {
   .controls .name,
@@ -59,17 +60,29 @@ $boxMinHeight: $leftHeaderMinHeight;
           height: 100%
         }
 
+        &.info {
+          width: 100%;
+          &:hover {
+            background: $blue;
+          }
+          .icon {
+            background: url(../../icons/724-info.png) center center no-repeat;
+          }
+        }
+        &.edit {
+          &:hover {
+            background: $orange;
+          }
+          .icon {
+            background: url(../../icons/740-gear.png) center center no-repeat;
+          }
+        }
         &.remove {
           &:hover {
             background: $satColor;
           }
           .icon {
             background: url(../../icons/711-trash.png) center center no-repeat;
-          }
-        }
-        &.edit {
-          .icon {
-            background: url(../../icons/740-gear.png) center center no-repeat;
           }
         }
       }
@@ -104,17 +117,17 @@ $boxMinHeight: $leftHeaderMinHeight;
 
     .shmdata {
       min-height: $leftHeaderMinHeight;
-      border-left: 1px solid $colorBorder;
+      border-left: $quiddityGap solid $colorBorder;
       border-bottom: 1px solid $colorBorder;
-      @include clearfix;
+      //@include clearfix;
 
       .controls {
-        cursor: help;
         &:before {
           content: "";
           position: absolute;
           top: 0;
-          bottom: 0;
+          bottom: 1px;
+          left: -2px;
           width: 2px;
           background: $satColor;
         }
@@ -183,6 +196,11 @@ $boxMinHeight: $leftHeaderMinHeight;
 
       &:last-child {
         border-bottom: none !important;
+        .controls {
+          &:before {
+            bottom: 0;
+          }
+        }
         .boxes {
           .box {
             border-bottom: none !important;
@@ -195,7 +213,7 @@ $boxMinHeight: $leftHeaderMinHeight;
 
 .destinations {
   min-height: $boxMinHeight;
-  margin: 0 0 10px $leftHeaderWidth * 2;
+  margin: 0 0 10px $leftHeaderWidth * 2 + $quiddityGap;
   float: left;
   clear: both;
   position: relative;

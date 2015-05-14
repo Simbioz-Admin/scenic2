@@ -336,7 +336,7 @@ QuiddityManager.prototype.removeConrolByQuiddParent = function ( quiddParent ) {
 
 QuiddityManager.prototype.remove_property_value_of_dico = function ( property, name ) {
     var self                      = this;
-    var currentValuesDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", property ) );
+    var currentValuesDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", [property] ) );
     var newValuesDico             = [];
     _.each( currentValuesDicoProperty, function ( value ) {
       if ( value.name != name ) {

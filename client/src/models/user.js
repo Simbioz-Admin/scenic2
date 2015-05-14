@@ -11,7 +11,7 @@ define(
     'lib/socket',
     'views/users/user',
     'views/users/editUser',
-    'views/destination'
+    'views/table/destination'
   ],
 
   function(_, Backbone, socket, ViewUser, ViewEditUser, ViewDestination) {

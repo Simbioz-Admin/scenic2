@@ -13,17 +13,16 @@ define( [
     'collections/loggers',
     'collections/users',
     'collections/channels-irc',
-    'views/destinations',
     'views/global',
     'views/quidds',
-    'views/destinationProperties',
+    'views/control/destinationProperties',
     'views/loggers',
     'views/users/users',
     'views/ircs',
     'views/SystemUsage'
 ], function ( _, Backbone, Mutators, async, $, i18n, CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp,
               CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
-              ViewDestinations, ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
+              ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
               SystemUsageView ) {
 
     var initialize = function ( config ) {

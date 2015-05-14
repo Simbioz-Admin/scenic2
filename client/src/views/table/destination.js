@@ -7,10 +7,11 @@ define(
    */
 
   [
+    '' +
     'underscore',
     'backbone',
     'lib/socket',
-    'text!../../templates/table/destination.html'
+    'text!../../../templates/table/destination.html'
   ],
 
   function(_, Backbone, socket, TemplateDestination) {

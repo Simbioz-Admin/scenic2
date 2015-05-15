@@ -5,7 +5,6 @@ define( [
     'async',
     'jquery',
     'i18n',
-    'collections/classes_doc',
     'collections/destinationsProperties',
     'collections/loggers',
     'collections/channels-irc',
@@ -25,7 +24,7 @@ define( [
     // New Views
     'view/Scenic',
     'view/scenic/Tabs'
-], function ( _, Backbone, Mutators, async, $, i18n, CollectionClassesDoc,
+], function ( _, Backbone, Mutators, async, $, i18n,
               CollectionLoggers, CollectionIrcs,
               ViewGlobal, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
               SystemUsageView,

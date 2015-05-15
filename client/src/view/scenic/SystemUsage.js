@@ -35,7 +35,6 @@ define( [
         },
 
         onAttach: function () {
-            console.log('aa');
             $( this.el ).i18n();
             this.$net = $( '.network .content' );
             socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );

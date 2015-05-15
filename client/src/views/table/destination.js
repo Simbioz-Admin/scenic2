@@ -71,7 +71,7 @@ define(
           var sources = this.table.get("collectionSources");
           sources.each(function(source) {
             if (source) {
-              var shmdatas = source.get("shmdatasCollection");
+              var shmdatas = source.get("shmdatas");
               shmdatas.each(function(shm) {
                 shm.trigger("renderConnection", that.model, that.table.get("type"));
               });

@@ -5,10 +5,8 @@ define( [
     'async',
     'jquery',
     'i18n',
-    'collections/tables',
     'collections/classes_doc',
     'collections/destinationsRtp',
-    'collections/quidds',
     'collections/destinationsProperties',
     'collections/loggers',
     'collections/users',
@@ -19,17 +17,24 @@ define( [
     'views/loggers',
     'views/users/users',
     'views/ircs',
-    'views/SystemUsage'
-], function ( _, Backbone, Mutators, async, $, i18n, CollectionTables, CollectionClassesDoc, CollectionDestinationsRtp,
-              CollectionQuidds, CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
+    'views/SystemUsage',
+    // New Models
+    'model/Tables',
+    'model/Quiddities',
+    // New Views
+    'views/Tabs'
+], function ( _, Backbone, Mutators, async, $, i18n, CollectionClassesDoc, CollectionDestinationsRtp,
+              CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
               ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
-              SystemUsageView ) {
+              SystemUsageView,
+              // New Models
+              Tables, Quiddities,
+              // New Views
+              TabsView ) {
 
     var initialize = function ( config ) {
 
         //FIXME: There is nowhere to put this $("#currentUser").html(config.nameComputer);
-
-        var self = this;
 
         async.series( [
 
@@ -52,27 +57,20 @@ define( [
             },
 
             function ( callback ) {
-                views.quidds = new ViewQuidds( {collection: collections.quidds} );
+                views.quiddities = new ViewQuidds( {collection: collections.quiddities} );
 
                 collections.destinationsRtp = new CollectionDestinationsRtp();
                 collections.destinationsRtp.fetch();
 
-                collections.quidds = new CollectionQuidds();
-                collections.quidds.fetch( {success: _.partial(callback, null ), error: callback} );
+                collections.quiddities = new Quiddities();
+                collections.quiddities.fetch( { success: _.partial(callback, null ), error: callback } );
             },
 
             function( callback ) {
-                collections.tables = new CollectionTables();
+                collections.tables = new Tables();
 
                 collections.destinationProperties = new CollectionDestinationsProperties();
                 collections.destinationProperties.fetch();
-
-                /* FIXME: New logger
-                 collections.loggers = new CollectionLoggers();
-                 views.logger = new ViewLoggers({
-                 collection: collections.loggers
-                 });
-                 */
 
                 views.global = new ViewGlobal();
                 views.systemUsage   = new SystemUsageView();
@@ -83,6 +81,31 @@ define( [
                 views.destinationProperties = new ViewDestinationProperties( { collection: collections.destinationProperties } );
 
                 views.users = new ViewUsers( { collection: collections.users } );
+
+
+                //
+                //
+                //
+                //
+                //
+                //
+                //
+                //
+
+
+
+
+                // Finish with new views
+                var tabsView = window.tabs = new TabsView({ collection: collections.tables });
+                // Temporary tab click handler
+                tabsView.on('childview:show:table', function(childView, args) {
+                    collections.tables.setCurrentTable( childView.model );
+                    // Legacy
+                    $(".table").removeClass("active");
+                    $("#" + childView.model.get('id')).addClass("active");
+                });
+                tabsView.render();
+
 
                 callback();
             }

@@ -11,6 +11,7 @@ require( {
         socketio:     '/socket.io/socket.io', // Served by the socket.io server, needs a build path to be set to 'empty:' in the build configuration
         underscore:   '../bower_components/underscore/underscore',
         backbone:     '../bower_components/backbone/backbone',
+        marionette:   '../bower_components/marionette/lib/backbone.marionette',
         mutators:     '../bower_components/backbone.mutators/backbone.mutators.min',
         async:     '../bower_components/async/lib/async',
         jquery:       '../bower_components/jquery/dist/jquery.min',

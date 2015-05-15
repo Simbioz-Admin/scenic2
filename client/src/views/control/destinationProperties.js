@@ -67,7 +67,7 @@ define(
           // return;
 
           var quidds = {};
-          collections.quidds.each(function(quidd) {
+          collections.quiddities.each(function(quidd) {
             var quiddCategory = quidd.get("category");
             if (quiddCategory.indexOf("System") == -1 && quiddCategory.indexOf("mapper") == -1 && quidd.get("class") != "midisrc") {
               var listProperties = [];

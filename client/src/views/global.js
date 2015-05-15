@@ -51,8 +51,6 @@ define(
           "submit #saveFile": 'save',
           'click #panelFiles .file': 'load_file',
           'click .remove_save': 'remove_save',
-          "click .tabTable": 'showTable',
-          "touchstart .tabTable": 'showTable',
           "click #create_receiver": "create_receiver",
           "click #add-receiver": "add_receiver",
           /*"click  #form-destination, #form-lightbox, #panelInfo, #panelFiles,\
@@ -307,7 +305,7 @@ define(
 
                   //regenerate source transfer
                   $("#sources").html("");
-                  collections.quidds.fetch({
+                  collections.quiddities.fetch({
                     success: function() {
                       collections.destinationProperties.fetch();
                       views.users.render();
@@ -381,23 +379,6 @@ define(
         },
         panelBoxRemove: function panelInfoRemove() {
           $(".panelBox").remove();
-        },
-
-        /* Called for switcher between the different table (control and tranfer) */
-
-        showTable: function(event) {
-          var table = $(event.currentTarget).data("id");
-          /* add to the local storage */
-          localStorage['currentTable'] = table;
-          collections.tables.currentTable = table;
-          $(".tabTable").removeClass("active");
-          $(event.currentTarget).addClass("active");
-          var target = $(event.target).attr('class')
-            // if (!((target == "cpu") || (target == "cpu_info") || (target == "tabTable"))) {
-            //   $("#htop").remove();
-            // }
-          $(".table").removeClass("active");
-          $("#" + table).addClass("active");
         },
 
         changeLang : function(e){

@@ -139,7 +139,7 @@ define(
 
                                 /* Check if already connected */
                                 var shmdata_readers = null;
-                                var shmdatasReaders = destination.get( "shmdatasCollection" ).where( {
+                                var shmdatasReaders = destination.get( "shmdatas" ).where( {
                                     type: 'reader'
                                 } );
 

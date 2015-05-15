@@ -37,7 +37,6 @@ define(
         events: {
           "click .edit-source": "edit",
           "click .remove-source": "removeClick",
-          "click .preview": "preview",
           'click .info': 'info'
         },
 
@@ -86,8 +85,6 @@ define(
                 property: property
               });
               var prop = $(".shmdatas", that.el).append(propertyTpl);
-console.log( 'cicasf');
-console.log( 'cicasf');
               _.each(destinations, function(destination) {
                 var active = false;
                 prop.append( boxTemplate( {
@@ -103,7 +100,7 @@ console.log( 'cicasf');
           });
 
           //check if mapper exist for the 
-          collections.quidds.each(function(quidd) {
+          collections.quiddities.each(function(quidd) {
             if (quidd.get("category") == "mapper" && quidd.get("view") != null) {
               quidd.get("view").render();
             }
@@ -119,9 +116,6 @@ console.log( 'cicasf');
         },
         removeView: function() {
           this.remove();
-        },
-        preview: function(element) {
-          this.model.preview(element);
         },
         info: function(element) {
           this.model.info(element);

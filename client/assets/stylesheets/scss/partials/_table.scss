@@ -292,7 +292,7 @@ $quiddityGap: 2px;
 
 #tabs {
 
-  .tabTable {
+  .tab {
     position: relative;
     width: 100%;
     height: 65px;
@@ -546,7 +546,7 @@ $quiddityGap: 2px;
   }
 }
 
-#tabs .tabTable {
+#tabs .tab {
   &.active {
     background: $backgroundColorDark;
   }

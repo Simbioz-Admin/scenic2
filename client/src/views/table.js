@@ -65,15 +65,15 @@ define(
           var active = (currentTable == this.model.get("id") ? "active" : "inactive");
           var btnTable = $("<div></div>", {
             text: "",
-            class: "tabTable " + this.model.get("type") + " " + this.model.get("name" ).toLowerCase() + " " + active,
+            class: "tab " + this.model.get("type") + " " + this.model.get("name" ).toLowerCase() + " " + active,
             title: this.model.get("description"),
             data: {
               id: this.model.get("id")
             }
           });
 
-          btnTable.append("<div class='content'><div class='icon'></div><div class='name'>"+this.model.get('name')+"</div></div>");
-          $("#tabs").prepend(btnTable);
+          //btnTable.append("<div class='content'><div class='icon'></div><div class='name'>"+this.model.get('name')+"</div></div>");
+          //$("#tabs").prepend(btnTable);
 
           /* generate the table */
           var template = _.template(TemplateTable)( {
@@ -156,7 +156,7 @@ define(
           $(".createQuidd").button()
             .click(function(event){
               event.stopPropagation();
-              views.quidds.defineName($(this));
+              views.quiddities.defineName($(this));
             });
 
         },
@@ -250,7 +250,7 @@ define(
          */
         getMenuProperties: function(element) {
           var quiddsMenu = {};
-          collections.quidds.each(function(quidd) {
+          collections.quiddities.each(function(quidd) {
             var quiddCategory = quidd.get("category");
             if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
               var listProperties = [];
@@ -285,7 +285,7 @@ define(
           collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
             var devicesMidi = property["values"];
             _.each(devicesMidi, function(device, index) {
-              collections.quidds.each(function(quidd) {
+              collections.quiddities.each(function(quidd) {
                 if (quidd.get("class") == "midisrc") {
                   _.each(quidd.get("properties"), function(property) {
                     if (property.name == "device" && property.value == device.name) delete devicesMidi[index];

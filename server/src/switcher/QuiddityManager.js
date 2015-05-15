@@ -25,6 +25,7 @@ function QuiddityManager( config, switcher, io ) {
  */
 QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "create", this.create.bind( this ) );
+    socket.on( "get_quiddities", this.get_quiddities.bind( this ) );
     socket.on( "get_quiddity_description", this.get_description.bind( this ) );
     socket.on( "get_info", this.get_info.bind( this ) );
     socket.on( "get_properties_description", this.get_properties_description.bind( this ) );
@@ -110,6 +111,17 @@ QuiddityManager.prototype.removeElementsAssociateToQuiddRemoved = function ( qui
     }, this );
 };
 
+QuiddityManager.prototype.get_quiddities = function ( cb ) {
+    log.debug( 'Getting quiddities');
+    var quiddDescriptions = JSON.parse( this.switcher.get_quiddities_description( ) );
+    log.debug( quiddDescriptions );
+    if ( quiddDescriptions.error ) {
+        cb( quiddDescriptions.error );
+        return
+    }
+    cb( null, quiddDescriptions.quiddities );
+};
+
 QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
     log.debug( "get Description quidd", quiddName );
 
@@ -165,7 +177,10 @@ QuiddityManager.prototype.set_property_value = function ( quiddName, property, v
 QuiddityManager.prototype.get_info = function ( quiddName, path, cb ) {
     log.debug( "Getting quiddity information for: " + quiddName );
     var info = JSON.parse( this.switcher.get_info( quiddName, path ) );
-    return cb( info );
+    if ( info.error ) {
+        return cb( info.error );
+    }
+    return cb( null, info );
 };
 
 QuiddityManager.prototype.get_property_by_class = function ( className, propertyName, callback ) {

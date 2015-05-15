@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'model/Sources',
-    'model/Destinations',
+    'model/base/Destinations',
     'views/table',
     'views/source'
 ], function ( _, Backbone, Sources, Destinations, ViewTable ) {
@@ -33,13 +33,11 @@ define( [
             if ( !this.get( "collectionDestinations" ) ) {
                 this.set( "collectionDestinations", new Destinations( this.getQuidds( "destinations" ) ) );
             }
-
-            /* Create view for the table and associate this model */
-            var viewTable = new ViewTable( {
-                model: this
-            } );
         },
 
+        activate: function() {
+            this.collection.setCurrentTable( this );
+        },
 
 
         //
@@ -69,35 +67,6 @@ define( [
                 var quiddsSelect = this.get( shmdataType ).select;
                 return collections.quiddities.SelectQuidds( quiddsSelect );
             }
-        },
-
-        /* Return list of quiddity you can created for this table */
-        selectByCategory: function ( shmdataType ) {
-
-            var classes,
-                that = this;
-
-            if ( !this.get( shmdataType ) ) {
-                return null;
-            }
-
-            /* if specified category selected */
-            if ( this.get( shmdataType ).select ) {
-                classes = collections.classesDoc.getByCategory( this.get( shmdataType ).select );
-            } else {
-                classes = collections.classesDoc.toJSON();
-            }
-
-            if ( this.get( shmdataType ).exclude ) {
-                classes = _.filter( classes, function ( clas ) {
-                    if ( !_.contains( that.get( shmdataType ).exclude, clas["category"] ) ) {
-                        return clas
-                    }
-                } );
-            }
-
-            return classes;
-
         },
 
         isAuthorized: function ( quiddClass ) {

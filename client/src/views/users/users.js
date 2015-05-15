@@ -75,13 +75,13 @@ define(
           var that = this;
           //Get List status for users
           socket.emit("getListStatus", function(err, listStatus) {
-            collections.users.listStatus = listStatus;
+            collections.contacts.listStatus = listStatus;
 
             $(that.el).html("");
             /* add information about user connected */
             var tpl = _.template(that.template)( {
               loginForm: false,
-              listStatus: collections.users.listStatus
+              listStatus: collections.contacts.listStatus
             });
             $(that.el).append(tpl);
 
@@ -149,7 +149,7 @@ define(
             socket.emit('remove', config.sip.quiddName);
             /* if successfully logout we remove all information about users for showing form login */
             $(that.el).html("");
-            collections.users.reset();
+            collections.contacts.reset();
             that.renderLogin();
 
             views.global.notification("valid", $.t("Successful logout to the SIP server"));

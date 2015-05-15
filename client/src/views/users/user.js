@@ -107,7 +107,7 @@ define(
         },
         addUserToDestinationMatrix: function() {
           var that = this;
-          var user = collections.users.get(this.model.get('uri'));
+          var user = collections.contacts.get(this.model.get('uri'));
           if (!user.in_tab) {
             socket.emit("addUserToDestinationMatrix", this.model.get("uri"), function(err, msg) {
               if (err) return views.global.notification("error", err);

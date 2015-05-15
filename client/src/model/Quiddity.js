@@ -3,15 +3,13 @@
 define( [
     'underscore',
     'backbone',
+    'async',
     'lib/socket',
     'model/base/ScenicModel',
-    'model/Shmdatas',
-    'views/source',
-    'views/sourceProperty',
-    'views/table/destination',
-    'views/mapper',
-    'views/editQuidd'
-], function ( _, Backbone, socket, ScenicModel, Shmdatas, ViewSource, ViewSourceProperty, ViewDestination, ViewMapper, ViewEditQuidd ) {
+    'model/quiddity/Properties',
+    'model/quiddity/Methods',
+    'model/quiddity/Shmdatas'
+], function ( _, Backbone, async, socket, ScenicModel, Properties, Methods, Shmdatas ) {
 
     /**
      *  @constructor
@@ -27,8 +25,8 @@ define( [
             "category":         null,
             "long name":        null,
             "description":      null,
-            "properties":       [],
-            "methods":          [],
+            "properties":       new Properties(),
+            "methods":          new Methods(),
             "encoder_category": null,
             "shmdatas":         new Shmdatas(),
             "view":             null
@@ -43,12 +41,16 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
-            socket.on( "remove", _.bind( this._onRemove, this ) );
+            socket.on( "remove", _.bind( this._onRemoved, this ) );
             socket.on( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
             socket.on( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
 
+            this.get( 'properties' ).quiddity = this;
+            this.get( 'methods' ).quiddity = this;
             this.get( 'shmdatas' ).quiddity = this;
             if ( !this.isNew() ) {
+                this.get( 'properties' ).fetch();
+                this.get( 'methods' ).fetch();
                 this.get( 'shmdatas' ).fetch();
             }
         },
@@ -56,14 +58,10 @@ define( [
         /**
          * Delete Handler
          *
-         * @param {String} quiddityName
+         * @param {String} quiddityId
          */
-        _onRemove: function ( quiddityName ) {
-            if ( this.id == quiddityName ) {
-                //TODO: Get that out of the model
-                if ( quiddity.get( 'class' ) != "sip" ) {
-                    views.global.notification( "info", this.get( 'name' ) + " " + $.t( 'was deleted' ) );
-                }
+        _onRemoved: function ( quiddityId ) {
+            if ( this.id == quiddityId ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -121,23 +119,27 @@ define( [
         //
 
         /**
-         *  Allows you to create a view that contains all the information to edit the quiddity
-         *  also allows to register the change in the quiddity
+         *  Edit Quiddity
+         *  Put the quiddity in edit mode by updating its properties and descriptions,
+         *  then subscribing to get real-time updates
          */
-
         edit: function () {
-            var that = this;
-
-            /* We collect the latest information on the properties and method of quiddity */
-            that.getProperties( function () {
-                that.getMethodsDescription( function () {
-                    new ViewEditQuidd( {
-                        model: that
-                    } );
-                    //subscribe for have information about modification on quidd
-                    socket.emit( "subscribe_info_quidd", that.get( "name" ), socket.id );
-                } );
-            } );
+            var self = this;
+            async.series([
+                function( callback ) {
+                    self.getProperties( callback );
+                },
+                function( callback ) {
+                    self.getMethodsDescription( callback );
+                }
+            ], function( error ) {
+                if ( error ) {
+                    console.error( error );
+                    return;
+                }
+                socket.emit( "subscribe_info_quidd", self.id, socket.id );
+                self.trigger('edit', self);
+            });
         },
 
 

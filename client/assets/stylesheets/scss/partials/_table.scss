@@ -525,7 +525,7 @@ $quiddityGap: 2px;
   display: none;
 }
 
-.table #headerTable .headerMenu > li div, .tableScenic tr .groupSource, td.active {
+.table .menu .tableMenu > li div, .tableScenic tr .groupSource, td.active {
   background: $backgroundColor;
   color: $textColor;
   &:hover {

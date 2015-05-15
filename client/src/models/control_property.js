@@ -64,7 +64,7 @@ define(
           var that = this;
           views.global.confirmation(function(ok) {
               if (ok) {
-                socket.emit("removeValuePropertyOfDico", "controlProperties", that.get("name"));
+                socket.emit("removeValuePropertyOfDico", "controlDestinations", that.get("name"));
               }
           });
         }

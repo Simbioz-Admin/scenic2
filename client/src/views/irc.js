@@ -47,8 +47,8 @@ define(
 
 
           //add to the top the channel
-          $("#chat .headerMenu li").removeClass("active");
-          $("#chat .headerMenu").append('<li class="channel active" id=' + this.model.get("channel") + ' >#' + this.model.get("channel") + '<span class="countMsgIrc"></span></li>');
+          $("#chat .tableMenu li").removeClass("active");
+          $("#chat .tableMenu").append('<li class="channel active" id=' + this.model.get("channel") + ' >#' + this.model.get("channel") + '<span class="countMsgIrc"></span></li>');
 
           //listen outside of element associate to the view (for the menu)
           $("#" + this.model.get("channel")).click(function() {
@@ -69,7 +69,7 @@ define(
 
         showChannel: function(event) {
           //set all channel to false for define current active
-          $("#chat .headerMenu li").removeClass("active");
+          $("#chat .tableMenu li").removeClass("active");
           collections.irc.each(function(channel) {
             channel.set({
               active: false
@@ -111,7 +111,7 @@ define(
 
           //update nb connected
           $(".nb-connected", this.el).html(_.size(usersConnected));
-          //$("#chat .headerMenu #"+channel+" .newMsg").html(connected.length);
+          //$("#chat .tableMenu #"+channel+" .newMsg").html(connected.length);
 
           //update list connected
           _.each(usersConnected, function(name) {

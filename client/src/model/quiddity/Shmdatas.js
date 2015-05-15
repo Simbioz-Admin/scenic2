@@ -5,7 +5,7 @@ define( [
     'backbone',
     'lib/socket',
     'model/base/ScenicCollection',
-    'model/Shmdata'
+    'model/quiddity/Shmdata'
 ], function ( _, Backbone, socket, ScenicCollection, Shmdata ) {
 
     /**

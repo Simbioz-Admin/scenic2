@@ -1,0 +1,21 @@
+<div id="subMenu" >
+    <% if(type == "classes") { %>
+    <% _.each(classes, function(category, name){ %>
+    <div class="menuHeading"><%=name%></div>
+    <div class="menuButtons">
+        <% _.each(category, function(clas) { %>
+        <a class="create" data-name="<%=clas['class name']%>"><%=clas["long name"]%></a>
+        <% }); %>
+    </div>
+    <% }) %>
+    <% } else if ( type == "QuiddsAndProperties" ) { %>
+    <% _.each(menus, function(menu, name){ %>
+    <div class="menuHeading"><%=name%></div>
+    <div class="menuButtons" data-quiddname="<%=name%>">
+        <% _.each(menu, function(property) { %>
+        <a class="createControlProperty" data-property="<%=property%>" href="#"><%=property%></a>
+        <% }); %>
+    </div>
+    <% }); %>
+    <% } %>
+</div>

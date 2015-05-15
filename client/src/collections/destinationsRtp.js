@@ -31,7 +31,7 @@ define(
 
       {
         model: ModelDestinationRtp,
-        url: '/destinationsRtp',
+        url: '/rtpDestinations',
         parse: function(results, xhr) {
           return results;
         },

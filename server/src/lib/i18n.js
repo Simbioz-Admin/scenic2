@@ -32,8 +32,8 @@ module.exports = {
       process.stdout.write( '\n\u001b[90m');
 
       //Get names and categories from switcher
-      var classesDoc = JSON.parse( switcher.get_classes_doc() ).classes;
-      _.each( classesDoc, function ( classDoc ) {
+      var classDescriptions = JSON.parse( switcher.get_classes_doc() ).classes;
+      _.each( classDescriptions, function ( classDoc ) {
         i18n.t( classDoc['long name'] );
         i18n.t( classDoc['category'] );
         var className = classDoc['class name'];

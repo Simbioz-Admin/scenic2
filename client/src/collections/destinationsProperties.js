@@ -79,7 +79,7 @@ define(
 						quiddName: quiddName,
 						property: property
 					}
-					socket.emit("setPropertyValueOfDico", "controlProperties", newControlProperty, function(ok) {
+					socket.emit("setPropertyValueOfDico", "controlDestinations", newControlProperty, function(ok) {
 						callback(newControlProperty.name);
 					});
 				}

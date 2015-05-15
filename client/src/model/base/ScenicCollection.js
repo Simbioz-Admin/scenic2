@@ -28,6 +28,7 @@ define( [
             var command = this.methodMap[method];
             if ( command ) {
                 var callback = function( error, result ) {
+                    //console.log( command, error, result, options );
                     if ( error ) {
                         return options.error( error );
                     }

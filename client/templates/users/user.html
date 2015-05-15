@@ -12,7 +12,7 @@
 		<% if(itsMe){%>
 			<div id="currentStatus"><%=status%>
 				<ul>
-					<% _.each(collections.users.listStatus, function(status){ %>
+					<% _.each(collections.contacts.listStatus, function(status){ %>
 						<li class="listStatus" data-status="<%=status.value%>"><%=status.name%></li>
 					<% }); %>
 				</ul>

@@ -6,35 +6,47 @@ define( [
     'jquery',
     'i18n',
     'collections/classes_doc',
-    'collections/destinationsRtp',
     'collections/destinationsProperties',
     'collections/loggers',
-    'collections/users',
     'collections/channels-irc',
     'views/global',
-    'views/quidds',
-    'views/control/destinationProperties',
     'views/loggers',
     'views/users/users',
     'views/ircs',
-    'views/SystemUsage',
+    'view/scenic/SystemUsage',
     // New Models
     'model/Tables',
+    'model/ClassDescriptions',
     'model/Quiddities',
+    'model/SIPDestinations',
+    'model/RTPDestinations',
+    'model/ControlDestinations',
+    'model/Contacts',
     // New Views
-    'views/Tabs'
-], function ( _, Backbone, Mutators, async, $, i18n, CollectionClassesDoc, CollectionDestinationsRtp,
-              CollectionDestinationsProperties, CollectionLoggers, CollectionUsers, CollectionIrcs,
-              ViewGlobal, ViewQuidds, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
+    'view/Scenic',
+    'view/scenic/Tabs'
+], function ( _, Backbone, Mutators, async, $, i18n, CollectionClassesDoc,
+              CollectionLoggers, CollectionIrcs,
+              ViewGlobal, ViewDestinationProperties, ViewLoggers, ViewUsers, ViewIrcs,
               SystemUsageView,
               // New Models
-              Tables, Quiddities,
+              Tables, ClassDescriptions, Quiddities, SIPDestinations, RTPDestinations, ControlDestinations, Contacts,
               // New Views
-              TabsView ) {
+              ScenicView, TabsView ) {
+
+    var classDescriptions = null;
+    var quiddities = null;
+    var sipDestinations = null;
+    var rtpDestinations = null;
+    var controlDestinations = null;
+    var contacts = null;
+    var tables = null;
 
     var initialize = function ( config ) {
 
         //FIXME: There is nowhere to put this $("#currentUser").html(config.nameComputer);
+
+        var self = this;
 
         async.series( [
 
@@ -51,66 +63,76 @@ define( [
             },
 
             function ( callback ) {
-                collections.users      = new CollectionUsers();
-                collections.classesDoc = new CollectionClassesDoc();
-                collections.classesDoc.fetch( {success: _.partial(callback, null)} );
+                // Get class descriptions
+                self.classDescriptions = collections.classDescriptions = new ClassDescriptions();
+                self.classDescriptions.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
             function ( callback ) {
-                views.quiddities = new ViewQuidds( {collection: collections.quiddities} );
-
-                collections.destinationsRtp = new CollectionDestinationsRtp();
-                collections.destinationsRtp.fetch();
-
-                collections.quiddities = new Quiddities();
-                collections.quiddities.fetch( { success: _.partial(callback, null ), error: callback } );
+                // Get Quiddities
+                self.quiddities = collections.quiddities = new Quiddities();
+                self.quiddities.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
-            function( callback ) {
-                collections.tables = new Tables();
+            function ( callback ) {
+                // Get RTP Destinations
+                self.sipDestinations = collections.sipDestinations = new SIPDestinations();
+                //self.sipDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+                callback();
+            },
 
-                collections.destinationProperties = new CollectionDestinationsProperties();
-                collections.destinationProperties.fetch();
+            function ( callback ) {
+                // Get RTP Destinations
+                self.rtpDestinations = collections.rtpDestinations = new RTPDestinations();
+                self.rtpDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+            },
 
-                views.global = new ViewGlobal();
-                views.systemUsage   = new SystemUsageView();
+            function ( callback ) {
+                // Get Control Destinations
+                self.controlDestinations = collections.controlDestinations = new ControlDestinations();
+                self.controlDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+            },
 
-                collections.irc = new CollectionIrcs();
-                views.ircs      = new ViewIrcs();
+            function ( callback ) {
+                self.contacts = collections.contacts = new Contacts();
+                self.contacts.fetch( {success: _.partial( callback, null ), error: callback} );
+            },
 
-                views.destinationProperties = new ViewDestinationProperties( { collection: collections.destinationProperties } );
+            function ( callback ) {
+                // Table Collection
+                self.tables = collections.tables = new Tables();
 
-                views.users = new ViewUsers( { collection: collections.users } );
+                // Scenic Main View
+                var scenicView = new ScenicView( self );
+                scenicView.render();
 
 
                 //
                 //
                 //
                 //
-                //
-                //
-                //
-                //
 
-
-
+                // Views
+                views.global              = new ViewGlobal();
+                views.controlDestinations = new ViewDestinationProperties( {collection: collections.controlDestinations} );
+                views.users               = new ViewUsers( {collection: collections.contacts} );
 
                 // Finish with new views
-                var tabsView = window.tabs = new TabsView({ collection: collections.tables });
-                // Temporary tab click handler
-                tabsView.on('childview:show:table', function(childView, args) {
-                    collections.tables.setCurrentTable( childView.model );
-                    // Legacy
-                    $(".table").removeClass("active");
-                    $("#" + childView.model.get('id')).addClass("active");
-                });
-                tabsView.render();
+                /*var tabsView = window.tabs = new TabsView( {collection: collections.tables} );
+                 // Temporary tab click handler
+                 tabsView.on( 'childview:show:table', function ( childView, args ) {
+                 collections.tables.setCurrentTable( childView.model );
+                 // TODO: Legacy
+                 $( ".table" ).removeClass( "active" );
+                 $( "#" + childView.model.get( 'id' ) ).addClass( "active" );
+                 } );
+                 tabsView.render();*/
 
 
                 callback();
             }
 
-        ], function( error ) {
+        ], function ( error ) {
             if ( error ) {
                 console.error( error );
             }
@@ -118,6 +140,14 @@ define( [
     };
 
     return {
-        initialize: initialize
+        initialize:          initialize,
+        classDescriptions:   classDescriptions,
+        quiddities:          quiddities,
+        sipDestinations:     sipDestinations,
+        rtpDestinations:     rtpDestinations,
+        controlDestinations: controlDestinations,
+        contacts:            contacts,
+        tables:              tables
     };
-} );
+} )
+;

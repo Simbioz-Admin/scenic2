@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!../../templates/tab.html'
+    'text!../../../templates/tab.html'
 ], function ( _, Backbone, Marionette, TabTemplate ) {
 
     /**
@@ -15,8 +15,8 @@ define( [
     var TabView = Marionette.ItemView.extend( {
         tagName: 'div',
         template: _.template(TabTemplate),
-        triggers:    {
-            'click': 'show:table'
+        events:    {
+            'click': 'activate'
         },
         attributes: function () {
             return {
@@ -32,6 +32,9 @@ define( [
         },
         onRender: function() {
             this.$el.attr(this.attributes());
+        },
+        activate: function() {
+            this.model.activate();
         }
     } );
 

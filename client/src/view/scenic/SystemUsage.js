@@ -8,10 +8,11 @@
 define( [
     'underscore',
     'backbone',
+    'marionette',
     'lib/socket',
-    'text!../../templates/system-usage.html',
-    'text!../../templates/system-usage/network.html'
-], function ( _, Backbone, socket, SystemUsageTemplate, NetworkUsageTemplate ) {
+    'text!../../../template/system-usage.html',
+    'text!../../../template/system-usage/network.html'
+], function ( _, Backbone, Marionette, socket, SystemUsageTemplate, NetworkUsageTemplate ) {
 
     /**
      * SystemUsageView
@@ -20,9 +21,8 @@ define( [
      * @extends Backbone.View
      */
 
-    var SystemUsageView = Backbone.View.extend( {
-
-        template:  SystemUsageTemplate,
+    var SystemUsageView = Backbone.Marionette.ItemView.extend( {
+        template:  _.template( SystemUsageTemplate ),
         className: 'monitor',
         id:        "system-usage",
         cpuRender: false,
@@ -31,15 +31,13 @@ define( [
          * Initialize
          */
         initialize: function () {
-            $( "#tabs" ).append( this.el );
-
-            var template = _.template( SystemUsageTemplate )();
-            $( this.el ).html( template );
-            $( this.el ).i18n();
-
-            this.$net                 = $( '.network .content' );
             this.networkUsageTemplate = _.template( NetworkUsageTemplate );
+        },
 
+        onAttach: function () {
+            console.log('aa');
+            $( this.el ).i18n();
+            this.$net = $( '.network .content' );
             socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
         },
 

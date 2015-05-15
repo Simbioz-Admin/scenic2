@@ -119,7 +119,7 @@ define(
             // Check if we need to connect to SIP server before continuing
             if (dataFormSip.name && dataFormSip.password) {
               console.info("Logging in to SIP server");
-              collections.users.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
+              collections.contacts.loginSip(dataFormSip.address, dataFormSip.name, dataFormSip.password, dataFormSip.port, function(err) {
                 if (err) {
                   //TODO: Actually make something useful for the EU out of this error
                   return console.error(err);

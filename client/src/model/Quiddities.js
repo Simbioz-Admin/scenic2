@@ -23,6 +23,16 @@ define( [
             'read':   'get_quiddities'
         },
 
+        ignoredQuiddities: [
+            'dico',
+            'create_remove_spy',
+            'rtpsession',
+            'logger',
+            'runtime',
+            'logger',
+            'SOAPcontrolServer'
+        ],
+
         /**
          * Initialize
          */
@@ -37,7 +47,9 @@ define( [
          * @param {Object} quiddity
          */
         _onCreate: function ( quiddity ) {
-            this.add( quiddity, {merge: true} );
+            if ( !_.contains( this.ignoredQuiddities, quiddity.class ) ) {
+                this.add( quiddity, {merge: true} );
+            }
         },
 
 

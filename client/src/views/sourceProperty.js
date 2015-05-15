@@ -73,7 +73,7 @@ define(
 
           var that = this,
             properties = this.model.get("properties"),
-            destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.destinationProperties.toJSON()),
+            destinations = (this.table == "transfer" ? collections.destinations.toJSON() : collections.controlDestinations.toJSON()),
             countProperty = 0;
 
 

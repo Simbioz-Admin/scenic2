@@ -39,7 +39,6 @@ define(
           "click #create-quiddsProperties": "getMenuProperties",
           "click #create-midi": "getMenuMidiDevice",
           "click .contextMenu .menuButton": 'getClasses',
-          "mouseleave #subMenu": 'leaveSubMenu',
           "click body.scenic": 'leaveSubMenu',
           "click .box": "toggle_connection",
           "keypress #port_destination": "set_connection",
@@ -59,35 +58,6 @@ define(
           this.model.on("addCategoryFilter", this.addCategoryFilter, this);
           this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
 
-          /* generate a btn for the table */
-          var currentTable = localStorage["currentTable"] ? localStorage["currentTable"] : config.defaultPanelTable;
-
-          var active = (currentTable == this.model.get("id") ? "active" : "inactive");
-          var btnTable = $("<div></div>", {
-            text: "",
-            class: "tab " + this.model.get("type") + " " + this.model.get("name" ).toLowerCase() + " " + active,
-            title: this.model.get("description"),
-            data: {
-              id: this.model.get("id")
-            }
-          });
-
-          //btnTable.append("<div class='content'><div class='icon'></div><div class='name'>"+this.model.get('name')+"</div></div>");
-          //$("#tabs").prepend(btnTable);
-
-          /* generate the table */
-          var template = _.template(TemplateTable)( {
-            type: this.model.get("type"),
-            menus: this.model.get("menus")
-          });
-          $(this.el)
-            .attr("id", this.model.get("id"))
-            .addClass(active)
-            .html(template);
-
-
-          /* add to the default panel */
-          $("#main").append(this.el);
           //translation
           $(this.el).i18n();
 
@@ -100,14 +70,14 @@ define(
          */
         getClasses: function(e) {
           $("#subMenu").remove();
-          var shmdataType = e.target ? $(e.target ).parent().data("type") : e;
+         /* var shmdataType = e.target ? $(e.target ).parent().data("type") : e;
 
-          /* get the quiddity classes authorized on this table */
+          /!* get the quiddity classes authorized on this table *!/
           var classes = this.model.selectByCategory(shmdataType);
-          /* we not load classes if nothing is return */
+          /!* we not load classes if nothing is return *!/
           if (classes && classes.length == 0) return;
 
-          /* GroupBy category the list of classes */
+          /!* GroupBy category the list of classes *!/
           var classesByCategory = _.groupBy(classes, function(clas) {
             return clas.category;
           });
@@ -115,7 +85,7 @@ define(
           var template = _.template(TemplateSubMenu)( {
             type: "classes",
             classes: classesByCategory
-          });
+          });*/
 
           $("#listSources", this.el).remove();
           $( e.target ).after(template);
@@ -161,9 +131,7 @@ define(
 
         },
 
-        leaveSubMenu: function(e) {
-          $("#subMenu").remove();
-        },
+
 
         toggle_connection: function(e) {
           var box = $(e.currentTarget),
@@ -255,7 +223,7 @@ define(
             if (quiddCategory.indexOf("source") != -1 && quidd.get("class") != "midisrc") {
               var listProperties = [];
               _.each(quidd.get("properties"), function(property) {
-                if (!collections.controlProperties.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
+                if (!collections.controlDestinations.get(quidd.get("name") + "_" + property.name) && property.writable == "true" && property.name != "started") {
                   listProperties.push(property.name);
                   quiddsMenu[quidd.get("name")] = listProperties;
                 }
@@ -282,7 +250,7 @@ define(
         getMenuMidiDevice: function(element) {
           console.log("menu midi");
           $("#listDevicesMidi").remove();
-          collections.classesDoc.getPropertyByClass("midisrc", "device", function(property) {
+          collections.classDescriptions.getPropertyByClass("midisrc", "device", function(property) {
             var devicesMidi = property["values"];
             _.each(devicesMidi, function(device, index) {
               collections.quiddities.each(function(quidd) {

@@ -9,7 +9,7 @@ define( [
      *  @constructor
      *  @augments module:Backbone.Model
      */
-    var Destination = Backbone.Model.extend( {
+    var Argument = Backbone.Model.extend( {
         defaults:    {
 
         },
@@ -19,5 +19,5 @@ define( [
         }
     } );
 
-    return Destination;
+    return Argument;
 } );

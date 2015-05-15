@@ -2,7 +2,7 @@ define(
 
     /** 
      *	Module for get information about the documentation of quiddities
-     *	@exports collections/classesDoc
+     *	@exports collections/classDescriptions
      */
 
     [
@@ -25,7 +25,7 @@ define(
         var ClassesDocCollection = Backbone.Collection.extend(
 
             /**
-             *	@lends module:collections/classesDoc~ClassesDocCollection.prototype
+             *	@lends module:collections/classDescriptions~ClassesDocCollection.prototype
              */
 
             {
@@ -47,26 +47,6 @@ define(
                     socket.emit("get_property_by_class", className, propertyName, function(propertyByClass) {
                         callback(propertyByClass);
                     });
-                },
-
-
-                /** 
-                 *	Returns the type of classes available for a defined category
-                 *	@param {string} Name of the category
-                 */
-
-                getByCategory: function(categories) {
-                    filtered = _.filter(this.toJSON(), function(classDoc) {
-                        var sameCat = false;
-                        _.each(categories, function(cat) {
-                            if (classDoc.category.indexOf(cat) >= 0) sameCat = true;
-                            if (classDoc["class name"].indexOf(cat) >= 0) sameCat = true;
-                        });
-                        if (sameCat) return classDoc;
-                        // if(_.contains(categories, classDoc.category)) return classDoc 
-                    });
-
-                    return filtered;
                 }
             });
 

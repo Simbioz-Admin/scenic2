@@ -24,12 +24,33 @@ function ReceiverManager( config, switcher, io ) {
  * @param socket
  */
 ReceiverManager.prototype.bindClient = function ( socket ) {
+    socket.on( "list_rtp_destinations", this.list_rtp_destinations.bind( this ) );
     socket.on( "create_destination", this.create_destination.bind( this ) );
     socket.on( "update_destination", this.update_destination.bind( this ) );
     socket.on( "remove_destination", this.remove_destination.bind( this ) );
     socket.on( "connect_destination", this.connect_destination.bind( this ) );
     socket.on( "remove_connection", this.remove_connection.bind( this ) );
 };
+
+/**
+ * List RTP Destinations
+ *
+ * @param cb
+ * @returns {*}
+ */
+ReceiverManager.prototype.list_rtp_destinations = function( cb ) {
+    var destinations = this.switcher.invoke( 'dico', 'read', ['rtpDestinations'] );
+    if ( !destinations ) {
+        var msg = "Could not list RTP destinations.";
+        log.error(msg);
+        return cb(msg);
+    }
+    cb(null,destinations);
+};
+
+//
+//
+//
 
 /**
  *  Create a new Receiver : Add in dico destination, add destination in rtpsession and if a port soap is
@@ -42,7 +63,7 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
 ReceiverManager.prototype.create_destination = function ( destination, cb ) {
 
     /* Get the destinations existing stock in dico (propety destinations) */
-    var destinations = this.switcher.invoke( "dico", "read", ["destinationsRtp"] );
+    var destinations = this.switcher.invoke( "dico", "read", ["rtpDestinations"] );
     destinations     = JSON.parse( destinations );
 
     var exist = _.findWhere( destinations, {
@@ -65,8 +86,8 @@ ReceiverManager.prototype.create_destination = function ( destination, cb ) {
 
     destinations.push( destination );
 
-    // var setDestination = this.switcher.set_property_value("dico", "destinationsRtp", JSON.stringify(destinations));
-    var setDestination  = this.switcher.invoke( "dico", "update", ["destinationsRtp", JSON.stringify( destinations )] );
+    // var setDestination = this.switcher.set_property_value("dico", "rtpDestinations", JSON.stringify(destinations));
+    var setDestination  = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinations )] );
     if ( !setDestination ) {
         var msg = "Failed to set property destination for add " + destination.hostName;
         log.error( msg );
@@ -177,7 +198,7 @@ ReceiverManager.prototype.connect_destination = function ( quiddName, path, id, 
     }
 
     /* 3. we save data stream to the dico destination */
-    var destinations = JSON.parse( this.switcher.invoke( "dico", "read", ["destinationsRtp"] ) );
+    var destinations = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) );
     destinations     = _.map( destinations, function ( destination ) {
 
         if ( destination.id == id ) {
@@ -190,7 +211,7 @@ ReceiverManager.prototype.connect_destination = function ( quiddName, path, id, 
         return destination;
     } );
 
-    var setPropertyValueOfDico = this.switcher.invoke( "dico", "update", ["destinationsRtp", JSON.stringify( destinations )] );
+    var setPropertyValueOfDico = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinations )] );
     if ( !setPropertyValueOfDico ) {
         return cb( "error when saving Destinations Dico" );
     }
@@ -229,7 +250,7 @@ ReceiverManager.prototype.remove_connection = function ( path, id, cb ) {
 
     /* 2. we remove data stream to the dico destination */
     var destinations_rtp  = JSON.parse( this.switcher.get_property_value( "defaultrtp", "destinations-json" ) ).destinations;
-    var destinations_dico = JSON.parse( this.switcher.invoke( "dico", "read", ["destinationsRtp"] ) );
+    var destinations_dico = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) );
 
     /* 3. remove connection from dico destinations */
     var connectWithAnother = false;
@@ -270,7 +291,7 @@ ReceiverManager.prototype.remove_connection = function ( path, id, cb ) {
         log.debug( "Another receiver is connected to", path );
     }
 
-    var setPropertyValueOfDico = this.switcher.invoke( "dico", "update", ["destinationsRtp", JSON.stringify( destinations_dico )] );
+    var setPropertyValueOfDico = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinations_dico )] );
     if ( !setPropertyValueOfDico ) {
         return cb( "error when saving Destinations Dico" );
     }
@@ -296,7 +317,7 @@ ReceiverManager.prototype.update_destination = function ( oldId, destination, cb
 
     var self = this;
 
-    var destinations = JSON.parse( this.switcher.invoke( "dico", "read", ["destinationsRtp"] ) ),
+    var destinations = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) ),
         data_streams = destination.data_streams;
 
     /* 1. we remove destination */
@@ -372,11 +393,11 @@ ReceiverManager.prototype.remove_destination = function ( id, portSoap, cb ) {
 
     /* remove destination of the dico */
 
-    var destinations        = JSON.parse( this.switcher.invoke( "dico", "read", ["destinationsRtp"] ) );
+    var destinations        = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) );
     var destinationsWhitout = _.reject( destinations, function ( dest ) {
         return dest.id == id;
     } );
-    var setDicoWithout      = this.switcher.invoke( "dico", "update", ["destinationsRtp", JSON.stringify( destinationsWhitout )] );
+    var setDicoWithout      = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinationsWhitout )] );
     if ( !setDicoWithout ) {
         var msg = i18n.t( "Failed to set destination " ),
             id;

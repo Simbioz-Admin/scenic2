@@ -4,8 +4,8 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'views/Tab',
-    'text!../../templates/tabs.html'
+    'view/scenic/Tab',
+    'text!../../../templates/tabs.html'
 ], function ( _, Backbone, Marionette, TabView, TabsTemplate ) {
 
     /**
@@ -14,12 +14,10 @@ define( [
      */
 
     var TabsView = Marionette.CollectionView.extend( {
-        el: '#tabs',
         childView: TabView,
         template: _.template(TabsTemplate),
         events:    {},
         initialize: function () {
-
         },
         onRender: function() {
 

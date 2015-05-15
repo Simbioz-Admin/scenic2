@@ -4,17 +4,14 @@
       <div class="menuHeading"><%=name%></div>
       <div class="menuButtons">
         <% _.each(category, function(clas) { %>
-          <% var autoDetect = _.contains(config.deviceAutoDetect, clas["class name"]); %>
-          <a class="createQuidd <% if(autoDetect){ %> autoDetect<% } %>" data-name="<%=clas['class name']%>" data-quiddname="<%=clas['long name']%>">
-            <%=clas["long name"]%>
-          </a>
+          <a class="create" data-name="<%=clas['class name']%>"><%=clas["long name"]%></a>
       <% }); %>
       </div>
     <% }) %>
   <% } else if ( type == "QuiddsAndProperties" ) { %>
     <% _.each(menus, function(menu, name){ %>
       <div class="menuHeading"><%=name%></div>
-      <div class="menuButtons" data-quiddname="<%=name%>">
+      <div class="menuButtons">
         <% _.each(menu, function(property) { %>
           <a class="createControlProperty" data-property="<%=property%>" href="#"><%=property%></a>
         <% }); %>

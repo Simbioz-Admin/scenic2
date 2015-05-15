@@ -15,7 +15,8 @@ module.exports = function( app, config, switcherController ) {
     app.use('/client', express.static(rootPath + "/client/src"));
     app.use('/locales', express.static(rootPath + "/locales"));
     app.use('/assets', express.static(rootPath + "/client/assets"));
-    app.use('/templates', express.static(rootPath + "/client/templates"));
+    app.use('/templates', express.static(rootPath + "/client/templates")); //Legacy
+    app.use('/template', express.static(rootPath + "/client/template"));
 
     app.get('/', function(req, res) {
 
@@ -89,16 +90,16 @@ module.exports = function( app, config, switcherController ) {
     });
 
 
-    app.get('/destinationsRtp', function(request, response) {
+    app.get('/rtpDestinations', function(request, response) {
         response.contentType('application/json');
-        var destinations = switcher.invoke("dico","read", ["destinationsRtp"]);
+        var destinations = switcher.invoke("dico","read", ["rtpDestinations"]);
         response.send(destinations);
     });
 
 
     app.get('/destinationsProperties', function(request, response) {
         response.contentType('application/json');
-        var destinations = switcher.invoke("dico","read", ["controlProperties"]);
+        var destinations = switcher.invoke("dico","read", ["controlDestinations"]);
         response.send(destinations);
     });
 

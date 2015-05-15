@@ -4,9 +4,8 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/base/ScenicModel',
-    'views/shmdata'
-], function ( _, Backbone, socket, ScenicModel, ViewShmdata ) {
+    'model/base/ScenicModel'
+], function ( _, Backbone, socket, ScenicModel ) {
 
     /**
      *  @constructor
@@ -50,7 +49,7 @@ define( [
          * @param shmdata
          * @private
          */
-        _onRemove: function ( qname, shmdata ) {
+        _onRemoved: function ( qname, shmdata ) {
             if ( shmdata.path == this.id ) {
                 this.trigger( 'destroy', this, this.collection );
             }

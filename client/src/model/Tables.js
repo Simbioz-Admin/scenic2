@@ -31,10 +31,10 @@ define( [
                     type: "destinations"
                 }],
                 sources:      {
-                    select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
+                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
                 },
                 destinations: {
-                    select:  ["sink"],
+                    include:  ["sink"],
                     exclude: ["monitor"]
                 }
             } ) );
@@ -54,9 +54,9 @@ define( [
                     id:   "create_receiver"
                 }],
                 sources:                {
-                    select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
                 },
-                collectionDestinations: collections.destinationsRtp
+                collectionDestinations: collections.rtpDestinations
             } ) );
 
             /* Create matrix for manage connection between properties values and midi quiddity */
@@ -74,9 +74,9 @@ define( [
                     id:   "get_properties"
                 }],
                 sources:                {
-                    select: ["midisrc"]
+                    include: ["midisrc"]
                 },
-                collectionDestinations: collections.destinationsRtp
+                collectionDestinations: collections.rtpDestinations
             } ) );
 
             /* Manage transfer of shmdatas to the sip destination */
@@ -90,9 +90,9 @@ define( [
                     type: "sources"
                 }],
                 sources:                {
-                    select: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
                 },
-                collectionDestinations: collections.users
+                collectionDestinations: collections.contacts
             } ) );
 
             // Current
@@ -132,6 +132,7 @@ define( [
             if ( this.currentTable ) {
                 this.currentTable.set('active', true);
             }
+            this.trigger('change:current', this.currentTable);
         }
     } );
     return Tables;

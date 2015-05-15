@@ -18,6 +18,7 @@ var checkPort       = require( '../utils/check-port' );
 function SwitcherController( config, io ) {
     this.config          = config;
     this.io              = io;
+    this.switcher        = switcher;
     this.quiddityManager = new QuiddityManager( config, switcher, io );
     this.sipManager      = new SipManager( config, switcher, io );
     this.receiverManager = new ReceiverManager( config, switcher, io );
@@ -98,8 +99,8 @@ SwitcherController.prototype.initialize = function ( callback ) {
             // Create default dico
             log.debug( 'Creating Dictionaries...' );
             var dico = switcher.create( "dico", "dico" );
-            switcher.invoke( dico, "update", ["controlProperties", "[]"] );
-            switcher.invoke( dico, "update", ["destinationsRtp", "[]"] );
+            switcher.invoke( dico, "update", ["controlDestinations", "[]"] );
+            switcher.invoke( dico, "update", ["rtpDestinations", "[]"] );
 
             callback();
         }
@@ -122,6 +123,7 @@ SwitcherController.prototype.bindClient = function ( socket ) {
     socket.on( "load", this.load.bind( this ) );
     socket.on( "remove_save", this.remove_save.bind( this ) );
     socket.on( "get_save_file_list", this.get_save_file_list.bind( this ) );
+    socket.on( "list_control_destinations", this.list_control_destinations.bind( this ) );
 
     this.quiddityManager.bindClient( socket );
     this.sipManager.bindClient( socket );
@@ -134,6 +136,27 @@ SwitcherController.prototype.bindClient = function ( socket ) {
 //  ██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
 //  ╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
 //   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
+
+/**
+ * List Control Destinations
+ *
+ * @param cb
+ * @returns {*}
+ */
+SwitcherController.prototype.list_control_destinations = function ( cb ) {
+    var destinations = this.switcher.invoke( 'dico', 'read', ['controlDestinations'] );
+    if ( !destinations ) {
+        var msg = "Could not list Control Destinations.";
+        log.error( msg );
+        return cb( msg );
+    }
+    cb( null, destinations );
+};
+
+
+//
+//
+//
 
 /**
  * Switcher Log Callback

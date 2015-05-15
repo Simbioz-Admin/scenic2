@@ -1,0 +1,12 @@
+<div class="tableMenu">
+    <% _.each(menus, function(menu) { %>
+    <div class="contextMenu" <% if(menu.id) { %> id="<%=menu.id%>" <% } %> data-type="<%=menu.type%>">
+        <div class="menuButton"><%=menu.name%></div>
+    </div>
+    <% }); %>
+</div>
+<div class="filter" title="filter">
+    <select name="" class="dropdown_filter">
+        <option value="" data-i18n>Show all categories</option>
+    </select>
+</div>

@@ -28,6 +28,8 @@ function SipManager( config, switcher, io ) {
  * @param socket
  */
 SipManager.prototype.bindClient = function ( socket ) {
+    socket.on( "get_user_list", this.get_user_list.bind( this ) );
+    //
     socket.on( "sip_logout", this.logout.bind( this ) );
     socket.on( "sip_login", this.login.bind( this ) );
     socket.on( "addUser", this.addUser.bind( this ) );
@@ -39,6 +41,37 @@ SipManager.prototype.bindClient = function ( socket ) {
     socket.on( "hangUpUser", this.hangUpUser.bind( this ) );
     socket.on( "removeUser", this.removeUser.bind( this ) );
 };
+
+/**
+ * Get User List
+ *
+ * @param cb
+ */
+SipManager.prototype.get_user_list = function( cb ) {
+    var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.' ) );
+    if ( !users ) {
+        var msg = "Could not get users list.";
+        log.error(msg);
+        return cb(msg);
+    }
+    cb( null, users );
+};
+
+
+
+//
+//
+//
+//
+//
+
+//
+//
+//
+
+
+
+
 
 /*
  *  @function addListUser

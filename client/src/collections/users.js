@@ -37,22 +37,6 @@ define(
         initialize: function() {
           var that = this;
 
-          // receive update info user from server side
-          socket.on("infoUser", function(infoUser) {
-            if (infoUser != {}) {
-              var user = that.get(infoUser.uri);
-              if (user) {
-                user.set(infoUser);
-              } else {
-                if (infoUser.uri) {
-                  that.add(infoUser);
-                }
-              }
-
-            }
-
-          });
-
           // Message receive from the server //
 
           socket.on("addDestinationSip", function(uri) {
@@ -67,10 +51,6 @@ define(
             user.trigger('destroyDestinationMatrix', user, that);
           });
 
-          socket.on("removeUser", function(uri) {
-            var model = that.get(uri);
-            model.trigger('destroy', model, that);
-          });
         },
 
         parse: function(results, xhr) {

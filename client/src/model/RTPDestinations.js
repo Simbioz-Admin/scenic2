@@ -18,7 +18,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'list_rtp_destinations'
+            'read':   'listRtpDestinations'
         },
         initialize: function() {
             Destinations.prototype.initialize.apply(this,arguments);

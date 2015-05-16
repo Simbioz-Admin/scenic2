@@ -7,9 +7,8 @@ define( [
     'view/scenic/Tabs',
     'view/scenic/SystemUsage',
     'view/scenic/Table',
-    'view/scenic/Inspector',
-    'text!../../template/table/inspector/createQuiddity.html'
-], function ( _, Backbone, Marionette, TabsView, SystemUsageView, TableView, InspectorView, CreateQuiddityInspectorTemplate ) {
+    'view/scenic/Inspector'
+], function ( _, Backbone, Marionette, TabsView, SystemUsageView, TableView, InspectorView ) {
 
     /**
      *  @constructor
@@ -27,10 +26,6 @@ define( [
             inspector: '#inspector'
         },
 
-        childEvents: {
-            'create:quiddity': function(){console.log('adasadas');}
-        },
-
         initialize: function( app ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel('scenic');
 
@@ -38,7 +33,9 @@ define( [
             this.app.tables.on( 'change:current', _.bind( this._onShowTable, this ) );
 
             // Wreqr Handlers
-            this.scenicChannel.commands.setHandler( 'create:quiddity', _.bind( this._onCreateQuiddity, this ) );
+            this.scenicChannel.vent.on( 'notify', _.bind( this._onNotify, this ) );
+            this.scenicChannel.vent.on( 'success', _.bind( this._onSuccess, this ) );
+            this.scenicChannel.vent.on( 'error', _.bind( this._onError, this ) );
         },
 
         /**
@@ -51,21 +48,51 @@ define( [
             this.showChildView('tabs', new TabsView( { collection: this.app.tables }));
             this.showChildView('usage', new SystemUsageView());
             this.showChildView('table', new TableView( { model: this.app.tables.getCurrentTable() }));
+            this.showChildView('inspector', new InspectorView() );
         },
 
+        /**
+         * Current table change handler
+         * Displays the curent table
+         *
+         * @param table
+         * @private
+         */
         _onShowTable: function( table ) {
             this.showChildView('table', new TableView( { model: table }));
         },
 
-        _onCreateQuiddity: function( classDescription ) {
-            var self = this;
-            // Load devices before continuing
-            classDescription.loadDevices( function( error, devices ) {
-                if ( error ) {
-                    return;
-                }
-                self.showChildView( 'inspector', new InspectorView( { model: classDescription, template: _.template( CreateQuiddityInspectorTemplate ) }));
-            });
+        /**
+         * Notification Handler
+         * Displays a notification
+         *
+         * @param message
+         * @private
+         */
+        _onNotify: function( message ) {
+            console.log( message );
+        },
+
+        /**
+         * Success Handler
+         * Displays a notification
+         *
+         * @param message
+         * @private
+         */
+        _onSuccess: function( message ) {
+            console.info( message );
+        },
+
+        /**
+         * Error Handler
+         * Displays a notification
+         *
+         * @param message
+         * @private
+         */
+        _onError: function( message ) {
+            console.error( message );
         }
     } );
     return ScenicView;

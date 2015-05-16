@@ -7,7 +7,7 @@ define( [
     'view/scenic/table/Menu',
     'view/scenic/table/Sources',
     'view/scenic/table/Destinations',
-    'text!../../../template/table.html'
+    'text!template/scenic/table.html'
 ], function ( _, Backbone, Marionette, MenuView, SourcesView, DestinationsView, TableTemplate ) {
 
     /**

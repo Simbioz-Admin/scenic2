@@ -1,0 +1,17 @@
+<div class="close" id="close-inspector">X</div>
+<div class="title">Choose name for <%=obj['class name']%></div>
+<div class="content">
+    <form id="form-quidd">
+        <label for="quiddityName" data-i18n>Choose a name, if empty a default name will been defined</label>
+        <input type="text" id="quiddityName" name="quiddityName" data-i18n="[placeholder]Name" placeholder="Name" value=""/>
+        <% if (devices.length > 0) { %>
+            <label for="device" data-i18n>Choose a device</label>
+            <select id="device" name="device">
+                <% _.each(devices, function(device) { %>
+                    <option value="<%=device.value%>"><%=device.name%></option>
+                <% }) %>
+            </select>
+        <% } %>
+        <a id="create" class="btn btn-large" data-i18n>Create</a>
+    </form>
+</div>

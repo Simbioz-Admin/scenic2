@@ -32,7 +32,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   function() { return [ 'get_info', this.quiddity.id, '.shmdata' ] }
+            'read':   function() { return [ 'getInfo', this.quiddity.id, '.shmdata' ] }
         },
 
         parse: function( response ) {

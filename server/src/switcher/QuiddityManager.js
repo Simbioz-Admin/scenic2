@@ -1,8 +1,9 @@
 "use strict";
 
-var _    = require( 'underscore' );
-var i18n = require( 'i18next' );
-var log  = require( '../lib/logger' );
+var _       = require( 'underscore' );
+var i18n    = require( 'i18next' );
+var log     = require( '../lib/logger' );
+var logback = require( './logback' );
 
 /**
  * Constructor
@@ -13,9 +14,10 @@ var log  = require( '../lib/logger' );
  * @constructor
  */
 function QuiddityManager( config, switcher, io ) {
-    this.config   = config;
-    this.switcher = switcher;
-    this.io       = io;
+    this.config            = config;
+    this.switcher          = switcher;
+    this.io                = io;
+    this.quidditySocketMap = {};
 }
 
 /**
@@ -24,115 +26,292 @@ function QuiddityManager( config, switcher, io ) {
  * @param socket
  */
 QuiddityManager.prototype.bindClient = function ( socket ) {
-    socket.on( "get_classes_doc", this.get_classes_doc.bind( this ));
+    socket.on( "getQuiddityClasses", this.getQuiddityClasses.bind( this ) );
+    socket.on( "getQuiddities", this.getQuiddities.bind( this ) );
+    socket.on( "getInfo", this.getInfo.bind( this ) );
+    socket.on( "getProperties", this.getProperties.bind( this ) );
+    socket.on( "getPropertyDescription", this.getPropertyDescription.bind( this ) );
+    socket.on( "getMethods", this.getMethods.bind( this ) );
+    socket.on( "getMethodDescription", this.getMethodDescription.bind( this ) );
+    socket.on( "invokeMethod", this.invokeMethod.bind( this ) );
     socket.on( "create", this.create.bind( this ) );
-    socket.on( "get_quiddities", this.get_quiddities.bind( this ) );
+    socket.on( "remove", this.remove.bind( this ) );
+    //
+    //
+    //
     socket.on( "get_quiddity_description", this.get_description.bind( this ) );
-    socket.on( "get_info", this.get_info.bind( this ) );
-    socket.on( "get_properties_description", this.get_properties_description.bind( this ) );
-    socket.on( "get_methods_description", this.get_methods_description.bind( this ) );
-    socket.on( "get_method_description", this.get_method_description.bind( this ) );
-    socket.on( "get_property_description", this.get_property_description.bind( this ) );
     socket.on( "get_property_value", this.get_property_value.bind( this ) );
     socket.on( "set_property_value", this.set_property_value.bind( this ) );
     socket.on( "get_property_by_class", this.get_property_by_class.bind( this ) );
-    socket.on( "remove", this.remove.bind( this ) );
-    socket.on( "invoke", this.invoke.bind( this ) );
     socket.on( "subscribe_info_quidd", this.subscribe_info_quidd.bind( this ) );
     socket.on( "unsubscribe_info_quidd", this.unsubscribe_info_quidd.bind( this ) );
     socket.on( "setPropertyValueOfDico", this.set_property_value_of_dico.bind( this ) );
     socket.on( "removeValuePropertyOfDico", this.remove_property_value_of_dico.bind( this ) );
 };
 
-QuiddityManager.prototype.get_classes_doc = function( cb ) {
-    var classes = JSON.parse(this.switcher.get_classes_doc() ).classes;
-    if ( !classes ) {
-        var msg = "Could not get classes descriptions";
-        log.error(msg);
-        return cb( msg );
-    }
-    cb( null, classes );
-};
-
+//   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
+//  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
+//  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
+//  ██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
+//  ╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
+//   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
 
 /**
- *  @function create
- *  @description call when a user ask to creating a quiddity
+ * Get quiddity classes
+ *
+ * @param cb
+ */
+QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
+    log.debug( 'Getting quiddity classes' );
+    try {
+        var result = JSON.parse( this.switcher.get_classes_doc() );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || !result.classes ) {
+        return logback( i18n.t( 'Could not get quiddity classes' ), cb );
+    }
+    cb( null, result.classes );
+};
+
+/**
+ * Get Quiddities
+ *
+ * @param cb
+ */
+QuiddityManager.prototype.getQuiddities = function ( cb ) {
+    log.debug( 'Getting quiddities' );
+    try {
+        var quiddDescriptions = JSON.parse( this.switcher.get_quiddities_description() );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !quiddDescriptions || quiddDescriptions.error ) {
+        return logback( quiddDescriptions ? quiddDescriptions.error : i18n.t( 'Could not get quiddities' ), cb );
+    }
+    cb( null, quiddDescriptions.quiddities );
+};
+
+/**
+ * Get quiddity information
+ * @param quiddityId
+ * @param path
+ * @param cb
+ * @returns {*}
+ */
+QuiddityManager.prototype.getInfo = function ( quiddityId, path, cb ) {
+    log.debug( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
+    try {
+        var info = JSON.parse( this.switcher.get_info( quiddityId, path ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !info || info.error ) {
+        return logback( info ? info.error : i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ), cb );
+    }
+    return cb( null, info );
+};
+
+/**
+ * Get properties
+ *
+ * @param quiddityId
+ * @param cb
+ * @returns {*}
+ */
+QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
+    log.debug( 'Getting properties for quiddity: ' + quiddityId );
+    try {
+        var result = JSON.parse( this.switcher.get_properties_description( quiddityId ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || !result.properties || result.error ) {
+        return logback( result && result.error ? result.error : i18n.t( 'Could not get properties for __quiddityId__', {quiddityId: quiddityId} ), cb );
+    }
+    cb( null, result.properties );
+};
+
+/**
+ * Get property description
+ *
+ * @param quiddityId
+ * @param property
+ * @param cb
+ */
+QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property, cb ) {
+    try {
+        var result = JSON.parse( this.switcher.get_property_description( quiddityId, property ) );
+    } catch( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || result.error ) {
+        return logback( i18n.t( 'Could not get property description for __quiddityId__ property __property__', { quiddityId: quiddityId, property: property } ) + ' ' + ( result ? result.error : '' ) )
+    }
+    cb( null, result );
+};
+
+/**
+ * Get Methods
+ *
+ * @param quiddityId
+ * @param cb
+ */
+QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
+    log.debug( 'Getting methods for quiddity: ' + quiddityId );
+    try {
+        var result = JSON.parse( this.switcher.get_methods_description( quiddityId ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || !result.methods || result.error ) {
+        return logback( i18n.t( "Failed to get methods for __quiddityId__", {quiddityId: quiddityId} ) );
+    }
+    cb( null, result.methods );
+};
+
+/**
+ * Get method description
+ *
+ * @param quiddityId
+ * @param method
+ * @param cb
+ * @returns {*}
+ */
+QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, cb ) {
+    try {
+        var result = JSON.parse( this.switcher.get_method_description( quiddityId, method ) );
+    } catch( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || result.error ) {
+        return logback( i18n.t( 'Could not get method description for __quiddityId__ method __method__', { quiddityId: quiddityId, method: method } ) + ' ' + ( result ? result.error : '' ) )
+    }
+    cb( null, result );
+};
+
+/**
+ * Invoke method on quiddity
+ *
+ * @param quiddityId
+ * @param method
+ * @param parameters
+ * @param cb
+ * @returns {*}
+ */
+QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters, cb ) {
+    log.debug( "Invoking method " + method + " of " + quiddityId + " with " + parameters );
+    try {
+        var invoke = this.switcher.invoke( quiddityId, method, parameters );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !invoke ) {
+        return logback( i18n.t( "Failed to invoke __method__ on __quiddidtyId__", {
+            quiddityId: quiddityId,
+            method:    method
+        } ) );
+    }
+    cb( null, invoke );
+
+    //TODO: What the hell is this?
+    if ( method == "remove_udp_stream_to_dest" ) {
+        this.io.emit( "remove_connection", invoke, quiddityId, parameters );
+    }
+};
+
+/**
+ * Create Quiddity
+ *
  *  @param {string} className The class of the quiddity
- *  @param {string} quiddName The name (id) of the quiddity
+ *  @param {string} quiddityName The name (id) of the quiddity
  *  @param {string} socketId Id Socket (socket.io) of the user ask to create the quiddity
+ * @param cb
  */
-QuiddityManager.prototype.create = function ( className, quiddName, socketId, cb ) {
-  if ( !cb ) {
-    cb = socketId;
-  } //its not always a user ask for create a quidd
+QuiddityManager.prototype.create = function ( className, quiddityName, socketId, cb ) {
+    log.debug( 'Creating quiddity ' + className + ' named ' + quiddityName );
 
-    quiddName = (quiddName ? this.switcher.create( className, quiddName ) : this.switcher.create( className ));
-    if ( quiddName ) {
-
-        /* we stock id of socket and name of quidd because we want to alert the user
-         client side when the quiddity is created for show the properties */
-
-        log.debug( "quiddity " + quiddName + " (" + className + ") created." );
-
-        this.config.listQuiddsAndSocketId[quiddName] = socketId;
-        var quiddInfo                                = JSON.parse( this.switcher.get_quiddity_description( quiddName ) );
-        cb( null, quiddInfo );
-
-    } else {
-        var msgError = i18n.t( "failed to create __className__ maybe this name is already used?", {className: className} );
-        log.error( msgError );
-        cb( msgError );
+    // Create the quiddity
+    try {
+        var result = quiddityName ? this.switcher.create( className, quiddityName ) : this.switcher.create( className );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !result ) {
+        return logback( i18n.t( "Failed to create __className__ __quiddityName__", {
+            className:    className,
+            quiddityName: quiddityName
+        } ), cb );
     }
 
+    var quiddityId = result;
+    // Keep a history of who created what
+    this.quidditySocketMap[quiddityId] = socketId;
+
+    // Get new quiddity information
+    try {
+        var quiddInfo = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !quiddInfo || quiddInfo.error ) {
+        return logback( quiddInfo ? quiddInfo.error : i18n.t('Failed to get information for quiddity __quiddityId__', {quiddityId: quiddityId}) );
+    }
+    cb( null, quiddInfo );
 };
 
 /**
- *  @function remove
- *  @description removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
- *  @param {string} quiddName The name (id) of the quiddity
+ * Remove quiddity
+ * Removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
+ *
+ * @param {string} quiddityId The name (id) of the quiddity
+ * @param cb
  */
-QuiddityManager.prototype.remove = function ( quiddName ) {
-
-    if ( this.switcher.remove( quiddName ) ) {
-        log.debug( "quiddity " + quiddName + " is removed." );
-    } else {
-        log.error( "failed to remove " + quiddName );
+QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
+    log.debug( 'Removing quiddity ' + quiddityId );
+    try {
+        var result = this.switcher.remove( quiddityId );
+    } catch ( e ) {
+        return logback( e, cb );
     }
+    if ( !result ) {
+        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
+    }
+    log.debug( "Quiddity " + quiddityId + " removed." );
+    cb();
 };
+
+//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
+//
+
 
 QuiddityManager.prototype.removeElementsAssociateToQuiddRemoved = function ( quiddName ) {
     var self   = this;
     log.debug( "remove quidds associate to quidd removed", quiddName );
     var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
 
-  if ( !quidds ) {
-    return log.error( "failed remove quiddity " + quiddName );
-  }
+    if ( !quidds ) {
+        return log.error( "failed remove quiddity " + quiddName );
+    }
 
     this.removeConrolByQuiddParent( quiddName );
 
     /* Remove quiddity sink base on quidd removed  or vumeter */
     _.each( quidds, function ( quidd ) {
-      if ( quidd.name.indexOf( quiddName + "-sink" ) != -1 ) {
-        this.switcher.remove( quidd.name );
-      }
-      if ( quidd.name.indexOf( "vumeter_" ) >= 0 && quidd.name.indexOf( quiddName ) >= 0 ) {
-        this.switcher.remove( quidd.name );
-      }
+        if ( quidd.name.indexOf( quiddName + "-sink" ) != -1 ) {
+            this.switcher.remove( quidd.name );
+        }
+        if ( quidd.name.indexOf( "vumeter_" ) >= 0 && quidd.name.indexOf( quiddName ) >= 0 ) {
+            this.switcher.remove( quidd.name );
+        }
     }, this );
 };
 
-QuiddityManager.prototype.get_quiddities = function ( cb ) {
-    log.debug( 'Getting quiddities');
-    var quiddDescriptions = JSON.parse( this.switcher.get_quiddities_description( ) );
-    log.debug( quiddDescriptions );
-    if ( quiddDescriptions.error ) {
-        cb( quiddDescriptions.error );
-        return
-    }
-    cb( null, quiddDescriptions.quiddities );
-};
 
 QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
     log.debug( "get Description quidd", quiddName );
@@ -186,14 +365,6 @@ QuiddityManager.prototype.set_property_value = function ( quiddName, property, v
     }
 };
 
-QuiddityManager.prototype.get_info = function ( quiddName, path, cb ) {
-    log.debug( "Getting quiddity information for: " + quiddName );
-    var info = JSON.parse( this.switcher.get_info( quiddName, path ) );
-    if ( !info || info.error ) {
-        return cb( info.error );
-    }
-    return cb( null, info );
-};
 
 /**
  * Get property by class
@@ -216,17 +387,10 @@ QuiddityManager.prototype.get_property_by_class = function ( className, property
     callback( null, propertyByClass );
 };
 
-QuiddityManager.prototype.get_property_description = function ( quiddName, property, callback ) {
-    var property_description = JSON.parse( this.switcher.get_property_description( quiddName, property ) );
-    if ( property_description && property_description.error ) {
-        log.error( property_description.error + "(property : " + property + ", quiddity : " + quiddName + ")" );
-        return;
-    }
-    callback( property_description );
-};
+
 
 QuiddityManager.prototype.get_properties_values = function ( quiddName ) {
-    var self = this;
+    var self            = this;
     var propertiesQuidd = this.switcher.get_properties_description( quiddName );
     if ( propertiesQuidd == "" ) {
         log.error( "failed to get properties description of" + quiddName );
@@ -238,60 +402,17 @@ QuiddityManager.prototype.get_properties_values = function ( quiddName ) {
     //recover the value set for the properties
     _.each( propertiesQuidd, function ( property, index ) {
         var valueOfproperty = this.switcher.get_property_value( quiddName, property.name );
-      if ( property.name == "shmdata-writers" ) {
-        valueOfproperty = JSON.parse( valueOfproperty );
-      }
+        if ( property.name == "shmdata-writers" ) {
+            valueOfproperty = JSON.parse( valueOfproperty );
+        }
         propertiesQuidd[index].value = valueOfproperty;
     }, this );
 
     return propertiesQuidd;
 };
 
-/**
- * Get properties
- *
- * @param quiddName
- * @param cb
- * @returns {*}
- */
-QuiddityManager.prototype.get_properties_description = function ( quiddName, cb ) {
-    var properties_description = JSON.parse( this.switcher.get_properties_description( quiddName ) ).properties;
-    if ( !properties_description || properties_description.error ) {
-        var msg = properties_description.error + "(quiddity: " + quiddName + ")";
-        log.error( msg );
-        return cb( msg );
-    }
-    cb( null, properties_description );
-};
 
-/**
- * Get Methods
- *
- * @param quiddName
- * @param cb
- */
-QuiddityManager.prototype.get_methods_description = function ( quiddName, cb ) {
-    var methods = JSON.parse( this.switcher.get_methods_description( quiddName ) ).methods;
-    if ( !methods || methods.error ) {
-        var msg = i18n.t( "Failed to get methods description __quiddName__", { quiddName: quiddName } );
-        return cb( msg );
-    }
-    cb( null, methods );
-};
 
-QuiddityManager.prototype.get_method_description = function ( quiddName, method, cb ) {
-    var descriptionJson = JSON.parse( this.switcher.get_method_description( quiddName, method ) );
-    if ( !descriptionJson ) {
-        var msg = i18n.t( "failed to get __method__ method description __quiddName", {
-            method:    method,
-            quiddName: quiddName
-        } );
-        cb( msg, err );
-        log.error( msg );
-        return;
-    }
-    cb( null, descriptionJson );
-};
 
 QuiddityManager.prototype.get_property_value = function ( quiddName, property, cb ) {
     log.debug( "Get property value", quiddName, property );
@@ -313,27 +434,7 @@ QuiddityManager.prototype.get_property_value = function ( quiddName, property, c
     cb( null, property_value );
 };
 
-QuiddityManager.prototype.invoke = function ( quiddName, method, parameters, cb ) {
-    var invoke = this.switcher.invoke( quiddName, method, parameters );
-    log.debug( "the method " + method + " of " + quiddName + " is invoked with " + parameters );
-    if ( !invoke ) {
-        var msgError = i18n.t( "failed to invoke __quiddName__ method __method__", {
-            quiddName: quiddName,
-            method:    method
-        } );
-        log.error( msgError );
-        return cb( msgError );
-    }
-  if ( cb ) {
-    cb( null, invoke );
-  }
 
-  if ( method == "remove_udp_stream_to_dest" ) {
-    this.io.emit( "remove_connection", invoke, quiddName, parameters );
-  }
-
-    //this.io.emit("invoke", invoke, quiddName, method, parameters);
-};
 
 QuiddityManager.prototype.subscribe_info_quidd = function ( quiddName, socketId ) {
     log.debug( "socketId (" + socketId + ") subscribe info " + quiddName );
@@ -348,11 +449,11 @@ QuiddityManager.prototype.unsubscribe_info_quidd = function ( quiddName, socketI
 
 QuiddityManager.prototype.set_property_value_of_dico = function ( property, value, callback ) {
     var currentValueDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", [property] ) );
-  if ( currentValueDicoProperty ) {
-    currentValueDicoProperty[currentValueDicoProperty.length] = value;
-  } else {
-    var currentValueDicoProperty = [value];
-  }
+    if ( currentValueDicoProperty ) {
+        currentValueDicoProperty[currentValueDicoProperty.length] = value;
+    } else {
+        var currentValueDicoProperty = [value];
+    }
 
     this.switcher.set_property_value( "dico", property, JSON.stringify( currentValueDicoProperty ) );
     this.io.emit( "setDicoValue", property, value );
@@ -373,9 +474,9 @@ QuiddityManager.prototype.remove_property_value_of_dico = function ( property, n
     var currentValuesDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", [property] ) );
     var newValuesDico             = [];
     _.each( currentValuesDicoProperty, function ( value ) {
-      if ( value.name != name ) {
-        newValuesDico.push( value );
-      }
+        if ( value.name != name ) {
+            newValuesDico.push( value );
+        }
     } );
 
     if ( property == "controlDestinations" ) {

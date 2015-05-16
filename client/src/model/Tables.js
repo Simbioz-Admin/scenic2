@@ -40,7 +40,7 @@ define( [
             } ) );
 
             /* Create a table for managing shmdatas transmission throught RTP/SDP  */
-            var rtp = this.add( new Table( {
+            this.add( new Table( {
                 name:                   $.t( 'Transfer' ),
                 type:                   "transfer",
                 id:                     "transferRtp",

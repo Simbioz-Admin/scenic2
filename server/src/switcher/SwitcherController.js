@@ -8,6 +8,7 @@ var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
 var ReceiverManager = require( './ReceiverManager' );
 var log             = require( '../lib/logger' );
+var logback         = require( './logback' );
 var checkPort       = require( '../utils/check-port' );
 
 /**
@@ -119,11 +120,14 @@ SwitcherController.prototype.initialize = function ( callback ) {
  * @param socket
  */
 SwitcherController.prototype.bindClient = function ( socket ) {
+    socket.on( "listControlDestinations", this.listControlDestinations.bind( this ) );
+    //
+    //
+    //
     socket.on( "save", this.save.bind( this ) );
     socket.on( "load", this.load.bind( this ) );
     socket.on( "remove_save", this.remove_save.bind( this ) );
     socket.on( "get_save_file_list", this.get_save_file_list.bind( this ) );
-    socket.on( "list_control_destinations", this.list_control_destinations.bind( this ) );
 
     this.quiddityManager.bindClient( socket );
     this.sipManager.bindClient( socket );
@@ -143,19 +147,25 @@ SwitcherController.prototype.bindClient = function ( socket ) {
  * @param cb
  * @returns {*}
  */
-SwitcherController.prototype.list_control_destinations = function ( cb ) {
-    var destinations = this.switcher.invoke( 'dico', 'read', ['controlDestinations'] );
+SwitcherController.prototype.listControlDestinations = function ( cb ) {
+    log.debug( 'Getting control destinations' );
+    try {
+        var destinations = this.switcher.invoke( 'dico', 'read', ['controlDestinations'] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !destinations ) {
-        var msg = "Could not list Control Destinations.";
-        log.error( msg );
-        return cb( msg );
+        return logback( i18n.t( 'Could not list Control Destinations' ), cb );
     }
     cb( null, destinations );
 };
 
-
-//
-//
+//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
 //
 
 /**

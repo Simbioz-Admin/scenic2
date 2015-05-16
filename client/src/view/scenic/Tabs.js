@@ -5,7 +5,7 @@ define( [
     'backbone',
     'marionette',
     'view/scenic/Tab',
-    'text!../../../templates/tabs.html'
+    'text!template/scenic/tabs.html'
 ], function ( _, Backbone, Marionette, TabView, TabsTemplate ) {
 
     /**

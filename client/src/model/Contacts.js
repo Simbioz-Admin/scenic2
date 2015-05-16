@@ -19,7 +19,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'get_user_list'
+            'read':   'getContacts'
         },
 
         initialize: function() {

@@ -4,6 +4,7 @@ var _         = require( 'underscore' );
 var i18n      = require( 'i18next' );
 var cryptoJS  = require( 'crypto-js' );
 var log       = require( '../lib/logger' );
+var logback   = require( './logback' );
 var checkPort = require( '../utils/check-port' );
 
 var secretString = 'Les patates sont douces!';
@@ -17,9 +18,9 @@ var secretString = 'Les patates sont douces!';
  * @constructor
  */
 function SipManager( config, switcher, io ) {
-    this.config    = config;
-    this.switcher  = switcher;
-    this.io        = io;
+    this.config   = config;
+    this.switcher = switcher;
+    this.io       = io;
 }
 
 /**
@@ -28,7 +29,9 @@ function SipManager( config, switcher, io ) {
  * @param socket
  */
 SipManager.prototype.bindClient = function ( socket ) {
-    socket.on( "get_user_list", this.get_user_list.bind( this ) );
+    socket.on( "getContacts", this.getContacts.bind( this ) );
+    //
+    //
     //
     socket.on( "sip_logout", this.logout.bind( this ) );
     socket.on( "sip_login", this.login.bind( this ) );
@@ -42,42 +45,46 @@ SipManager.prototype.bindClient = function ( socket ) {
     socket.on( "removeUser", this.removeUser.bind( this ) );
 };
 
+//   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
+//  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
+//  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
+//  ██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
+//  ╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
+//   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
+
 /**
- * Get User List
+ * Get Contacts List
  *
  * @param cb
  */
-SipManager.prototype.get_user_list = function( cb ) {
-    var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.' ) );
+SipManager.prototype.getContacts = function ( cb ) {
+    log.debug( 'Getting contacts' );
+    try {
+        var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.' ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !users ) {
-        var msg = "Could not get users list.";
-        log.error(msg);
-        return cb(msg);
+        return logback( i18n.t( "Could not get contacts" ) );
     }
     cb( null, users );
 };
 
 
-
+//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
 //
-//
-//
-//
-//
-
-//
-//
-//
-
-
-
 
 
 /*
  *  @function addListUser
  *  @description add to the array listUsers a new users
  */
-SipManager.prototype._addUser = function( URI, name, cb ) {
+SipManager.prototype._addUser = function ( URI, name, cb ) {
     log.debug( "Adding SIP user..." );
     var addBuddy = this.switcher.invoke( this.config.sip.quiddName, "add_buddy", [URI] );
     if ( !addBuddy ) {
@@ -105,7 +112,7 @@ SipManager.prototype._addUser = function( URI, name, cb ) {
  *  @function _createSip
  *  @description set the connection with the server sip. This function is called a initialization of switcher
  */
-SipManager.prototype._createSip = function( name, password, address, port, cb ) {
+SipManager.prototype._createSip = function ( name, password, address, port, cb ) {
     log.debug( "Creating SIP quiddity", {name: name, address: address, port: port} );
     //@TODO : Encrypt client side and decrypt server side the password
 

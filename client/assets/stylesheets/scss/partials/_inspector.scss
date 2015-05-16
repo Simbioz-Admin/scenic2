@@ -44,9 +44,8 @@
 }
 
 #inspector {
-  display: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   .info-panel {
+    display: none;
     top: $headerHeight + 20px;
     right: 20px;
     width: 300px;

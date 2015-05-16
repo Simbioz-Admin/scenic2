@@ -1,8 +1,9 @@
 "use strict";
 
-var _    = require( 'underscore' );
-var i18n = require( 'i18next' );
-var log  = require( '../lib/logger' );
+var _       = require( 'underscore' );
+var i18n    = require( 'i18next' );
+var log     = require( '../lib/logger' );
+var logback = require( './logback' );
 
 /**
  * Constructor
@@ -24,7 +25,10 @@ function ReceiverManager( config, switcher, io ) {
  * @param socket
  */
 ReceiverManager.prototype.bindClient = function ( socket ) {
-    socket.on( "list_rtp_destinations", this.list_rtp_destinations.bind( this ) );
+    socket.on( "listRtpDestinations", this.listRtpDestinations.bind( this ) );
+    //
+    //
+    //
     socket.on( "create_destination", this.create_destination.bind( this ) );
     socket.on( "update_destination", this.update_destination.bind( this ) );
     socket.on( "remove_destination", this.remove_destination.bind( this ) );
@@ -32,24 +36,37 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
     socket.on( "remove_connection", this.remove_connection.bind( this ) );
 };
 
+//   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
+//  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
+//  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
+//  ██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
+//  ╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
+//   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
+
 /**
  * List RTP Destinations
  *
  * @param cb
  * @returns {*}
  */
-ReceiverManager.prototype.list_rtp_destinations = function( cb ) {
-    var destinations = this.switcher.invoke( 'dico', 'read', ['rtpDestinations'] );
-    if ( !destinations ) {
-        var msg = "Could not list RTP destinations.";
-        log.error(msg);
-        return cb(msg);
+ReceiverManager.prototype.listRtpDestinations = function ( cb ) {
+    try {
+        var destinations = this.switcher.invoke( 'dico', 'read', ['rtpDestinations'] );
+    } catch ( e ) {
+        return logback( e, cb );
     }
-    cb(null,destinations);
+    if ( !destinations ) {
+        return logback( i18n.t( 'Could not list RTP destinations' ), cb );
+    }
+    cb( null, destinations );
 };
 
-//
-//
+//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
 //
 
 /**

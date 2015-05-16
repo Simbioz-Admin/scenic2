@@ -13,7 +13,9 @@ define( [
      */
 
     var Shmdata = ScenicModel.extend( {
+
         idAttribute: "path",
+
         defaults:    {
             path:     null,
             quidd:    null,

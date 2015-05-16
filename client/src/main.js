@@ -13,12 +13,14 @@ require( {
         backbone:     '../bower_components/backbone/backbone',
         marionette:   '../bower_components/marionette/lib/backbone.marionette',
         mutators:     '../bower_components/backbone.mutators/backbone.mutators.min',
-        async:     '../bower_components/async/lib/async',
+        async:         '../bower_components/async/lib/async',
         jquery:       '../bower_components/jquery/dist/jquery.min',
         jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',
         punch:        '../bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min',
         spin:         '../bower_components/spin.js/spin',
-        i18n:         '../bower_components/i18next/i18next.min'
+        i18n:         '../bower_components/i18next/i18next.min',
+        // In-house
+        template:     '../template'
     },
     shim:     {
         underscore:   {

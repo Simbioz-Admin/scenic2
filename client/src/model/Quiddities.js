@@ -20,7 +20,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'get_quiddities'
+            'read':   'getQuiddities'
         },
 
         ignoredQuiddities: [

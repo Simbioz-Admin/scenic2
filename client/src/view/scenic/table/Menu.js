@@ -4,8 +4,8 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!../../../../template/table/menu.html',
-    'text!../../../../template/table/menu/subMenu.html'
+    'text!template/scenic/table/menu.html',
+    'text!template/scenic/table/menu/subMenu.html'
 ], function ( _, Backbone, Marionette, MenuTemplate, SubMenuTemplate ) {
 
     /**

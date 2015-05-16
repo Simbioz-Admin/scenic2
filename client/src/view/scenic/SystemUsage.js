@@ -10,8 +10,8 @@ define( [
     'backbone',
     'marionette',
     'lib/socket',
-    'text!../../../template/system-usage.html',
-    'text!../../../template/system-usage/network.html'
+    'text!template/scenic/system-usage.html',
+    'text!template/scenic/system-usage/network.html'
 ], function ( _, Backbone, Marionette, socket, SystemUsageTemplate, NetworkUsageTemplate ) {
 
     /**

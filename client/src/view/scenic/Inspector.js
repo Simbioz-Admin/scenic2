@@ -1,37 +1,60 @@
 define( [
     'underscore',
     'backbone',
-    'marionette'
-], function ( _, Backbone, Marionette ) {
+    'marionette',
+    'text!template/scenic/inspector.html',
+    'view/scenic/inspector/CreateQuiddity'
+], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView ) {
 
     /**
      *  @constructor
      *  @augments module:Backbone.Marionette.ItemView
      */
-    var Inspector = Backbone.Marionette.ItemView.extend( {
-        tagName: 'div',
+    var Inspector = Backbone.Marionette.LayoutView.extend( {
+        tagName:   'div',
         className: 'inspector-info-panel info-panel ui-draggable',
-        ui:       {
+        template:  _.template( InspectorTemplate ),
 
-        },
-        events:   {
-
-        },
-
-        getTemplate: function() {
-            return this.options.template;
+        regions: {
+            panel: '.panel'
         },
 
         initialize: function () {
-            //TODO: After render $( "#inspector .inspector-info-panel" ).i18n();
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.scenicChannel.commands.setHandler( 'create:quiddity', _.bind( this._onCreateQuiddity, this ) );
+            this.scenicChannel.vent.on( 'created:quiddity', _.bind( this._onCreatedQuiddity, this ) );
         },
 
-        onAttach: function() {
-            //Legacy
-            $('#inspector' ).show();
-            setTimeout( function () {
-                $( "#inspector .inspector-info-panel #quiddName" ).focus();
-            }, 1 );
+        /**
+         * Create Quiddity Handler
+         * Display the quiddity creation form
+         *
+         * @param classDescription
+         * @private
+         */
+        _onCreateQuiddity: function ( classDescription ) {
+            var self = this;
+            // Load devices before continuing
+            classDescription.loadDevices( function ( error, devices ) {
+                if ( error ) {
+                    return;
+                }
+                self.showChildView( 'panel', new CreateQuiddityView( {model: classDescription} ) );
+                console.log(self);
+                self.$el.show();
+            } );
+        },
+
+        /**
+         * Creates Quiddity Handler
+         * Removes the quiddity creation form
+         *
+         * @param classDescription
+         * @private
+         */
+        _onCreatedQuiddity: function ( classDescription ) {
+            this.getRegion( 'panel' ).empty();
+            this.$el.hide();
         }
 
     } );

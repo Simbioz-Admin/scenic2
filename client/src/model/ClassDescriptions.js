@@ -19,7 +19,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'get_classes_doc'
+            'read':   'getQuiddityClasses'
         },
 
         initialize: function() {

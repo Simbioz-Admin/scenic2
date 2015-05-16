@@ -18,7 +18,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'list_control_destinations'
+            'read':   'listControlDestinations'
         },
         initialize: function() {
             Destinations.prototype.initialize.apply(this,arguments);

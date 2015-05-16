@@ -30,6 +30,9 @@ define( [
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
             } );
+
+            // Destroy listener, removes socket listeners
+            this.on( 'destroy', _.bind( this._onDestroy, this ) );
         },
 
         /**
@@ -39,11 +42,50 @@ define( [
          * Can be overridden in sub classes
          */
         methodMap: {
-            'create': function() { return [ 'create', this.get( 'class' ), this.get( 'newName' ), socket.id ]; },
+            'create': function () {
+                return ['create', this.get( 'class' ), this.get( 'newName' ), socket.id];
+            },
             'update': null,
             'patch':  null,
-            'delete': null,
+            'delete': function () {
+                return ['remove', this.id];
+            },
             'read':   null
+        },
+
+        /**
+         * List of socket listeners
+         * @see Same var in ScenicCollection
+         * @var {Array}
+         */
+        socketListeners: [],
+
+        /**
+         * Listen to socket message on a callback
+         * This utility method allows us to remove listeners all at once when destroyed
+         *
+         * @see Same method in ScenicCollection
+         *
+         * @param message
+         * @param callback
+         */
+        onSocket: function ( message, callback ) {
+            this.socketListeners.push( {message: message, callback: callback} );
+            socket.on( message, callback );
+        },
+
+        /**
+         * Destroy Handler
+         * Removes all socket listeners
+         *
+         * @see Same method in ScenicCollection
+         *
+         * @private
+         */
+        _onDestroy: function() {
+            _.each( this.socketListeners, function( listener ) {
+                socket.removeListener( listener.message, listener.callback );
+            });
         },
 
         /**
@@ -56,15 +98,15 @@ define( [
          * @returns {*}
          */
         sync: function ( method, model, options ) {
-            var self = this;
+            var self    = this;
             var command = this.methodMap[method];
             if ( command ) {
                 var callback = function ( error, result ) {
                     if ( error ) {
                         return options.error( error );
                     }
-                    if ( method == 'create') {
-                        self.set('id', result.name);
+                    if ( method == 'create' ) {
+                        self.set( 'id', result.name );
                     }
                     options.success( result );
                 };

@@ -32,6 +32,9 @@ define( [
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
             } );
+
+            // Destroy listener, removes socket listeners
+            this.on( 'destroy', _.bind( this._onDestroy, this ) );
         },
 
         /**
@@ -49,6 +52,41 @@ define( [
         },
 
         /**
+         * List of socket listeners
+         * @see Same var in ScenicModel
+         * @var {Array}
+         */
+        socketListeners: [],
+
+        /**
+         * Listen to socket message on a callback
+         * This utility method allows us to remove listeners all at once when destroyed
+         *
+         * @see Same method in ScenicModel
+         *
+         * @param message
+         * @param callback
+         */
+        onSocket: function ( message, callback ) {
+            this.socketListeners.push( {message: message, callback: callback} );
+            socket.on( message, callback );
+        },
+
+        /**
+         * Destroy Handler
+         * Removes all socket listeners
+         *
+         * @see Same method in ScenicModel
+         *
+         * @private
+         */
+        _onDestroy: function() {
+            _.each( this.socketListeners, function( listener ) {
+                socket.removeListener( listener.message, listener.callback );
+            });
+        },
+
+        /**
          * Overridden Sync Method
          * Supports "syncing" over websocket by mapping CRUD methods to our internal socket messages
          *
@@ -58,6 +96,7 @@ define( [
          * @returns {*}
          */
         sync: function ( method, collection, options ) {
+            var self = this;
             var command = this.methodMap[method];
             if ( command ) {
                 var callback = function ( error, result ) {

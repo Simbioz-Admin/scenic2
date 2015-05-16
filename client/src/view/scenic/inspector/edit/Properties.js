@@ -33,11 +33,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (property) {
-            var excluded = _.contains( this.excludedProperties, property.get('name') );
-            if ( excluded ) {
-                console.log( 'Excluded: ', property );
-            }
-            return !excluded;
+            return !_.contains( this.excludedProperties, property.get('name') );
         }
     } );
 

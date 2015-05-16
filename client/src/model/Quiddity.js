@@ -22,18 +22,20 @@ define( [
 
         idAttribute: 'name',
 
-        defaults:    {
-            "name":             null,
-            "newName":          null, // Name is the is we need to separate the requested name
-            "class":            null,
-            "category":         null,
-            "long name":        null,
-            "description":      null,
-            "encoder_category": null,
-            "view":             null,
-            "properties":       new Properties(),
-            "methods":          new Methods(),
-            "shmdatas":         new Shmdatas()
+        defaults: function () {
+            return {
+                "name":             null,
+                "newName":          null, // Name is the is we need to separate the requested name
+                "class":            null,
+                "category":         null,
+                "long name":        null,
+                "description":      null,
+                "encoder_category": null,
+                "view":             null,
+                "properties":       new Properties(),
+                "methods":          new Methods(),
+                "shmdatas":         new Shmdatas()
+            }
         },
 
         /**
@@ -48,8 +50,8 @@ define( [
 
             // Setup child collections
             this.get( 'properties' ).quiddity = this;
-            this.get( 'methods' ).quiddity = this;
-            this.get( 'shmdatas' ).quiddity = this;
+            this.get( 'methods' ).quiddity    = this;
+            this.get( 'shmdatas' ).quiddity   = this;
             if ( !this.isNew() ) {
                 this.get( 'properties' ).fetch();
                 this.get( 'methods' ).fetch();
@@ -57,7 +59,7 @@ define( [
             }
 
             // Handlers
-            socket.on( "remove", _.bind( this._onRemoved, this ) );
+            this.onSocket( "remove", _.bind( this._onRemoved, this ) );
         },
 
         /**
@@ -79,12 +81,13 @@ define( [
          * @param key
          * @param value
          */
-        setProperty: function( key, value ) {
-            var property = this.get('properties').get(key);
+        setProperty: function ( key, value ) {
+            var property = this.get( 'properties' ).get( key );
             if ( !property ) {
-                property = this.get('properties' ).add({name:key,value:value});
+                console.debug( 'Quiddity:setProperty', key, value );
+                property = this.get( 'properties' ).add( {name: key, value: value} );
             }
-            property.set('value', value);
+            property.set( 'value', value );
         },
 
         /**
@@ -97,7 +100,7 @@ define( [
             //TODO: Get properties
             //TODO: Get methods
             //TODO: Subscribe socket.emit( "subscribe_info_quidd", self.id, socket.id );
-            this.scenicChannel.commands.execute('quiddity:edit', self);
+            this.scenicChannel.commands.execute( 'quiddity:edit', self );
         },
 
         //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗

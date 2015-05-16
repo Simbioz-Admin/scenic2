@@ -30,7 +30,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-            console.log(this.model);
+
         },
 
         /**

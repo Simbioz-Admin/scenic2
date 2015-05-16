@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 define( [
     'underscore',
@@ -35,8 +35,8 @@ define( [
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
             //Handlers
-            socket.on( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
-            socket.on( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( 'signals_properties_info', _.bind( this._onSignalsPropertiesInfo, this ) );
+            this.onSocket( 'signals_properties_value', _.bind( this._onSignalsPropertiesValue, this ) );
         },
 
         /**
@@ -48,8 +48,9 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
-            if ( signal == "on-property-added" && this.quiddity.id == quiddityId ) {
+            if ( signal == 'on-property-added' && this.quiddity.id == quiddityId ) {
                 var property = this.add( {name: name[0]}, {merge: true} );
+                console.debug( 'Property info', property );
                 // The property is empty at this point, fetch its content
                 property.fetch();
             }
@@ -67,7 +68,7 @@ define( [
             if ( this.quiddity.id == quiddityId && this.get(key) == null ) {
                 // Somehow the property doesn't exists, create it but stay safe with merge
                 var property = this.add({name: key, value:value}, {merge:true});
-                console.log( property );
+                console.debug( 'Property value', property );
                 // We were not aware of this property, so fetch it
                 property.fetch();
             }

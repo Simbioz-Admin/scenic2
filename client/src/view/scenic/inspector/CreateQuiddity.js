@@ -24,7 +24,6 @@ define( [
         },
 
         initialize: function () {
-            InspectorPanel.prototype.initialize.apply(this,arguments);
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
         },
 
@@ -46,7 +45,6 @@ define( [
                     if ( device ) {
                         quiddity.setProperty( 'device', this );
                     }
-                    self.scenicChannel.vent.trigger('quiddity:created', quiddity);
                 },
                 error:   function ( error ) {
                     self.scenicChannel.vent.trigger('error', error );

@@ -32,11 +32,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (method) {
-            var excluded = _.contains( this.excludedMethods, method.get('name') );
-            if ( excluded ) {
-                console.log( 'Excluded: ', method );
-            }
-            return !excluded;
+            return !_.contains( this.excludedMethods, method.get('name') );
         }
     } );
 

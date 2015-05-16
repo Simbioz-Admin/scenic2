@@ -282,5 +282,6 @@
     "Video Pattern": "Video Pattern",
     "Type of test pattern to generate": "Type of test pattern to generate",
     "Jack Audio Device2": "Jack Audio Device2",
-    "Error registering SIP quiddity": "Error registering SIP quiddity"
+    "Error registering SIP quiddity": "Error registering SIP quiddity",
+    "Failed to remove quiddity __quiddityId__": "Failed to remove quiddity __quiddityId__"
 }

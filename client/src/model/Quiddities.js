@@ -50,20 +50,25 @@ define( [
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
             // Handlers
-            socket.on( "create", _.bind( this._onCreate, this ) );
+            this.onSocket( "create", _.bind( this._onCreate, this ) );
         },
 
         /**
          * Create Handler
          * Listens to quididity creations and add/merge new quiddities to the collection
          *
-         * @param {Object} quiddity
          * @private
+         * @param quiddityData
+         * @param socketId
          */
-        _onCreate: function ( quiddityData ) {
+        _onCreate: function ( quiddityData, socketId ) {
             if ( !_.contains( this.ignoredQuiddities, quiddityData.class ) ) {
                 var quiddity = this.add( quiddityData, {merge: true} );
                 this.scenicChannel.vent.trigger('quiddity:added', quiddity);
+                // If we created it, start editing it
+                if ( socket.id == socketId ) {
+                    quiddity.edit();
+                }
             }
         },
 

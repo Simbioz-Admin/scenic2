@@ -13,13 +13,7 @@ define( [
      * @extends module:Backbone.Collection
      */
     var Arguments = Backbone.Collection.extend( {
-        model: Argument,
-        defaults: {
-            'name': null,
-            'long name': null,
-            'description': null,
-            'type': null
-        }
+        model: Argument
     } );
 
     return Arguments;

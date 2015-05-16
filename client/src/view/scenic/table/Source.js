@@ -27,7 +27,7 @@ define( [
 
         events: {
             'click @ui.edit': 'edit',
-            'click @ui.remove': 'remove'
+            'click @ui.remove': 'removeQuiddity'
         },
 
         /**
@@ -51,8 +51,9 @@ define( [
          *
          * @param event
          */
-        remove: function( event ) {
-
+        removeQuiddity: function( event ) {
+            //TODO: Ask before
+            this.model.destroy();
         }
     } );
 

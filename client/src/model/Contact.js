@@ -24,7 +24,7 @@ define( [
             ScenicModel.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            socket.on( 'removeUser', _.bind( this._onRemoved, this ) );
+            this.onSocket( 'removeUser', _.bind( this._onRemoved, this ) );
         },
 
         /**

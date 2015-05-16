@@ -162,14 +162,16 @@ SwitcherController.prototype._onSwitcherLog = function ( message ) {
 SwitcherController.prototype._onSwitcherProperty = function ( qname, qprop, pvalue ) {
     var self = this;
 
-    log.debug( 'Property:', qname + '.' + qprop + '=' + pvalue );
-
     // We exclude byte-rate because it dispatches every second
-    if ( qprop != "byte-rate" && qprop != "caps" ) {
-        log.debug( '...PROP...: ', qname, ' ', qprop, ' ', pvalue );
-    } else {
-        this.io.emit( "signals_properties_value", qname, qprop, pvalue );
+    if ( qprop != "byte-rate" ) {
+        log.debug( 'Property:', qname + '.' + qprop + '=' + pvalue );
     }
+
+    /*if ( qprop != "byte-rate" && qprop != "caps" ) {
+     log.debug( '...PROP...: ', qname, ' ', qprop, ' ', pvalue );
+     } else {
+     this.io.emit( "signals_properties_value", qname, qprop, pvalue );
+     }*/
 
 
     /* ************ PROP - SIPQUID ************ */
@@ -231,7 +233,7 @@ SwitcherController.prototype._onSwitcherSignal = function ( qname, qsignal, pval
     var self = this;
 
     //if ( qname != "systemusage" ) {
-        log.debug( 'Signal:', qname + '.' + qsignal + '=' + pvalue );
+    log.debug( 'Signal:', qname + '.' + qsignal + '=' + pvalue );
     //}
 
     /* manage callback fro SIP quidd  */
@@ -356,19 +358,20 @@ SwitcherController.prototype._onSwitcherSignal = function ( qname, qsignal, pval
 
 
             /* cehck if the quiddity is created by interface and send all except user created this */
+            this.io.emit( "create", quiddClass, this.quiddityManager.quidditySocketMap[quiddClass.name] );
+
             //FIXME: socket.io removed except in 1.0
-            var socketIdCreatedThisQuidd = false;
-            /*_.each(this.config.listQuiddsAndSocketId, function(socketId, quiddName) {
+            /*var socketIdCreatedThisQuidd = false;
+            /!*_.each(this.config.listQuiddsAndSocketId, function(socketId, quiddName) {
              if (quiddName == pvalue[0])
              socketIdCreatedThisQuidd = socketId;
              delete this.config.listQuiddsAndSocketId[quiddName];
-             });*/
+             });*!/
             if ( socketIdCreatedThisQuidd ) {
                 console.log( this.io.sockets.clients() );
                 this.io.except( socketIdCreatedThisQuidd ).emit( "create", quiddClass );
             } else {
-                this.io.emit( "create", quiddClass );
-            }
+            }*/
         }
     }
 

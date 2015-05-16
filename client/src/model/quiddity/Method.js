@@ -16,22 +16,26 @@ define( [
      */
     var Method = ScenicModel.extend( {
         idAttribute: 'name',
-        defaults:    {
-            'name':               null,
-            'long name':          null,
-            'description':        null,
-            'return description': null,
-            'return type':        null,
-            'position category':  null,
-            'position weight':    0,
-            arguments:            new Arguments()
+        defaults:    function () {
+            return {
+                'name':               null,
+                'long name':          null,
+                'description':        null,
+                'return description': null,
+                'return type':        null,
+                'position category':  null,
+                'position weight':    0,
+                arguments:            new Arguments()
+            }
         },
-        methodMap: {
+        methodMap:   {
             'create': null,
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   function () { return ['getMethodDescription', this.collection.quiddity.id, this.get('name')] }
+            'read':   function () {
+                return ['getMethodDescription', this.collection.quiddity.id, this.get( 'name' )]
+            }
         },
 
         /**
@@ -40,7 +44,7 @@ define( [
          * @param response
          * @returns {*}
          */
-        parse: function( response ) {
+        parse: function ( response ) {
             //Parse arguments into a collection
             response.arguments = new Arguments( response.arguments );
             return response;
@@ -49,11 +53,11 @@ define( [
         /**
          * Initialize
          */
-        initialize:  function () {
+        initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
             // Handlers
-            socket.on( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
+            this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
         },
 
         /**
@@ -65,7 +69,7 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
-            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId &&  this.get('name') == name[0] ) {
+            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.get( 'name' ) == name[0] ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -76,8 +80,8 @@ define( [
          * @param args
          * @param callback
          */
-        invoke: function( args, callback ) {
-            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.get('name'), args, callback );
+        invoke: function ( args, callback ) {
+            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.get( 'name' ), args, callback );
         }
     } );
 

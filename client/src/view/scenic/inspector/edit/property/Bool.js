@@ -42,7 +42,7 @@ define( [
             } else {
                 this.ui.property.val( 'false' ).attr( 'checked', false );
             }
-            this.model.set( 'value', this.ui.property.val() );
+            this.model.setValue( this.ui.property.val() );
         }
     } );
 

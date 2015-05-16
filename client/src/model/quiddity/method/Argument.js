@@ -13,6 +13,13 @@ define( [
      */
     var Argument = Backbone.Model.extend( {
 
+        defaults: {
+            'name': null,
+            'long name': null,
+            'description': null,
+            'type': null
+        },
+
         /**
          * Initialize
          */

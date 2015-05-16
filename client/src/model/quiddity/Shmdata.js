@@ -34,12 +34,12 @@ define( [
 
             //TODO: LEGACY Listens to quiddity removal to removel ourself
             if ( this.get( "quidd" ) ) {
-                collections.quiddities.get( this.get( "quidd" ) ).on( "remove", this.removeModel, this );
+                //TODO: app.quiddities.get( this.model.get( "quidd" ) ).on( "remove", this.removeModel, this );
             }
 
             // Handlers
-            socket.on( 'removeShmdata', _.bind( this._onRemoved, this ) );
-            socket.on( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( 'removeShmdata', _.bind( this._onRemoved, this ) );
+            this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
         },
 
         /**

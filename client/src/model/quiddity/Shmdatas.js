@@ -44,7 +44,8 @@ define( [
          * @returns {Array}
          */
         parse: function( response ) {
-            console.log( response );
+            console.log( 'HOW SHOUL I PARSE SHMDATAS:', response );
+            return;
             var shmdatas = [];
             if ( response.reader ) {
                 _.each( response.reader, function ( shmdata, path ) {
@@ -70,7 +71,7 @@ define( [
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            socket.on( 'addShmdata', _.bind( this._onAddShmdata, this ) );
+            this.onSocket( 'addShmdata', _.bind( this._onAddShmdata, this ) );
         },
 
         /**

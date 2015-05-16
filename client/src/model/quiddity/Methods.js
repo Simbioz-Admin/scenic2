@@ -35,7 +35,7 @@ define( [
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
             //Handlers
-            socket.on( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
+            this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
         },
 
         /**

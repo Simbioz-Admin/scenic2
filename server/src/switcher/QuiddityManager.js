@@ -297,9 +297,10 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
     } catch ( e ) {
         return logback( e, cb );
     }
-    if ( !result ) {
+    //FIXME: Result is false even when quiddity is removed
+    /*if ( !result ) {
         return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
-    }
+    }*/
     log.debug( "Quiddity " + quiddityId + " removed." );
     cb();
 };

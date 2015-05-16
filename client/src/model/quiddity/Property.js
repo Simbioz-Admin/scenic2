@@ -35,26 +35,33 @@ define( [
                 return ['getPropertyDescription', this.collection.quiddity.id, this.get('name')]
             }
         },
-        mutators: {
+        /*mutators: {
             value: {
-                /**
+                /!**
                  * Value setter, syncs with the backend when the value changes
                  *
                  * @param key
                  * @param value
                  * @param options
                  * @param set
-                 */
+                 *!/
                 set: function( key, value, options, set ) {
-                    socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
-                        if ( error ) {
-                            return this.scenicChannel.vent('error', error );
-                        }
-                        set( key, value, options );
-                    } );
+                    // Sync value with the server only if it changes (prevents double setting when gettign confirmation back)
+                    console.log( key, this.attributes[key], this.get(key), value );
+                    if ( this.get(key) != value ) {
+                        socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
+                            if ( error ) {
+                                return this.scenicChannel.vent( 'error', error );
+                            }
+                            set( key, value, options );
+                        } );
+                    }
+                },
+                get: function() {
+                    return this.get('value');
                 }
             }
-        },
+        },*/
 
         /**
          * Initialize
@@ -64,8 +71,20 @@ define( [
             this.scenicChannel = Backbone.Wreqr.radio.channel('scenic');
 
             // Handlers
-            socket.on( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
-            socket.on( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
+            this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+        },
+
+        setValue: function( value ) {
+            var self = this;
+            if ( this.get('value') != value ) {
+                socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
+                    if ( error ) {
+                        return this.scenicChannel.vent( 'error', error );
+                    }
+                    self.set('value', value)
+                } );
+            }
         },
 
         /**
@@ -91,7 +110,6 @@ define( [
          * @param {string} value The value of the property
          */
         _onSignalsPropertiesValue: function ( quiddityId, property, value ) {
-            console.log(this);
             if ( this.collection.quiddity.id == quiddityId && this.id == property ) {
                 this.set('value', value);
             }

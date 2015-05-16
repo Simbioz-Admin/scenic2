@@ -14,14 +14,16 @@ define( [
      * @extends module:Backbone.Model
      */
     var Table = Backbone.Model.extend( {
-        defaults: {
-            "name":         null,
-            "type":         null,
-            "description":  null,
-            "menus":        [],
-            "active":       false,
-            "sources":      new Sources(),
-            "destinations": new Destinations()
+        defaults: function () {
+            return {
+                "name":         null,
+                "type":         null,
+                "description":  null,
+                "menus":        [],
+                "active":       false,
+                "sources":      new Sources(),
+                "destinations": new Destinations()
+            }
         },
 
         /**
@@ -50,12 +52,12 @@ define( [
          * @returns {boolean}
          */
         filterQuiddityOrClass: function ( type, quiddity ) {
-            var className = quiddity.has('class name') ? quiddity.get('class name') : quiddity.get( 'class' );
+            var className = quiddity.has( 'class name' ) ? quiddity.get( 'class name' ) : quiddity.get( 'class' );
             var category  = quiddity.get( 'category' );
-            var included  = this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
+            var included  = this.has( type ) && this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
                 return category.indexOf( include ) != -1 || className.indexOf( include ) != -1;
             } ) : true;
-            var excluded  = this.get( type ).exclude ? _.contains( this.get( type ).exclude, category ) : false;
+            var excluded  = this.has( type ) && this.get( type ).exclude ? _.contains( this.get( type ).exclude, category ) : false;
             return included && !excluded;
         }
     } );

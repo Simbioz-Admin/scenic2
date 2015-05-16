@@ -31,7 +31,7 @@ define( [
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            socket.on( 'infoUser', _.bind( this._onUserInfo, this ) );
+            this.onSocket( 'infoUser', _.bind( this._onUserInfo, this ) );
         },
 
         /**

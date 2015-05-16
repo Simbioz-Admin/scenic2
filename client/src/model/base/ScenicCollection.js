@@ -9,19 +9,26 @@ define( [
 ], function ( _, Backbone, socket, BaseCollection, ScenicModel ) {
 
     /**
-     *  @constructor
-     *  @augments BaseModel
+     * Scenic Collection
+     * Provides a way to sync collections with Scenic using websockets
+     *
+     * @constructor
+     * @extends BaseModel
      */
     var ScenicCollection = BaseCollection.extend( {
         model: ScenicModel,
 
+        /**
+         * Initialize
+         */
         initialize: function () {
             BaseCollection.prototype.initialize.apply( this, arguments );
 
+            // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
-            // Error Handler
+            // Collection Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
             } );

@@ -9,8 +9,10 @@ define( [
 ], function ( _, Backbone, socket, ScenicCollection, Contact ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicCollection
+     * SIP Contact Collection
+     *
+     * @constructor
+     * @extends ScenicCollection
      */
     var Contacts = ScenicCollection.extend( {
         model:      Contact,
@@ -22,11 +24,22 @@ define( [
             'read':   'getContacts'
         },
 
+        /**
+         * Initialize
+         */
         initialize: function() {
             ScenicCollection.prototype.initialize.apply(this,arguments);
+
+            // Handlers
             socket.on( 'infoUser', _.bind( this._onUserInfo, this ) );
         },
 
+        /**
+         * User Info Handler
+         *
+         * @param userInfo
+         * @private
+         */
         _onUserInfo: function( userInfo ) {
             this.add( userInfo, { merge: true } );
         }

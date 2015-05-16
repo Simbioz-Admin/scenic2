@@ -9,12 +9,14 @@ define( [
 ], function ( _, Backbone, socket, ScenicCollection, ClassDescription ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicCollection
+     * Class Description Collection
+     *
+     * @constructor
+     * @extends ScenicCollection
      */
     var ClassDescriptions = ScenicCollection.extend( {
-        model:      ClassDescription,
-        methodMap:  {
+        model:     ClassDescription,
+        methodMap: {
             'create': null,
             'update': null,
             'patch':  null,
@@ -22,9 +24,13 @@ define( [
             'read':   'getQuiddityClasses'
         },
 
-        initialize: function() {
-            ScenicCollection.prototype.initialize.apply(this,arguments);
+        /**
+         * Initialize
+         */
+        initialize: function () {
+            ScenicCollection.prototype.initialize.apply( this, arguments );
         }
     } );
+
     return ClassDescriptions;
 } );

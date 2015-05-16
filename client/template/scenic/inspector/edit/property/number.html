@@ -1,0 +1,13 @@
+<% var moreInfo = minimum ? 'Min: ' + minimum + ' Max: ' + maximum: ''; %>
+<div class="property-content">
+    <div class="<%=name%>"></div>
+    <input id="<%=name%>"
+           name="<%=name%>"
+           type="number"
+           value="<%=obj['default value'].replace(',','.')%>"
+           class="property <%=type%> slider"
+           data-current="<%=obj['default value']%>"
+           data-min="<%=minimum%>"
+           data-maximum="<%=maximum%>"
+           placeholder="Value type <%=type%>"/>
+</div>

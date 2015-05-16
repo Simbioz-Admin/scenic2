@@ -3,15 +3,16 @@ define( [
     'backbone',
     'marionette',
     'model/Quiddity',
-    'view/scenic/inspector/InspectorPanel',
     'text!template/scenic/inspector/createQuiddity.html'
-], function ( _, Backbone, Marionette, Quiddity, InspectorPanel, CreateQuiddityTemplate ) {
+], function ( _, Backbone, Marionette, Quiddity, CreateQuiddityTemplate ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Marionette.ItemView
+     * Create Quiddity Form
+     *
+     * @constructor
+     * @extends module:Marionette.ItemView
      */
-    var CreateQuiddity = InspectorPanel.extend( {
+    var CreateQuiddity = Marionette.ItemView.extend( {
         template: _.template( CreateQuiddityTemplate ),
         ui:       {
             'name': '#quiddityName',
@@ -45,7 +46,7 @@ define( [
                     if ( device ) {
                         quiddity.setProperty( 'device', this );
                     }
-                    self.scenicChannel.vent.trigger('created:quiddity', quiddity);
+                    self.scenicChannel.vent.trigger('quiddity:created', quiddity);
                 },
                 error:   function ( error ) {
                     self.scenicChannel.vent.trigger('error', error );

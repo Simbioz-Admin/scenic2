@@ -8,8 +8,10 @@ define( [
 ], function ( _, Backbone, Destinations, RTPDestination ) {
 
     /**
-     *  @constructor
-     *  @extends Destinations
+     * RTP Destination Collection
+     *
+     * @constructor
+     * @extends Destinations
      */
     var RTPDestinations = Destinations.extend( {
         model:        RTPDestination,
@@ -20,9 +22,14 @@ define( [
             'delete': null,
             'read':   'listRtpDestinations'
         },
+
+        /**
+         * Initialize
+         */
         initialize: function() {
             Destinations.prototype.initialize.apply(this,arguments);
         }
     } );
+
     return RTPDestinations;
 } );

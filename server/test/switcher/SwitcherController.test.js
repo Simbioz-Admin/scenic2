@@ -52,21 +52,21 @@ describe( 'Switcher Controller', function () {
 
         it( 'should subscribe to property when property is added', function () {
             switcher.subscribe_to_property = sinon.spy();
-            switcherController.onSwitcherSignal( 'irrelevant', 'on-property-added', ['anything'] );
+            switcherController._onSwitcherSignal( 'irrelevant', 'on-property-added', ['anything'] );
             switcher.subscribe_to_property.should.have.been.calledOnce;
             switcher.subscribe_to_property.should.have.been.calledWith( 'irrelevant', 'anything' );
         } );
 
         it( 'should unsubscribe to property when property is removed', function () {
             switcher.unsubscribe_to_property = sinon.spy();
-            switcherController.onSwitcherSignal( 'irrelevant', 'on-property-removed', ['anything'] );
+            switcherController._onSwitcherSignal( 'irrelevant', 'on-property-removed', ['anything'] );
             switcher.unsubscribe_to_property.should.have.been.calledOnce;
             switcher.unsubscribe_to_property.should.have.been.calledWith( 'irrelevant', 'anything' );
         } );
 
         it( 'should notify clients and cleanup when quiddity is removed', function () {
             var quiddityRemoveStub = sinon.stub( switcherController.quiddityManager, 'removeElementsAssociateToQuiddRemoved' );
-            switcherController.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
+            switcherController._onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
             io.emit.should.have.been.calledOnce;
             io.emit.should.have.been.calledWith( 'remove', ['anything'] );
             quiddityRemoveStub.calledOnce;

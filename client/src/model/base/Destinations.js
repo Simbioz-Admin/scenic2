@@ -8,11 +8,17 @@ define( [
 ], function ( _, Backbone, ScenicCollection, Destination ) {
 
     /**
-     *  @constructor
-     *  @extends ScenicCollection
+     * Base Destination Collection
+     *
+     * @constructor
+     * @extends ScenicCollection
      */
     var Destinations = ScenicCollection.extend( {
         model:        Destination,
+
+        /**
+         * Initialize
+         */
         initialize: function() {
             ScenicCollection.prototype.initialize.apply(this,arguments);
         }

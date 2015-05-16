@@ -4,84 +4,59 @@ define( [
     'underscore',
     'backbone',
     'model/Sources',
-    'model/base/Destinations',
-    'views/table',
-    'views/source'
-], function ( _, Backbone, Sources, Destinations, ViewTable ) {
+    'model/base/Destinations'
+], function ( _, Backbone, Sources, Destinations ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Model
+     * Table
+     *
+     * @constructor
+     * @extends module:Backbone.Model
      */
     var Table = Backbone.Model.extend( {
-        defaults:    {
-            "name":                   null,
-            "type":                   null,
-            "description":            null,
-            "menus":                  [],
-            "collectionSources":      null,
-            "collectionDestinations": null,
-            "active": false
+        defaults: {
+            "name":         null,
+            "type":         null,
+            "description":  null,
+            "menus":        [],
+            "active":       false,
+            "sources":      new Sources(),
+            "destinations": new Destinations()
         },
 
+        /**
+         * Initialize
+         */
         initialize: function () {
-
-            /* Create collection source and destination */
-            /* we check if it's already a collection */
-            this.set( "collectionSources", new Sources( this.getQuidds( "sources" ) ) );
-
-            if ( !this.get( "collectionDestinations" ) ) {
-                this.set( "collectionDestinations", new Destinations( this.getQuidds( "destinations" ) ) );
-            }
+            // Setup child collections
+            // TODO: Setup colections with data respecting the source/destination include/exclude policies
+            //this.get( 'sources' ).add( this.getQuidds( 'sources' ), {merge: true} );
+            //this.get( 'destinations' ).add( this.getQuidds( 'destinations' ), {merge: true} );
+            //TODO: When a source or destination is added, check if it is for a source/destination in the current table
         },
 
-        activate: function() {
+        /**
+         * Activate a table
+         */
+        activate: function () {
             this.collection.setCurrentTable( this );
         },
 
-
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-
-
-
-
-
-
-
-
-
-        /* Return the quiddities authorize baded on tyoe (source or destination) */
-        getQuidds: function ( shmdataType ) {
-
-            /* parse global collection quidds contains all quidds already created for return just what you want */
-            if ( this.get( shmdataType ) ) {
-                var quiddsSelect = this.get( shmdataType ).select;
-                return collections.quiddities.SelectQuidds( quiddsSelect );
-            }
-        },
-
-        isAuthorized: function ( quiddClass ) {
-            var authorized_source = _.find( this.selectByCategory( "sources" ), function ( clas ) {
-                return clas["class name"] == quiddClass;
-            } );
-
-            var authorized_destination = _.find( this.selectByCategory( "destinations" ), function ( clas ) {
-                return clas["class name"] == quiddClass;
-            } );
-
-            return {
-                source:      authorized_source ? true : false,
-                destination: authorized_destination ? true : false
-            }
+        /**
+         * Filter Quiddity for access from this table
+         *
+         * @param type
+         * @param quiddity
+         * @returns {boolean}
+         */
+        filterQuiddityOrClass: function ( type, quiddity ) {
+            var className = quiddity.has('class name') ? quiddity.get('class name') : quiddity.get( 'class' );
+            var category  = quiddity.get( 'category' );
+            var included  = this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
+                return category.indexOf( include ) != -1 || className.indexOf( include ) != -1;
+            } ) : true;
+            var excluded  = this.get( type ).exclude ? _.contains( this.get( type ).exclude, category ) : false;
+            return included && !excluded;
         }
     } );
 

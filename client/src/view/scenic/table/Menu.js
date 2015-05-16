@@ -10,9 +10,9 @@ define( [
 
     /**
      *  @constructor
-     *  @augments module:Backbone.Marionette.LayoutView
+     *  @augments module:Marionette.LayoutView
      */
-    var Menu = Backbone.Marionette.ItemView.extend( {
+    var Menu = Marionette.ItemView.extend( {
         template: _.template( MenuTemplate ),
         ui:       {
             'menuButton': '.menuButton'
@@ -37,20 +37,14 @@ define( [
             $( "#subMenu" ).remove(); //TODO: Legacy
 
             var menu            = $( event.currentTarget.closest( '[data-type]' ) ).data( 'type' );
-            var tableMenuConfig = this.model.get( menu );
-            if ( !tableMenuConfig ) {
+            if ( !this.model.has(menu) ) {
                 return;
             }
 
-            var classDescriptions = _.groupBy( _.filter( collections.classDescriptions.toJSON(), function ( classDescription ) {
-                var name     = classDescription['class name'];
-                var category = classDescription['category'];
-                var included = tableMenuConfig.include ? _.some( tableMenuConfig.include, function ( include ) {
-                    return category.indexOf( include ) != -1 || name.indexOf( include ) != -1;
-                } ) : true;
-                var excluded = tableMenuConfig.exclude ? _.contains( tableMenuConfig.exclude, category ) : false;
-                return included && !excluded;
-            } ), 'category' );
+            var self = this;
+            var classDescriptions = _.groupBy( app.classDescriptions.filter( function ( classDescription ) {
+                return self.model.filterQuiddityOrClass( menu, classDescription );
+            } ), function( item ) { return item.get('category'); } );
 
             if ( classDescriptions.length == 0 ) {
                 return;
@@ -78,7 +72,7 @@ define( [
 
         create: function( event ) {
             //this.triggerMethod('create:quiddity', collections.classDescriptions.get( $(event.currentTarget ).data('name') ) );
-            this.scenicChannel.commands.execute( 'create:quiddity', collections.classDescriptions.get( $(event.currentTarget ).data('name') ) );
+            this.scenicChannel.commands.execute( 'quiddity:create', app.classDescriptions.get( $(event.currentTarget ).data('name') ) );
         },
 
         /**

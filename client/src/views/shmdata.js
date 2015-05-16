@@ -86,7 +86,7 @@ define(
                     var that = this;
                     $( ".box", that.el ).remove();
                     _.defer( function () {
-                        that.table.get( "collectionDestinations" ).each( function ( destination ) {
+                        that.table.get( "destinations" ).each( function ( destination ) {
                             that.connectionForDestination( destination, that.table.get( "type" ) );
                         } );
                     } );

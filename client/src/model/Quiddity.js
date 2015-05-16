@@ -12,8 +12,10 @@ define( [
 ], function ( _, Backbone, async, socket, ScenicModel, Properties, Methods, Shmdatas ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicModel
+     * Quiddity
+     *
+     * @constructor
+     * @extends ScenicModel
      */
 
     var QuiddModel = ScenicModel.extend( {
@@ -27,21 +29,24 @@ define( [
             "category":         null,
             "long name":        null,
             "description":      null,
+            "encoder_category": null,
+            "view":             null,
             "properties":       new Properties(),
             "methods":          new Methods(),
-            "encoder_category": null,
-            "shmdatas":         new Shmdatas(),
-            "view":             null
+            "shmdatas":         new Shmdatas()
         },
 
         /**
-         *  Function executed when the model quiddity is created
-         *  It's used for created a view associate to the model
-         *  This view need to know if it's in table controler or transfer and if it's a source or destination
+         *  Initialize
          */
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+            // Setup child collections
             this.get( 'properties' ).quiddity = this;
             this.get( 'methods' ).quiddity = this;
             this.get( 'shmdatas' ).quiddity = this;
@@ -59,6 +64,7 @@ define( [
          * Delete Handler
          *
          * @param {String} quiddityId
+         * @private
          */
         _onRemoved: function ( quiddityId ) {
             if ( this.id == quiddityId ) {
@@ -70,15 +76,28 @@ define( [
          * Set Property Helper
          * Will add the property if it doesn't exists
          *
-         * @param property
+         * @param key
          * @param value
          */
-        setProperty: function( property, value ) {
-            var property = this.get('properties').get(property);
+        setProperty: function( key, value ) {
+            var property = this.get('properties').get(key);
             if ( !property ) {
-                property = this.get('properties' ).add({name:property,value:value});
+                property = this.get('properties' ).add({name:key,value:value});
             }
             property.set('value', value);
+        },
+
+        /**
+         *  Edit Quiddity
+         *  Put the quiddity in edit mode by updating its properties and descriptions,
+         *  then subscribing to get real-time updates
+         */
+        edit: function () {
+            var self = this;
+            //TODO: Get properties
+            //TODO: Get methods
+            //TODO: Subscribe socket.emit( "subscribe_info_quidd", self.id, socket.id );
+            this.scenicChannel.commands.execute('quiddity:edit', self);
         },
 
         //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
@@ -88,30 +107,6 @@ define( [
         //  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
         //  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
         //
-
-        /**
-         *  Edit Quiddity
-         *  Put the quiddity in edit mode by updating its properties and descriptions,
-         *  then subscribing to get real-time updates
-         */
-        edit: function () {
-            var self = this;
-            async.series([
-                function( callback ) {
-                    self.getProperties( callback );
-                },
-                function( callback ) {
-                    self.getMethodsDescription( callback );
-                }
-            ], function( error ) {
-                if ( error ) {
-                    console.error( error );
-                    return;
-                }
-                socket.emit( "subscribe_info_quidd", self.id, socket.id );
-                self.trigger('edit', self);
-            });
-        },
 
 
         /**

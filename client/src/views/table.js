@@ -195,7 +195,7 @@ define(
               path = $(e.target).closest("tr").data("path"),
               quiddName = $(e.target).closest("tr").data("quiddname"),
               port = $(e.target).val(),
-              portSoap = this.model.get("collectionDestinations").get(id).get("portSoap"),
+              portSoap = this.model.get("destinations").get(id).get("portSoap"),
               that = this;
 
             socket.emit("connect_destination", quiddName, path, id, port, portSoap, function(ok) {
@@ -297,7 +297,7 @@ define(
           var that = this;
 
           if (orientation == "source") {
-            var sourceSameCat = this.model.get("collectionSources").where({
+            var sourceSameCat = this.model.get("sources").where({
               "category": category
             }).length;
             category = category.replace(" source", "").replace(" sink", "");
@@ -305,7 +305,7 @@ define(
           }
 
           if (orientation == "destination") {
-            var sourceSameCat = this.model.get("collectionDestinations").where({
+            var sourceSameCat = this.model.get("destinations").where({
               "category": category
             }).length;
             category = category.replace(" source", "").replace(" sink", "");
@@ -317,13 +317,13 @@ define(
         filter_quiddities: function(element) {
           var that = this;
           var filterVal = $(element.target).val();
-          this.model.get("collectionSources").each(function(source) {
+          this.model.get("sources").each(function(source) {
             /* reset showing source */
             source.trigger("toggleShow", "show", that.model.get("name"));
             if (source.get("category").indexOf(filterVal) < 0) source.trigger("toggleShow", "hide", that.model.get("name"));
 
           });
-          this.model.get("collectionDestinations").each(function(destination) {
+          this.model.get("destinations").each(function(destination) {
             destination.trigger("toggleShow", "show", that.model.get("name"));
             if (destination.get("category") && destination.get("category").indexOf(filterVal) < 0) destination.trigger("toggleShow", "hide", that.model.get("name"));
           });

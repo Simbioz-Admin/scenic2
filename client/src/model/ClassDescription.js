@@ -8,8 +8,10 @@ define( [
 ], function ( _, Backbone, socket, ScenicModel ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicModel
+     * Class Description Collection
+     *
+     * @constructor
+     * @extends ScenicModel
      */
 
     var ClassDescription = ScenicModel.extend( {
@@ -25,14 +27,32 @@ define( [
             'devices': []
         },
 
+        /**
+         * Quiddities for which we'll autodetect devices
+         */
         deviceAutoDetectList: ["v4l2src", "pulsesrc", "midisrc"],
+
+        /**
+         * Device auto-detect flag
+         */
         autoDetectDevices: false,
 
+        /**
+         * Initialize
+         */
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
+
+            // Setup device-autodetect
             this.autoDetectDevices = _.contains( this.deviceAutoDetectList, this.get('class name'));
         },
 
+        /**
+         * Load devices for quiddity
+         *
+         * @param callback
+         * @returns {*}
+         */
         loadDevices: function( callback ) {
             if ( !this.autoDetectDevices ) {
                 return callback ? callback() : null;
@@ -43,10 +63,11 @@ define( [
                     return callback ? callback( error ) : null;
                 }
                 //TODO: Parse devices
-                console.log( property );
+                console.info( '>>> WHAT SHOULD I DO WITH THIS ROPERTY? >>>', property );
                 return callback ? callback( null, property ) : null;
             } );
         }
     } );
+
     return ClassDescription;
 } );

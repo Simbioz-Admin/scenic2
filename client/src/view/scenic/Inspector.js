@@ -3,14 +3,15 @@ define( [
     'backbone',
     'marionette',
     'text!template/scenic/inspector.html',
-    'view/scenic/inspector/CreateQuiddity'
-], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView ) {
+    'view/scenic/inspector/CreateQuiddity',
+    'view/scenic/inspector/EditQuiddity'
+], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView, EditQuiddityView ) {
 
     /**
      *  @constructor
-     *  @augments module:Backbone.Marionette.ItemView
+     *  @augments module:Marionette.ItemView
      */
-    var Inspector = Backbone.Marionette.LayoutView.extend( {
+    var Inspector = Marionette.LayoutView.extend( {
         tagName:   'div',
         className: 'inspector-info-panel info-panel ui-draggable',
         template:  _.template( InspectorTemplate ),
@@ -21,15 +22,20 @@ define( [
 
         initialize: function () {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.scenicChannel.commands.setHandler( 'create:quiddity', _.bind( this._onCreateQuiddity, this ) );
-            this.scenicChannel.vent.on( 'created:quiddity', _.bind( this._onCreatedQuiddity, this ) );
+
+            // Quiddity creation
+            this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onCreateQuiddity, this ) );
+            this.scenicChannel.vent.on( 'quiddity:created', _.bind( this._onCreatedQuiddity, this ) );
+
+            // Quiddity editing
+            this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onEditQuiddity, this ) );
         },
 
         /**
          * Create Quiddity Handler
          * Display the quiddity creation form
          *
-         * @param classDescription
+         * @param {ClassDescription} classDescription
          * @private
          */
         _onCreateQuiddity: function ( classDescription ) {
@@ -40,9 +46,21 @@ define( [
                     return;
                 }
                 self.showChildView( 'panel', new CreateQuiddityView( {model: classDescription} ) );
-                console.log(self);
                 self.$el.show();
             } );
+        },
+
+        /**
+         * Edit Quiddity Handler
+         * Display the quiddity edition form
+         *
+         * @param {Quiddity} quiddity
+         * @private
+         */
+        _onEditQuiddity: function ( quiddity ) {
+            var self = this;
+            this.showChildView( 'panel', new EditQuiddityView( {model: quiddity} ) );
+            self.$el.show();
         },
 
         /**

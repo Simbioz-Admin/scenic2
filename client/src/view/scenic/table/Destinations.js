@@ -3,17 +3,36 @@
 define( [
     'underscore',
     'backbone',
-    'marionette'
-    //'text!template/scenic/table/menu.html'
-], function ( _, Backbone, Marionette ) {
+    'marionette',
+    'view/scenic/table/Destination'
+], function ( _, Backbone, Marionette, DestinationView ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Marionette.CollectionView
+     * Destination Collection
+     *
+     * @constructor
+     * @augments module:Marionette.CollectionView
      */
-    var Destinations = Backbone.Marionette.CollectionView.extend( {
+    var Destinations = Marionette.CollectionView.extend( {
+        childView: DestinationView,
+
+        /**
+         * Initialize
+         */
         initialize: function( ) {
+
+        },
+
+        /**
+         * Destinations View Filter
+         *
+         * @param quiddity
+         * @returns {boolean}
+         */
+        filter: function (quiddity) {
+            return this.model.filterQuiddityOrClass( 'destination', quiddity );
         }
     } );
+
     return Destinations;
 } );

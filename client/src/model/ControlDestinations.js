@@ -8,8 +8,10 @@ define( [
 ], function ( _, Backbone, Destinations, ControlDestination ) {
 
     /**
-     *  @constructor
-     *  @extends Destinations
+     * Control Destination Collection
+     *
+     * @constructor
+     * @extends Destinations
      */
     var ControlDestinations = Destinations.extend( {
         model:        ControlDestination,
@@ -20,9 +22,14 @@ define( [
             'delete': null,
             'read':   'listControlDestinations'
         },
+
+        /**
+         * Initialize
+         */
         initialize: function() {
             Destinations.prototype.initialize.apply(this,arguments);
         }
     } );
+
     return ControlDestinations;
 } );

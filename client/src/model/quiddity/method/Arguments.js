@@ -7,11 +7,20 @@ define( [
 ], function ( _, Backbone, Argument ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Collection
+     * Method Arguments
+     *
+     * @constructor
+     * @extends module:Backbone.Collection
      */
     var Arguments = Backbone.Collection.extend( {
-        model:        Argument,
+        model: Argument,
+        defaults: {
+            'name': null,
+            'long name': null,
+            'description': null,
+            'type': null
+        }
     } );
+
     return Arguments;
 } );

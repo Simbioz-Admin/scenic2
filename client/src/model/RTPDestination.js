@@ -7,14 +7,16 @@ define( [
 ], function ( _, Backbone, Destination ) {
 
     /**
-     *  @constructor
-     *  @extends Destination
+     * RTP Destination
+     *
+     * @constructor
+     * @extends Destination
      */
     var RTPDestination = Destination.extend( {
-        defaults:    {
 
-        },
-
+        /**
+         * Initialize
+         */
         initialize: function () {
             Destination.prototype.initialize.apply(this,arguments);
         }

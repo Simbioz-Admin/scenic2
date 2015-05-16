@@ -6,14 +6,16 @@ define( [
 ], function ( _, Backbone ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Model
+     * Method Argument
+     *
+     * @constructor
+     * @extends module:Backbone.Model
      */
     var Argument = Backbone.Model.extend( {
-        defaults:    {
 
-        },
-
+        /**
+         * Initialize
+         */
         initialize: function () {
 
         }

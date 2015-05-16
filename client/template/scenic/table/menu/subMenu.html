@@ -1,10 +1,10 @@
 <div id="subMenu" >
     <% if(type == "classes") { %>
-    <% _.each(classes, function(category, name){ %>
-    <div class="menuHeading"><%=name%></div>
+    <% _.each(classes, function(classes, category){ %>
+    <div class="menuHeading"><%=category%></div>
     <div class="menuButtons">
-        <% _.each(category, function(clas) { %>
-        <a class="create" data-name="<%=clas['class name']%>"><%=clas["long name"]%></a>
+        <% _.each(classes, function(quiddityClass) { %>
+        <a class="create" data-name="<%=quiddityClass.get('class name')%>"><%=quiddityClass.get("long name")%></a>
         <% }); %>
     </div>
     <% }) %>

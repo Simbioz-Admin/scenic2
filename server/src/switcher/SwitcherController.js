@@ -14,6 +14,8 @@ var checkPort       = require( '../utils/check-port' );
 /**
  * Constructor
  *
+ * @param config
+ * @param io
  * @constructor
  */
 function SwitcherController( config, io ) {
@@ -28,8 +30,6 @@ function SwitcherController( config, io ) {
 /**
  * Initialize
  *
- * @param cfg
- * @param socketIo
  * @param callback
  */
 SwitcherController.prototype.initialize = function ( callback ) {
@@ -39,9 +39,9 @@ SwitcherController.prototype.initialize = function ( callback ) {
     var self = this;
 
     // Switcher Callbacks
-    switcher.register_log_callback( this.onSwitcherLog.bind( this ) );
-    switcher.register_prop_callback( this.onSwitcherProperty.bind( this ) );
-    switcher.register_signal_callback( this.onSwitcherSignal.bind( this ) );
+    switcher.register_log_callback( this._onSwitcherLog.bind( this ) );
+    switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
+    switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
 
     /**
      * DEFAULTS
@@ -142,38 +142,12 @@ SwitcherController.prototype.bindClient = function ( socket ) {
 //   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
 
 /**
- * List Control Destinations
- *
- * @param cb
- * @returns {*}
- */
-SwitcherController.prototype.listControlDestinations = function ( cb ) {
-    log.debug( 'Getting control destinations' );
-    try {
-        var destinations = this.switcher.invoke( 'dico', 'read', ['controlDestinations'] );
-    } catch ( e ) {
-        return logback( e, cb );
-    }
-    if ( !destinations ) {
-        return logback( i18n.t( 'Could not list Control Destinations' ), cb );
-    }
-    cb( null, destinations );
-};
-
-//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
-//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
-//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
-//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
-//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
-//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
-//
-
-/**
  * Switcher Log Callback
  *
  * @param message
+ * @private
  */
-SwitcherController.prototype.onSwitcherLog = function ( message ) {
+SwitcherController.prototype._onSwitcherLog = function ( message ) {
     log.switcher( message );
 };
 
@@ -183,12 +157,14 @@ SwitcherController.prototype.onSwitcherLog = function ( message ) {
  * @param qname
  * @param qprop
  * @param pvalue
+ * @private
  */
-SwitcherController.prototype.onSwitcherProperty = function ( qname, qprop, pvalue ) {
-
+SwitcherController.prototype._onSwitcherProperty = function ( qname, qprop, pvalue ) {
     var self = this;
 
-    //we exclude byte-reate because its call every second (almost a spam...)
+    log.debug( 'Property:', qname + '.' + qprop + '=' + pvalue );
+
+    // We exclude byte-rate because it dispatches every second
     if ( qprop != "byte-rate" && qprop != "caps" ) {
         log.debug( '...PROP...: ', qname, ' ', qprop, ' ', pvalue );
     } else {
@@ -248,14 +224,15 @@ SwitcherController.prototype.onSwitcherProperty = function ( qname, qprop, pvalu
  * @param qname
  * @param qsignal
  * @param pvalue
+ * @private
  */
-SwitcherController.prototype.onSwitcherSignal = function ( qname, qsignal, pvalue ) {
+SwitcherController.prototype._onSwitcherSignal = function ( qname, qsignal, pvalue ) {
 
     var self = this;
 
-    if ( qname != "systemusage" ) {
-        log.debug( 'signal:', qname, qsignal, pvalue );
-    }
+    //if ( qname != "systemusage" ) {
+        log.debug( 'Signal:', qname + '.' + qsignal + '=' + pvalue );
+    //}
 
     /* manage callback fro SIP quidd  */
 
@@ -435,6 +412,46 @@ SwitcherController.prototype.onSwitcherSignal = function ( qname, qsignal, pvalu
         switcher.unsubscribe_to_property( qname, pvalue[0] );
     }
 };
+
+
+//  ██╗  ██╗ █████╗ ███╗   ██╗██████╗ ██╗     ███████╗██████╗ ███████╗
+//  ██║  ██║██╔══██╗████╗  ██║██╔══██╗██║     ██╔════╝██╔══██╗██╔════╝
+//  ███████║███████║██╔██╗ ██║██║  ██║██║     █████╗  ██████╔╝███████╗
+//  ██╔══██║██╔══██║██║╚██╗██║██║  ██║██║     ██╔══╝  ██╔══██╗╚════██║
+//  ██║  ██║██║  ██║██║ ╚████║██████╔╝███████╗███████╗██║  ██║███████║
+//  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝
+//
+
+/**
+ * List Control Destinations
+ *
+ * @param cb
+ * @returns {*}
+ */
+SwitcherController.prototype.listControlDestinations = function ( cb ) {
+    log.debug( 'Getting control destinations' );
+    try {
+        var destinations = this.switcher.invoke( 'dico', 'read', ['controlDestinations'] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !destinations ) {
+        return logback( i18n.t( 'Could not list Control Destinations' ), cb );
+    }
+    cb( null, destinations );
+};
+
+//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
+//
+
+
+
+
 
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗
 //  ██║     ██║██╔════╝██╔════╝██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝

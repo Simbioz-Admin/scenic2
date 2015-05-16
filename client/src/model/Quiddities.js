@@ -9,10 +9,11 @@ define( [
 ], function ( _, Backbone, socket, ScenicCollection, Quiddity ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicCollection
+     * Quiddities Collection
+     *
+     * @constructor
+     * @extends ScenicCollection
      */
-
     var Quiddities = ScenicCollection.extend( {
         model: Quiddity,
         methodMap:  {
@@ -23,6 +24,11 @@ define( [
             'read':   'getQuiddities'
         },
 
+        /**
+         * Ignored quiddities
+         * Internal quiddities for which we don't really care in the UI
+         * TODO: Put this on the server so that we never know about them
+         */
         ignoredQuiddities: [
             'dico',
             'create_remove_spy',
@@ -38,17 +44,26 @@ define( [
          */
         initialize: function () {
             ScenicCollection.prototype.initialize.apply( this, arguments );
+
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+            // Handlers
             socket.on( "create", _.bind( this._onCreate, this ) );
         },
 
         /**
          * Create Handler
+         * Listens to quididity creations and add/merge new quiddities to the collection
          *
          * @param {Object} quiddity
+         * @private
          */
-        _onCreate: function ( quiddity ) {
-            if ( !_.contains( this.ignoredQuiddities, quiddity.class ) ) {
-                this.add( quiddity, {merge: true} );
+        _onCreate: function ( quiddityData ) {
+            if ( !_.contains( this.ignoredQuiddities, quiddityData.class ) ) {
+                var quiddity = this.add( quiddityData, {merge: true} );
+                this.scenicChannel.vent.trigger('quiddity:added', quiddity);
             }
         },
 
@@ -59,21 +74,6 @@ define( [
         //
         //
 
-
-        /**
-         *  create a model quiddity and add to the collection Quidds in client side
-         *  This function is executed on event create emitted by the server when switcher create a quiddity
-         *  @param {object} quiddInfo object json with information about the quiddity (name, class, etc...)
-         */
-
-        create: function ( quiddInfo ) {
-            var model = new Quiddity( quiddInfo );
-            this.add( model );
-            if ( quiddInfo.class != "sip" ) {
-                views.global.notification( "info", model.get( "name" ) + " (" + model.get( "class" ) + ") " + $.t( 'is created' ) );
-            }
-            return model;
-        },
 
 
 
@@ -93,19 +93,6 @@ define( [
                 }
                 callback( propertyValue );
             } );
-        }
-        ,
-
-        /**
-         *  Filter for get specific quidds of this collection
-         */
-        SelectQuidds: function ( category ) {
-
-            var quidds = this.filter( function ( quidd ) {
-                return quidd.get( "category" ) == category;
-            } );
-
-            return quidds;
         }
     } );
 

@@ -68,7 +68,7 @@ define(
           $("#" + this.table.get("id") + " .destinations").append($(this.el));
           this.render();
           //Render connection shmdata for this destination
-          var sources = this.table.get("collectionSources");
+          var sources = this.table.get("sources");
           sources.each(function(source) {
             if (source) {
               var shmdatas = source.get("shmdatas");

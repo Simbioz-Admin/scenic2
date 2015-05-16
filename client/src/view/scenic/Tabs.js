@@ -4,22 +4,23 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/Tab',
-    'text!template/scenic/tabs.html'
-], function ( _, Backbone, Marionette, TabView, TabsTemplate ) {
+    'view/scenic/Tab'
+], function ( _, Backbone, Marionette, TabView ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.View
+     * Tabs View
+     *
+     * @constructor
+     * @extends module:Marionette.CollectionView
      */
 
     var TabsView = Marionette.CollectionView.extend( {
         childView: TabView,
-        template: _.template(TabsTemplate),
-        events:    {},
+
+        /**
+         * Initialize
+         */
         initialize: function () {
-        },
-        onRender: function() {
 
         }
     } );

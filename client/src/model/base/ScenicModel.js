@@ -8,18 +8,25 @@ define( [
 ], function ( _, Backbone, socket, BaseModel ) {
 
     /**
-     *  @constructor
-     *  @augments BaseModel
+     * Scenic Model
+     * Provides a way to sync models with Scenic using websockets
+     *
+     * @constructor
+     * @extends BaseModel
      */
     var ScenicModel = BaseModel.extend( {
 
+        /**
+         * Initialize
+         */
         initialize: function () {
             BaseModel.prototype.initialize.apply( this, arguments );
 
+            // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
-            // Error Handler
+            // Model Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
             } );
@@ -32,10 +39,10 @@ define( [
          * Can be overridden in sub classes
          */
         methodMap: {
-            'create': null,
+            'create': function() { return [ 'create', this.get( 'class' ), this.get( 'newName' ), socket.id ]; },
             'update': null,
             'patch':  null,
-            'delete': 'remove',
+            'delete': null,
             'read':   null
         },
 
@@ -50,32 +57,21 @@ define( [
          */
         sync: function ( method, model, options ) {
             var self = this;
-            switch ( method ) {
-                case 'create':
-                    socket.emit( 'create', this.get( 'class' ), this.get( 'newName' ), socket.id, function ( error, info ) {
-                        if ( error ) {
-                            return options.error( error );
-                        }
-                        self.set( 'id', info.name );
-                        options.success( info );
-                    } );
-                    break;
-
-                default:
-                    var command = this.methodMap[method];
-                    if ( command ) {
-                        var callback = function ( error, result ) {
-                            if ( error ) {
-                                return options.error( error );
-                            }
-                            options.success( result );
-                        };
-                        socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
-                        model.trigger( 'request', model, socket, options );
-                    } else {
-                        return options.error( 'Invalid request' );
+            var command = this.methodMap[method];
+            if ( command ) {
+                var callback = function ( error, result ) {
+                    if ( error ) {
+                        return options.error( error );
                     }
-                    break;
+                    if ( method == 'create') {
+                        self.set('id', result.name);
+                    }
+                    options.success( result );
+                };
+                socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
+                model.trigger( 'request', model, socket, options );
+            } else {
+                return options.error( 'Invalid request' );
             }
         }
     } );

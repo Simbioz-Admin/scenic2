@@ -8,10 +8,11 @@ define( [
 ], function ( _, Backbone, socket, ScenicModel ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicModel
+     * Shmdata
+     *
+     * @constructor
+     * @extends ScenicModel
      */
-
     var Shmdata = ScenicModel.extend( {
 
         idAttribute: "path",
@@ -25,22 +26,19 @@ define( [
         },
 
         /**
-         *  Function executed when the model quiddity is created
-         *  It's used for created a view associate to the model
-         *  This view need to know if it's in table controler or transfer and if it's a source or destination
+         *  Initialize
          */
 
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
 
-            /* listen if the quidd is removed */
+            //TODO: LEGACY Listens to quiddity removal to removel ourself
             if ( this.get( "quidd" ) ) {
                 collections.quiddities.get( this.get( "quidd" ) ).on( "remove", this.removeModel, this );
             }
 
-            socket.on( 'removeShmdata', _.bind( this._onRemove, this ) );
-
-            /** Event called when the value of a property changes */
+            // Handlers
+            socket.on( 'removeShmdata', _.bind( this._onRemoved, this ) );
             socket.on( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
         },
 
@@ -63,6 +61,7 @@ define( [
          *  @param {string} quiddName The name of the quiddity
          *  @param {string} prop The name of the property or method
          *  @param {string} value The value of the property
+         *  @private
          */
         _onSignalsPropertiesValue: function ( quiddName, prop, value ) {
             if ( prop == "byte-rate" && quiddName.indexOf('vumeter_') == 0 ) {
@@ -77,16 +76,13 @@ define( [
 
 
 
+        //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
+        //  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
+        //  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
+        //  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
+        //  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
+        //  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
         //
-        //
-        //
-        //
-
-
-        removeModel: function () {
-            console.log( "Remove Shmdata" );
-            this.trigger( "destroy", this );
-        },
 
         /**
          * If this is a shmdata for a sipquidd, this will provide the sip user parsed from the shmdata name

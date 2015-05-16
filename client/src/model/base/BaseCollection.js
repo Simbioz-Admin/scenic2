@@ -7,13 +7,20 @@ define( [
 ], function ( _, Backbone, BaseModel ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Collection
+     * Base Collection
+     * In case we need to extend Backbone.Collection
+     *
+     * @constructor
+     * @extends module:Backbone.Collection
      */
     var BaseCollection = Backbone.Collection.extend( {
         model: BaseModel,
+
+        /**
+         * Initialize
+         */
         initialize: function () {
-            Backbone.Collection.prototype.initialize.apply(this, arguments);
+            Backbone.Collection.prototype.initialize.apply( this, arguments );
         }
     } );
 

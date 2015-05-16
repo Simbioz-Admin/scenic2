@@ -9,8 +9,10 @@ define( [
 ], function ( _, Backbone, socket, ScenicCollection, Shmdata ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicCollection
+     * Shmdatas
+     *
+     * @constructor
+     * @extends ScenicCollection
      */
     var Shmdatas = ScenicCollection.extend( {
         model:      Shmdata,
@@ -35,7 +37,14 @@ define( [
             'read':   function() { return [ 'getInfo', this.quiddity.id, '.shmdata' ] }
         },
 
+        /**
+         * Parse data from sync
+         *
+         * @param response
+         * @returns {Array}
+         */
         parse: function( response ) {
+            console.log( response );
             var shmdatas = [];
             if ( response.reader ) {
                 _.each( response.reader, function ( shmdata, path ) {
@@ -54,9 +63,13 @@ define( [
             return shmdatas;
         },
 
+        /**
+         * Initialize
+         */
         initialize: function() {
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
+            // Handlers
             socket.on( 'addShmdata', _.bind( this._onAddShmdata, this ) );
         },
 

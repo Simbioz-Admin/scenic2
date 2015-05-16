@@ -8,8 +8,10 @@ define( [
 ], function ( _, Backbone, Destinations, SIPDestination ) {
 
     /**
-     *  @constructor
-     *  @extends Destinations
+     * SIP Destination Collection
+     *
+     * @constructor
+     * @extends Destinations
      */
     var SIPDestinations = Destinations.extend( {
         model:        SIPDestination,
@@ -20,9 +22,14 @@ define( [
             'delete': null,
             'read':   null
         },
+
+        /**
+         * Initialize
+         */
         initialize: function() {
             Destinations.prototype.initialize.apply(this,arguments);
         }
     } );
+
     return SIPDestinations;
 } );

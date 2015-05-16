@@ -7,14 +7,15 @@ define( [
 ], function ( _, Backbone, ScenicModel ) {
 
     /**
-     *  @constructor
-     *  @extends ScenicModel
+     * Base Destination
+     *
+     * @constructor
+     * @extends ScenicModel
      */
     var Destination = ScenicModel.extend( {
-        defaults:    {
-
-        },
-
+        /**
+         * Initialize
+         */
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
         }

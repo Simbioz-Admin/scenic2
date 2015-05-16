@@ -19,22 +19,22 @@ define( [
 
             /* Create a table for manage Audio device and connexion */
             this.add( new Table( {
-                name:         $.t( 'Sink' ),
-                type:         'sink',
-                id:           "sink",
-                description:  "Manage audio device and connexion audio",
-                menus:        [{
-                    name: "Source",
-                    type: "sources"
+                name:        $.t( 'Sink' ),
+                type:        'sink',
+                id:          "sink",
+                description: $.t( "Manage audio/video devices and connections" ),
+                menus:       [{
+                    name: $.t( "Sources" ),
+                    type: "source"
                 }, {
                     name: $.t( "Sink" ),
-                    type: "destinations"
+                    type: "destination"
                 }],
-                sources:      {
+                source:      {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
                 },
-                destinations: {
-                    include:  ["sink"],
+                destination: {
+                    include: ["sink"],
                     exclude: ["monitor"]
                 }
             } ) );
@@ -44,19 +44,19 @@ define( [
                 name:                   $.t( 'Transfer' ),
                 type:                   "transfer",
                 id:                     "transferRtp",
-                description:            "Manage connexion with destination type host",
+                description:            $.t( "Manage connexions with host destination" ),
                 menus:                  [{
-                    name: "source",
-                    type: "sources"
+                    name: $.t( "Sources" ),
+                    type: "source"
                 }, {
-                    name: "destination RTP",
-                    type: "destinations",
+                    name: $.t( "RTP Destination" ),
+                    type: "destination",
                     id:   "create_receiver"
                 }],
-                sources:                {
+                source:                 {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
                 },
-                collectionDestinations: collections.rtpDestinations
+                collectionDestinations: app.rtpDestinations
             } ) );
 
             /* Create matrix for manage connection between properties values and midi quiddity */
@@ -64,40 +64,40 @@ define( [
                 name:                   $.t( "Control" ),
                 type:                   "control",
                 id:                     "control",
-                description:            "Control properties of quiddities with device",
+                description:            "Control properties of quiddities with devices",
                 menus:                  [{
-                    name: $.t( "midi control" ),
-                    type: "sources"
+                    name: $.t( "MIDI Controls" ),
+                    type: "source"
                 }, {
-                    name: $.t( "properties" ),
-                    type: "destinations",
+                    name: $.t( "Properties" ),
+                    type: "destination",
                     id:   "get_properties"
                 }],
-                sources:                {
+                source:                 {
                     include: ["midisrc"]
                 },
-                collectionDestinations: collections.rtpDestinations
+                collectionDestinations: app.rtpDestinations
             } ) );
 
             /* Manage transfer of shmdatas to the sip destination */
             this.add( new Table( {
-                name:                   "SIP",
+                name:                   $.t( "SIP" ),
                 type:                   "transfer",
                 id:                     "transferSip",
-                description:            "Manage transfer of shmdatas to the sip destination",
+                description:            $.t( "Manage transfer of shmdatas to SIP contacts" ),
                 menus:                  [{
-                    name: "source",
-                    type: "sources"
+                    name: $.t( "Sources" ),
+                    type: "source"
                 }],
-                sources:                {
+                source:                 {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
                 },
-                collectionDestinations: collections.contacts
+                collectionDestinations: app.contacts
             } ) );
 
             // Current
-            if ( localStorage.getItem("currentTable") ) {
-                this.setCurrentTable( this.get( localStorage.getItem("currentTable") ) );
+            if ( localStorage.getItem( "currentTable" ) ) {
+                this.setCurrentTable( this.get( localStorage.getItem( "currentTable" ) ) );
             } else {
                 this.setCurrentTable( this.get( config.defaultPanelTable ) );
             }
@@ -108,11 +108,11 @@ define( [
          *
          * @returns {*}
          */
-        getCurrentTable: function() {
+        getCurrentTable: function () {
             if ( this.currentTable ) {
                 return this.currentTable;
-            } else if ( localStorage.getItem('currentTable') ) {
-                return this.get( localStorage.getItem('currentTable') );
+            } else if ( localStorage.getItem( 'currentTable' ) ) {
+                return this.get( localStorage.getItem( 'currentTable' ) );
             } else {
                 return this.get( config.defaultPanelTable );
             }
@@ -123,17 +123,18 @@ define( [
          *
          * @param table
          */
-        setCurrentTable: function( table ) {
+        setCurrentTable: function ( table ) {
             if ( this.currentTable ) {
-                this.currentTable.set('active', false);
+                this.currentTable.set( 'active', false );
             }
             this.currentTable = table;
-            localStorage.setItem('currentTable', this.currentTable ? this.currentTable.get('id') : null );
+            localStorage.setItem( 'currentTable', this.currentTable ? this.currentTable.get( 'id' ) : null );
             if ( this.currentTable ) {
-                this.currentTable.set('active', true);
+                this.currentTable.set( 'active', true );
             }
-            this.trigger('change:current', this.currentTable);
+            this.trigger( 'change:current', this.currentTable );
         }
     } );
+
     return Tables;
 } );

@@ -7,14 +7,16 @@ define( [
 ], function ( _, Backbone, Destination ) {
 
     /**
-     *  @constructor
-     *  @extends Destination
+     * SIP Destination
+     *
+     * @constructor
+     * @extends Destination
      */
     var SIPDestination = Destination.extend( {
-        defaults:    {
 
-        },
-
+        /**
+         * Initialize
+         */
         initialize: function () {
             Destination.prototype.initialize.apply(this,arguments);
         }

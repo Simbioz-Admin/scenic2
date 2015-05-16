@@ -21,7 +21,7 @@ define( [
      * @extends Backbone.View
      */
 
-    var SystemUsageView = Backbone.Marionette.ItemView.extend( {
+    var SystemUsageView = Marionette.ItemView.extend( {
         template:  _.template( SystemUsageTemplate ),
         className: 'monitor',
         id:        "system-usage",

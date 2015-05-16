@@ -50,16 +50,16 @@ require( {
     'app',
     'lib/util',
     'lib/socket',
-    collections = [],
-    views = {},
-    config = {}
-], function ( app, util, socket ) {
+     app = {} //The only global variable I'll tolerate
+], function ( application, util, socket ) {
 
-    //Announce ourselves and recover config information from the server
-    socket.emit( "getConfig", localStorage.getItem("socketId"), socket.id, function ( configServer ) {
-        config = configServer;
+    // "Facade" the application
+    app = application;
+
+    // Announce ourselves and recover config information from the server
+    socket.emit( "getConfig", localStorage.getItem("socketId"), socket.id, function ( config ) {
         localStorage.setItem('socketId', socket.id);
-        app.initialize( config );
+        application.initialize( config );
     } );
 
     // When the server is closed or crashes shutdown the app

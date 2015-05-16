@@ -30,6 +30,7 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "getQuiddities", this.getQuiddities.bind( this ) );
     socket.on( "getInfo", this.getInfo.bind( this ) );
     socket.on( "getProperties", this.getProperties.bind( this ) );
+    socket.on( "getPropertyByClass", this.getPropertyByClass.bind( this ) );
     socket.on( "getPropertyDescription", this.getPropertyDescription.bind( this ) );
     socket.on( "getMethods", this.getMethods.bind( this ) );
     socket.on( "getMethodDescription", this.getMethodDescription.bind( this ) );
@@ -42,7 +43,6 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "get_quiddity_description", this.get_description.bind( this ) );
     socket.on( "get_property_value", this.get_property_value.bind( this ) );
     socket.on( "set_property_value", this.set_property_value.bind( this ) );
-    socket.on( "get_property_by_class", this.get_property_by_class.bind( this ) );
     socket.on( "subscribe_info_quidd", this.subscribe_info_quidd.bind( this ) );
     socket.on( "unsubscribe_info_quidd", this.unsubscribe_info_quidd.bind( this ) );
     socket.on( "setPropertyValueOfDico", this.set_property_value_of_dico.bind( this ) );
@@ -110,6 +110,29 @@ QuiddityManager.prototype.getInfo = function ( quiddityId, path, cb ) {
         return logback( info ? info.error : i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ), cb );
     }
     return cb( null, info );
+};
+
+/**
+ * Get properties by class
+ *
+ * Used to get devices of a certain type
+ *
+ * @param className
+ * @param propertyName
+ * @param cb
+ * @returns {*}
+ */
+QuiddityManager.prototype.getPropertyByClass = function ( className, propertyName, cb ) {
+    log.debug( "Getting property " + propertyName + " for class " + className );
+    try {
+        var result = JSON.parse( this.switcher.get_property_description_by_class( className, propertyName ) );
+    } catch(e) {
+        return logback( e, cb );
+    }
+    if ( !result || result.error ) {
+        return logback( result ? result.error : i18n.t('Could not get property __propertyName__ for class __className__', { propertyName: propertyName, className: className }));
+    }
+    cb( null, result );
 };
 
 /**
@@ -366,26 +389,7 @@ QuiddityManager.prototype.set_property_value = function ( quiddName, property, v
 };
 
 
-/**
- * Get property by class
- *
- * Used to get devices of a certain type
- *
- * @param className
- * @param propertyName
- * @param callback
- * @returns {*}
- */
-QuiddityManager.prototype.get_property_by_class = function ( className, propertyName, callback ) {
-    log.debug( "Getting property by class", className, propertyName );
-    var propertyByClass = JSON.parse( this.switcher.get_property_description_by_class( className, propertyName ) );
-    if ( !propertyByClass || propertyByClass.error ) {
-        var msg = propertyByClass.error + "(property : " + propertyName + ", class : " + className + ")";
-        log.error( msg );
-        return callback( msg );
-    }
-    callback( null, propertyByClass );
-};
+
 
 
 

@@ -8,18 +8,22 @@ define( [
 ], function ( _, Backbone, socket, ScenicModel ) {
 
     /**
-     *  @constructor
-     *  @augments ScenicModel
+     * SIP Contact
+     *
+     * @constructor
+     * @extends ScenicModel
      */
 
     var Contact = ScenicModel.extend( {
         idAttribute: 'uri',
-        defaults: {
 
-        },
-
+        /**
+         * Initialize
+         */
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
+
+            // Handlers
             socket.on( 'removeUser', _.bind( this._onRemoved, this ) );
         },
 
@@ -27,6 +31,7 @@ define( [
          * Delete Handler
          *
          * @param {String} uri
+         * @private
          */
         _onRemoved: function ( uri ) {
             if ( this.id == uri ) {

@@ -8,7 +8,7 @@ if ( self.get( "category" ) != "mapper" && self.get( "class" ) != "midisrc" ) {
 
         if ( authorization.source ) {
             /* insert in collection */
-            tableModel.get( "collectionSources" ).add( self );
+            tableModel.get( "sources" ).add( self );
 
             /* we create a view source for table transfer and after that we create view for shmdata */
             new ViewSource( {
@@ -21,7 +21,7 @@ if ( self.get( "category" ) != "mapper" && self.get( "class" ) != "midisrc" ) {
 
         if ( authorization.destination ) {
             /* insert in collection destination of this table */
-            tableModel.get( "collectionDestinations" ).add( self );
+            tableModel.get( "destinations" ).add( self );
             /* Create a view */
             new ViewDestination( {
                 model: self,

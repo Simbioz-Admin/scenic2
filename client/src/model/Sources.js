@@ -7,11 +7,21 @@ define( [
 ], function ( _, Backbone, Source ) {
 
     /**
-     *  @constructor
-     *  @augments module:Backbone.Collection
+     * Sources Collection
+     *
+     * @constructor
+     * @extends module:Backbone.Collection
      */
     var Sources = Backbone.Collection.extend( {
-        model:        Source,
+        model: Source,
+
+        /**
+         * Initialize
+         */
+        initialize: function () {
+
+        }
     } );
+
     return Sources;
 } );

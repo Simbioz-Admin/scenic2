@@ -44,10 +44,6 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
             // Setup child collections
             this.get( 'properties' ).quiddity = this;
             this.get( 'methods' ).quiddity    = this;

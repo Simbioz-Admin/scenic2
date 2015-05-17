@@ -4,16 +4,17 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'view/scenic/inspector/edit/property/Field',
     'text!template/scenic/inspector/edit/property/string.html'
-], function ( _, Backbone, Marionette, StringTemplate ) {
+], function ( _, Backbone, Marionette, FieldView, StringTemplate ) {
 
     /**
      * String View
      *
      * @constructor
-     * @extends module:Marionette.LayoutView
+     * @extends FieldView
      */
-    var StringProperty = Marionette.ItemView.extend( {
+    var StringProperty = FieldView.extend( {
         template: _.template( StringTemplate ),
 
         ui: {
@@ -29,7 +30,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-
+            FieldView.prototype.initialize( this, arguments );
         },
 
         /**

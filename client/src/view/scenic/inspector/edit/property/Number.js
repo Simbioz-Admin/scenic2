@@ -4,22 +4,25 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'view/scenic/inspector/edit/property/Field',
     'text!template/scenic/inspector/edit/property/number.html'
-], function ( _, Backbone, Marionette, NumberTemplate ) {
+], function ( _, Backbone, Marionette, FieldView, NumberTemplate ) {
 
     /**
      * Number View
      *
      * @constructor
-     * @extends module:Marionette.LayoutView
+     * @extends FieldView
      */
-    var NumberProperty = Marionette.ItemView.extend( {
+    var NumberProperty = FieldView.extend( {
         template: _.template( NumberTemplate ),
 
         /**
          * Initialize
          */
         initialize: function( ) {
+            FieldView.prototype.initialize( this, arguments );
+
             //TODO: Put in model
             this.model.set('default property', parseFloat( this.model.get("default value").replace(",", ".") ) )
         },

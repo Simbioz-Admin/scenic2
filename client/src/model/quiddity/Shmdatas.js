@@ -17,7 +17,7 @@ define( [
     var Shmdatas = ScenicCollection.extend( {
         model:      Shmdata,
         quiddity:   null,
-        comparator: function ( a, b ) {
+        /*comparator: function ( a, b ) {
             var aSip = a.getSipUser();
             var bSip = b.getSipUser();
             if ( aSip != bSip ) {
@@ -27,7 +27,7 @@ define( [
                 var bPath = b.get( 'path' );
                 return aPath != null ? aPath.localeCompare( bPath ) : ( bPath != null ? bPath.localeCompare( aPath ) * -1 : 0 );
             }
-        },
+        },*/
 
         methodMap:  {
             'create': null,
@@ -40,21 +40,21 @@ define( [
         /**
          * Parse data from sync
          *
+         * TODO: Max readers?
+         *
          * @param response
          * @returns {Array}
          */
         parse: function( response ) {
-            console.log( 'HOW SHOUL I PARSE SHMDATAS:', response );
-            return;
             var shmdatas = [];
-            if ( response.reader ) {
+            if ( response.reader && typeof response.reader == 'object' ) {
                 _.each( response.reader, function ( shmdata, path ) {
                     shmdata["path"]  = path;
                     shmdata["type"]  = 'reader';
                     shmdatas.push(shmdata);
                 } );
             }
-            if ( response.writer ) {
+            if ( response.writer && typeof response.writer == 'object' ) {
                 _.each( response.writer, function ( shmdata, path ) {
                     shmdata["path"]  = path;
                     shmdata["type"]  = 'writer';
@@ -77,12 +77,12 @@ define( [
         /**
          * Add Shmdata Handler
          *
-         * @param quiddName
+         * @param quiddityId
          * @param shmdata
          * @private
          */
-        _onAddShmdata: function ( quiddName, shmdata ) {
-            if ( this.quiddity && this.quiddity.id == quiddName ) {
+        _onAddShmdata: function ( quiddityId, shmdata ) {
+            if ( this.quiddity && this.quiddity.id == quiddityId ) {
                 this.add( shmdata, { merge: true } );
             }
         }

@@ -17,7 +17,10 @@ define( [
 
         initialize: function () {
 
-            /* Create a table for manage Audio device and connexion */
+            //  ┌─┐┬┌┐┌┬┌─
+            //  └─┐││││├┴┐
+            //  └─┘┴┘└┘┴ ┴
+
             this.add( new Table( {
                 name:        $.t( 'Sink' ),
                 type:        'sink',
@@ -39,7 +42,10 @@ define( [
                 }
             } ) );
 
-            /* Create a table for managing shmdatas transmission throught RTP/SDP  */
+            //  ┬─┐┌┬┐┌─┐
+            //  ├┬┘ │ ├─┘
+            //  ┴└─ ┴ ┴
+
             this.add( new Table( {
                 name:                   $.t( 'Transfer' ),
                 type:                   "transfer",
@@ -50,8 +56,7 @@ define( [
                     type: "source"
                 }, {
                     name: $.t( "RTP Destination" ),
-                    type: "destination",
-                    id:   "create_receiver"
+                    type: "destination"
                 }],
                 source:                 {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
@@ -59,7 +64,10 @@ define( [
                 collectionDestinations: app.rtpDestinations
             } ) );
 
-            /* Create matrix for manage connection between properties values and midi quiddity */
+            //  ┌─┐┌─┐┌┐┌┌┬┐┬─┐┌─┐┬
+            //  │  │ ││││ │ ├┬┘│ ││
+            //  └─┘└─┘┘└┘ ┴ ┴└─└─┘┴─┘
+
             this.add( new Table( {
                 name:                   $.t( "Control" ),
                 type:                   "control",
@@ -70,8 +78,7 @@ define( [
                     type: "source"
                 }, {
                     name: $.t( "Properties" ),
-                    type: "destination",
-                    id:   "get_properties"
+                    type: "destination"
                 }],
                 source:                 {
                     include: ["midisrc"]
@@ -79,7 +86,10 @@ define( [
                 collectionDestinations: app.rtpDestinations
             } ) );
 
-            /* Manage transfer of shmdatas to the sip destination */
+            //  ┌─┐┬┌─┐
+            //  └─┐│├─┘
+            //  └─┘┴┴
+
             this.add( new Table( {
                 name:                   $.t( "SIP" ),
                 type:                   "transfer",

@@ -17,14 +17,29 @@ define( [
     var ScenicModel = BaseModel.extend( {
 
         /**
+         * @constructor
+         */
+        constructor: function() {
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+            /**
+             * List of socket listeners
+             * @see Same var in ScenicCollection
+             * @var {Array}
+             */
+            this.socketListeners = [];
+
+            // Call the original constructor
+            BaseModel.apply(this, arguments);
+        },
+
+        /**
          * Initialize
          */
         initialize: function () {
             BaseModel.prototype.initialize.apply( this, arguments );
-
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
             // Model Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
@@ -54,13 +69,6 @@ define( [
         },
 
         /**
-         * List of socket listeners
-         * @see Same var in ScenicCollection
-         * @var {Array}
-         */
-        socketListeners: [],
-
-        /**
          * Listen to socket message on a callback
          * This utility method allows us to remove listeners all at once when destroyed
          *
@@ -84,7 +92,7 @@ define( [
          */
         _onDestroy: function() {
             _.each( this.socketListeners, function( listener ) {
-                socket.removeListener( listener.message, listener.callback );
+                socket.off( listener.message, listener.callback );
             });
         },
 

@@ -4,23 +4,24 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'view/scenic/inspector/edit/property/Field',
     'text!template/scenic/inspector/edit/property/select.html'
-], function ( _, Backbone, Marionette, SelectTemplate ) {
+], function ( _, Backbone, Marionette, FieldView, SelectTemplate ) {
 
     /**
      * Select View
      *
      * @constructor
-     * @extends module:Marionette.LayoutView
+     * @extends FieldView
      */
-    var SelectProperty = Marionette.ItemView.extend( {
+    var SelectProperty = FieldView.extend( {
         template: _.template( SelectTemplate ),
 
         /**
          * Initialize
          */
         initialize: function( ) {
-
+            FieldView.prototype.initialize( this, arguments );
         }
     } );
 

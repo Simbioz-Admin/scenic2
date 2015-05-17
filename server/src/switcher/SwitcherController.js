@@ -167,6 +167,26 @@ SwitcherController.prototype._onSwitcherProperty = function ( qname, qprop, pval
         log.debug( 'Property:', qname + '.' + qprop + '=' + pvalue );
     }
 
+    // Send to clients
+    // TODO: Redo subscription lists
+    this.io.emit( "signals_properties_value", qname, qprop, pvalue );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /*if ( qprop != "byte-rate" && qprop != "caps" ) {
      log.debug( '...PROP...: ', qname, ' ', qprop, ' ', pvalue );
      } else {
@@ -229,12 +249,22 @@ SwitcherController.prototype._onSwitcherProperty = function ( qname, qprop, pval
  * @private
  */
 SwitcherController.prototype._onSwitcherSignal = function ( qname, qsignal, pvalue ) {
-
     var self = this;
 
-    //if ( qname != "systemusage" ) {
-    log.debug( 'Signal:', qname + '.' + qsignal + '=' + pvalue );
-    //}
+    // We exclude byte-rate because it dispatches every second
+    if ( qname != "systemusage" ) {
+        log.debug( 'Signal:', qname + '.' + qsignal + '=' + pvalue );
+    }
+
+
+
+
+
+
+
+
+
+
 
     /* manage callback fro SIP quidd  */
 

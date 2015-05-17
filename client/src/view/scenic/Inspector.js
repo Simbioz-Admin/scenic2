@@ -69,7 +69,6 @@ define( [
          * @private
          */
         _onQuiddityEdit: function ( quiddity ) {
-            console.log(quiddity);
             this.showChildView( 'panel', new EditQuiddityView( {model: quiddity} ) );
             this.$el.show();
         }

@@ -1,10 +1,5 @@
 "use strict";
 
-/**
- *    View Systemusage
- *    Manage information about cpu and memory
- *    @exports views/Systemusage
- */
 define( [
     'underscore',
     'backbone',

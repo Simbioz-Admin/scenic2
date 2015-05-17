@@ -68,21 +68,27 @@ define( [
          */
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
-            this.scenicChannel = Backbone.Wreqr.radio.channel('scenic');
 
             // Handlers
             this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
             this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
         },
 
+        /**
+         * Internally set the value of the property
+         * We set the internal flag so that we can ignore the following update event in the ui and thus avoid
+         * re-rendering the view aimlessly.
+         *
+         * @param value
+         */
         setValue: function( value ) {
             var self = this;
-            if ( this.get('value') != value ) {
+            if ( this.get('default value') != value ) {
                 socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
                     if ( error ) {
-                        return this.scenicChannel.vent( 'error', error );
+                        return self.scenicChannel.vent( 'error', error );
                     }
-                    self.set('value', value)
+                    self.set('default value', value, { internal: true } );
                 } );
             }
         },
@@ -110,8 +116,8 @@ define( [
          * @param {string} value The value of the property
          */
         _onSignalsPropertiesValue: function ( quiddityId, property, value ) {
-            if ( this.collection.quiddity.id == quiddityId && this.id == property ) {
-                this.set('value', value);
+            if ( this.collection.quiddity.id == quiddityId && this.id == property && this.get('default value') != value ) {
+                this.set('default value', value);
             }
         }
     } );

@@ -45,10 +45,6 @@ define( [
         initialize: function () {
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
             // Handlers
             this.onSocket( "create", _.bind( this._onCreate, this ) );
         },

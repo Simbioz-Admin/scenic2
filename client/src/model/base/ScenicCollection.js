@@ -19,14 +19,29 @@ define( [
         model: ScenicModel,
 
         /**
+         * @constructor
+         */
+        constructor: function() {
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+            /**
+             * List of socket listeners
+             * @see Same var in ScenicModel
+             * @var {Array}
+             */
+            this.socketListeners = [];
+
+            // Call the original constructor
+            BaseCollection.apply(this, arguments);
+        },
+
+        /**
          * Initialize
          */
         initialize: function () {
             BaseCollection.prototype.initialize.apply( this, arguments );
-
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
             // Collection Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
@@ -50,13 +65,6 @@ define( [
             'delete': null,
             'read':   null
         },
-
-        /**
-         * List of socket listeners
-         * @see Same var in ScenicModel
-         * @var {Array}
-         */
-        socketListeners: [],
 
         /**
          * Listen to socket message on a callback

@@ -4,16 +4,17 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'view/scenic/inspector/edit/property/Field',
     'text!template/scenic/inspector/edit/property/bool.html'
-], function ( _, Backbone, Marionette, BoolTemplate ) {
+], function ( _, Backbone, Marionette, FieldView, BoolTemplate ) {
 
     /**
      * Bool View
      *
      * @constructor
-     * @extends module:Marionette.LayoutView
+     * @extends FieldView
      */
-    var BoolProperty = Marionette.ItemView.extend( {
+    var BoolProperty = FieldView.extend( {
         template: _.template( BoolTemplate ),
 
         ui : {
@@ -28,7 +29,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-
+            FieldView.prototype.initialize( this, arguments );
         },
 
         /**

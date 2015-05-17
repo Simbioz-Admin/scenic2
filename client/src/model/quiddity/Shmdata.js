@@ -87,7 +87,7 @@ define( [
         /**
          * If this is a shmdata for a sipquidd, this will provide the sip user parsed from the shmdata name
          */
-        getSipUser: function () {
+        /*getSipUser: function () {
             var sipUser = null;
             if ( this.get( 'quidd' ) == config.sip.quiddName ) {
                 var parts     = this.get( 'path' ).replace( 'vumeter_', '' ).split( '_' );
@@ -98,7 +98,7 @@ define( [
                 }
             }
             return sipUser;
-        }
+        }*/
     } );
     return Shmdata;
 } );

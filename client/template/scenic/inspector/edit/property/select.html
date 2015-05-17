@@ -1,7 +1,5 @@
-<div class="property-content">
-    <select id="<%=name%>" name="<%=name%>" class="property" data-current="<%=obj['default value']['value']%>">
-    <% _.each(values, function(value) { %>
-        <option value="<%=value.name%>"<% if(obj['default value']['name'] == value.name){ %> selected="selected"<% } %>><%=value.name%></option>
-    <% }); %>
-    </select>
-</div>
+<select id="<%=name%>" name="<%=name%>" class="property" data-current="<%=obj['default value']['value']%>">
+<% _.each(values, function(option) { %>
+    <option value="<%=option.name%>"<% if(option.name == value.name){ %> selected="selected"<% } %>><%=option.name%></option>
+<% }); %>
+</select>

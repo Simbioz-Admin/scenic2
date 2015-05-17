@@ -66,6 +66,9 @@ define( [
          */
         _onRemoved: function ( quiddityId ) {
             if ( this.id == quiddityId ) {
+                this.get( 'properties' ).destroy();
+                this.get( 'methods' ).destroy();
+                this.get( 'shmdatas' ).destroy();
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -77,14 +80,14 @@ define( [
          * @param key
          * @param value
          */
-        setProperty: function ( key, value ) {
-            var property = this.get( 'properties' ).get( key );
-            if ( !property ) {
-                console.debug( 'Quiddity:setProperty', key, value );
-                property = this.get( 'properties' ).add( {name: key, value: value} );
-            }
-            property.set( 'value', value );
-        },
+        /*setProperty: function ( key, value ) {
+         var property = this.get( 'properties' ).get( key );
+         if ( !property ) {
+         console.debug( 'Quiddity:setProperty', key, value );
+         property = this.get( 'properties' ).add( {name: key, value: value} );
+         }
+         property.set( 'value', value );
+         },*/
 
         /**
          *  Edit Quiddity
@@ -96,6 +99,8 @@ define( [
             //TODO: Get properties
             //TODO: Get methods
             //TODO: Subscribe socket.emit( "subscribe_info_quidd", self.id, socket.id );
+            //TODO: Unsubscribe on end edit
+            //TODO: If we choose to stay subscribed always then move this in the inspector on quiddity:created
             this.scenicChannel.commands.execute( 'quiddity:edit', self );
         },
 

@@ -17,11 +17,37 @@ define( [
     var SelectProperty = FieldView.extend( {
         template: _.template( SelectTemplate ),
 
+        ui: {
+            property: '.property'
+        },
+
+        events: {
+            'change .property': 'updateModel'
+        },
+
         /**
          * Initialize
          */
         initialize: function( ) {
             FieldView.prototype.initialize( this, arguments );
+        },
+
+        /**
+         * Update
+         *
+         * @param event
+         */
+        updateModel: function ( event ) {
+            // Update the model
+            this.model.set('value', this.ui.property.val() );
+        },
+
+        /**
+         * Set the value of the slider
+         * @inheritdoc
+         */
+        onModelChanged: function( model, value, options ) {
+            this.ui.property.val( value );
         }
     } );
 

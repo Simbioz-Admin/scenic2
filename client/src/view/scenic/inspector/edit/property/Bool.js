@@ -22,7 +22,7 @@ define( [
         },
 
         events: {
-            'change .property': 'update'
+            'change .property': 'updateModel'
         },
 
         /**
@@ -33,17 +33,25 @@ define( [
         },
 
         /**
-         * Update
+         * Update Model Value
          *
          * @param event
          */
-        update: function ( event ) {
-            if ( this.ui.property.is( ':checked' ) ) {
-                this.ui.property.val( 'true' ).attr( 'checked', true );
-            } else {
-                this.ui.property.val( 'false' ).attr( 'checked', false );
-            }
-            this.model.setValue( this.ui.property.val() );
+        updateModel: function ( event ) {
+            // We have a custom checkbox and string booleans,
+            // so this is needed to toggle and set the actual value
+            var checked = this.ui.property.is( ':checked' );
+            this.ui.property.val( checked ? 'true' : 'false' ).attr( 'checked', checked );
+            // Update the model
+            this.model.set('value', this.ui.property.val() );
+        },
+
+        /**
+         * Set the value of the checkbox
+         * @inheritdoc
+         */
+        onModelChanged: function( model, value, options ) {
+            this.ui.property.val( value ).attr( 'checked', value != 'false' );
         }
     } );
 

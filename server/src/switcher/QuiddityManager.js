@@ -32,6 +32,7 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "getProperties", this.getProperties.bind( this ) );
     socket.on( "getPropertyByClass", this.getPropertyByClass.bind( this ) );
     socket.on( "getPropertyDescription", this.getPropertyDescription.bind( this ) );
+    socket.on( "setPropertyValue", this.setPropertyValue.bind( this ) );
     socket.on( "getMethods", this.getMethods.bind( this ) );
     socket.on( "getMethodDescription", this.getMethodDescription.bind( this ) );
     socket.on( "invokeMethod", this.invokeMethod.bind( this ) );
@@ -42,7 +43,6 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     //
     socket.on( "get_quiddity_description", this.get_description.bind( this ) );
     socket.on( "get_property_value", this.get_property_value.bind( this ) );
-    socket.on( "set_property_value", this.set_property_value.bind( this ) );
     socket.on( "subscribe_info_quidd", this.subscribe_info_quidd.bind( this ) );
     socket.on( "unsubscribe_info_quidd", this.unsubscribe_info_quidd.bind( this ) );
     socket.on( "setPropertyValueOfDico", this.set_property_value_of_dico.bind( this ) );
@@ -175,6 +175,36 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
 };
 
 /**
+ * Set Property Value
+ *
+ * @param quiddityId
+ * @param property
+ * @param value
+ * @param cb
+ */
+QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, value, cb ) {
+    var self = this;
+    if ( quiddityId && property && value ) {
+        try {
+            var result = this.switcher.set_property_value( quiddityId, property, String( value ) );
+        } catch( e ) {
+            logback( e, cb );
+        }
+        if ( !result ) {
+            logback( i18n.t( 'Could not set property __property__ value __value__ on __quiddity__', {
+                property: property,
+                value:    value,
+                quiddity: quiddityId
+            } ), cb );
+        }
+        log.debug( 'The property ' + property + ' of ' + quiddityId + ' was set to ' + value );
+        cb( );
+    } else {
+        logback( i18n.t('Missing arguments to set property value:') + ' ' + quiddityId + ' ' + property + ' ' + value );
+    }
+};
+
+/**
  * Get Methods
  *
  * @param quiddityId
@@ -299,8 +329,8 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
     }
     //FIXME: Result is false even when quiddity is removed
     /*if ( !result ) {
-        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
-    }*/
+     return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
+     }*/
     log.debug( "Quiddity " + quiddityId + " removed." );
     cb();
 };
@@ -350,44 +380,7 @@ QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
     cb( null, quiddDescription );
 };
 
-QuiddityManager.prototype.set_property_value = function ( quiddName, property, value, cb ) {
-    var self = this;
-    //check for remove shmdata when set property started to false
-    if ( property == "started" && value == "false" ) {
 
-        //remove vumemeter associate with quiddity
-        var shmdatas = JSON.parse( this.switcher.get_property_value( quiddName, "shmdata-writers" ) );
-        if ( shmdatas && !shmdatas.error ) {
-            shmdatas = shmdatas.shmdata_writers;
-            _.each( shmdatas, function ( shmdata, index ) {
-                log.debug( "remove vumeter : vumeter_" + shmdata.path );
-                this.switcher.remove( 'vumeter_' + shmdata.path );
-            }, this );
-        }
-
-        //remove shmdata of rtp
-        var shmdatas = JSON.parse( this.switcher.get_property_value( quiddName, "shmdata-writers" ) ).shmdata_writers;
-        _.each( shmdatas, function ( shmdata ) {
-            // console.log("remove data stream", shmdata.path);
-            //var remove = this.switcher.invoke("defaultrtp","remove_data_stream", [shmdata.path]);
-        } );
-
-    }
-
-    if ( quiddName && property && value ) {
-        var ok = this.switcher.set_property_value( quiddName, property, String( value ) );
-        if ( ok ) {
-            log.debug( "the porperty " + property + " of " + quiddName + "is set to " + value );
-            cb( null, property, value );
-
-        } else {
-            log.error( "failed to set the property " + property + " of " + quiddName );
-            this.io.emit( "msg", "error", "the property " + property + " of " + quiddName + " is not set" );
-        }
-    } else {
-        log.error( "missing arguments for set property value :", quiddName, property, value );
-    }
-};
 
 
 
@@ -443,7 +436,6 @@ QuiddityManager.prototype.get_property_value = function ( quiddName, property, c
 
 QuiddityManager.prototype.subscribe_info_quidd = function ( quiddName, socketId ) {
     log.debug( "socketId (" + socketId + ") subscribe info " + quiddName );
-
     this.config.subscribe_quidd_info[socketId] = quiddName;
 };
 

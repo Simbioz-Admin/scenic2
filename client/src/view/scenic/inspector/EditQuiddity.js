@@ -2,10 +2,11 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'view/scenic/inspector/edit/Properties',
     'view/scenic/inspector/edit/Methods',
     'text!template/scenic/inspector/editQuiddity.html'
-], function ( _, Backbone, Marionette, PropertiesView, MethodsView, EditQuiddityTemplate ) {
+], function ( _, Backbone, Marionette, i18n, PropertiesView, MethodsView, EditQuiddityTemplate ) {
 
     /**
      * Edit Quiddity Form
@@ -15,6 +16,7 @@ define( [
      */
     var EditQuiddity = Marionette.LayoutView.extend( {
         template: _.template( EditQuiddityTemplate ),
+        className: 'edit-quiddity',
 
         regions: {
             properties: '.properties',
@@ -22,7 +24,7 @@ define( [
         },
 
         initialize: function () {
-
+            this.title = $.t('Edit __quiddityName__', { quiddityName: this.model.get('name')});
         },
 
         onBeforeShow: function() {

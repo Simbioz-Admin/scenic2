@@ -15,15 +15,25 @@ define( [
     var Field = Marionette.ItemView.extend( {
 
         modelEvents: {
-            'change:default value': 'updateValue' //TODO Just render for now, update more precisely in the future
+            'change:value': 'onModelChanged'
+        },
+
+        initialize:function(){
+
         },
 
         /**
-         * Set value on the model with the internal flag set so that we don't re-render aimlessly
-         * @param value
+         * Value Changed Handler
+         * Only redraws the view if the change isn't internal,
+         * when the change is internal it's because it came from the ui
+         * so we already have the right value shown, we don't need re-rendering
+         *
+         * Can be overridden to change the behavior to a type-optimized version
          */
-        updateValue: function( model, value, options ) {
-            console.log( options );
+        onModelChanged: function( model, value, options ) {
+            if ( !options.internal ) {
+                this.render();
+            }
         }
     } );
 

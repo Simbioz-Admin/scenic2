@@ -12,7 +12,7 @@ require( {
         underscore:   '../bower_components/underscore/underscore',
         backbone:     '../bower_components/backbone/backbone',
         marionette:   '../bower_components/marionette/lib/backbone.marionette',
-        mutators:     '../bower_components/backbone.mutators/backbone.mutators.min',
+        mutators:     '../bower_components/backbone.mutators/backbone.mutators',
         async:         '../bower_components/async/lib/async',
         jquery:       '../bower_components/jquery/dist/jquery.min',
         jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',

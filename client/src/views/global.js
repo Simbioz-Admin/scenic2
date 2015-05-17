@@ -61,103 +61,13 @@ define(
                 /* Called when the view is initialized */
 
                 initialize: function () {
-                    // clicking on the body would remove a floating element.
-                    //$('body').bind('click', this.closePanel);
-                    //$('body').bind('click', this.panelBoxRemove);
                     var that = this;
-                    /** Event called when the server has a message for you */
-                    socket.on( "msg", function ( type, msg ) {
-                        that.notification( type, msg );
-                    } );
 
-                    /* Define the inspector draggable */
-                    $( " .inspector-info-panel, .shmdata-info-panel" ).draggable( {
-                        cursor: "move",
-                        handle: ".title"
-                    } );
 
                     $( document ).keyup( function ( e ) {
                         that.keyboardAction( e );
                     } );
-                    $( document ).tooltip();
-
-                    //show current language in header
-                    $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
-
-                    var self = this;
-                    collections.quiddities.on('destroy', function( collection, quiddity ) {
-                        if ( quiddity.get( 'class' ) != "sip" ) {
-                            views.global.notification( "info", quiddity.get( 'name' ) + " " + $.t( 'was deleted' ) );
-                        }
-                    });
                 },
-
-                /*
-                 * DOn't propagate events through visible elements
-                 */
-                /*preventPropagation: function preventPropagation(element) {
-                 element.stopPropagation();
-                 },*/
-
-                /* Function called for show a specific message in the interface */
-
-                notification: function ( type, msg ) {
-
-                    var speed = 500;
-                    $( "#msgHighLight" ).remove();
-                    $( "body" ).append( "<div id='msgHighLight' class='" + type + "'>" + msg + "</div>" );
-                    setTimeout( function () {
-                        $( '#msgHighLight' ).addClass( 'active' ).delay( 4000 ).queue( function ( next ) {
-                            $( this ).removeClass( "active" );
-                        } );
-                    }, 0 )
-
-                    $( "#msgHighLight" ).click( function () {
-                        $( this ).remove();
-                    } )
-                },
-
-                /* Called when we need confirmation for actions */
-
-                confirmation: function ( msg, callback ) {
-
-                    if ( !callback ) {
-                        callback = msg;
-                        msg      = "Are you sure?";
-                    }
-
-                    var template = _.template( confirmationTemplate )( {
-                        msg: msg
-                    } );
-                    $( "body" ).prepend( template );
-                    $( "#container" ).addClass( "blur" );
-                    $( "#overlay_confirmation" ).animate( {
-                        opacity: 1
-                    }, 100 );
-
-                    $( "#confirmation .btn_confirmation" ).on( "click", function () {
-                        callback( $( this ).data( "val" ) );
-                        $( "#overlay_confirmation" ).remove();
-                        $( "#container" ).removeClass( "blur" );
-
-                    } );
-                    //var result = confirm(msg);
-                    //return result
-                },
-
-
-                /* Called for close the panel Right  */
-
-                closePanel: function ( e ) {
-                    $( "#inspector" ).hide();
-                    $( "#inspector" ).data( "quiddName", "" );
-                    /* we unsubscribe to the quiddity */
-
-                    if ( $( "#quiddName" ).val() ) {
-                        socket.emit( "unsubscribe_info_quidd", $( "#quiddName" ).val(), socket.id );
-                    }
-                },
-
 
                 create_receiver: function ( element ) {
                     //element.stopPropagation();
@@ -165,7 +75,6 @@ define(
                     $( "#inspector .inspector-info-panel" ).html( template );
                     views.global.openPanel();
                 },
-
 
                 add_receiver: function ( e ) {
                     e.preventDefault();
@@ -186,9 +95,6 @@ define(
                         views.global.closePanel();
                     } );
                 },
-
-
-                /* here we define all action accessible with keyboard */
 
                 keyboardAction: function ( event ) {
                     var that = this;
@@ -225,22 +131,6 @@ define(
                     }
                 },
 
-
-                /*  Called for all checkbox changed
-                 *  To dynamically change its value
-                 */
-
-                stateCheckbox: function () {
-                    var check = $( event.target );
-
-                  if ( check.is( ':checked' ) ) {
-                    check.val( 'true' ).attr( 'checked', true );
-                  } else {
-                    check.val( 'false' ).attr( 'checked', false );
-                  }
-                },
-
-
                 save_file: function ( event ) {
                     if ( $( "#panelSave" ).length == 0 ) {
                         $( ".panelBox" ).remove();
@@ -250,10 +140,6 @@ define(
                         $( ".panelBox" ).remove();
                     }
                 },
-
-                /*
-                 *  Called for saving the current state of scenic
-                 */
 
                 save: function ( e ) {
                     e.preventDefault();
@@ -272,10 +158,6 @@ define(
                     } )
                 },
 
-                /*
-                 *  Called for get files saved on the server
-                 */
-
                 get_save_file_list: function ( event ) {
                     var that = this;
                     socket.emit( 'get_save_file_list', function ( saveFiles ) {
@@ -291,10 +173,6 @@ define(
                         }
                     } );
                 },
-
-                /*
-                 *  Called for loading the state saved of scenic without the current state
-                 */
 
                 load_file: function ( e ) {
                     var name = $( e.target ).data( 'name' );
@@ -332,30 +210,6 @@ define(
                     } )
                 },
 
-                /* Called for showing the panel of log information */
-
-                panelLog: function () {
-                    var that = this;
-                    if ( !this.statePanelLog ) {
-                        $( "#log" ).animate( {
-                                "right": 0
-                            },
-                                             function () {
-                                                 that.statePanelLog = true;
-                                             } );
-                    } else {
-                        $( "#log" ).animate( {
-                            "right": -$( "#log" ).width() - 61
-                        }, function () {
-                            that.statePanelLog = false;
-                        } );
-                    }
-
-                },
-
-
-                /* Called for showing panel Info  */
-
                 panelInfo: function ( event ) {
                     // element.stopPropagation();
                     if ( $( "#panelInfo" ).length == 0 ) {
@@ -369,16 +223,6 @@ define(
                     } else {
                         $( "#panelInfo" ).remove();
                     }
-                },
-
-
-                /* Called for closing panel Info  */
-
-                closeShmdataInfoPanel: function () {
-                    $( ".shmdata-info-panel" ).remove();
-                },
-                panelBoxRemove:        function panelInfoRemove() {
-                    $( ".panelBox" ).remove();
                 },
 
                 changeLang: function ( e ) {

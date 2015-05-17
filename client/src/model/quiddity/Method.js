@@ -69,7 +69,8 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
-            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.get( 'name' ) == name[0] ) {
+            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name[0] ) {
+                this.get( 'arguments' ).destroy();
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -81,7 +82,7 @@ define( [
          * @param callback
          */
         invoke: function ( args, callback ) {
-            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.get( 'name' ), args, callback );
+            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.id, args, callback );
         }
     } );
 

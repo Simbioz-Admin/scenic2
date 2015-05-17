@@ -21,7 +21,7 @@ define( [
         /**
          * @constructor
          */
-        constructor: function() {
+        constructor: function () {
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
@@ -34,7 +34,7 @@ define( [
             this.socketListeners = [];
 
             // Call the original constructor
-            BaseCollection.apply(this, arguments);
+            BaseCollection.apply( this, arguments );
         },
 
         /**
@@ -47,9 +47,6 @@ define( [
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
             } );
-
-            // Destroy listener, removes socket listeners
-            this.on( 'destroy', _.bind( this._onDestroy, this ) );
         },
 
         /**
@@ -81,17 +78,20 @@ define( [
         },
 
         /**
-         * Destroy Handler
-         * Removes all socket listeners
-         *
-         * @see Same method in ScenicModel
-         *
-         * @private
+         * Destroys the collection, removing any socket lsitener and destroying child models
          */
-        _onDestroy: function() {
-            _.each( this.socketListeners, function( listener ) {
+        destroy: function () {
+            // Romove socket listeners
+            _.each( this.socketListeners, function ( listener ) {
                 socket.removeListener( listener.message, listener.callback );
-            });
+            } );
+            // Destroy children
+            var models = this.map( function ( model ) {
+                return model;
+            } );
+            _.each( models, function ( model ) {
+                model.trigger( 'destroy', model, this );
+            } );
         },
 
         /**
@@ -104,7 +104,7 @@ define( [
          * @returns {*}
          */
         sync: function ( method, collection, options ) {
-            var self = this;
+            var self    = this;
             var command = this.methodMap[method];
             if ( command ) {
                 var callback = function ( error, result ) {

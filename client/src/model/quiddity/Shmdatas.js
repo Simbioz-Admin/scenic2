@@ -47,6 +47,7 @@ define( [
          */
         parse: function( response ) {
             var shmdatas = [];
+            //TODO: Do this server-side
             if ( response.reader && typeof response.reader == 'object' ) {
                 _.each( response.reader, function ( shmdata, path ) {
                     shmdata["path"]  = path;

@@ -29,37 +29,11 @@ define(
 
     var ViewQuiddEdit = Backbone.View.extend(
 
-      /**
-       *  @lends module: Views/EditQuidd~ViewQuiddEdit.prototype
-       */
-
-      {
-
-        events: {
-          "change input.property, select.property": "setProperty",
-          "click .setMethod": "setMethod",
-          "click input": "selectFocus",
-          "click #form-quidd, .title": "handlePropagation"
-        },
 
         /* Called when the value of a property changed (see in live the real value !) */
 
         updateValue: function(property) {
 
-          var value = this.model.get("properties")[property]["default value"];
-          var type = this.model.get("properties")[property]["type"];
-
-          if (type == "float" || type == "int" || type == "double" || type == "string" || type == "uint") {
-            $("." + property).slider('value', value);
-            $("[name='" + property + "']").val(value);
-          }
-          if (type == "boolean") {
-            $("[name='" + property + "']").prop("checked", value).val(value);
-            if (value == "false") $("[name='" + property + "']").removeAttr("checked");
-          }
-          if (type == "enum") {
-            $("[name='" + property + "']").val(value);
-          }
 
           //exeption for last midi value : need to show for have indication click on midi device
           if (property == "last-midi-value") {

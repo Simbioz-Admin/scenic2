@@ -29,6 +29,7 @@ define( [
 
         /**
          * Quiddities for which we'll autodetect devices
+         * TODO: Do this server-side
          */
         deviceAutoDetectList: ["v4l2src", "pulsesrc", "midisrc"],
 
@@ -44,11 +45,14 @@ define( [
             ScenicModel.prototype.initialize.apply(this,arguments);
 
             // Setup device-autodetect
+            //TODO: Do this server-side
             this.autoDetectDevices = _.contains( this.deviceAutoDetectList, this.get('class name'));
         },
 
         /**
          * Load devices for quiddity
+         *
+         * TODO: Do this server-side
          *
          * @param callback
          * @returns {*}

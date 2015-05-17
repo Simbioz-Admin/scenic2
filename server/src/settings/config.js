@@ -64,6 +64,7 @@ var config = {
   rtpsession: "defaultrtp",
 
 
+  privateQuiddities: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer'],
 
 
 
@@ -72,7 +73,6 @@ var config = {
   passSet: null,
   loadFile: false,
   nameComputer: os.hostname(),
-  //quiddExclude: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'logger', 'SOAPcontrolServer'],
   propertiesExclude: ["shmdata-readers", "shmdata-writers"],
   //deviceAutoDetect: ["v4l2src", "pulsesrc", "midisrc"],
   defaultPanelTable: "transfer",

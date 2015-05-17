@@ -16,6 +16,7 @@ define( [
 
     var Property = ScenicModel.extend( {
         idAttribute: 'name',
+
         defaults: {
             'type': null,
             'writable': null,
@@ -24,8 +25,11 @@ define( [
             'short description': null,
             'default value': null,
             'position category': null,
-            'position weight': 0
+            'position weight': 0,
+            // Custom
+            value: null
         },
+
         methodMap: {
             'create': null,
             'update': null,
@@ -35,33 +39,21 @@ define( [
                 return ['getPropertyDescription', this.collection.quiddity.id, this.get('name')]
             }
         },
-        /*mutators: {
-            value: {
-                /!**
-                 * Value setter, syncs with the backend when the value changes
-                 *
-                 * @param key
-                 * @param value
-                 * @param options
-                 * @param set
-                 *!/
-                set: function( key, value, options, set ) {
-                    // Sync value with the server only if it changes (prevents double setting when gettign confirmation back)
-                    console.log( key, this.attributes[key], this.get(key), value );
-                    if ( this.get(key) != value ) {
-                        socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
-                            if ( error ) {
-                                return this.scenicChannel.vent( 'error', error );
-                            }
-                            set( key, value, options );
-                        } );
-                    }
-                },
-                get: function() {
-                    return this.get('value');
-                }
+
+        /**
+         * Parse 'default value' in to value, unless it already exists.
+         * Created because having spaces in 'default value' breaks the backbone model events and also default
+         * value does not mean value, it was misleading and could not be changed server-side as the server is
+         * unaware of the specifics like this.
+         *
+         * @param response
+         */
+        parse: function( response ) {
+            if ( !response.value ) {
+                response.value = response['default value'];
             }
-        },*/
+            return response;
+        },
 
         /**
          * Initialize
@@ -69,28 +61,27 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply(this,arguments);
 
+            // Automatically sync value change with the server if the change is not internal
+            this.on('change:value', function(model, value, options){
+                if ( options.internal ) {
+                    // Keep last synced value as a backup in case setting a value fails
+                    this.lastSyncedValue = value;
+                    return;
+                }
+                var self = this;
+                socket.emit( "setPropertyValue", this.collection.quiddity.id, this.id, value, function ( error ) {
+                    if ( error ) {
+                        // There was an error setting the value, go back to the last synced value or the default
+                        // TODO: Retrieve good value from server in that case
+                        self.set('value', self.lastSyncedValue !== undefined ? self.lastSyncedValue : self.get('default value'), { internal: true } );
+                        return self.scenicChannel.vent( 'error', error );
+                    }
+                } );
+            });
+
             // Handlers
             this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
             this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
-        },
-
-        /**
-         * Internally set the value of the property
-         * We set the internal flag so that we can ignore the following update event in the ui and thus avoid
-         * re-rendering the view aimlessly.
-         *
-         * @param value
-         */
-        setValue: function( value ) {
-            var self = this;
-            if ( this.get('default value') != value ) {
-                socket.emit( "set_property_value", this.collection.quiddity.id, this.id, value, function ( error ) {
-                    if ( error ) {
-                        return self.scenicChannel.vent( 'error', error );
-                    }
-                    self.set('default value', value, { internal: true } );
-                } );
-            }
         },
 
         /**
@@ -102,7 +93,7 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
-            if ( signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.get('name') == name[0] ) {
+            if ( signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.id == name[0] ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -116,8 +107,9 @@ define( [
          * @param {string} value The value of the property
          */
         _onSignalsPropertiesValue: function ( quiddityId, property, value ) {
-            if ( this.collection.quiddity.id == quiddityId && this.id == property && this.get('default value') != value ) {
-                this.set('default value', value);
+            if ( this.collection.quiddity.id == quiddityId && this.id == property && this.get('value') != value ) {
+                // Here we use the internal flag so that we don't try to re-sync that change with the server
+                this.set('value', value, { internal: true });
             }
         }
     } );

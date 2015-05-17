@@ -2,9 +2,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'model/Quiddity',
     'text!template/scenic/inspector/createQuiddity.html'
-], function ( _, Backbone, Marionette, Quiddity, CreateQuiddityTemplate ) {
+], function ( _, Backbone, Marionette, i18n, Quiddity, CreateQuiddityTemplate ) {
 
     /**
      * Create Quiddity Form
@@ -14,6 +15,7 @@ define( [
      */
     var CreateQuiddity = Marionette.ItemView.extend( {
         template: _.template( CreateQuiddityTemplate ),
+        classname: 'create-quiddity',
         ui:       {
             'name': '#quiddityName',
             'device': '#device',
@@ -25,6 +27,7 @@ define( [
 
         initialize: function () {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.title = $.t('Create __quiddityClass__', { quiddityClass: this.model.get('class name')});
         },
 
         onAttach: function() {

@@ -17,14 +17,20 @@ define( [
     var NumberProperty = FieldView.extend( {
         template: _.template( NumberTemplate ),
 
+        ui: {
+            property: '.property',
+            slider: '.slider'
+        },
+
+        events: {
+            'change .property': 'updateModel'
+        },
+
         /**
          * Initialize
          */
         initialize: function( ) {
             FieldView.prototype.initialize( this, arguments );
-
-            //TODO: Put in model
-            this.model.set('default property', parseFloat( this.model.get("default value").replace(",", ".") ) )
         },
 
         onRender: function() {
@@ -33,7 +39,7 @@ define( [
             var minimum = this.model.get('minimum');
             var maximum = this.model.get('maximum');
             var step = (type == "int" || type == "uint" ? 1 : (parseInt(maximum) - parseInt(minimum)) / 200);
-            this.$el.slider({
+            this.ui.slider.slider({
                 range: "min",
                 value: self.model.get("default value"),
                 step: step,
@@ -43,6 +49,24 @@ define( [
                     self.model.set('value', ui.value);
                 }
             });
+        },
+
+        /**
+         * Update
+         *
+         * @param event
+         */
+        updateModel: function ( event ) {
+            this.model.set('value', this.ui.property.val() );
+        },
+
+        /**
+         * Set the value of the slider
+         * @inheritdoc
+         */
+        onModelChanged: function( model, value, options ) {
+            this.ui.property.val( value );
+            this.ui.slider.slider('value', value );
         }
     } );
 

@@ -58,11 +58,13 @@ define( [
          * @param socketId
          */
         _onCreate: function ( quiddityData, socketId ) {
+            console.log( 'created', quiddityData);
             if ( !_.contains( this.ignoredQuiddities, quiddityData.class ) ) {
                 var quiddity = this.add( quiddityData, {merge: true} );
                 this.scenicChannel.vent.trigger('quiddity:added', quiddity);
                 // If we created it, start editing it
                 if ( socket.id == socketId ) {
+                    //TODO: Send quiddity:created with local flag instead
                     quiddity.edit();
                 }
             }

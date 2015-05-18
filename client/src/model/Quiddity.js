@@ -60,15 +60,18 @@ define( [
 
         /**
          * Delete Handler
+         * Destroy this quiddity and its child collections if our id matches the one being removed
          *
          * @param {String} quiddityId
          * @private
          */
         _onRemoved: function ( quiddityId ) {
             if ( this.id == quiddityId ) {
+                // Destroy child collections
                 this.get( 'properties' ).destroy();
                 this.get( 'methods' ).destroy();
                 this.get( 'shmdatas' ).destroy();
+                // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -95,13 +98,31 @@ define( [
          *  then subscribing to get real-time updates
          */
         edit: function () {
-            var self = this;
             //TODO: Get properties
             //TODO: Get methods
             //TODO: Subscribe socket.emit( "subscribe_info_quidd", self.id, socket.id );
             //TODO: Unsubscribe on end edit
             //TODO: If we choose to stay subscribed always then move this in the inspector on quiddity:created
-            this.scenicChannel.commands.execute( 'quiddity:edit', self );
+            this.scenicChannel.commands.execute( 'quiddity:edit', this );
+        },
+
+        /**
+         * Check if this quiddity is connected to a shmdata
+         *
+         * @param shmdata
+         * @return bool
+         */
+        isConnected: function( shmdata ) {
+            // Check if already connected
+            var shmdataReaders = this.get( "shmdatas" ).where( {
+                type: 'reader'
+            } );
+            if ( !shmdataReaders || shmdataReaders.length == 0 ) {
+                return false;
+            }
+            return _.some( shmdataReaders, function ( shm ) {
+                return ( shm.get( 'path' ) == shmdata.get( 'path' ) );
+            } );
         },
 
         //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗

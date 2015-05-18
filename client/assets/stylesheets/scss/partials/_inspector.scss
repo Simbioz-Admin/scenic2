@@ -1,9 +1,14 @@
 .info-panel {
+  display: none;
+  top: $headerHeight + 20px;
+  right: 20px;
+  width: 300px;
   background: $backgroundColorDarker;
   color: $textColor;
   min-width: 300px;
   min-height: 100px;
   position: fixed;
+  overflow: hidden;
   @include border-radius(6px);
   @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
 
@@ -41,28 +46,11 @@
       background: $satColor;
     }
   }
-}
 
-#inspector {
-  .info-panel {
-    display: none;
-    top: $headerHeight + 20px;
-    right: 20px;
-    width: 300px;
-  }
-}
-
-.shmdata-info-panel {
-  display: none;
-  left: 400px;
-  top: 200px;
-  z-index: 10000;
-
-  .content {
+  .shmdata-info {
     .name {
       margin-bottom: 1em;
     }
-
     .capabilities {
       .property {
         padding-right: 1em;
@@ -85,9 +73,7 @@
   }
 }
 
-
-
-.setMethod, .sendProperty {
+/*.setMethod, .sendProperty {
   padding: 11px 10px;
   background: #444;
   color: white;
@@ -143,10 +129,10 @@
   z-index: 100;
   background: #333;
   color: white;
-}
+}*/
 
 #inspector input[type=text],
-.shmdata-info-panel input[type=text] {
+#inspector input[type=number] {
   background: $backgroundColorDark;
   border: none;
   color: white;

@@ -60,8 +60,7 @@ define( [
                 }],
                 source:                 {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
-                },
-                collectionDestinations: app.rtpDestinations
+                }
             } ) );
 
             //  ┌─┐┌─┐┌┐┌┌┬┐┬─┐┌─┐┬
@@ -82,8 +81,7 @@ define( [
                 }],
                 source:                 {
                     include: ["midisrc"]
-                },
-                collectionDestinations: app.rtpDestinations
+                }
             } ) );
 
             //  ┌─┐┬┌─┐
@@ -101,8 +99,7 @@ define( [
                 }],
                 source:                 {
                     include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
-                },
-                collectionDestinations: app.contacts
+                }
             } ) );
 
             // Current

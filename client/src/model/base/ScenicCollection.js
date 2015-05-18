@@ -83,15 +83,13 @@ define( [
         destroy: function () {
             // Romove socket listeners
             _.each( this.socketListeners, function ( listener ) {
-                socket.removeListener( listener.message, listener.callback );
+                socket.off( listener.message, listener.callback );
             } );
-            // Destroy children
-            var models = this.map( function ( model ) {
-                return model;
-            } );
-            _.each( models, function ( model ) {
+            this.socketListeners = [];
+            var model;
+            while( model = this.first() ) {
                 model.trigger( 'destroy', model, this );
-            } );
+            }
         },
 
         /**

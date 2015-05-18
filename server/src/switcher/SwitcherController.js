@@ -19,9 +19,9 @@ var checkPort       = require( '../utils/check-port' );
  * @constructor
  */
 function SwitcherController( config, io ) {
-    this.config          = config;
-    this.io              = io;
-    this.switcher        = switcher;
+    this.config   = config;
+    this.io       = io;
+    this.switcher = switcher;
 
     this.vuMeters = [];
 
@@ -137,6 +137,25 @@ SwitcherController.prototype.bindClient = function ( socket ) {
     this.receiverManager.bindClient( socket );
 };
 
+/**
+ * Remove quiddity's VU meters
+ *
+ * @param quiddityId
+ */
+SwitcherController.prototype.removeVuMeters = function ( quiddityId ) {
+    log.debug( 'Removing VU meters for ' + quiddityId );
+    //TODO: Maybe use var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities; and look for quidd.name.indexOf( "vumeter_" ) && quidd.name.indexOf( quiddName )
+    this.vuMeters = _.filter( this.vuMeters, function ( vuMeter ) {
+        if ( vuMeter.quiddity == quiddityId ) {
+            log.debug( 'Removing VU meter: ' + vuMeter.path );
+            this.switcher.remove( vuMeter.path );
+            return false;
+        } else {
+            return true;
+        }
+    }, this );
+};
+
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
 //  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
 //  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
@@ -163,14 +182,10 @@ SwitcherController.prototype._onSwitcherLog = function ( message ) {
  * @private
  */
 SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, property, value ) {
-    var self = this;
-
     // We exclude byte-rate because it dispatches every second
     if ( property != "byte-rate" ) {
         log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
     }
-
-
 
 
     // Send to clients
@@ -178,40 +193,14 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
     this.io.emit( "signals_properties_value", quiddityId, property, value );
 
 
-
-
     // If stopping a quiddity, check for associated shmdata and remove them
     if ( property == "started" && value == "false" ) {
-        log.debug( 'A quiddity was stopped, removing VU meters...');
-        this.vuMeters = _.filter( this.vuMeters, function ( vuMeter ) {
-            if ( vuMeter.quiddity == quiddityId ) {
-                log.debug( 'Removing VU meter: ' + vuMeter.path );
-                this.switcher.remove( vuMeter.path );
-                return false;
-            } else {
-                return true;
-            }
-        }, this );
+        log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
+        this.removeVuMeters( quiddityId );
 
-
-
-        // Remove vu meter associated with quiddity
-        /*try {
-            var shmdataWriters = JSON.parse( this.switcher.get_info( quiddityId, "." ) );
-        } catch ( e ) {
-            log.error( e );
-        }
-        log.warn( shmdataWriters );
-        if ( !shmdataWriters || shmdataWriters.error ) {
-            log.error( shmdataWriters && shmdataWriters.error ? shmdataWriters.error : 'Could not get associated shmdatas.' );
-        } else {
-            _.each( shmdataWriters, function ( shmdata, index ) {
-                console.log( shmdata, index );
-                log.debug( 'Removing VU meter for ' + shmdata.path );
-                this.switcher.remove( 'vumeter_' + shmdata.path );
-            }, this );
-        }*/
-
+        //
+        //TODO: Remove connections
+        //
 
         //TODO: WHat does this do?
         var destinations = this.switcher.get_property_value( "dico", "destinations" ),
@@ -228,6 +217,7 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
         } );
 
         /* check if another quiddities is associate to */
+        console.log( this.switcher.get_quiddities_description() );
         var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
         _.each( quidds, function ( quidd ) {
             if ( quidd.name.indexOf( "sink_" ) >= 0 && quidd.name.indexOf( quiddityId ) >= 0 ) {
@@ -236,16 +226,6 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
             }
         } );
     }
-
-
-
-
-
-
-
-
-
-
 
 
     /*if ( qprop != "byte-rate" && qprop != "caps" ) {
@@ -258,18 +238,18 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
     /* ************ PROP - SIPQUID ************ */
 
     /*if ( qprop == "sip-registration" && qname == this.config.sip.quiddName ) {
-        log.debug( "Sip Registration", pvalue );
-    }*/
+     log.debug( "Sip Registration", pvalue );
+     }*/
 
     /* broadcast all the modification on properties */
     /*_.each( this.config.subscribe_quidd_info, function ( quiddName, socketId ) {
-        if ( quiddName == qname ) {
-            var socket = self.io.sockets.sockets[socketId];
-            if ( socket ) {
-                socket.emit( "signals_properties_value", qname, qprop, pvalue );
-            }
-        }
-    } );*/
+     if ( quiddName == qname ) {
+     var socket = self.io.sockets.sockets[socketId];
+     if ( socket ) {
+     socket.emit( "signals_properties_value", qname, qprop, pvalue );
+     }
+     }
+     } );*/
 };
 
 /**
@@ -281,22 +261,11 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
  * @private
  */
 SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, value ) {
-    var self = this;
 
-    // We exclude byte-rate because it dispatches every second
+    // We exclude byte-rate from debug because it dispatches every second
     if ( quiddityId != "systemusage" ) {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
     }
-
-
-
-
-
-
-
-
-
-
 
     /* manage callback fro SIP quidd  */
 
@@ -305,86 +274,78 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     // }
     // if (qname == "sipquid" && qsignal == "on-tree-pruned") {
     //   sip.removeFromList(switcher.get_info(qname, pvalue[0]));
-
     // }
 
-    /* ON TREE GRAFTED */
+    //  ┌┬┐┬─┐┌─┐┌─┐  ┌─┐┬─┐┌─┐┌─┐┌┬┐┌─┐┌┬┐
+    //   │ ├┬┘├┤ ├┤   │ ┬├┬┘├─┤├┤  │ ├┤  ││
+    //   ┴ ┴└─└─┘└─┘  └─┘┴└─┴ ┴└   ┴ └─┘─┴┘
 
     if ( quiddityId != "systemusage" && signal == "on-tree-grafted" ) {
 
-        /* shmdata writer */
-
+        // Shmdata Writer
         if ( value[0].indexOf( ".shmdata.writer" ) >= 0 ) {
-            var shmdatasInfo = JSON.parse( switcher.get_info( quiddityId, value[0] ) );
-            /* temporary add name in info (request for add by default) */
-            shmdatasInfo["path"]  = value[0].replace( ".shmdata.writer.", "" );
-            shmdatasInfo['quidd'] = quiddityId;
-            shmdatasInfo['type']  = "writer";
+            var shmdataWriterInfo   = JSON.parse( switcher.get_info( quiddityId, value[0] ) );
+            shmdataWriterInfo.path  = value[0].replace( ".shmdata.writer.", "" );
+            shmdataWriterInfo.quidd = quiddityId;
+            shmdataWriterInfo.type  = "writer";
 
             // VU Meters
             log.debug( "Creating VU meters for " + quiddityId );
-            var shmdataWriters = JSON.parse( switcher.get_info( quiddityId, ".shmdata.writer" ) );
+            var shmdataWriters      = JSON.parse( switcher.get_info( quiddityId, ".shmdata.writer" ) );
             _.each( shmdataWriters, function ( shmdata, name ) {
                 log.debug( 'Creating VU meter for shmdata ' + name );
                 var vuMeter = switcher.create( "fakesink", "vumeter_" + name );
                 if ( vuMeter ) {
-                    this.vuMeters.push( { quiddity: quiddityId, path: vuMeter } );
+                    this.vuMeters.push( {quiddity: quiddityId, path: vuMeter} );
                     switcher.invoke( vuMeter, "connect", [name] );
                 } else {
                     log.warn( 'Could not create VU Meter for ' + name );
                 }
             }, this );
-
-            this.io.emit( "addShmdata", quiddityId, shmdatasInfo );
+            this.io.emit( "addShmdata", quiddityId, shmdataWriterInfo );
         }
 
-        /* Shmdata reader */
-
+        // Shmdata Reader
         if ( value[0].indexOf( ".shmdata.reader" ) >= 0 ) {
-            var shmdatasInfo      = JSON.parse( switcher.get_info( quiddityId, value[0] ) );
-            shmdatasInfo["path"]  = value[0].replace( ".shmdata.reader.", "" );
-            shmdatasInfo['type']  = "reader";
-            shmdatasInfo['quidd'] = quiddityId;
-            this.io.emit( "addShmdata", quiddityId, shmdatasInfo );
+            var shmdataReaderInfo   = JSON.parse( switcher.get_info( quiddityId, value[0] ) );
+            shmdataReaderInfo.path  = value[0].replace( ".shmdata.reader.", "" );
+            shmdataReaderInfo.quidd = quiddityId;
+            shmdataReaderInfo.type  = "reader";
+            this.io.emit( "addShmdata", quiddityId, shmdataReaderInfo );
         }
 
-        /* sipquidd */
-
+        // TODO: SIP
         if ( quiddityId == this.config.sip.quiddName && value[0].indexOf( ".buddy" ) >= 0 ) {
             //TODO : Get Better method for get information about user without split value
             var idUser   = value[0].split( "." )[2];
             var infoUser = JSON.parse( switcher.get_info( quiddityId, '.buddy.' + idUser ) );
             this.io.emit( 'infoUser', infoUser );
         }
-
-
     }
 
-
-    /* ON TREE PRUNED */
+    //  ┌┬┐┬─┐┌─┐┌─┐  ┌─┐┬─┐┬ ┬┌┐┌┌─┐┌┬┐
+    //   │ ├┬┘├┤ ├┤   ├─┘├┬┘│ ││││├┤  ││
+    //   ┴ ┴└─└─┘└─┘  ┴  ┴└─└─┘┘└┘└─┘─┴┘
 
     if ( quiddityId != "systemusage" && signal == "on-tree-pruned" ) {
 
-        //Shmdata Writer
-        if ( value[0].indexOf( ".shmdata.writer" ) >= 0 ) { //writer
-            var shmdata = {
+        // Shmdata Writer
+        if ( value[0].indexOf( ".shmdata.writer" ) >= 0 ) {
+            this.io.emit( "removeShmdata", quiddityId, {
                 path: value[0].replace( ".shmdata.writer.", "" ),
                 type: 'writer'
-            };
-
-            this.io.emit( "removeShmdata", quiddityId, shmdata );
+            } );
         }
 
-        //Shmdata Reader
-        if ( value[0].indexOf( ".shmdata.reader" ) >= 0 ) { //writer
-            var shmdata = {
+        // Shmdata Reader
+        if ( value[0].indexOf( ".shmdata.reader" ) >= 0 ) {
+            this.io.emit( "removeShmdata", quiddityId, {
                 path: value[0].replace( ".shmdata.reader.", "" ),
                 type: 'reader'
-            };
-
-            this.io.emit( "removeShmdata", quiddityId, shmdata );
+            } );
         }
 
+        //TODO: SIP
         if ( quiddityId == this.config.sip.quiddName ) {
             var idUser   = value[0].split( "." )[2];
             var infoUser = JSON.parse( switcher.get_info( quiddityId, '.buddy.' + idUser ) );
@@ -392,8 +353,76 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
         }
     }
 
+    //  ┌─┐ ┬ ┬┬┌┬┐┌┬┐┬┌┬┐┬ ┬  ┌─┐┬─┐┌─┐┌─┐┌┬┐┌─┐┌┬┐
+    //  │─┼┐│ ││ ││ │││ │ └┬┘  │  ├┬┘├┤ ├─┤ │ ├┤  ││
+    //  └─┘└└─┘┴─┴┘─┴┘┴ ┴  ┴   └─┘┴└─└─┘┴ ┴ ┴ └─┘─┴┘
 
-    /* manage callback fro systemusage quidd  */
+    if ( signal == "on-quiddity-created" ) {
+        var newQuiddityId = value[0];
+        // Quiddity was created, get information on its type
+        var quiddClass = JSON.parse( switcher.get_quiddity_description( newQuiddityId ) );
+        // Only proceed if it's not on of the "private" quiddities, they don't matter to the client
+        if ( !_.contains( this.config.privateQuiddities, quiddClass.class ) ) {
+
+            // Subscribe to property/method add/remove signals
+            switcher.subscribe_to_signal( newQuiddityId, "on-property-added" );
+            switcher.subscribe_to_signal( newQuiddityId, "on-property-removed" );
+            switcher.subscribe_to_signal( newQuiddityId, "on-method-added" );
+            switcher.subscribe_to_signal( newQuiddityId, "on-method-removed" );
+            switcher.subscribe_to_signal( newQuiddityId, "on-connection-tried" ); //TODO: What is this?
+
+            // Subscribe to this quiddity's tree modifications
+            switcher.subscribe_to_signal( newQuiddityId, "on-tree-grafted" );
+            switcher.subscribe_to_signal( newQuiddityId, "on-tree-pruned" );
+
+            // Then subscribe to all of the quiddity's properties
+            try {
+                var properties = JSON.parse( switcher.get_properties_description( newQuiddityId ) ).properties;
+                _.each( properties, function ( property ) {
+                    log.debug( "Subscribing to property", property.name, "of", newQuiddityId );
+                    switcher.subscribe_to_property( newQuiddityId, property.name );
+                } );
+            } catch ( e ) {
+                log.error( "Error getting properties for quiddity", newQuiddityId, e );
+            }
+
+            // Broadcast creation message including the creator's socketId so that the interface can know if they created the quiddity
+            this.io.emit( "create", quiddClass, this.quiddityManager.quidditySocketMap[quiddClass.name] );
+        }
+    }
+
+    //  ┌─┐ ┬ ┬┬┌┬┐┌┬┐┬┌┬┐┬ ┬  ┬─┐┌─┐┌┬┐┌─┐┬  ┬┌─┐┌┬┐
+    //  │─┼┐│ ││ ││ │││ │ └┬┘  ├┬┘├┤ ││││ │└┐┌┘├┤  ││
+    //  └─┘└└─┘┴─┴┘─┴┘┴ ┴  ┴   ┴└─└─┘┴ ┴└─┘ └┘ └─┘─┴┘
+
+    if ( signal == "on-quiddity-removed" ) {
+        log.debug( 'Quiddity ' + value + ' removed' );
+        this.removeVuMeters( value );
+        this.io.emit( "remove", value );
+        this.quiddityManager.removeElementsAssociateToQuiddRemoved( value[0] );
+    }
+
+    //  ┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐┌┬┐┬ ┬  ┌─┐┌┬┐┌┬┐┌─┐┌┬┐
+    //  ├─┘├┬┘│ │├─┘├┤ ├┬┘ │ └┬┘  ├─┤ ││ ││├┤  ││
+    //  ┴  ┴└─└─┘┴  └─┘┴└─ ┴  ┴   ┴ ┴─┴┘─┴┘└─┘─┴┘
+
+    if ( signal == "on-property-added" ) {
+        log.debug( "Subscribing to property", quiddityId, value[0] );
+        switcher.subscribe_to_property( quiddityId, value[0] );
+    }
+
+    //  ┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐┌┬┐┬ ┬  ┬─┐┌─┐┌┬┐┌─┐┬  ┬┌─┐┌┬┐
+    //  ├─┘├┬┘│ │├─┘├┤ ├┬┘ │ └┬┘  ├┬┘├┤ ││││ │└┐┌┘├┤  ││
+    //  ┴  ┴└─└─┘┴  └─┘┴└─ ┴  ┴   ┴└─└─┘┴ ┴└─┘ └┘ └─┘─┴┘
+
+    if ( signal == "on-property-removed" ) {
+        log.debug( "Unsubscribing from property", quiddityId, value[0] );
+        switcher.unsubscribe_to_property( quiddityId, value[0] );
+    }
+
+    //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
+    //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
+    //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
 
     if ( quiddityId == "systemusage" && signal == "on-tree-grafted" ) {
         var info = switcher.get_info( quiddityId, value[0] );
@@ -402,92 +431,26 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     }
 
 
-    /* ************ SIGNAL - ON QUIDDITY CREATED ************ */
+    //
+    //
+    //
 
-    if ( signal == "on-quiddity-created" ) {
-
-        var quiddClass = JSON.parse( switcher.get_quiddity_description( value[0] ) );
-        if ( !_.contains( this.config.quiddExclude, quiddClass.class ) ) {
-
-            /* subscribe signal for properties add/remove and methods add/remove */
-            switcher.subscribe_to_signal( value[0], "on-property-added" );
-            switcher.subscribe_to_signal( value[0], "on-property-removed" );
-            switcher.subscribe_to_signal( value[0], "on-method-added" );
-            switcher.subscribe_to_signal( value[0], "on-method-removed" );
-            switcher.subscribe_to_signal( value[0], "on-connection-tried" );
-
-            /*subscribe to the modification on this quiddity systemusage*/
-            switcher.subscribe_to_signal( value[0], "on-tree-grafted" );
-            switcher.subscribe_to_signal( value[0], "on-tree-pruned" );
-
-            /* we subscribe all properties of quidd created */
-            try {
-                var propDecription = switcher.get_properties_description( value[0] );
-                var properties     = JSON.parse( switcher.get_properties_description( value[0] ) ).properties;
-                _.each( properties, function ( property ) {
-                    switcher.subscribe_to_property( value[0], property.name );
-                    log.debug( "Subscribed to", value[0], property.name );
-                } );
-            } catch ( e ) {
-                log.error( "Error getting properties", e );
-            }
-
-            // Broadcast creation message including the creator's socketId so that the interface can know if they created the quiddity
-            this.io.emit( "create", quiddClass, this.quiddityManager.quidditySocketMap[quiddClass.name] );
-
-            //FIXME: socket.io removed except in 1.0
-            /*var socketIdCreatedThisQuidd = false;
-            /!*_.each(this.config.listQuiddsAndSocketId, function(socketId, quiddName) {
-             if (quiddName == pvalue[0])
-             socketIdCreatedThisQuidd = socketId;
-             delete this.config.listQuiddsAndSocketId[quiddName];
-             });*!/
-            if ( socketIdCreatedThisQuidd ) {
-                console.log( this.io.sockets.clients() );
-                this.io.except( socketIdCreatedThisQuidd ).emit( "create", quiddClass );
-            } else {
-            }*/
-        }
-    }
-
-    /* ************ SIGNAL - ON QUIDDITY REMOVED ************ */
-
-    /* Emits to users a quiddity is removed */
-    if ( signal == "on-quiddity-removed" ) {
-
-        this.io.emit( "remove", value );
-        log.debug( "the quiddity " + value + " is removed" );
-        this.quiddityManager.removeElementsAssociateToQuiddRemoved( value[0] );
-    }
 
     if ( signal == "on-property-added" || signal == "on-property-removed" || signal == "on-method-added" || signal == "on-method-removed" ) {
         //TODO: redo subscriptions
         log.debug( "TODO: SUBSCRIPTIONS!", this.config.subscribe_quidd_info );
         /*_.each( this.config.subscribe_quidd_info, function ( quiddName, socketId ) {
-            if ( quiddName == qname ) {
-                log.debug( "Sending to socket", socketId, qsignal, pvalue );
-                var socket = self.io.sockets.sockets[socketId];
-                if ( socket ) {
-                    socket.emit( 'signals_properties_info', qsignal, qname, pvalue );
-                }
-            }
-        } );*/
+         if ( quiddName == qname ) {
+         log.debug( "Sending to socket", socketId, qsignal, pvalue );
+         var socket = self.io.sockets.sockets[socketId];
+         if ( socket ) {
+         socket.emit( 'signals_properties_info', qsignal, qname, pvalue );
+         }
+         }
+         } );*/
     }
 
-    /* ************ SIGNAL - ON PROPERTY ADDED ************ */
 
-    /* subscribe to the property added */
-    if ( signal == "on-property-added" ) {
-        log.debug( "Subscribing to property", quiddityId, value[0] );
-        switcher.subscribe_to_property( quiddityId, value[0] );
-    }
-
-    /* ************ SIGNAL - ON PROPERTY REMOVED ************ */
-
-    if ( signal == "on-property-removed" ) {
-        log.debug( "Unsubscribing from property", quiddityId, value[0] );
-        switcher.unsubscribe_to_property( quiddityId, value[0] );
-    }
 };
 
 
@@ -527,9 +490,6 @@ SwitcherController.prototype.listControlDestinations = function ( cb ) {
 //
 
 
-
-
-
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗
 //  ██║     ██║██╔════╝██╔════╝██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝
 //  ██║     ██║█████╗  █████╗  ██║      ╚████╔╝ ██║     ██║     █████╗
@@ -548,7 +508,6 @@ SwitcherController.prototype.close = function () {
     }
     switcher.close();
 };
-
 
 
 //  ██████╗  ██████╗  ██████╗██╗   ██╗███╗   ███╗███████╗███╗   ██╗████████╗███████╗

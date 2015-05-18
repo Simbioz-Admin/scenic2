@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'model/Sources',
-    'model/base/Destinations'
-], function ( _, Backbone, Sources, Destinations ) {
+    'lib/socket'
+], function ( _, Backbone, socket ) {
 
     /**
      * Table
@@ -20,9 +19,7 @@ define( [
                 "type":         null,
                 "description":  null,
                 "menus":        [],
-                "active":       false,
-                "sources":      new Sources(),
-                "destinations": new Destinations()
+                "active":       false
             }
         },
 
@@ -30,6 +27,11 @@ define( [
          * Initialize
          */
         initialize: function () {
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+
             // Setup child collections
             // TODO: Setup colections with data respecting the source/destination include/exclude policies
             //this.get( 'sources' ).add( this.getQuidds( 'sources' ), {merge: true} );
@@ -59,6 +61,67 @@ define( [
             } ) : true;
             var excluded  = this.has( type ) && this.get( type ).exclude ? _.contains( this.get( type ).exclude, category ) : false;
             return included && !excluded;
+        },
+
+        /**
+         * Check if a shmdata can connect to a destination
+         *
+         * @param shmdata
+         * @param destination
+         * @param callback
+         */
+        canConnect: function( shmdata, destination, callback ) {
+            if ( this.get('type') == 'sink' ) {
+                socket.emit( 'invokeMethod', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
+                    if ( error ) {
+                        console.error( error );
+                        callback( false );
+                    }
+                    callback( canSink == 'true' );
+                } );
+            }
+        },
+
+        connect: function( shmdata, destination ) {
+            var self = this;
+            if ( this.get('type') == 'sink' ) {
+                //TODO: Move into destination quiddity
+                var existingConnectionCount = destination.get('shmdatas').where({type:'reader'});
+                var maxReaders = destination.get('maxReaders');
+                if (maxReaders > existingConnectionCount || maxReaders == 0) {
+                    socket.emit('invokeMethod', destination.id, 'connect', [shmdata.id], function(error, result) {
+                        if ( error ) {
+                            console.error( error );
+                        }
+                    });
+                } else {
+                    if (maxReaders == 1) {
+                        socket.emit('invokeMethod', destination.id, 'disconnect-all', [], function(error, result) {
+                            if ( error ) {
+                                console.error( error );
+                            }
+                            socket.emit('invokeMethod', destination.id, 'connect', [shmdata.id], function(error, result) {
+                                if ( error ) {
+                                    console.error( error );
+                                }
+                            });
+                        });
+                    } else {
+                        self.scenicChannel.vent.trigger('error', $.t('You have reached the maximum number of connections. The limit is __limit__', { limit: maxReaders }));
+                    }
+                }
+            }
+        },
+
+        disconnect: function( shmdata, destination ) {
+            if ( this.get('type') == 'sink' ) {
+                //TODO: Move into destination quiddity
+                socket.emit( 'invokeMethod', destination.id, 'disconnect', [shmdata.id], function ( error, data ) {
+                    if ( error ) {
+                        log.error( error );
+                    }
+                } );
+            }
         }
     } );
 

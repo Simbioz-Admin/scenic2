@@ -94,6 +94,7 @@ define( [
             _.each( this.socketListeners, function( listener ) {
                 socket.off( listener.message, listener.callback );
             });
+            this.socketListeners = [];
         },
 
         /**

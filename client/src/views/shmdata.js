@@ -130,14 +130,15 @@ define(
                     }
 
                     /* Render for Tab Sink */
-                    if ( tableType == "sink" && that.table.get( "type" ) == tableType ) {
+                    //DONE
+                    /*if ( tableType == "sink" && that.table.get( "type" ) == tableType ) {
 
-                        /* Check if we can create a connexion between shmdata and sink */
+                        /!* Check if we can create a connexion between shmdata and sink *!/
                         socket.emit( "invoke", destination.get( "name" ), "can-sink-caps", [that.model.get( "caps" )], function ( err, canSink ) {
 
                             if ( $( '[data-destination="' + destination.get( "name" ) + '"]', that.el ).length == 0 ) {
 
-                                /* Check if already connected */
+                                /!* Check if already connected *!/
                                 var shmdata_readers = null;
                                 var shmdatasReaders = destination.get( "shmdatas" ).where( {
                                     type: 'reader'
@@ -165,7 +166,7 @@ define(
                             }
                         } );
 
-                    }
+                    }*/
                 },
 
                 updateByteRate: function () {

@@ -40,25 +40,23 @@ define( [
         /**
          * Parse data from sync
          *
-         * TODO: Max readers?
-         *
          * @param response
          * @returns {Array}
          */
         parse: function( response ) {
             var shmdatas = [];
-            //TODO: Do this server-side
+            this.quiddity.set('maxReaders', response.max_reader );
             if ( response.reader && typeof response.reader == 'object' ) {
                 _.each( response.reader, function ( shmdata, path ) {
-                    shmdata["path"]  = path;
-                    shmdata["type"]  = 'reader';
+                    shmdata.path  = path;
+                    shmdata.type  = 'reader';
                     shmdatas.push(shmdata);
                 } );
             }
             if ( response.writer && typeof response.writer == 'object' ) {
                 _.each( response.writer, function ( shmdata, path ) {
-                    shmdata["path"]  = path;
-                    shmdata["type"]  = 'writer';
+                    shmdata.path  = path;
+                    shmdata.type  = 'writer';
                     shmdatas.push(shmdata);
                 } );
             }

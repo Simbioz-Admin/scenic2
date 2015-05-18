@@ -19,6 +19,12 @@ define( [
         className: 'quiddity source',
 
         childView: ShmdataView,
+        childViewOptions: function() {
+            return {
+                table: this.options.table,
+                collection: this.model.collection
+            }
+        },
         childViewContainer: '.shmdatas',
 
         ui: {

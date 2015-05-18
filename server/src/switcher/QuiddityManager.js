@@ -253,15 +253,15 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
  * @returns {*}
  */
 QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters, cb ) {
-    log.debug( "Invoking method " + method + " of " + quiddityId + " with " + parameters );
+    log.debug( "Invoking method " + method + " of " + quiddityId + " with", parameters );
     try {
         var invoke = this.switcher.invoke( quiddityId, method, parameters );
     } catch ( e ) {
         return logback( e, cb );
     }
     if ( !invoke ) {
-        return logback( i18n.t( "Failed to invoke __method__ on __quiddidtyId__", {
-            quiddityId: quiddityId,
+        return logback( i18n.t( "Failed to invoke __method__ on __quiddity__", {
+            quiddity: quiddityId,
             method:    method
         } ) );
     }
@@ -346,11 +346,10 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
 
 QuiddityManager.prototype.removeElementsAssociateToQuiddRemoved = function ( quiddName ) {
     var self   = this;
-    log.debug( "remove quidds associate to quidd removed", quiddName );
+    log.debug( "LEGACY >>> Removing associate quiddities for", quiddName );
     var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
-
     if ( !quidds ) {
-        return log.error( "failed remove quiddity " + quiddName );
+        return log.error( "LEGACY >>> Failed removing associated quiddities for " + quiddName );
     }
 
     this.removeConrolByQuiddParent( quiddName );
@@ -358,11 +357,13 @@ QuiddityManager.prototype.removeElementsAssociateToQuiddRemoved = function ( qui
     /* Remove quiddity sink base on quidd removed  or vumeter */
     _.each( quidds, function ( quidd ) {
         if ( quidd.name.indexOf( quiddName + "-sink" ) != -1 ) {
+            log.debug( 'LEGACY >>> Removing ' + quidd.name );
             this.switcher.remove( quidd.name );
         }
-        if ( quidd.name.indexOf( "vumeter_" ) >= 0 && quidd.name.indexOf( quiddName ) >= 0 ) {
+        /*Handled in switcher controller if ( quidd.name.indexOf( "vumeter_" ) >= 0 && quidd.name.indexOf( quiddName ) >= 0 ) {
+            log.debug( 'LEGACY >>> Removing ' + quidd.name );
             this.switcher.remove( quidd.name );
-        }
+        }*/
     }, this );
 };
 

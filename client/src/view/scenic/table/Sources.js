@@ -15,6 +15,11 @@ define( [
      */
     var Sources = Marionette.CollectionView.extend( {
         childView: SourceView,
+        childViewOptions: function() {
+            return {
+                table: this.options.table
+            }
+        },
 
         /**
          * Initialize
@@ -25,12 +30,13 @@ define( [
 
         /**
          * Sources View Filter
+         * Filters quiddities for the current table view table view
          *
          * @param quiddity
          * @returns {boolean}
          */
         filter: function (quiddity) {
-            return this.model.filterQuiddityOrClass( 'source', quiddity );
+            return this.options.table.filterQuiddityOrClass( 'source', quiddity );
         }
     } );
 

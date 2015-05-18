@@ -4,8 +4,9 @@ define( [
     'marionette',
     'text!template/scenic/inspector.html',
     'view/scenic/inspector/CreateQuiddity',
-    'view/scenic/inspector/EditQuiddity'
-], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView, EditQuiddityView ) {
+    'view/scenic/inspector/EditQuiddity',
+    'view/scenic/inspector/ShmdataInfo'
+], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView, EditQuiddityView, ShmdataInfoView ) {
 
     /**
      *  @constructor
@@ -44,11 +45,9 @@ define( [
                 handle: ".title"
             } );
 
-            // Quiddity creation
             this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
-
-            // Quiddity editing
             this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );
+            this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
         },
 
         close: function() {
@@ -86,6 +85,18 @@ define( [
          */
         _onQuiddityEdit: function ( quiddity ) {
             this.currentPanel = new EditQuiddityView( {model: quiddity} );
+            this.showChildView( 'content', this.currentPanel );
+            this.$el.show();
+        },
+
+        /**
+         * Show Information Panel for shmdata
+         *
+         * @param {Shmdata} shmdata
+         * @private
+         */
+        _onShmdataInfo: function( shmdata ) {
+            this.currentPanel = new ShmdataInfoView( {model: shmdata} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.show();
         }

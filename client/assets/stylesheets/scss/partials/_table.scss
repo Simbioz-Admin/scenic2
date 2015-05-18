@@ -133,6 +133,10 @@ $quiddityGap: 2px;
         }
       }
 
+      &.active .controls:before {
+        background: $green;
+      }
+
       &.sip {
         .controls {
           .user {
@@ -148,13 +152,10 @@ $quiddityGap: 2px;
         }
       }
 
-      &.active .controls:before {
-        background: $green;
-      }
 
-      .boxes {
+      .connections {
         float: left;
-        .box {
+        .connection {
           float: left;
           position: relative;
           width: $boxWidth;
@@ -201,8 +202,8 @@ $quiddityGap: 2px;
             bottom: 0;
           }
         }
-        .boxes {
-          .box {
+        .connections {
+          .connection {
             border-bottom: none !important;
           }
         }

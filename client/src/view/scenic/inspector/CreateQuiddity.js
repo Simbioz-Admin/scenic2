@@ -15,7 +15,7 @@ define( [
      */
     var CreateQuiddity = Marionette.ItemView.extend( {
         template: _.template( CreateQuiddityTemplate ),
-        classname: 'create-quiddity',
+        className: 'create-quiddity',
         ui:       {
             'name': '#quiddityName',
             'device': '#device',

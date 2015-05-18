@@ -30,7 +30,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (quiddity) {
-            return this.model.filterQuiddityOrClass( 'destination', quiddity );
+            return this.options.table.filterQuiddityOrClass( 'destination', quiddity );
         }
     } );
 

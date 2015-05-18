@@ -38,8 +38,8 @@ define( [
          */
         onBeforeShow: function( ) {
             this.showChildView('menu', new MenuView({ model: this.model }));
-            this.showChildView('sources', new SourcesView({ model: this.model, collection: app.quiddities }));
-            this.showChildView('destinations', new DestinationsView({ model: this.model, collection: app.quiddities }));
+            this.showChildView('sources', new SourcesView({ table: this.model, collection: app.quiddities }));
+            this.showChildView('destinations', new DestinationsView({ table: this.model, collection: app.quiddities }));
         }
     } );
 

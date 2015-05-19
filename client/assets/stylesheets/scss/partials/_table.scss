@@ -141,6 +141,7 @@ $quiddityGap: 2px;
           position: relative;
           display: inline-block;
           .connection {
+            position: relative;
             display: inline-block;
             margin-bottom: -3px;
             width: $boxWidth;

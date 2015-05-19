@@ -81,7 +81,7 @@ define( [
          * @private
          */
         _onAddShmdata: function ( quiddityId, shmdata ) {
-            if ( this.quiddity && this.quiddity.id == quiddityId ) {
+            if ( this.quiddity.id == quiddityId ) {
                 this.add( shmdata, { merge: true } );
             }
         }

@@ -56,7 +56,6 @@ define( [
          */
         _onRemoved: function ( quiddityId, shmdata ) {
             if ( this.collection.quiddity.id == quiddityId && shmdata.path == this.id && shmdata.type == this.get( 'type' ) ) {
-                console.log( shmdata, this );
                 this.trigger( 'destroy', this, this.collection );
             }
         },

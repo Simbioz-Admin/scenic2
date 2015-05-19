@@ -19,7 +19,7 @@ define( [
 
         ui: {
             property: '.property',
-            slider: '.slider'
+            slider:   '.slider'
         },
 
         events: {
@@ -29,26 +29,26 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( ) {
+        initialize: function () {
             FieldView.prototype.initialize( this, arguments );
         },
 
-        onRender: function() {
-            var self = this;
-            var type = this.model.get('type');
-            var minimum = this.model.get('minimum');
-            var maximum = this.model.get('maximum');
-            var step = (type == "int" || type == "uint" ? 1 : (parseInt(maximum) - parseInt(minimum)) / 200);
-            this.ui.slider.slider({
+        onRender: function () {
+            var self    = this;
+            var type    = this.model.get( 'type' );
+            var minimum = this.model.get( 'minimum' );
+            var maximum = this.model.get( 'maximum' );
+            var step    = (type == "int" || type == "uint" ? 1 : (maximum - minimum ) / 200);
+            this.ui.slider.slider( {
                 range: "min",
-                value: self.model.get("default value"),
-                step: step,
-                min: type == "int" || type == "uint" ? parseInt(minimum) : parseFloat(minimum),
-                max: type == "int" || type == "uint" ? parseInt(maximum) : parseFloat(maximum),
-                slide: function(event, ui) {
-                    self.model.set('value', ui.value);
+                value: self.model.get( "value" ),
+                step:  step,
+                min:   minimum,
+                max:   maximum,
+                slide: function ( event, ui ) {
+                    self.model.updateValue( ui.value );
                 }
-            });
+            } );
         },
 
         /**
@@ -57,16 +57,16 @@ define( [
          * @param event
          */
         updateModel: function ( event ) {
-            this.model.set('value', this.ui.property.val() );
+            this.model.updateValue( this.ui.property.val() );
         },
 
         /**
          * Set the value of the slider
          * @inheritdoc
          */
-        onModelChanged: function( model, value, options ) {
+        onModelValueChanged: function ( model, value, options ) {
             this.ui.property.val( value );
-            this.ui.slider.slider('value', value );
+            this.ui.slider.slider( 'value', value );
         }
     } );
 

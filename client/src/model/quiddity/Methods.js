@@ -42,13 +42,13 @@ define( [
          * Signals Property Info Handler
          * Listens to method addition concerning our parent quiddity and add new methods if it matches
          *
-         * @param {string} signal The type of event on property or method
          * @param {string} quiddityId The name of the quiddity
+         * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
+        _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
             if ( signal == "on-method-added" && this.quiddity.id == quiddityId ) {
-                var method = this.add( {name: name[0]}, {merge: true} );
+                var method = this.add( {name: name}, {merge: true} );
                 //The method is empty at this point, fetch its content
                 method.fetch();
             }

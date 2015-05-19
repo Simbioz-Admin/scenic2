@@ -39,14 +39,14 @@ define( [
          * @param event
          */
         updateModel: function ( event ) {
-            this.model.set('value', this.ui.property.val() );
+            this.model.updateValue( this.ui.property.val() );
         },
 
         /**
          * Set the value of the slider
          * @inheritdoc
          */
-        onModelChanged: function( model, value, options ) {
+        onModelValueChanged: function( model, value, options ) {
             this.ui.property.val( value );
         }
     } );

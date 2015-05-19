@@ -4,15 +4,15 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Menus',
+    'view/scenic/pages/base/TableMenus',
     'text!template/scenic/pages/sink/menus.html'
-], function ( _, Backbone, Marionette, MenusView, SinkMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, SinkMenusTemplate ) {
 
     /**
      * @constructor
      * @extends MenusView
      */
-    var SinkMenus = MenusView.extend( {
+    var SinkMenus = TableMenusView.extend( {
         template: _.template( SinkMenusTemplate ),
         ui: {
             'source': '.menu.source',
@@ -38,7 +38,7 @@ define( [
             }
         },
         initialize: function () {
-            MenusView.prototype.initialize.apply( this, arguments );
+            TableMenusView.prototype.initialize.apply( this, arguments );
             this.listenTo( app.quiddities, 'update', this.render );
         },
 

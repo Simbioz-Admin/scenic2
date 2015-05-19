@@ -2,16 +2,17 @@
 
 define( [
     'underscore',
-    'backbone'
-], function ( _, Backbone ) {
+    'backbone',
+    'model/base/BaseModel'
+], function ( _, Backbone, BaseModel ) {
 
     /**
      * Method Argument
      *
      * @constructor
-     * @extends module:Backbone.Model
+     * @extends BaseModel
      */
-    var Argument = Backbone.Model.extend( {
+    var Argument = BaseModel.extend( {
 
         defaults: {
             'name': null,

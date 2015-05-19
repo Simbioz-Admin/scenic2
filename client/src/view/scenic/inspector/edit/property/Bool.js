@@ -38,20 +38,19 @@ define( [
          * @param event
          */
         updateModel: function ( event ) {
-            // We have a custom checkbox and string booleans,
-            // so this is needed to toggle and set the actual value
+            // We have a custom checkbox, this is needed to toggle and set the actual value
             var checked = this.ui.property.is( ':checked' );
-            this.ui.property.val( checked ? 'true' : 'false' ).attr( 'checked', checked );
+            this.ui.property.val( checked ).attr( 'checked', checked );
             // Update the model
-            this.model.set('value', this.ui.property.val() );
+            this.model.updateValue( this.ui.property.val() );
         },
 
         /**
          * Set the value of the checkbox
          * @inheritdoc
          */
-        onModelChanged: function( model, value, options ) {
-            this.ui.property.val( value ).attr( 'checked', value != 'false' );
+        onModelValueChanged: function( model, value, options ) {
+            this.ui.property.val( value ).attr( 'checked', value );
         }
     } );
 

@@ -3,16 +3,17 @@
 define( [
     'underscore',
     'backbone',
+    'model/base/BaseCollection',
     'model/quiddity/method/Argument'
-], function ( _, Backbone, Argument ) {
+], function ( _, Backbone, BaseCollection, Argument ) {
 
     /**
      * Method Arguments
      *
      * @constructor
-     * @extends module:Backbone.Collection
+     * @extends BaseCollection
      */
-    var Arguments = Backbone.Collection.extend( {
+    var Arguments = BaseCollection.extend( {
         model: Argument
     } );
 

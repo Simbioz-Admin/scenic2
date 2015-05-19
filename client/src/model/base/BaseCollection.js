@@ -21,6 +21,16 @@ define( [
          */
         initialize: function () {
             Backbone.Collection.prototype.initialize.apply( this, arguments );
+        },
+
+        /**
+         * Destroys the collection, and child models
+         */
+        destroy: function() {
+            var model;
+            while( model = this.first() ) {
+                model.trigger( 'destroy', model, this );
+            }
         }
     } );
 

@@ -1,11 +1,10 @@
 <% var moreInfo = minimum ? 'Min: ' + minimum + ' Max: ' + maximum: ''; %>
 <div class="slider"></div>
-<input id="<%=name%>"
-       name="<%=name%>"
+<input id="<%=id%>"
+       name="<%=id%>"
        type="number"
-       value="<%=obj['default value'].replace(',','.')%>"
+       value="<%=value%>"
        class="property <%=type%> slider"
-       data-current="<%=obj['default value']%>"
-       data-min="<%=minimum%>"
-       data-maximum="<%=maximum%>"
+       min="<%=minimum%>"
+       max="<%=maximum%>"
        placeholder="Value type <%=type%>"/>

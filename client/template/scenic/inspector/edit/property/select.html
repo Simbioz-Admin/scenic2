@@ -1,5 +1,5 @@
-<select id="<%=name%>" name="<%=name%>" class="property" data-current="<%=obj['default value']['value']%>">
-<% _.each(values, function(option) { %>
-    <option value="<%=option.name%>"<% if(option.name == value.name){ %> selected="selected"<% } %>><%=option.name%></option>
+<select id="<%=id%>" name="<%=id%>" class="property">
+<% _.each(options, function(option) { %>
+    <option value="<%=option.value%>"<% if(option.value == value){ %> selected="selected"<% } %>><%=option.name%></option>
 <% }); %>
 </select>

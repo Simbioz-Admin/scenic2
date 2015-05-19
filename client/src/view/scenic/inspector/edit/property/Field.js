@@ -15,10 +15,10 @@ define( [
     var Field = Marionette.ItemView.extend( {
 
         modelEvents: {
-            'change:value': 'onModelChanged'
+            'change:value': 'onModelValueChanged'
         },
 
-        initialize:function(){
+        initialize:function() {
 
         },
 
@@ -30,7 +30,7 @@ define( [
          *
          * Can be overridden to change the behavior to a type-optimized version
          */
-        onModelChanged: function( model, value, options ) {
+        onModelValueChanged: function( model, value, options ) {
             if ( !options.internal ) {
                 this.render();
             }

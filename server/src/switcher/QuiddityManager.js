@@ -49,6 +49,186 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "removeValuePropertyOfDico", this.remove_property_value_of_dico.bind( this ) );
 };
 
+QuiddityManager.prototype._onAdded = function( quiddityId ) {
+    // Quiddity was created, get information on its type
+    var quiddClass = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+    // Only proceed if it's not on of the "private" quiddities, they don't matter to the client
+    if ( !_.contains( this.config.privateQuiddities, quiddClass.class ) ) {
+
+        // Subscribe to property/method add/remove signals
+        this.switcher.subscribe_to_signal( quiddityId, "on-property-added" );
+        this.switcher.subscribe_to_signal( quiddityId, "on-property-removed" );
+        this.switcher.subscribe_to_signal( quiddityId, "on-method-added" );
+        this.switcher.subscribe_to_signal( quiddityId, "on-method-removed" );
+        //this.switcher.subscribe_to_signal( quiddityId, "on-connection-tried" ); //TODO: What is this? SOAPcontrolClient
+
+        // Subscribe to this quiddity's tree modifications
+        this.switcher.subscribe_to_signal( quiddityId, "on-tree-grafted" );
+        this.switcher.subscribe_to_signal( quiddityId, "on-tree-pruned" );
+
+        // Then subscribe to all of the quiddity's properties
+        try {
+            var properties = JSON.parse( this.switcher.get_properties_description( quiddityId ) ).properties;
+            _.each( properties, function ( property ) {
+                log.debug( "Subscribing to property", property.name, "of", quiddityId );
+                this.switcher.subscribe_to_property( quiddityId, property.name );
+            }, this );
+        } catch ( e ) {
+            log.error( "Error getting properties for quiddity", quiddityId, e );
+        }
+
+        // Broadcast creation message including the creator's socketId so that the interface can know if they created the quiddity
+        this.io.emit( "create", quiddClass, this.quidditySocketMap[quiddClass.name] );
+    }
+};
+
+QuiddityManager.prototype._onRemoved = function( quiddityId ) {
+    log.debug( 'Quiddity ' + quiddityId + ' removed' );
+    this.removeVuMeters( value );
+    this.removeElementsAssociateToQuiddRemoved( quiddityId );
+    this.io.emit( "remove", value );
+};
+
+QuiddityManager.prototype._onSwitcherProperty = function( quiddityId, property, value ) {
+    // We exclude byte-rate because it dispatches every second
+    if ( property != "byte-rate" ) {
+        log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
+    }
+
+    // We have to get the property info in order to parse its value correctly\
+    try {
+        var propertyInfo = JSON.parse( this.switcher.get_property_description( quiddityId, property ) );
+    } catch ( e ) {
+        return log.error( e );
+    }
+    if ( !propertyInfo || propertyInfo.error ) {
+        return log.error( 'Could not get property description for', quiddityId, property, value, propertyInfo ? propertyInfo.error : '' );
+    }
+
+    // Parse property
+    this.parseProperty( propertyInfo );
+
+    // Use the parsed value from now on
+    value = propertyInfo.value;
+
+    // Send to clients
+    this.io.emit( "signals_properties_value", quiddityId, property, value );
+
+    // If stopping a quiddity, check for associated shmdata and remove them
+    if ( property == "started" && value == "false" ) {
+        log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
+        this.removeVuMeters( quiddityId );
+
+        //
+        //TODO: Remove connections
+        //
+
+        //TODO: WHat does this do?
+        var destinations = this.switcher.get_property_value( "dico", "destinations" ),
+            destinations = JSON.parse( destinations );
+
+        _.each( destinations, function ( dest ) {
+            _.each( dest.data_streams, function ( stream ) {
+                log.debug( 'DESTINATION DATA SCTREAM SOMETHING', stream.quiddName, quiddityId );
+                if ( stream.quiddName == quiddityId ) {
+                    log.debug( "find quidd connected!", stream.path, stream.port );
+                    receivers.remove_connection( stream.path, dest.id );
+                }
+            } );
+        } );
+
+        /* check if another quiddities is associate to */
+        var quidds       = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
+        _.each( quidds, function ( quidd ) {
+            if ( quidd.name.indexOf( "sink_" ) >= 0 && quidd.name.indexOf( quiddityId ) >= 0 ) {
+                log.debug( "WHAT IS THIS I DON'T EVEN? Remove sink", quidd.name );
+                switcher.remove( quidd.name );
+            }
+        } );
+    }
+};
+
+/**
+ * Remove quiddity's VU meters
+ *
+ * @param quiddityId
+ */
+QuiddityManager.prototype.removeVuMeters = function ( quiddityId ) {
+    log.debug( 'Removing VU meters for ' + quiddityId );
+    //TODO: Maybe use var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities; and look for quidd.name.indexOf( "vumeter_" ) && quidd.name.indexOf( quiddName )
+    this.vuMeters = _.filter( this.vuMeters, function ( vuMeter ) {
+        if ( vuMeter.quiddity == quiddityId ) {
+            log.debug( 'Removing VU meter: ' + vuMeter.path );
+            this.switcher.remove( vuMeter.path );
+            return false;
+        } else {
+            return true;
+        }
+    }, this );
+};
+
+/**
+ * Parse a property into a format more manageable by the front end
+ *
+ * @param property
+ * @returns {*}
+ */
+QuiddityManager.prototype.parseProperty = function( property ) {
+    // Value
+    switch ( property.type ) {
+        case 'float':
+        case 'double':
+            property.value = parseFloat( property['default value'] );
+            property.default = parseFloat( property['default value'] );
+            property.minimum = parseFloat( property.minimum );
+            property.maximum = parseFloat( property.maximum );
+            break;
+        case 'int':
+        case 'uint':
+            property.value = parseInt( property['default value'] );
+            property.default = parseInt( property['default value'] );
+            property.minimum = parseInt( property.minimum );
+            property.maximum = parseInt( property.maximum );
+            break;
+        case 'boolean':
+            property.value = property['default value'].toLowerCase() != 'false';
+            property.default = property['default value'].toLowerCase() != 'false';
+            break;
+        case 'enum':
+            property.value = property['default value'];
+            property.value = property.value.nick;
+            delete property.value.nick;
+            property.default = property['default value'];
+            property.options = property.values;
+            delete property.values;
+            _.each( property.options, function( option ) {
+                option.id = option.value;
+                option.value = option.nick;
+                delete option.nick;
+            });
+            break;
+        case 'string':
+        default:
+            property.value = property['default value'];
+            property.default = property['default value'];
+            break;
+    }
+
+    // Other
+    property.id = property.name;
+    property.name = property['long name'];
+    property.description = property['short description'];
+    property.order = property['position weight'];
+
+    delete property['default value'];
+    delete property['long name'];
+    delete property['short description'];
+    delete property['position category'];
+    delete property['position weight'];
+
+    return property;
+};
+
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
 //  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
 //  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
@@ -107,11 +287,15 @@ QuiddityManager.prototype.getQuiddities = function ( cb ) {
  */
 QuiddityManager.prototype.getInfo = function ( quiddityId, path, cb ) {
     log.debug( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
+
+    //TODO: Switcher could send empty response or a message instead of an error
+
     try {
         var info = JSON.parse( this.switcher.get_info( quiddityId, path ) );
     } catch ( e ) {
         return logback( e, cb );
     }
+
     if ( !info || info.error ) {
         return logback( info ? info.error : i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ), cb );
     }
@@ -161,6 +345,11 @@ QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
     if ( !result || !result.properties || result.error ) {
         return logback( result && result.error ? result.error : i18n.t( 'Could not get properties for __quiddityId__', {quiddityId: quiddityId} ), cb );
     }
+
+    // Parse properties
+    _.each( result.properties, this.parseProperty, this );
+
+    //Return to client
     cb( null, result.properties );
 };
 
@@ -183,6 +372,11 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
             property: property
         } ) + ' ' + ( result ? result.error : '' ) )
     }
+
+    // Parse property
+    this.parseProperty( result );
+
+    // Return to client
     cb( null, result );
 };
 
@@ -196,7 +390,7 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
  */
 QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, value, cb ) {
     var self = this;
-    if ( quiddityId && property && value ) {
+    if ( quiddityId && property && value != null ) {
         try {
             var result = this.switcher.set_property_value( quiddityId, property, String( value ) );
         } catch ( e ) {
@@ -212,7 +406,7 @@ QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, va
         log.debug( 'The property ' + property + ' of ' + quiddityId + ' was set to ' + value );
         cb();
     } else {
-        logback( i18n.t( 'Missing arguments to set property value:' ) + ' ' + quiddityId + ' ' + property + ' ' + value );
+        logback( i18n.t( 'Missing arguments to set property value:' ) + ' ' + quiddityId + ' ' + property + ' ' + value, cb );
     }
 };
 

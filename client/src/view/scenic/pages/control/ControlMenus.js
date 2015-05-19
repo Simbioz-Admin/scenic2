@@ -4,15 +4,15 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Menus',
+    'view/scenic/pages/base/TableMenus',
     'text!template/scenic/pages/control/menus.html'
-], function ( _, Backbone, Marionette, MenusView, ControlMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, ControlMenusTemplate ) {
 
     /**
      * @constructor
      * @extends MenusView
      */
-    var ControlMenus = MenusView.extend( {
+    var ControlMenus = TableMenusView.extend( {
         template: _.template( ControlMenusTemplate ),
 
         ui: {
@@ -31,7 +31,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-            MenusView.prototype.initialize.apply( this, arguments );
+            TableMenusView.prototype.initialize.apply( this, arguments );
         },
 
         /**

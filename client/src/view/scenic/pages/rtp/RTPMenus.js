@@ -4,15 +4,15 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Menus',
+    'view/scenic/pages/base/TableMenus',
     'text!template/scenic/pages/rtp/menus.html'
-], function ( _, Backbone, Marionette, MenusView, RTPMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, RTPMenusTemplate ) {
 
     /**
      * @constructor
      * @extends MenusView
      */
-    var RTPMenus = MenusView.extend( {
+    var RTPMenus = TableMenusView.extend( {
         template: _.template( RTPMenusTemplate ),
         ui: {
             'source': '.menu.source',
@@ -42,7 +42,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-            MenusView.prototype.initialize.apply( this, arguments );
+            TableMenusView.prototype.initialize.apply( this, arguments );
             this.listenTo( app.quiddities, 'update', this.render );
         },
 

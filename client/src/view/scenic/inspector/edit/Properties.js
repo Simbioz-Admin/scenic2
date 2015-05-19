@@ -23,7 +23,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-            //TODO: Sort
+
         },
 
         /**
@@ -33,7 +33,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (property) {
-            return !_.contains( this.excludedProperties, property.get('name') );
+            return !_.contains( this.excludedProperties, property.id );
         }
     } );
 

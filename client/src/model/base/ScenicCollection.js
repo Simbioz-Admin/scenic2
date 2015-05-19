@@ -78,7 +78,7 @@ define( [
         },
 
         /**
-         * Destroys the collection, removing any socket lsitener and destroying child models
+         * Destroys the collection, removing any socket listener and destroying child models
          */
         destroy: function () {
             // Romove socket listeners
@@ -86,10 +86,7 @@ define( [
                 socket.off( listener.message, listener.callback );
             } );
             this.socketListeners = [];
-            var model;
-            while( model = this.first() ) {
-                model.trigger( 'destroy', model, this );
-            }
+            BaseCollection.prototype.destroy.apply(this,arguments);
         },
 
         /**

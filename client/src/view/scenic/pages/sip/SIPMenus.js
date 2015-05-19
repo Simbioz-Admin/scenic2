@@ -4,15 +4,15 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Menus',
+    'view/scenic/pages/base/TableMenus',
     'text!template/scenic/pages/sip/menus.html'
-], function ( _, Backbone, Marionette, MenusView, SIPMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, SIPMenusTemplate ) {
 
     /**
      * @constructor
      * @extends MenusView
      */
-    var SIPMenus = MenusView.extend( {
+    var SIPMenus = TableMenusView.extend( {
         template: _.template( SIPMenusTemplate ),
         ui: {
             'source': '.menu.source',
@@ -38,7 +38,7 @@ define( [
             }
         },
         initialize: function () {
-            MenusView.prototype.initialize.apply( this, arguments );
+            TableMenusView.prototype.initialize.apply( this, arguments );
             this.listenTo( app.quiddities, 'update', this.render );
         },
 

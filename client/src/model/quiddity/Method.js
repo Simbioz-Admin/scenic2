@@ -64,12 +64,13 @@ define( [
          * Signals Property Info Handler
          * Listens to method removal concerning our parent quiddity and destroy this method if it matches
          *
-         * @param {string} signal The type of event on property or method
          * @param {string} quiddityId The name of the quiddity
+         * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignalsPropertiesInfo: function ( signal, quiddityId, name ) {
-            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name[0] ) {
+        _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
+            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
+                console.log( this );
                 this.get( 'arguments' ).destroy();
                 this.trigger( 'destroy', this, this.collection );
             }

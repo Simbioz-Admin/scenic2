@@ -5,4 +5,83 @@
   bottom: 0;
   background: $backgroundColorDarker;
   padding-top: 50px;
+  .tab {
+    position: relative;
+    width: 100%;
+    height: 65px;
+    border: none;
+    float: right;
+    margin: 5px 0px 0;
+    opacity: 0.8;
+    color: #ccc;
+    padding-left: 1px;
+    .content {
+      width: 100%;
+      height: 100%;
+      .icon {
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    &.transfer .content .icon {
+      background: url(../../icons/732-cloud-upload.png) no-repeat center 10px;
+    }
+    &.control .content .icon {
+      background: url(../../icons/1060-switches.png) no-repeat center 10px;
+    }
+    &.sink .content .icon {
+      background: url(../../icons/725-airplay.png) no-repeat center 10px;
+    }
+    &.sip .content .icon {
+      background: url(../../icons/779-users.png) no-repeat center 10px;
+    }
+    &.settings .content .icon {
+      background: url(../../icons/740-gear.png) no-repeat center 10px;
+    }
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+      color: #eee;
+      .content .icon {
+        opacity: 0.75;
+      }
+    }
+    &.active {
+      opacity: 1;
+      color: #eee;
+      background: $backgroundColor;
+      border-left: 2px solid $satColor;
+      padding-left: 0;
+      .content .icon {
+        opacity: 1;
+      }
+      &.transfer .content .icon {
+        background: url(../../icons/732-cloud-upload-selected.png) no-repeat center 10px;
+      }
+      &.control .content .icon {
+        background: url(../../icons/1060-switches-selected.png) no-repeat center 10px;
+      }
+      &.sink .content .icon {
+        background: url(../../icons/725-airplay-selected.png) no-repeat center 10px;
+      }
+      &.sip .content .icon {
+        background: url(../../icons/779-users-selected.png) no-repeat center 10px;
+      }
+      &.settings .content .icon {
+        background: url(../../icons/740-gear-selected.png) no-repeat center 10px;
+      }
+    }
+    .name {
+      position: absolute;
+      font-size: 10px;
+      width: 100%;
+      bottom: 10px;
+      text-align: center;
+    }
+    &:hover .name {
+      opacity: 1;
+      display: block;
+    }
+  }
 }

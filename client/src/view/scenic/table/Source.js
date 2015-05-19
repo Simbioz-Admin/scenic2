@@ -43,6 +43,12 @@ define( [
         initialize: function( ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.collection = this.model.get('shmdatas');
+
+            // Check for started property
+            var startedProperty = this.model.get('properties' ).findWhere({name:'started'});
+            if ( startedProperty ) {
+                this.listenTo( startedProperty, 'change:value', this._onStartedChanged );
+            }
         },
 
         /**
@@ -64,6 +70,14 @@ define( [
                     self.model.destroy();
                 }
             });
+        },
+
+        _onStartedChanged: function( model, value ) {
+            if ( value == 'true' ) {
+                this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
+            } else {
+                this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
+            }
         }
     } );
 

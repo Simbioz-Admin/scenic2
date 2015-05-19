@@ -4,16 +4,30 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'model/Pages',
+    'model/pages/Sink',
+    'model/pages/RTP',
+    'model/pages/SIP',
+    'model/pages/Control',
+    'model/pages/Settings',
+    'view/scenic/pages/Sink',
+    'view/scenic/pages/RTP',
+    'view/scenic/pages/SIP',
+    'view/scenic/pages/Control',
+    'view/scenic/pages/Settings',
     'view/scenic/Tabs',
     'view/scenic/SystemUsage',
-    'view/scenic/Table',
+    'view/scenic/Notifications',
     'view/scenic/Inspector',
     'view/scenic/modal/Confirmation'
-], function ( _, Backbone, Marionette, TabsView, SystemUsageView, TableView, InspectorView, ConfirmationView ) {
+], function ( _, Backbone, Marionette, Pages,
+              SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
+              SinkView, RTPView, SIPView, ControlView, SettingsView,
+              TabsView, SystemUsageView, NotificationsView, InspectorView, ConfirmationView ) {
 
     /**
-     *  @constructor
-     *  @augments module:Marionette.LayoutView
+     * @constructor
+     * @augments module:Marionette.LayoutView
      */
     var ScenicView = Marionette.LayoutView.extend( {
         el:       '#scenic',
@@ -23,7 +37,7 @@ define( [
             tabs:      '#tabs',
             usage:     '#usage',
             menu:      '#header .menu',
-            table:     '#main',
+            page:      '#page',
             inspector: '#inspector',
             modal:     '#modal'
         },
@@ -32,34 +46,28 @@ define( [
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
             this.app = app;
-            this.app.tables.on( 'change:current', _.bind( this._onShowTable, this ) );
+
+            this.notifications = new NotificationsView();
+
+            this.pages = new Pages( null, {config: this.app.config });
+            this.pages.add( new SinkPage( {viewClass: SinkView} ) );
+            this.pages.add( new RTPPage( {viewClass: RTPView} ) );
+            this.pages.add( new SIPPage( {viewClass: SIPView} ) );
+            this.pages.add( new ControlPage( {viewClass: ControlView} ) );
+            this.pages.add( new SettingsPage( {viewClass: SettingsView} ) );
+
+            this.pages.on( 'change:current', _.bind( this.showPage, this ) );
 
             // Wreqr Handlers
-            this.scenicChannel.vent.on( 'notify', this._onNotify, this );
-            this.scenicChannel.vent.on( 'success', this._onSuccess, this );
-            this.scenicChannel.vent.on( 'error', this._onError, this );
             this.scenicChannel.commands.setHandler( 'confirm', this._onConfirm, this );
 
             //TODO: Put in notification manager
             this.scenicChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
+            this.scenicChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
 
             // TODO: Legacy
             $( document ).tooltip();
             $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
-
-            // Notifications
-            var type = 'error';
-            var msg  = 'Reimplement notifications';
-            $( "#msgHighLight" ).remove();
-            this.$el.append( "<div id='msgHighLight' class='" + type + "'>" + msg + "</div>" );
-            setTimeout( function () {
-                $( '#msgHighLight' ).addClass( 'active' ).delay( 4000 ).queue( function ( next ) {
-                    $( this ).removeClass( "active" );
-                } );
-            }, 0 )
-            $( "#msgHighLight" ).click( function () {
-                $( this ).remove();
-            } )
         },
 
         /**
@@ -67,54 +75,26 @@ define( [
          * Special case for the moment as we don't use a master application view to render us
          */
         onBeforeRender: function () {
-            this.showChildView( 'tabs', new TabsView( {collection: this.app.tables} ) );
+            this.showChildView( 'tabs', new TabsView( { collection: this.pages } ) );
             this.showChildView( 'usage', new SystemUsageView() );
-            this.showChildView( 'table', new TableView( {model: this.app.tables.getCurrentTable()} ) );
             this.showChildView( 'inspector', new InspectorView() );
+
+            this.showPage( this.pages.getCurrentPage() );
         },
 
         /**
-         * Current table change handler
-         * Displays the current table
+         * Current page change handler
+         * Displays the current page
          *
-         * @param table
+         * @param page
          * @private
          */
-        _onShowTable: function ( table ) {
-            this.showChildView( 'table', new TableView( {model: table} ) );
-        },
-
-        /**
-         * Notification Handler
-         * Displays a notification
-         *
-         * @param message
-         * @private
-         */
-        _onNotify: function ( message ) {
-            console.log( message );
-        },
-
-        /**
-         * Success Handler
-         * Displays a notification
-         *
-         * @param message
-         * @private
-         */
-        _onSuccess: function ( message ) {
-            console.info( message );
-        },
-
-        /**
-         * Error Handler
-         * Displays a notification
-         *
-         * @param message
-         * @private
-         */
-        _onError: function ( message ) {
-            console.error( message );
+        showPage: function ( page ) {
+            if ( page ) {
+                this.showChildView( 'page', page.getViewInstance() );
+            } else {
+                this.getRegion('page' ).empty();
+            }
         },
 
         /**
@@ -131,7 +111,10 @@ define( [
                 message  = $.t( 'Are you sure?"' );
             }
             this.$el.addClass( 'blur' );
-            this.showChildView( 'modal', new ConfirmationView( { message: message, callback: _.bind( this.closeModal, this, callback ) } ) );
+            this.showChildView( 'modal', new ConfirmationView( {
+                message:  message,
+                callback: _.bind( this.closeModal, this, callback )
+            } ) );
         },
 
         /**
@@ -140,20 +123,34 @@ define( [
          * @param callback
          * @param result
          */
-        closeModal: function( callback, result ) {
+        closeModal: function ( callback, result ) {
             this.$el.addClass( 'blur' );
-            this.getRegion('modal' ).empty();
+            this.getRegion( 'modal' ).empty();
             callback( result );
         },
 
         /**
-         * Quiddity Created Handler
+         * Quiddity Added Handler
          *
          * @param quiddity
          * @private
          */
         _onQuiddityAdded: function ( quiddity ) {
-            console.info( $.t( 'Quiddity __name__ added', {name: quiddity.get( 'name' )} ) );
+            if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
+                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ added', {name: quiddity.get( 'name' )} ) );
+            }
+        },
+
+        /**
+         * Quiddity Removed Handler
+         *
+         * @param quiddity
+         * @private
+         */
+        _onQuiddityRemoved: function ( quiddity ) {
+            if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
+                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ removed', {name: quiddity.get( 'name' )} ) );
+            }
         }
     } );
     return ScenicView;

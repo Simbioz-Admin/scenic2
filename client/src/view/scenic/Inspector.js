@@ -42,7 +42,9 @@ define( [
             // Draggable
             this.$el.draggable( {
                 cursor: "move",
-                handle: ".title"
+                handle: ".title",
+                containment: "window",
+                opacity: 0.75
             } );
 
             this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );

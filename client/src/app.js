@@ -6,7 +6,6 @@ define( [
     'jquery',
     'i18n',
     // New Models
-    'model/Tables',
     'model/ClassDescriptions',
     'model/Quiddities',
     'model/SIPDestinations',
@@ -17,7 +16,7 @@ define( [
     'view/Scenic'
 ], function ( _, Backbone, Mutators, async, $, i18n,
               // New Models
-              Tables, ClassDescriptions, Quiddities, SIPDestinations, RTPDestinations, ControlDestinations, Contacts,
+              ClassDescriptions, Quiddities, SIPDestinations, RTPDestinations, ControlDestinations, Contacts,
               // New Views
               ScenicView ) {
 
@@ -29,13 +28,15 @@ define( [
     var contacts = null;
     var tables = null;
 
+    var config = null;
+
     var initialize = function ( config ) {
 
         if ( this.initialized ) {
             return;
         }
 
-        //FIXME: There is nowhere to put this $("#currentUser").html(config.nameComputer);
+        this.config = config;
 
         var self = this;
 
@@ -87,13 +88,6 @@ define( [
             function ( callback ) {
                 self.contacts = new Contacts();
                 self.contacts.fetch( {success: _.partial( callback, null ), error: callback} );
-            },
-
-            function ( callback ) {
-                // Table Collection
-                self.tables = new Tables();
-
-                callback();
             }
 
         ], function ( error ) {
@@ -110,6 +104,7 @@ define( [
     };
 
     return {
+        config:              config,
         initialize:          initialize,
         classDescriptions:   classDescriptions,
         quiddities:          quiddities,

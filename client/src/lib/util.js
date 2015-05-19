@@ -31,11 +31,6 @@ define( [
         return o;
     };
 
-    //close lightbox
-    $( document ).on( "click", "#close, #bgLightbox", function () {
-        $( "#lightBox, #bgLightbox" ).fadeOut( 200 );
-    } );
-
     // define tooltip global with jquery UI
     $( document ).tooltip( {
         track:   true,

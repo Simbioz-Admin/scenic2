@@ -7,7 +7,8 @@
 @import "basics";
 @import "global";
 
-@import "jquery-ui/jquery-ui-structure";
+@import "plugins/jquery-ui-structure";
+@import "plugins/toastr";
 
 @import "partials/notifications";
 @import "partials/modals";
@@ -16,8 +17,14 @@
 @import "partials/header";
 @import "partials/menus";
 @import "partials/tabs";
-@import "partials/table";
 @import "partials/inspector";
 @import "partials/contacts";
-
 @import "partials/system-usage";
+
+@import "partials/pages";
+@import "partials/table";
+
+@import "pages/sink";
+@import "pages/sip";
+@import "pages/rtp";
+@import "pages/control";

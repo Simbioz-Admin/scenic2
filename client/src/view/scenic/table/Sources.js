@@ -24,8 +24,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( ) {
-
+        initialize: function(  ) {
+            this.listenTo( this.options.table, 'change:filter', this.render );
         },
 
         /**
@@ -36,7 +36,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (quiddity) {
-            return this.options.table.filterQuiddityOrClass( 'source', quiddity );
+            return this.options.table.filterQuiddityOrClass( 'source', quiddity, true );
         }
     } );
 

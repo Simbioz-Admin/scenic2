@@ -21,10 +21,10 @@ $backgroundColorDarker: #222222;
 $disabled: darken( $backgroundColor, 1% );
 $active: $backgroundColorDarker;
 
-$red: $satColor;
-$orange: orange;
-$green: #01b101;
-$blue: #1f9cff;
+$red: #bd362f;//$satColor;
+$orange: #f89406;//orange;
+$green: #51a351;//#01b101;
+$blue: #2f96b4;//#1f9cff;
 
 @mixin shadow1 {
   @include box-shadow( rgba(black, 0.25) 0px 0px 24px);

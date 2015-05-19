@@ -19,12 +19,14 @@ define( [
         className:          'shmdata',
 
         childView:          ConnectionView,
+
         childViewOptions: function() {
             return {
                 shmdata: this.model,
                 table: this.options.table
             }
         },
+
         childViewContainer: '.connections',
 
         modelEvents: {
@@ -47,6 +49,14 @@ define( [
         },
 
         /**
+         * Render Handler
+         */
+        onRender: function() {
+            // Check the byte rate to update status
+            this.updateByteRate();
+        },
+
+        /**
          * Sources Connections for shmdata
          *
          * @param quiddity
@@ -54,7 +64,7 @@ define( [
          */
         filter: function (quiddity) {
             // Get back up to the table model to filter the displayed connections
-            return this.options.table.filterQuiddityOrClass( 'destination', quiddity );
+            return this.options.table.filterQuiddityOrClass( 'destination', quiddity, true );
         },
 
         /**
@@ -65,8 +75,11 @@ define( [
             this.scenicChannel.commands.execute( 'shmdata:info', this.model );
         },
 
-        updateByteRate: function( model, value ) {
-            if ( value == 0 ) {
+        /**
+         * Update byte rate
+         */
+        updateByteRate: function( ) {
+            if ( this.model.get('byteRate') == 0 ) {
                 this.$el.removeClass('active');
             } else {
                 this.$el.addClass('active');

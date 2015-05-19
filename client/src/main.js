@@ -16,6 +16,7 @@ require( {
         async:         '../bower_components/async/lib/async',
         jquery:       '../bower_components/jquery/dist/jquery.min',
         jqueryui:     '../bower_components/jquery-ui/jquery-ui.min',
+        toastr:       '../bower_components/toastr/toastr',
         punch:        '../bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min',
         spin:         '../bower_components/spin.js/spin',
         i18n:         '../bower_components/i18next/i18next.min',

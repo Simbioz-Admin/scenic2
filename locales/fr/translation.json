@@ -286,5 +286,8 @@
     "Failed to remove quiddity __quiddityId__": "Failed to remove quiddity __quiddityId__",
     "Could not set property __property__ value __value__ on __quiddity__": "Could not set property __property__ value __value__ on __quiddity__",
     "Missing arguments to set property value:": "Missing arguments to set property value:",
-    "Failed to invoke __method__ on __quiddidtyId__": "Failed to invoke __method__ on __quiddidtyId__"
+    "Failed to invoke __method__ on __quiddidtyId__": "Failed to invoke __method__ on __quiddidtyId__",
+    "Failed to create __className__ __quiddityName__": "Failed to create __className__ __quiddityName__",
+    "Failed to get methods for __quiddityId__": "Failed to get methods for __quiddityId__",
+    "Failed to invoke __method__ on __quiddity__": "Failed to invoke __method__ on __quiddity__"
 }

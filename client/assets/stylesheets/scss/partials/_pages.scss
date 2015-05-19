@@ -1,0 +1,112 @@
+#page {
+  .menus {
+    border-bottom-color: black;
+    position: fixed;
+    z-index: 1;
+    left: $tabsWidth;
+    top: 0px;
+    height: 40px;
+    margin: 12px 12px 8px 24px;
+    background: #333;
+    padding: 0;
+    cursor: move;
+    .menu {
+      float: left;
+      margin-right: 10px;
+      font-size: 1.2em;
+      background: #444;
+      @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
+      border: none;
+      color: #ccc;
+      text-transform: uppercase;
+      &:hover {
+        color: white;
+        background: #484848;
+      }
+      .button {
+        padding: 6px 15px 5px 32px;
+        display: inline-block;
+        color: #ccc;
+        line-height: 25px;
+        font-family: "Irma Light", "Open Sans", sans-serif;
+        cursor: pointer;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        background: url(../../icons/arrow-down-small.png) no-repeat 8px;
+        &:hover {
+          color: white;
+          background-color: #484848;
+        }
+      }
+    }
+    .filter {
+      padding: 0;
+      width: 160px;
+      float: left;
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+      background: #444;
+      border: #444;
+      color: white;
+      cursor: pointer;
+      height: 36px;
+      margin: 0;
+      option {
+        cursor: pointer;
+        border: none;
+      }
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: default;
+}
+
+#sub-menu {
+  position: absolute;
+  width: 180px;
+  float: left;
+  top: 36px;
+  background-color: #333;
+  margin-right: 10px;
+  @include shadow1;
+  border: none;
+  color: $textColor;
+  text-transform: uppercase;
+  .group {
+    display: block;
+    background: $backgroundColorDarker;
+    margin: 0;
+    outline: none;
+    &:not(:last-child) {
+      border-bottom: darken($backgroundColorDarker, 2%) 1px solid;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  .items {
+    padding: 0;
+    height: auto;
+    .item {
+      text-decoration: none;
+      position: relative;
+      display: block;
+      color: #b3b3b3;
+      background: #323232;
+      border: 0;
+      &:hover {
+        background: $satColor;
+      }
+    }
+  }
+}

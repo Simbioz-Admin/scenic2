@@ -1,21 +1,13 @@
-<div id="subMenu" >
-    <% if(type == "classes") { %>
-    <% _.each(classes, function(classes, category){ %>
-    <div class="menuHeading"><%=category%></div>
-    <div class="menuButtons">
-        <% _.each(classes, function(quiddityClass) { %>
-        <a class="create" data-name="<%=quiddityClass.get('class name')%>"><%=quiddityClass.get("long name")%></a>
+<div id="sub-menu">
+    <div class="overlay"></div>
+    <div class="content">
+        <% _.each(groups, function(items, group){ %>
+        <div class="group"><%=group%></div>
+        <div class="items">
+            <% _.each(items, function(item) { %>
+            <a class="item" data-id="<%=item.id%>" title="<%=item.title%>"><%=item.name%></a>
+            <% }); %>
+        </div>
         <% }); %>
     </div>
-    <% }) %>
-    <% } else if ( type == "QuiddsAndProperties" ) { %>
-    <% _.each(menus, function(menu, name){ %>
-    <div class="menuHeading"><%=name%></div>
-    <div class="menuButtons" data-quiddname="<%=name%>">
-        <% _.each(menu, function(property) { %>
-        <a class="createControlProperty" data-property="<%=property%>" href="#"><%=property%></a>
-        <% }); %>
-    </div>
-    <% }); %>
-    <% } %>
 </div>

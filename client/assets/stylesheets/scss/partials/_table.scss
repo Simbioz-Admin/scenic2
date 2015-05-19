@@ -1,12 +1,3 @@
-#main {
-  position: absolute;
-  left: $tabsWidth;
-  top: $headerHeight;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-}
-
 $leftHeaderWidth: 125px;
 $leftHeaderMinHeight: 40px;
 $boxWidth: $leftHeaderWidth;
@@ -14,24 +5,32 @@ $boxMinHeight: $leftHeaderMinHeight;
 $quiddityGap: 2px;
 
 .table {
+  float: left;
+  margin: 25px 0 0 25px;
+
   .controls .name,
   .shmdatas .name,
   .destination .name {
     width: 100%;
     height: 100%;
-    padding: 1.25em 0;
     color: $textColorBrighter;
     text-align: center;
   }
 
   .controls {
     position: relative;
-    float: left;
     width: $boxWidth;
-    min-height: $boxMinHeight;
+    height: $boxMinHeight;
 
     .name {
       position: absolute;
+      white-space: normal;
+      word-break: break-all;
+      display: table;
+      >span {
+        display: table-cell;
+        vertical-align: middle;
+      }
     }
     .actions {
       position: absolute;
@@ -88,451 +87,157 @@ $quiddityGap: 2px;
       }
     }
   }
-}
 
-.sources {
-  float: left;
-  clear: both;
-  position: relative;
-  .source {
-    float: left;
-    clear: both;
-    position: relative;
-  }
-}
-
-.quiddity {
-  margin-bottom: 6px;
-  background: $backgroundColorDark;
-  @include clearfix;
-
-  .controls {
-    width: $leftHeaderWidth;
-    min-height: $leftHeaderMinHeight;
-  }
-
-  .shmdatas {
-    position: relative;
-    float: left;
-
-    .shmdata {
-      min-height: $leftHeaderMinHeight;
-      border-left: $quiddityGap solid $colorBorder;
-      border-bottom: 1px solid $colorBorder;
-      //@include clearfix;
-
-      .controls {
-        &:before {
-          content: "";
-          position: absolute;
-          top: 0;
-          bottom: 1px;
-          left: -2px;
-          width: 2px;
-          background: $satColor;
-        }
-      }
-
-      &.active .controls:before {
-        background: $green;
-      }
-
-      &.sip {
-        .controls {
-          .user {
-            color: $textColorBrighter;
-            font-weight: bold;
-            background-color: #2c2c2c;
-            padding: 5px 1em;
-          }
-          .name {
-            position: relative;
-            padding: 0.25em 0;
-          }
-        }
-      }
-
-
-      .connections {
-        float: left;
-        .connection {
-          float: left;
-          position: relative;
-          width: $boxWidth;
-          min-height: $boxMinHeight;
-          border-left: 1px solid $colorBorder;
-          border-bottom: 1px solid $colorBorder;
-
-          .icon {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.25;
-          }
-          &.enabled {
-            cursor: pointer;
-            background: $backgroundColorDark;
-            &.active {
-              background: $backgroundColorDarker;
-              &:hover {
-                background: $red url(../../icons/x.png) no-repeat center;
-              }
-              .icon {
-                background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
-              }
-            }
-            &.inactive {
-              background: $backgroundColorDark;
-              &:hover {
-                cursor: pointer;
-                background: $green url(../../icons/plus.png) center no-repeat;
-              }
-            }
-          }
-          &.disabled {
-            background: $disabled;
-          }
-        }
-      }
-
-      &:last-child {
-        border-bottom: none !important;
-        .controls {
-          &:before {
-            bottom: 0;
-          }
-        }
-        .connections {
-          .connection {
-            border-bottom: none !important;
-          }
-        }
-      }
-    }
-  }
-}
-
-.destinations {
-  min-height: $boxMinHeight;
-  margin: 0 0 10px $leftHeaderWidth * 2 + $quiddityGap;
-  float: left;
-  clear: both;
-  position: relative;
-
-  .destination {
-    float: left;
-    width: $boxWidth;
-    min-height: $boxMinHeight;
+  .quiddity {
+    margin-bottom: 6px;
     background: $backgroundColorDark;
-    border-left: 1px solid $colorBorder;
 
     .controls {
-      .actions {
-        .action {
-          .checkbox {
-            margin: 8px;
+      width: $leftHeaderWidth;
+      min-height: $leftHeaderMinHeight;
+    }
+
+    .shmdatas {
+      display: inline-block;
+
+      .shmdata {
+        background: $backgroundColorDark;
+        min-height: $leftHeaderMinHeight;
+        border-left: $quiddityGap solid $colorBorder;
+        border-bottom: 1px solid $colorBorder;
+
+        .controls {
+          &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0px;
+            left: -2px;
+            width: 2px;
+            background: $satColor;
           }
+        }
+
+        &.active .controls:before {
+          background: $green;
+        }
+
+        &.sip {
+          .controls {
+            .user {
+              color: $textColorBrighter;
+              font-weight: bold;
+              background-color: #2c2c2c;
+              padding: 5px 1em;
+            }
+            .name {
+              position: relative;
+              padding: 0.25em 0;
+            }
+          }
+        }
+
+        .connections {
+          position: relative;
+          display: inline-block;
+          .connection {
+            display: inline-block;
+            margin-bottom: -3px;
+            width: $boxWidth;
+            min-height: $boxMinHeight;
+            border-left: 1px solid $colorBorder;
+
+            .icon {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              opacity: 0.25;
+            }
+            &.enabled {
+              cursor: pointer;
+              background: $backgroundColorDark;
+              &.active {
+                background: $backgroundColorDarker;
+                &:hover {
+                  background: $red url(../../icons/x.png) no-repeat center;
+                }
+                .icon {
+                  background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
+                }
+              }
+              &.inactive {
+                background: $backgroundColorDark;
+                &:hover {
+                  cursor: pointer;
+                  background: $green url(../../icons/plus.png) center no-repeat;
+                }
+              }
+            }
+            &.disabled {
+              cursor: not-allowed;
+              background: $disabled;
+            }
+          }
+        }
+
+        &:last-child {
+          border-bottom: none !important;
         }
       }
     }
+  }
 
-    .status {
-      width: 100%;
-      height: 2px;
-      position: absolute;
-      bottom: 0;
-      z-index: 10;
-      &.disconnected {
-        background: $satColor;
-      }
-      &.wait {
-        background: $orange;
-      }
-      &.calling {
-        background: $green;
+  .sources {
+    float: left;
+    .source {
+      width: $boxWidth;
+      white-space: nowrap;
+      .controls {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: -2.5px;
       }
     }
   }
-}
 
+  .destinations {
+    min-height: $boxMinHeight;
+    margin: 0 10px 10px $leftHeaderWidth * 2 + $quiddityGap;
+    white-space: nowrap;
 
+    .destination {
+      display: inline-block;
+      width: $boxWidth;
+      min-height: $boxMinHeight;
+      background: $backgroundColorDark;
+      border-left: 1px solid $colorBorder;
 
+      .controls {
+        .actions {
+          .action {
+            .checkbox {
+              margin: 8px;
+            }
+          }
+        }
+      }
 
-
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#tabs {
-
-  .tab {
-    position: relative;
-    width: 100%;
-    height: 65px;
-    border: none;
-    float: right;
-    margin: 5px 0px 0;
-    opacity: 0.8;
-    color: #ccc;
-    padding-left: 1px;
-    .content {
-      width: 100%;
-      height: 100%;
-      .icon {
-        opacity: 0.5;
+      .status {
         width: 100%;
-        height: 100%;
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        z-index: 10;
+        &.disconnected {
+          background: $satColor;
+        }
+        &.wait {
+          background: $orange;
+        }
+        &.calling {
+          background: $green;
+        }
       }
     }
-    &.transfer .content .icon {
-      background: url(../../icons/732-cloud-upload.png) no-repeat center 10px;
-    }
-    &.control .content .icon {
-      background: url(../../icons/1060-switches.png) no-repeat center 10px;
-    }
-    &.sink .content .icon {
-      background: url(../../icons/725-airplay.png) no-repeat center 10px;
-    }
-    &.sip .content .icon {
-      background: url(../../icons/779-users.png) no-repeat center 10px;
-    }
-    &:hover {
-      cursor: pointer;
-      opacity: 1;
-      color: #eee;
-      .content .icon {
-        opacity: 0.75;
-      }
-    }
-    &.active {
-      opacity: 1;
-      color: #eee;
-      border-left: 2px solid $satColor;
-      padding-left: 0;
-      .content .icon {
-        opacity: 1;
-      }
-      &.transfer .content .icon {
-        background: url(../../icons/732-cloud-upload-selected.png) no-repeat center 10px;
-      }
-      &.control .content .icon {
-        background: url(../../icons/1060-switches-selected.png) no-repeat center 10px;
-      }
-      &.sink .content .icon {
-        background: url(../../icons/725-airplay-selected.png) no-repeat center 10px;
-      }
-      &.sip .content .icon {
-        background: url(../../icons/779-users-selected.png) no-repeat center 10px;
-      }
-    }
-    .name {
-      position: absolute;
-      font-size: 10px;
-      width: 100%;
-      bottom: 10px;
-      text-align: center;
-    }
-    &:hover .name {
-      opacity: 1;
-      display: block;
-    }
-  }
-}
-
-.tableScenic {
-  float: left;
-  display: block;
-  table-layout: fixed;
-  min-height: 110px;
-  min-width: 420px;
-  .infoTable {
-    width: 240px;
-    padding: 0;
-    border: none;
-  }
-  th, td {
-    text-align: center;
-    position: relative;
-    width: 125px;
-    height: 40px;
-    .mapper {
-      background: #222;
-      width: 100%;
-      height: 100%;
-      &:hover .actions {
-        display: table;
-        opacity: 1;
-      }
-    }
-  }
-  .group {
-    color: #333;
-  }
-  .groupDestination {
-    @include box-shadow(rgba(#333, 0.1) 0px 2px 4px);
-    @include background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)));
-  }
-  tr .groupSource {
-    cursor: pointer;
-    text-align: center;
-    background: rgba(white, 0.5);
-    @include background-image(linear-gradient(rgba(#f4f4f4, 0.7), rgba(#e8e8e8, 0.4)));
-    @include transition-property(opacity);
-    @include transition-duration(2s);
-    &:hover .short.nameSource {
-      display: none;
-    }
-    &:hover .actions {
-      display: table;
-      opacity: 1;
-    }
-  }
-  td.sources {
-    padding: 0;
-    border: none;
-  }
-}
-
-//TODO: Fix this, it doesn't detect mobile correctly
-@media screen and (min-device-width: 320px) and (max-device-width: 1024px) {
-  .box {
-    -webkit-user-select: none;
-  }
-  .box:hover {
-    background: none;
-  }
-}
-
-.content-port-destination {
-  height: 100%;
-  border: none;
-}
-
-#port_destination {
-  background: #292929;
-  color: white !important;
-  outline: 0;
-  font-size: 12px;
-  border: none;
-  height: 40px;
-}
-
-.connection {
-  background: #444;
-  text-align: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  display: table-cell;
-  vertical-align: middle;
-  color: white;
-}
-
-#control {
-  .source {
-    margin: 10px 0 0;
-  }
-  .property {
-    background: #222;
-  }
-  .shmdata th:after {
-    opacity: 0;
-  }
-}
-
-.vignette {
-  color: white;
-  line-height: 20px;
-  background: #333;
-  padding: 0 10px;
-  margin: 20px 0 10px 0;
-  float: left;
-}
-
-.tableSink {
-  width: 100%;
-  float: left;
-  position: relative;
-  .vignette {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-  }
-  .shmdatas {
-    margin-left: 0;
-  }
-}
-
-/* Table Sink */
-#sink {
-  .infoTable {
-    height: 60px;
-  }
-}
-
-#transfer {
-  .vignette.local-sources {
-    margin-top: -35px;
-  }
-}
-
-#audio .shmdata .preview {
-  display: none;
-}
-
-.table .menu .tableMenu > li div, .tableScenic tr .groupSource, td.active {
-  background: $backgroundColor;
-  color: $textColor;
-  &:hover {
-    background: $backgroundColorDarker;
-  }
-}
-
-.tableScenic tr .groupSource {
-  border: 1px solid $backgroundColorDarker;
-}
-
-.tableScenic .nameInOut, .scenic .destinations .nameInOut {
-  background: #3a3a3a;
-  border-color: $backgroundColor;
-  color: $textColor;
-  a {
-    color: $textColor;
-  }
-}
-
-#tabs .tab {
-  &.active {
-    background: $backgroundColorDark;
   }
 }

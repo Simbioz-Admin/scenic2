@@ -20,7 +20,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-
+            this.listenTo( this.options.table, 'change:filter', this.render );
         },
 
         /**
@@ -30,7 +30,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (quiddity) {
-            return this.options.table.filterQuiddityOrClass( 'destination', quiddity );
+            return this.options.table.filterQuiddityOrClass( 'destination', quiddity, true );
         }
     } );
 

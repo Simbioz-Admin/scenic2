@@ -73,6 +73,7 @@ define( [
                 this.get( 'shmdatas' ).destroy();
                 // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );
+                this.scenicChannel.vent.trigger('quiddity:removed', this);
             }
         },
 
@@ -122,31 +123,6 @@ define( [
             }
             return _.some( shmdataReaders, function ( shm ) {
                 return ( shm.get( 'path' ) == shmdata.get( 'path' ) );
-            } );
-        },
-
-        //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
-        //  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
-        //  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
-        //  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
-        //  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
-        //  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
-        //
-
-
-        /**
-         *  Allows to remove a specific quiddity. We also check if there are quiddity of control associated with the quiddity to also remove
-         * TODO: Get this out of here
-         */
-
-        askDelete: function () {
-            var self = this;
-
-            //TODO: Get the confirmation in the UI
-            views.global.confirmation( function ( ok ) {
-                if ( ok ) {
-                    self.destroy();
-                }
             } );
         }
 

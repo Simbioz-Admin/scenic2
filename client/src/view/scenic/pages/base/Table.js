@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!template/scenic/table.html'
+    'text!template/scenic/pages/base/table.html'
 ], function ( _, Backbone, Marionette, TableTemplate ) {
 
     /**

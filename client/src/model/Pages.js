@@ -4,7 +4,7 @@ define( [
     'underscore',
     'jquery',
     'backbone',
-    'model/pages/base/Page'
+    'model/Page'
 ], function ( _, $, Backbone, Page ) {
 
     /**

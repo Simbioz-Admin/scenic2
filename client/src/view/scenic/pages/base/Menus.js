@@ -4,16 +4,14 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!template/scenic/table/menus.html',
-    'text!template/scenic/table/menu/subMenu.html'
-], function ( _, Backbone, Marionette, MenusTemplate, SubMenuTemplate ) {
+    'text!template/scenic/pages/base/menu/subMenu.html'
+], function ( _, Backbone, Marionette, SubMenuTemplate ) {
 
     /**
      *  @constructor
      *  @augments module:Marionette.LayoutView
      */
     var Menus = Marionette.ItemView.extend( {
-        template: _.template( MenusTemplate ),
         initialize: function () {
             this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
             this.subMenuTemplate = _.template( SubMenuTemplate );

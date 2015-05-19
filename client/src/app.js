@@ -1,22 +1,25 @@
 define( [
+    // Lib
     'underscore',
     'backbone',
     'mutators',
     'async',
     'jquery',
     'i18n',
-    // New Models
+    // Model
     'model/ClassDescriptions',
     'model/Quiddities',
-    'model/SIPDestinations',
-    'model/RTPDestinations',
-    'model/ControlDestinations',
+    //'model/connections/SIPDestinations',
+    //'model/connections/RTPDestinations',
+    //'model/connections/ControlDestinations',
     'model/Contacts',
-    // New Views
+    // View
     'view/Scenic'
 ], function ( _, Backbone, Mutators, async, $, i18n,
               // New Models
-              ClassDescriptions, Quiddities, SIPDestinations, RTPDestinations, ControlDestinations, Contacts,
+              ClassDescriptions, Quiddities,
+              //SIPDestinations, RTPDestinations, ControlDestinations,
+              Contacts,
               // New Views
               ScenicView ) {
 
@@ -66,24 +69,24 @@ define( [
                 self.quiddities.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
-            function ( callback ) {
+            /*function ( callback ) {
                 // Get RTP Destinations
                 self.sipDestinations = new SIPDestinations();
                 //self.sipDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
                 callback();
-            },
+            },*/
 
-            function ( callback ) {
+            /*function ( callback ) {
                 // Get RTP Destinations
                 self.rtpDestinations = new RTPDestinations();
                 self.rtpDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-            },
+            },*/
 
-            function ( callback ) {
+            /*function ( callback ) {
                 // Get Control Destinations
                 self.controlDestinations = new ControlDestinations();
                 self.controlDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-            },
+            },*/
 
             function ( callback ) {
                 self.contacts = new Contacts();

@@ -1,15 +1,18 @@
 "use strict";
 
 define( [
+    // Lib
     'underscore',
     'backbone',
     'marionette',
+    // Model
     'model/Pages',
     'model/pages/Sink',
     'model/pages/RTP',
     'model/pages/SIP',
     'model/pages/Control',
     'model/pages/Settings',
+    // View
     'view/scenic/pages/Sink',
     'view/scenic/pages/RTP',
     'view/scenic/pages/SIP',

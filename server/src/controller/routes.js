@@ -39,7 +39,7 @@ module.exports = function( app, config, switcherController ) {
 
     });
 
-    app.get('/classes_doc/:className?/:type?/:value?', function(req, res) {
+    /*app.get('/classes_doc/:className?/:type?/:value?', function(req, res) {
 
         if (req.params.type == "properties") {
             if (req.params.value) res.send(JSON.parse(switcher.get_property_description_by_class(req.params.className, req.params.value)));
@@ -52,14 +52,14 @@ module.exports = function( app, config, switcherController ) {
         } else {
             res.send(JSON.parse(switcher.get_classes_doc()));
         }
-    });
+    });*/
 
-    app.get('/get_info/:quiddName/:path', function(req, res){
+    /*app.get('/get_info/:quiddName/:path', function(req, res){
         var info = switcher.get_info(req.params.quiddName, req.params.path);
         res.send(JSON.parse(info));
-    });
+    });*/
 
-    app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res) {
+    /*app.get('/quidds/:quiddName?/:type?/:value?/:val?', function(req, res) {
         if (req.params.val) {
             res.send(JSON.parse(switcher.get_property_value(req.params.quiddName, req.params.value)))
         } else if (req.params.type == "properties") {
@@ -87,27 +87,27 @@ module.exports = function( app, config, switcherController ) {
 
             res.send(quiddsFiltered);
         }
-    });
+    });*/
 
 
-    app.get('/rtpDestinations', function(request, response) {
+    /*app.get('/rtpDestinations', function(request, response) {
         response.contentType('application/json');
         var destinations = switcher.invoke("dico","read", ["rtpDestinations"]);
         response.send(destinations);
-    });
+    });*/
 
 
-    app.get('/destinationsProperties', function(request, response) {
+    /*app.get('/destinationsProperties', function(request, response) {
         response.contentType('application/json');
         var destinations = switcher.invoke("dico","read", ["controlDestinations"]);
         response.send(destinations);
-    });
+    });*/
 
     /* temporary create fake values for users */
 
-    app.get('/users', function(req, res) {
+    /*app.get('/users', function(req, res) {
         res.contentType('application/json');
         var listUsers = switcherController.sipManager.getListUsers();
         res.send(listUsers);
-    });
+    });*/
 };

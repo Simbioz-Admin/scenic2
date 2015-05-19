@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/pages/base/Page'
+    'model/Page'
 ], function ( _, Backbone, socket, Page ) {
 
     /**

@@ -1,0 +1,15 @@
+<div class="controls">
+    <div class="call status <%=send_status%>"></div>
+    <div class="name">
+        <span><%=name%></span>
+    </div>
+    <div class="actions">
+        <div class="action">
+            <input class="send checkbox" type="checkbox" id="send_sip" name="send_sip" value="false" <% if(send_status == "calling"){ %> checked="checked" <% } %> >
+            <label class="checkbox" for="send_sip" data-i18n="[title]Send data to the user" title="Send data to the user"></label>
+        </div>
+        <div class="action remove">
+            <div class="icon"></div>
+        </div>
+    </div>
+</div>

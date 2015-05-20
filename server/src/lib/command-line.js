@@ -22,7 +22,7 @@ exports.parse = function( config ) {
         message += rpad( '-g, --guiport', 25 ) + "GUI port for Scenic (default is " + config.scenic.ports.min + ")\n";
         message += rpad( '-s, --soapport', 25 ) + "SOAP port (default is " + config.soap.ports.min + ")\n";
         message += rpad( '-i, --identification', 25 ) + "Identification name (default is " + config.nameComputer + ")\n";
-        message += rpad( '-r, --rtpsession', 25 ) + "RTP session name (default is " + config.rtpsession + ")\n";
+        message += rpad( '-r, --rtpsession', 25 ) + "RTP session name (default is " + config.rtp.quiddName + ")\n";
         message += rpad( '--sip', 25 ) + "SIP configuration (ex : --sip name=1010 port=" + config.sip.port + " address=" + config.sip.address + "\n";
         console.log( message );
         process.exit();
@@ -93,7 +93,7 @@ exports.parse = function( config ) {
      */
     if ( argv.r || argv.rtpsession ) {
         var rtpsession    = (argv.r ? argv.r : argv.rtpsession);
-        config.rtpsession = rtpsession;
+        config.rtp.quiddName = rtpsession;
     }
 
     /**

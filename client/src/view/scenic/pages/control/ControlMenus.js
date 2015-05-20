@@ -22,7 +22,7 @@ define( [
 
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'create',
+            'click @ui.source .item': 'createQuidditySource',
             'click @ui.properties .button': 'dropProperties',
             'click @ui.properties .item': 'create'
         },
@@ -59,18 +59,8 @@ define( [
                     title: property.get( 'short description' )
                 };
             }, this ), 'group' ) );
-        },
-
-        /**
-         * Handle source creation
-         *
-         * @param event
-         */
-        create: function ( event ) {
-            var id = $( event.currentTarget ).data( 'id' );
-            this.closeMenu();
-            this.scenicChannel.commands.execute( 'quiddity:create', app.classDescriptions.get( id ) );
         }
+
     } );
 
     return ControlMenus;

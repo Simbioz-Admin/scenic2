@@ -14,11 +14,11 @@ define( [
     'model/pages/Control',
     'model/pages/Settings',
     // View
-    'view/scenic/pages/Sink',
-    'view/scenic/pages/RTP',
-    'view/scenic/pages/SIP',
-    'view/scenic/pages/Control',
-    'view/scenic/pages/Settings',
+    'view/scenic/pages/SinkTableView',
+    'view/scenic/pages/RTPTableView',
+    'view/scenic/pages/SIPTableView',
+    'view/scenic/pages/ControlTableView',
+    'view/scenic/pages/SettingsTableView',
     'view/scenic/Menu',
     'view/scenic/Tabs',
     'view/scenic/SystemUsage',
@@ -75,6 +75,7 @@ define( [
             this.scenicChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
             this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
             this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
+            this.scenicChannel.vent.on( 'file:error', this._onFileError, this );
 
             // TODO: Legacy
             $( document ).tooltip();
@@ -111,6 +112,13 @@ define( [
             }
         },
 
+        //  ███╗   ███╗ ██████╗ ██████╗  █████╗ ██╗
+        //  ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║
+        //  ██╔████╔██║██║   ██║██║  ██║███████║██║
+        //  ██║╚██╔╝██║██║   ██║██║  ██║██╔══██║██║
+        //  ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║  ██║███████╗
+        //  ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
         /**
          * Confirmation Handler
          * Shows a modal to confirm an action
@@ -143,6 +151,13 @@ define( [
             callback( result );
         },
 
+        //   ██████╗ ██╗   ██╗██╗██████╗ ██████╗ ██╗████████╗██╗███████╗███████╗
+        //  ██╔═══██╗██║   ██║██║██╔══██╗██╔══██╗██║╚══██╔══╝██║██╔════╝██╔════╝
+        //  ██║   ██║██║   ██║██║██║  ██║██║  ██║██║   ██║   ██║█████╗  ███████╗
+        //  ██║▄▄ ██║██║   ██║██║██║  ██║██║  ██║██║   ██║   ██║██╔══╝  ╚════██║
+        //  ╚██████╔╝╚██████╔╝██║██████╔╝██████╔╝██║   ██║   ██║███████╗███████║
+        //   ╚══▀▀═╝  ╚═════╝ ╚═╝╚═════╝ ╚═════╝ ╚═╝   ╚═╝   ╚═╝╚══════╝╚══════╝
+
         /**
          * Quiddity Added Handler
          *
@@ -167,11 +182,39 @@ define( [
             }
         },
 
+        //  ███████╗██╗██╗     ███████╗███████╗
+        //  ██╔════╝██║██║     ██╔════╝██╔════╝
+        //  █████╗  ██║██║     █████╗  ███████╗
+        //  ██╔══╝  ██║██║     ██╔══╝  ╚════██║
+        //  ██║     ██║███████╗███████╗███████║
+        //  ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝
+
+        /**
+         * File Loading Handler
+         *
+         * @param fileName
+         * @private
+         */
         _onFileLoading: function( fileName ) {
             this.stopSpinner = spin();
         },
 
+        /**
+         * File Loaded Handler
+         * @param fileName
+         * @private
+         */
         _onFileLoaded: function( fileName ) {
+            this.stopSpinner();
+        },
+
+        /**
+         * File Error Handler
+         *
+         * @param fileName
+         * @private
+         */
+        _onFileError: function( fileName ) {
             this.stopSpinner();
         }
     } );

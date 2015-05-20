@@ -12,19 +12,19 @@ define( [
      *  @augments module:Marionette.LayoutView
      */
     var Table = Marionette.LayoutView.extend( {
-        tagName: 'div',
+        tagName:   'div',
         className: 'table',
-        template: _.template(TableTemplate),
-        regions: {
-            'menus': '.menus',
+        template:  _.template( TableTemplate ),
+        regions:   {
+            'menus':        '.menus',
             'destinations': '.destinations',
-            'sources': '.sources'
+            'sources':      '.sources'
         },
 
         /**
          * Initialize
          */
-        initialize: function( ) {
+        initialize: function () {
 
         }
     } );

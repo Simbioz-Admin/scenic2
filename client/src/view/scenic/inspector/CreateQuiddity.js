@@ -3,9 +3,8 @@ define( [
     'backbone',
     'marionette',
     'i18n',
-    'model/Quiddity',
     'text!template/scenic/inspector/createQuiddity.html'
-], function ( _, Backbone, Marionette, i18n, Quiddity, CreateQuiddityTemplate ) {
+], function ( _, Backbone, Marionette, i18n, CreateQuiddityTemplate ) {
 
     /**
      * Create Quiddity Form
@@ -14,44 +13,36 @@ define( [
      * @extends module:Marionette.ItemView
      */
     var CreateQuiddity = Marionette.ItemView.extend( {
-        template: _.template( CreateQuiddityTemplate ),
+        template:  _.template( CreateQuiddityTemplate ),
         className: 'create-quiddity',
-        ui:       {
-            'name': '#quiddityName',
+        ui:        {
+            'name':   '#quiddityName',
             'device': '#device',
             'create': '#create'
         },
-        events:   {
+        events:    {
             'click @ui.create': 'create'
         },
 
-        initialize: function () {
+        initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title = $.t('Create __quiddityClass__', { quiddityClass: this.model.get('class name')});
+            this.title         = $.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class name' )} );
+            this.callback      = config.callback;
+
+            //TODO: Handle devices stuff
+            /*classDescription.loadDevices( function ( error, devices ) {
+                                              if ( error ) {
+                                                  return;
+                                              }
+                                          }
+            );*/
         },
 
-        onAttach: function() {
-            var self = this;
-            // A little time is necessary before focus() works
-            setTimeout( function() {
-                $( self.ui.name ).focus();
-            }, 0 );
-        },
-
-        create: function() {
-            var self = this;
-            var name = this.ui.name.val();
-            var device = this.ui.device.val();
-            var quiddity = new Quiddity( { 'class': this.model.get('class name'), 'newName': name } );
-            quiddity.save( null, {
-                success: function ( quiddity ) {
-                    if ( device ) {
-                        quiddity.setProperty( 'device', this );
-                    }
-                },
-                error:   function ( error ) {
-                    self.scenicChannel.vent.trigger('error', error );
-                }
+        create: function () {
+            this.callback( {
+                type:   this.model.get( 'class name' ),
+                name:   this.ui.name.val(),
+                device: this.ui.device.val()
             } );
         }
 

@@ -16,8 +16,10 @@ define( [
 
     var SaveFile = ScenicModel.extend( {
         idAttribute: 'uri',
-        methodMap:  {
-            'create': function() { return ['saveFile', this.get('name')]; },
+        methodMap:   {
+            'create': function () {
+                return ['saveFile', this.get( 'name' )];
+            },
             'update': null,
             'patch':  null,
             'delete': null,
@@ -28,31 +30,39 @@ define( [
          * Initialize
          */
         initialize: function () {
-            ScenicModel.prototype.initialize.apply(this,arguments);
+            ScenicModel.prototype.initialize.apply( this, arguments );
         },
 
-        loadFile: function( callback ) {
+        loadFile: function ( callback ) {
             var self = this;
-            self.scenicChannel.vent.trigger('file:loading', self.get('name') );
-            socket.emit( 'loadFile', this.get('name'), function( error ) {
+            self.scenicChannel.vent.trigger( 'file:loading', self.get( 'name' ) );
+            socket.emit( 'loadFile', this.get( 'name' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger('error', error );
+                    self.scenicChannel.vent.trigger( 'file:error error', error );
                     return callback ? callback( error ) : null;
                 }
-                app.quiddities.fetch();
-                self.scenicChannel.vent.trigger('file:loaded', self.get('name') );
-                callback ? callback() : null;
+                // Refresh the quiddities after a reload
+                app.quiddities.fetch( {
+                    success: function () {
+                        self.scenicChannel.vent.trigger( 'file:loaded', self.get( 'name' ) );
+                        callback ? callback() : null;
+                    },
+                    error:   function ( error ) {
+                        self.scenicChannel.vent.trigger( 'file:error error', error );
+                        callback ? callback( error ) : null;
+                    }
+                } );
             } );
         },
 
-        saveFile: function( callback ) {
+        saveFile: function ( callback ) {
             var self = this;
-            socket.emit( 'saveFile', this.get('name'), function( error ) {
+            socket.emit( 'saveFile', this.get( 'name' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger('error', error );
+                    self.scenicChannel.vent.trigger( 'file:error error', error );
                     return callback ? callback( error ) : null;
                 }
-                self.scenicChannel.vent.trigger('file:saved', self.get('name') );
+                self.scenicChannel.vent.trigger( 'file:saved', self.get( 'name' ) );
                 callback ? callback() : null;
             } );
         }

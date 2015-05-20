@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/Page'
-], function ( _, Backbone, socket, Page ) {
+    'model/Page',
+    'model/Quiddity'
+], function ( _, Backbone, socket, Page, Quiddity ) {
 
     /**
      * Table Page
@@ -21,6 +22,7 @@ define( [
          */
         initialize: function () {
             Page.prototype.initialize.apply( this, arguments );
+            this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
             this.set('filter', null);
         },
 
@@ -31,7 +33,7 @@ define( [
          * @param quiddity
          * @returns {boolean}
          */
-        filterQuiddityOrClass: function ( type, quiddity, useFilter ) {
+        _filterQuiddityOrClass: function ( type, quiddity, useFilter ) {
             var className = quiddity.has( 'class name' ) ? quiddity.get( 'class name' ) : quiddity.get( 'class' );
             var category  = quiddity.get( 'category' );
             var included  = this.has( type ) && this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
@@ -42,16 +44,71 @@ define( [
             return included && !excluded && !filtered;
         },
 
+        filterSource: function( quiddity, useFilter ) {
+            return this._filterQuiddityOrClass( 'source', quiddity, useFilter );
+        },
+
+        filterDestination: function( quiddity, useFilter ) {
+            return this._filterQuiddityOrClass( 'destination', quiddity, useFilter );
+        },
+
+        /**
+         * Get source collection
+         *
+         * @returns {quiddities|*}
+         */
+        getSourceCollection: function() {
+            return app.quiddities;
+        },
+
+        /**
+         * Get a list of possible source classes
+         * @returns {Array.<T>|*|boolean}
+         */
         getSources : function() {
             return app.classDescriptions.filter( function ( classDescription ) {
-                return this.filterQuiddityOrClass( 'source', classDescription );
+                return this.filterSource( classDescription );
             }, this );
         },
 
+        /**
+         * Get a list of possible destination classes
+         * @returns {Array.<T>|*|boolean}
+         */
         getDestinations: function() {
             return app.classDescriptions.filter( function ( classDescription ) {
-                return this.filterQuiddityOrClass( 'destination', classDescription );
+                return this.filterDestination( classDescription );
             }, this );
+        },
+
+        /**
+         * Get destination collection
+         *
+         * @returns {quiddities|*}
+         */
+        getDestinationCollection: function() {
+            return app.quiddities;
+        },
+
+        /**
+         * Create a quiddity
+         *
+         * @param info
+         */
+        createQuiddity: function ( info ) {
+            var self     = this;
+            var quiddity = new Quiddity( {'class': info.type, 'newName': info.name} );
+            quiddity.save( null, {
+                success: function ( quiddity ) {
+                    if ( info.device ) {
+                        //TODO: What is this I don't even
+                        quiddity.setProperty( 'device', info.device );
+                    }
+                },
+                error:   function ( error ) {
+                    self.scenicChannel.vent.trigger( 'error', error );
+                }
+            } );
         },
 
         /**

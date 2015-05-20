@@ -25,8 +25,8 @@ describe( 'Configuration', function () {
         should.exist( config.lang );
         should.exist( config.host );
 
-        should.exist( config.rtpsession );
-        config.rtpsession.should.be.a( 'string' );
+        should.exist( config.rtp.quiddName );
+        config.rtp.quiddName.should.be.a( 'string' );
 
         should.exist( config.nameComputer );
         config.nameComputer.should.be.a( 'string' );

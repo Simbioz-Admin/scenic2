@@ -20,7 +20,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'listRtpDestinations'
+            'read':   'listRTPDestinations'
         },
 
         /**

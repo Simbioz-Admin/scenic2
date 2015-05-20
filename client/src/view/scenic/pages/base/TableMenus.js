@@ -74,6 +74,20 @@ define( [
         closeMenu: function ( event ) {
             $( '#sub-menu' ).remove();
             $('.overlay').off( 'click', this.bodyClickHandler);
+        },
+
+        /**
+         * Handle source creation
+         *
+         * @param event
+         */
+        createQuidditySource: function ( event ) {
+            this.closeMenu();
+            this.scenicChannel.commands.execute(
+                'quiddity:create',
+                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                _.bind( this.model.createQuiddity, this.model )
+            );
         }
     } );
     return Menus;

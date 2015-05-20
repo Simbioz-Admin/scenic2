@@ -36,7 +36,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (quiddity) {
-            return this.options.table.filterQuiddityOrClass( 'source', quiddity, true );
+            return this.options.table.filterSource( quiddity, true );
         }
     } );
 

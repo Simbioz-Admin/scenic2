@@ -64,7 +64,7 @@ define( [
          */
         filter: function (quiddity) {
             // Get back up to the table model to filter the displayed connections
-            return this.options.table.filterQuiddityOrClass( 'destination', quiddity, true );
+            return this.options.table.filterDestination( quiddity, true );
         },
 
         /**

@@ -14,6 +14,7 @@ define( [
      */
     var RTPMenus = TableMenusView.extend( {
         template: _.template( RTPMenusTemplate ),
+        className: 'rtp',
         ui: {
             'source': '.menu.source',
             'destination': '.menu.destination',
@@ -21,15 +22,14 @@ define( [
         },
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'create',
-            'click @ui.destination .button': 'dropDestinations',
-            'click @ui.destination .item': 'create',
+            'click @ui.source .item': 'createQuidditySource',
+            'click @ui.destination .button': 'createRTPDestination',
             'change @ui.filter': 'filter'
         },
 
         templateHelpers: function () {
             var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
-                return this.model.filterQuiddityOrClass( 'source', quiddity ) || this.model.filterQuiddityOrClass( 'destination', quiddity );
+                return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
             }, this ), function ( quiddity ) {
                 return quiddity.get( 'category' );
             } ) );
@@ -56,23 +56,15 @@ define( [
         },
 
         /**
-         * Drop the destinations menu
+         * Create RTP Destination
          *
          * @param event
          */
-        dropDestinations: function ( event ) {
-            this.drop( this.ui.destination, this.mapMenu( this.model.getDestinations() ) );
-        },
-
-        /**
-         * Handle source/destination creation
-         *
-         * @param event
-         */
-        create: function ( event ) {
-            var id = $( event.currentTarget ).data( 'id' );
-            this.closeMenu();
-            this.scenicChannel.commands.execute( 'quiddity:create', app.classDescriptions.get( id ) );
+        createRTPDestination: function ( event ) {
+            //DEBUG QUICK CREATE
+            console.log("Debug quick create");
+            this.model.createRTPDestination({name:'test'+Math.random(),host:'localhost',port:null});
+            //this.scenicChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
         },
 
         /**

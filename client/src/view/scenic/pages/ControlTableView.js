@@ -7,14 +7,14 @@ define( [
     'view/scenic/pages/base/Table',
     'view/scenic/pages/base/table/Sources',
     'view/scenic/pages/base/table/Destinations',
-    'view/scenic/pages/sink/SinkMenus',
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, SinkMenus ) {
+    'view/scenic/pages/control/ControlMenus'
+], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, ControlMenus ) {
 
     /**
-     * @constructor
-     * @extends TableView
+     *  @constructor
+     *  @augments TableView
      */
-    var Sink = TableView.extend( {
+    var Control = TableView.extend( {
 
         /**
          * Initialize
@@ -29,19 +29,19 @@ define( [
          * @private
          */
         onBeforeShow: function () {
-            this.showChildView( 'menus', new SinkMenus( {
+            this.showChildView( 'menus', new ControlMenus( {
                 model: this.model
             } ) );
             this.showChildView( 'sources', new SourcesView( {
                 table:      this.model,
-                collection: app.quiddities
+                collection: this.model.getSourceCollection()
             } ) );
             this.showChildView( 'destinations', new DestinationsView( {
                 table:      this.model,
-                collection: app.quiddities
+                collection: this.model.getDestinationCollection()
             } ) );
         }
     } );
 
-    return Sink;
+    return Control;
 } );

@@ -2,11 +2,12 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!template/scenic/inspector.html',
     'view/scenic/inspector/CreateQuiddity',
     'view/scenic/inspector/EditQuiddity',
-    'view/scenic/inspector/ShmdataInfo'
-], function ( _, Backbone, Marionette, InspectorTemplate, CreateQuiddityView, EditQuiddityView, ShmdataInfoView ) {
+    'view/scenic/inspector/CreateRTP',
+    'view/scenic/inspector/ShmdataInfo',
+    'text!template/scenic/inspector.html'
+], function ( _, Backbone, Marionette, CreateQuiddityView, EditQuiddityView, CreateRTPView, ShmdataInfoView, InspectorTemplate ) {
 
     /**
      *  @constructor
@@ -32,7 +33,7 @@ define( [
 
         childEvents: {
             'show': function () {
-                this.ui.title.html(this.currentPanel.title);
+                this.ui.title.html( this.currentPanel.title );
             }
         },
 
@@ -41,41 +42,38 @@ define( [
 
             // Draggable
             this.$el.draggable( {
-                cursor: "move",
-                handle: ".title",
+                cursor:      "move",
+                handle:      ".title",
                 containment: "window",
-                opacity: 0.75
+                opacity:     0.75
             } );
 
             this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
             this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );
+            this.scenicChannel.commands.setHandler( 'rtp:create', _.bind( this._onRTPCreate, this ) );
+            this.scenicChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
             this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
         },
 
-        close: function() {
+        close: function () {
             this.currentPanel = null;
             this.getRegion( 'content' ).empty();
-            this.$el.hide();
+            this.$el.fadeOut( 250 );
         },
 
         /**
          * Create Quiddity Handler
          * Display the quiddity creation form
+         * Uses a callback to confirm the creation request
          *
          * @param {ClassDescription} classDescription
+         * @param callback
          * @private
          */
-        _onQuiddityCreate: function ( classDescription ) {
-            var self = this;
-            // Load devices before continuing
-            classDescription.loadDevices( function ( error, devices ) {
-                if ( error ) {
-                    return;
-                }
-                self.currentPanel = new CreateQuiddityView( {model: classDescription} );
-                self.showChildView( 'content', self.currentPanel );
-                self.$el.show();
-            } );
+        _onQuiddityCreate: function ( classDescription, callback ) {
+            this.currentPanel = new CreateQuiddityView( { model: classDescription, callback: callback} );
+            this.showChildView( 'content', this.currentPanel );
+            this.$el.fadeIn(250);
         },
 
         /**
@@ -88,7 +86,31 @@ define( [
         _onQuiddityEdit: function ( quiddity ) {
             this.currentPanel = new EditQuiddityView( {model: quiddity} );
             this.showChildView( 'content', this.currentPanel );
-            this.$el.show();
+            this.$el.fadeIn( 250 );
+        },
+
+        /**
+         * Create RTP Destination Handler
+         * Display the RTP destination creation form
+         * Uses a callback to confirm the creation request
+         *
+         * @param callback
+         * @private
+         */
+        _onRTPCreate: function ( callback ) {
+            this.currentPanel = new CreateRTPView({ callback: callback });
+            this.showChildView( 'content', this.currentPanel );
+            this.$el.fadeIn( 250 );
+        },
+
+        /**
+         * RTP Destination Created Handler
+         * Closes the panel
+         *
+         * @private
+         */
+        _onRTPCreated: function ( ) {
+            this.close();
         },
 
         /**
@@ -97,10 +119,10 @@ define( [
          * @param {Shmdata} shmdata
          * @private
          */
-        _onShmdataInfo: function( shmdata ) {
+        _onShmdataInfo: function ( shmdata ) {
             this.currentPanel = new ShmdataInfoView( {model: shmdata} );
             this.showChildView( 'content', this.currentPanel );
-            this.$el.show();
+            this.$el.fadeIn( 250 );
         }
 
     } );

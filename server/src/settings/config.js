@@ -58,6 +58,10 @@ var config = {
     quiddName: 'SIP'
   },
 
+  rtp: {
+    quiddName: 'defaultrtp'
+  },
+
   // System Usage
   systemUsage: {
     period: 1.0, // In seconds
@@ -68,10 +72,6 @@ var config = {
     supported: ['en', 'fr']
   },
 
-  rtpsession: "defaultrtp",
-
-
-  privateQuiddities: ['dico', 'create_remove_spy', 'rtpsession', 'logger', 'runtime', 'systemusage', 'SOAPcontrolServer'],
 
 
 

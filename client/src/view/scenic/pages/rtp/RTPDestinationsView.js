@@ -4,17 +4,17 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/Destination'
-], function ( _, Backbone, Marionette, DestinationView ) {
+    'view/scenic/pages/rtp/RTPDestinationView'
+], function ( _, Backbone, Marionette, RTPDestinationView ) {
 
     /**
-     * Destination Collection
+     * RTP Destination Collection
      *
      * @constructor
      * @augments module:Marionette.CollectionView
      */
-    var Destinations = Marionette.CollectionView.extend( {
-        childView: DestinationView,
+    var RTPDestinations = Marionette.CollectionView.extend( {
+        childView: RTPDestinationView,
 
         /**
          * Initialize
@@ -34,5 +34,5 @@ define( [
         }
     } );
 
-    return Destinations;
+    return RTPDestinations;
 } );

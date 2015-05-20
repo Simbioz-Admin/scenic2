@@ -21,7 +21,7 @@ define( [
         },
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'create',
+            'click @ui.source .item': 'createQuidditySource',
             'click @ui.destination .button': 'dropDestinations',
             'click @ui.destination .item': 'create',
             'change @ui.filter': 'filter'
@@ -29,7 +29,7 @@ define( [
 
         templateHelpers: function () {
             var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
-                return this.model.filterQuiddityOrClass( 'source', quiddity ) || this.model.filterQuiddityOrClass( 'destination', quiddity );
+                return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
             }, this ), function ( quiddity ) {
                 return quiddity.get( 'category' );
             } ) );
@@ -58,17 +58,6 @@ define( [
          */
         dropDestinations: function ( event ) {
             this.drop( this.ui.destination, this.mapMenu( this.model.getDestinations() ) );
-        },
-
-        /**
-         * Handle source/destination creation
-         *
-         * @param event
-         */
-        create: function ( event ) {
-            var id = $( event.currentTarget ).data( 'id' );
-            this.closeMenu();
-            this.scenicChannel.commands.execute( 'quiddity:create', app.classDescriptions.get( id ) );
         },
 
         /**

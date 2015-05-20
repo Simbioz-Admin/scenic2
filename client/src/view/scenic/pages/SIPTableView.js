@@ -7,14 +7,14 @@ define( [
     'view/scenic/pages/base/Table',
     'view/scenic/pages/base/table/Sources',
     'view/scenic/pages/base/table/Destinations',
-    'view/scenic/pages/rtp/RTPMenus'
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, RTPMenus ) {
+    'view/scenic/pages/sip/SIPMenus',
+], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, SIPMenus ) {
 
     /**
      *  @constructor
      *  @augments TableView
      */
-    var RTP = TableView.extend( {
+    var SIP = TableView.extend( {
 
         /**
          * Initialize
@@ -29,19 +29,19 @@ define( [
          * @private
          */
         onBeforeShow: function( ) {
-            this.showChildView('menus', new RTPMenus({
+            this.showChildView('menus', new SIPMenus({
                 model: this.model
             }));
             this.showChildView('sources', new SourcesView({
                 table: this.model,
-                collection: app.quiddities
+                collection: this.model.getSourceCollection()
             }));
             this.showChildView('destinations', new DestinationsView({
                 table: this.model,
-                collection: app.quiddities
+                collection: this.model.getDestinationCollection()
             }));
         }
     } );
 
-    return RTP;
+    return SIP;
 } );

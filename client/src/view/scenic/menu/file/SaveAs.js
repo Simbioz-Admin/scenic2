@@ -34,9 +34,9 @@ define( [
         initialize: function () {
             var self = this;
             this.model = new SaveFile();
-            setTimeout( function() {
+            _.defer( function() {
                 $( self.ui.name ).focus();
-            }, 0 );
+            });
         },
 
         saveFile: function () {

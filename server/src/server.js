@@ -105,7 +105,7 @@ require('./bootstrap' )( function( err ) {
         message += colors.yellow(rpad(" Home path",        25 )) + config.scenicDependenciesPath + "\n";
         message += colors.yellow(rpad(" Scenic GUI",       25 )) + "http://" + config.host + ":" + config.scenic.port + "\n";
         message += colors.yellow(rpad(" SOAP port",        25 )) + config.soap.port + "\n";
-        message += colors.yellow(rpad(" RTP session name", 25 )) + config.rtpsession + "\n";
+        message += colors.yellow(rpad(" RTP session name", 25 )) + config.rtp.quiddName + "\n";
         message += colors.yellow(rpad(" Identification",   25 )) + config.nameComputer + "\n";
         message += colors.yellow(rpad(" Log level",        25 )) + config.logLevel + "\n";
         message += "\nSIP Information\n";

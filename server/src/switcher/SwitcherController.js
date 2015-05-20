@@ -56,7 +56,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
 
     // Create the default quiddities necessary to use switcher
     log.debug( 'Creating RTP Session...' );
-    switcher.create( 'rtpsession', this.config.rtpsession );
+    switcher.create( 'rtpsession', this.config.rtp.quiddName );
 
     // Create quiddity systemusage to get information about the CPU usage
     log.debug( 'Creating System Usage...' );

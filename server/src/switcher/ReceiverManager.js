@@ -2,6 +2,7 @@
 
 var _       = require( 'underscore' );
 var i18n    = require( 'i18next' );
+var slug    = require( 'slug' );
 var log     = require( '../lib/logger' );
 var logback = require( './logback' );
 
@@ -22,7 +23,7 @@ function ReceiverManager( config, switcher, io ) {
 /**
  * Initialize
  */
-ReceiverManager.prototype.initialize = function( ) {
+ReceiverManager.prototype.initialize = function () {
 
 };
 
@@ -32,11 +33,11 @@ ReceiverManager.prototype.initialize = function( ) {
  * @param socket
  */
 ReceiverManager.prototype.bindClient = function ( socket ) {
-    socket.on( "listRtpDestinations", this.listRtpDestinations.bind( this ) );
+    socket.on( "listRTPDestinations", this.listRTPDestinations.bind( this ) );
+    socket.on( "createRTPDestination", this.createRTPDestination.bind( this ) );
     //
     //
     //
-    socket.on( "create_destination", this.create_destination.bind( this ) );
     socket.on( "update_destination", this.update_destination.bind( this ) );
     socket.on( "remove_destination", this.remove_destination.bind( this ) );
     socket.on( "connect_destination", this.connect_destination.bind( this ) );
@@ -56,7 +57,7 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
  * @param cb
  * @returns {*}
  */
-ReceiverManager.prototype.listRtpDestinations = function ( cb ) {
+ReceiverManager.prototype.listRTPDestinations = function ( cb ) {
     try {
         var destinations = this.switcher.invoke( 'dico', 'read', ['rtpDestinations'] );
     } catch ( e ) {
@@ -77,111 +78,76 @@ ReceiverManager.prototype.listRtpDestinations = function ( cb ) {
 //
 
 /**
- *  Create a new Receiver : Add in dico destination, add destination in rtpsession and if a port soap is
- *  define we create  a quidd SOAPControlClient for create an httpsdpdec on the distance server
+ * Create a new RTP destination
+ * Adds the destination in rtpsession and if a soap port was
+ * defined we create a SOAPControlClient quiddity to create an httpsdpdec on the remote server
  *
- *  @param {string} destination name of the new destination
- *  @param {object} callback return informatin about the new destination and a message
- *  or an error message
+ * @param info
+ * @param cb
  **/
-ReceiverManager.prototype.create_destination = function ( destination, cb ) {
+ReceiverManager.prototype.createRTPDestination = function ( info, cb ) {
+    log.debug( 'Creating RTP destination', info );
 
-    /* Get the destinations existing stock in dico (propety destinations) */
-    var destinations = this.switcher.invoke( "dico", "read", ["rtpDestinations"] );
-    destinations     = JSON.parse( destinations );
-
-    var exist = _.findWhere( destinations, {
-        name: destination.name
-    } );
-
-    /* check if already in the collection */
-    if ( exist ) {
-        return cb( {
-            error: "the destination already exists"
-        } );
-        log.warn( "destination with the name " + destination.hostName + "already exists" );
+    // Validate
+    if ( !info || !info.name || !info.host ) {
+        return logback( i18n.t( 'Missing information to create an RTP destination' ), cb );
+    } else if ( info.port && !_.isNumber( info.port ) ) {
+        return logback( i18n.t( 'Invalid port' ), cb );
     }
 
-    /* define a id before create client side */
-    destination["id"]           = destination.name;
-    destination['data_streams'] = [];
-    destination.hostName        = destination.hostName.replace( "http://", "" );
+    // Sanity check
+    info.id   = slug( info.name );
+    info.host = info.host.replace( 'http://', '' );
 
+    // Load current destinations
+    try {
+        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !result || result.error ) {
+        return logback( result ? result.error : i18n.t( 'Could not load RTP destinations.' ), cb );
+    }
+    var destinations = result.destinations;
 
-    destinations.push( destination );
-
-    // var setDestination = this.switcher.set_property_value("dico", "rtpDestinations", JSON.stringify(destinations));
-    var setDestination  = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinations )] );
-    if ( !setDestination ) {
-        var msg = "Failed to set property destination for add " + destination.hostName;
-        log.error( msg );
-        return cb( {
-            error: msg
-        } );
+    // Check if the name is already taken
+    var nameExists = _.findWhere( destinations, {name: info.name} );
+    if ( nameExists ) {
+        return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: info.name} ), cb );
     }
 
-    /* add the destination to the quiddity rtpsession */
-
-    log.info( "add to rtpdefault", destination.id );
-    var addToRtpSession = this.switcher.invoke( "defaultrtp", "add_destination", [destination.id, destination.hostName] );
-
-    if ( !addToRtpSession ) {
-        var msg = i18n.t( "Failed to add the destination to the quidd RTPSession" );
-        log.error( msg );
-        return cb( {
-            error: msg
-        } );
+    // Add to the default RTP quiddity
+    var added = this.switcher.invoke( this.config.rtp.quiddName, 'add_destination', [info.name, info.host] );
+    if ( !added ) {
+        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', {rtpDestinationName: info.name} ), cb );
     }
 
-    /* if port SOAP define we create a quiddity for communiate with the other scenic machine */
+    // If we have a port, we create the SOAP quiddity
+    if ( info.port ) {
+        log.debug( 'SOAP port ' + info.port + ' provided, creating quiddity...' );
 
-    if ( destination.portSoap ) {
-        log.info( "Soap Define, we create quiddity for " );
-
-
-        /* 1. we create a SOAPControlClient for talk to te other scenic */
-
-        if ( destination.hostName.indexOf( "http://" ) < 0 ) {
-            destination.hostName = "http://" + destination.hostName;
+        // Create the quiddity
+        var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', 'soapControlClient-' + info.name );
+        if ( !createdSOAPClient ) {
+            return logback( i18n.t( 'Could not create SOAP client __soapClient__', {soapClient: info.name} ), cb );
         }
 
-        var addressClient    = destination.hostName + ":" + destination.portSoap,
-            createSoapClient = this.switcher.create( "SOAPcontrolClient", "soapControlClient-" + destination.id );
-
-        if ( !createSoapClient ) {
-            var msg = i18n.t( "Failed to create Quiddity " ) + destination.id;
-            log.error( msg );
-            return cb( {
-                error: msg
-            } );
+        // Assign the URL
+        var urlSet = this.switcher.invoke( 'soapControlClient-' + info.name, 'set_remote_url_retry', ['http://' + info.host + ':' + info.port] );
+        if ( !urlSet ) {
+            //TODO: Should probably remove the quiddity at this point
+            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', {soapClient: info.name} ), cb );
         }
 
-        /* 2. we set url of client on quidd SOAPControlClient */
-
-        var setUrl = this.switcher.invoke( "soapControlClient-" + destination.id, "set_remote_url_retry", [addressClient] );
-        if ( !setUrl ) {
-            var msg = i18n.t( "Failed to set the method set_remote_url_retry for " ) + destination.id;
-            log.error( msg );
-            return cb( {
-                error: msg
-            } );
+        // Attempt to http spd dec on remote machine
+        var httpSdpDecCreated = this.switcher.invoke( 'soapControlClient-' + info.name, 'create', ['httpsdpdec', this.config.nameComputer] );
+        if ( !httpSdpDecCreated ) {
+            log.warn('Could not create httpSdpDec');
         }
-
-        /* 3. we try to create soapClient on the client scenic */
-
-        var CreateHttpsdpdec = this.switcher.invoke( "soapControlClient-" + destination.id, "create", ["httpsdpdec", this.config.nameComputer] );
-        log.info( "Quidds httpsdpdec created?", CreateHttpsdpdec );
-
     }
 
-    /* callback success create destination */
-    cb( {
-        destination: destination,
-        success:     "The destination " + destination.name + " is added"
-    } );
-    /* Send all creation of destination */
-    this.io.emit( "create_destination", destination );
-
+    cb();
+    //this.io.emit( 'createRtpDestination', destination );
 };
 
 /**
@@ -353,7 +319,7 @@ ReceiverManager.prototype.update_destination = function ( oldId, destination, cb
 
         /* 2. recreate destination*/
 
-        self.create_destination( destination, function ( data ) {
+        self.createRtpDestination( destination, function ( data ) {
             if ( data.error ) {
                 return log.error( data.error );
             }

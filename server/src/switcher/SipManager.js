@@ -24,6 +24,13 @@ function SipManager( config, switcher, io ) {
 }
 
 /**
+ * Initialize
+ */
+SipManager.prototype.initialize = function( ) {
+
+};
+
+/**
  * Binds a new client socket
  *
  * @param socket

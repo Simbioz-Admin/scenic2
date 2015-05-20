@@ -5,6 +5,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'lib/spin',
     // Model
     'model/Pages',
     'model/pages/Sink',
@@ -18,23 +19,28 @@ define( [
     'view/scenic/pages/SIP',
     'view/scenic/pages/Control',
     'view/scenic/pages/Settings',
+    'view/scenic/Menu',
     'view/scenic/Tabs',
     'view/scenic/SystemUsage',
     'view/scenic/Notifications',
     'view/scenic/Inspector',
-    'view/scenic/modal/Confirmation'
-], function ( _, Backbone, Marionette, Pages,
+    'view/scenic/modal/Confirmation',
+    // Template
+    'text!template/scenic.html'
+], function ( _, Backbone, Marionette, spin,
+              Pages,
               SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
               SinkView, RTPView, SIPView, ControlView, SettingsView,
-              TabsView, SystemUsageView, NotificationsView, InspectorView, ConfirmationView ) {
+              MenuView, TabsView, SystemUsageView, NotificationsView, InspectorView, ConfirmationView,
+              ScenicTemplate ) {
 
     /**
      * @constructor
      * @augments module:Marionette.LayoutView
      */
     var ScenicView = Marionette.LayoutView.extend( {
+        template: _.template(ScenicTemplate),
         el:       '#scenic',
-        template: false,
 
         regions: {
             tabs:      '#tabs',
@@ -67,6 +73,8 @@ define( [
             //TODO: Put in notification manager
             this.scenicChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
             this.scenicChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
+            this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
+            this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
 
             // TODO: Legacy
             $( document ).tooltip();
@@ -74,15 +82,18 @@ define( [
         },
 
         /**
-         * Before Render
+         * Render
          * Special case for the moment as we don't use a master application view to render us
          */
-        onBeforeRender: function () {
+        onRender: function () {
+            this.showChildView( 'menu', new MenuView( ) );
             this.showChildView( 'tabs', new TabsView( { collection: this.pages } ) );
             this.showChildView( 'usage', new SystemUsageView() );
             this.showChildView( 'inspector', new InspectorView() );
 
             this.showPage( this.pages.getCurrentPage() );
+
+            this.$el.fadeIn(500);
         },
 
         /**
@@ -154,6 +165,14 @@ define( [
             if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
                 this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ removed', {name: quiddity.get( 'name' )} ) );
             }
+        },
+
+        _onFileLoading: function( fileName ) {
+            this.stopSpinner = spin();
+        },
+
+        _onFileLoaded: function( fileName ) {
+            this.stopSpinner();
         }
     } );
     return ScenicView;

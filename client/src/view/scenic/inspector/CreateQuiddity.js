@@ -35,7 +35,7 @@ define( [
             // A little time is necessary before focus() works
             setTimeout( function() {
                 $( self.ui.name ).focus();
-            }, 1 );
+            }, 0 );
         },
 
         create: function() {

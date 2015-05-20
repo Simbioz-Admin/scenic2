@@ -41,7 +41,8 @@ var config = {
       max: 8089,
       retrieve: 1
     },
-    port: null //Automatic
+    port: null, //Automatic
+    quiddName: 'soap'
   },
 
   // SIP Configuration
@@ -55,6 +56,12 @@ var config = {
     //address: "scenic.sat.qc.ca"
     address : "10.10.30.235",
     quiddName: 'SIP'
+  },
+
+  // System Usage
+  systemUsage: {
+    period: 1.0, // In seconds
+    quiddName: 'systemusage'
   },
 
   locale: {
@@ -80,7 +87,6 @@ var config = {
   scenicDependenciesPath: scenicHomePath,
   scenicSavePath: scenicHomePath + "/save_files/",
   pathLogs: scenicHomePath + '/logs/',
-  systemusagePeriod: '1.0'
 };
 
 module.exports = config;

@@ -99,7 +99,6 @@ define( [
          * @returns {*}
          */
         sync: function ( method, collection, options ) {
-            var self    = this;
             var command = this.methodMap[method];
             if ( command ) {
                 var callback = function ( error, result ) {

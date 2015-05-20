@@ -7,6 +7,7 @@ define( [
     'jquery',
     'i18n',
     // Model
+    'model/SaveFiles',
     'model/ClassDescriptions',
     'model/Quiddities',
     //'model/connections/SIPDestinations',
@@ -16,24 +17,24 @@ define( [
     // View
     'view/Scenic'
 ], function ( _, Backbone, Mutators, async, $, i18n,
-              // New Models
-              ClassDescriptions, Quiddities,
-              //SIPDestinations, RTPDestinations, ControlDestinations,
+              // Models
+              SaveFiles, ClassDescriptions, Quiddities,
               Contacts,
-              // New Views
+              // Views
               ScenicView ) {
 
-    var classDescriptions = null;
-    var quiddities = null;
-    var sipDestinations = null;
-    var rtpDestinations = null;
+    var saveFiles           = null;
+    var classDescriptions   = null;
+    var quiddities          = null;
+    var sipDestinations     = null;
+    var rtpDestinations     = null;
     var controlDestinations = null;
-    var contacts = null;
-    var tables = null;
+    var contacts            = null;
+    var tables              = null;
 
     var config = null;
 
-    var initialize = function ( config ) {
+    var initialize = function ( config, callback ) {
 
         if ( this.initialized ) {
             return;
@@ -59,6 +60,12 @@ define( [
 
             function ( callback ) {
                 // Get class descriptions
+                self.saveFiles = new SaveFiles();
+                self.saveFiles.fetch( {success: _.partial( callback, null ), error: callback} );
+            },
+
+            function ( callback ) {
+                // Get class descriptions
                 self.classDescriptions = new ClassDescriptions();
                 self.classDescriptions.fetch( {success: _.partial( callback, null ), error: callback} );
             },
@@ -70,23 +77,23 @@ define( [
             },
 
             /*function ( callback ) {
-                // Get RTP Destinations
-                self.sipDestinations = new SIPDestinations();
-                //self.sipDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-                callback();
-            },*/
+             // Get RTP Destinations
+             self.sipDestinations = new SIPDestinations();
+             //self.sipDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+             callback();
+             },*/
 
             /*function ( callback ) {
-                // Get RTP Destinations
-                self.rtpDestinations = new RTPDestinations();
-                self.rtpDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-            },*/
+             // Get RTP Destinations
+             self.rtpDestinations = new RTPDestinations();
+             self.rtpDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+             },*/
 
             /*function ( callback ) {
-                // Get Control Destinations
-                self.controlDestinations = new ControlDestinations();
-                self.controlDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-            },*/
+             // Get Control Destinations
+             self.controlDestinations = new ControlDestinations();
+             self.controlDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
+             },*/
 
             function ( callback ) {
                 self.contacts = new Contacts();
@@ -95,12 +102,21 @@ define( [
 
         ], function ( error ) {
             if ( error ) {
+                alert( error );
                 console.error( error );
+                if ( callback ) {
+                    callback( error );
+                }
+                return;
             }
 
             // Scenic Main View
             var scenicView = new ScenicView( self );
             scenicView.render();
+
+            if ( callback ) {
+                callback();
+            }
         } );
 
         this.initialized = true;
@@ -109,6 +125,7 @@ define( [
     return {
         config:              config,
         initialize:          initialize,
+        saveFiles:           saveFiles,
         classDescriptions:   classDescriptions,
         quiddities:          quiddities,
         sipDestinations:     sipDestinations,

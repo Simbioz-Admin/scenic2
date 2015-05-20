@@ -20,6 +20,13 @@ function ReceiverManager( config, switcher, io ) {
 }
 
 /**
+ * Initialize
+ */
+ReceiverManager.prototype.initialize = function( ) {
+
+};
+
+/**
  * Binds a new client socket
  *
  * @param socket

@@ -38,7 +38,7 @@ define( [
             }));
             this.showChildView('destinations', new RTPDestinationsView({
                 table: this.model,
-                collection: this.model.getDestinationCollection()
+                collection: this.model.destinations
             }));
         }
     } );

@@ -5,8 +5,9 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/pages/base/Table'
-], function ( $, _, Backbone, socket,  Table ) {
+    'model/pages/base/Table',
+    'model/pages/rtp/RTPDestinations'
+], function ( $, _, Backbone, socket, Table, RTPDestinations ) {
 
     /**
      * RTP Table
@@ -34,9 +35,11 @@ define( [
          */
         initialize: function () {
             Table.prototype.initialize.apply( this, arguments );
+
+            this.destinations = new RTPDestinations( { property: app.quiddities.get(app.config.rtp.quiddName ).get('properties' ).get('destinations-json') });
         },
 
-        getDestinationCollection: function() {
+        /*getDestinationCollection: function() {
             var rtp = app.quiddities.get(app.config.rtp.quiddName);
             if ( !rtp ) {
                 return null;
@@ -44,7 +47,7 @@ define( [
             var destinations = rtp.get('properties' ).get('destinations-json');
            // if ( !destinations || !)
             console.log( rtp, app.config.rtp.quiddName );
-        },
+        },*/
 
         /**
          * Create an RTP Destination

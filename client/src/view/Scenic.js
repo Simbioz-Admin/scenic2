@@ -166,7 +166,7 @@ define( [
          */
         _onQuiddityAdded: function ( quiddity ) {
             if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
-                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ added', {name: quiddity.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ added', {name: quiddity.id} ) );
             }
         },
 
@@ -178,7 +178,7 @@ define( [
          */
         _onQuiddityRemoved: function ( quiddity ) {
             if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
-                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ removed', {name: quiddity.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ removed', {name: quiddity.id} ) );
             }
         },
 

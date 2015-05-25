@@ -3,8 +3,9 @@
 define( [
     'underscore',
     'backbone',
+    'lib/socket',
     'model/base/ScenicModel'
-], function ( _, Backbone, ScenicModel ) {
+], function ( _, Backbone, socket, ScenicModel ) {
 
     /**
      * RTP Destination
@@ -23,7 +24,7 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['createRTPDestination' /* TODO */];
+                return ['createRTPDestination', this.get('info' ).name, this.get('info' ).host, this.get('info' ).port];
             },
             'update': null,
             'patch':  null,
@@ -31,6 +32,40 @@ define( [
                 return ['removeRTPDestination', this.id];
             },
             'read':   null
+        },
+
+        mutators: {
+            port: {
+                transient: true,
+                get: function() {
+                    var ctrlClient = app.quiddities.get(app.config.soap.controlClientPrefix + this.id );
+                    if ( !ctrlClient ) {
+                        return null;
+                    }
+                    var url = ctrlClient.get('properties' ).get('url' ).get('value');
+                    if ( !url ) {
+                        return null;
+                    }
+                    return url.substr( url.lastIndexOf(':') + 1 );
+                }
+            }
+        },
+
+        /**
+         *  Edit Quiddity
+         *  Put the quiddity in edit mode by updating its properties and descriptions,
+         *  then subscribing to get real-time updates
+         */
+        edit: function () {
+            var self = this;
+            this.scenicChannel.commands.execute( 'rtp:edit', this, function( info ) {
+                socket.emit( 'updateRTPDestination', self.id, info, function( error ) {
+                    if ( error ) {
+                        self.scenicChannel.vent.trigger( 'error', error );
+                        return;
+                    }
+                } )
+            } );
         }
     } );
 

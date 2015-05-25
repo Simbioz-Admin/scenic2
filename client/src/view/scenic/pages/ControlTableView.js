@@ -16,6 +16,8 @@ define( [
      */
     var Control = TableView.extend( {
 
+        className: 'table control',
+
         /**
          * Initialize
          */

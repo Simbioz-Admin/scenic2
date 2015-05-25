@@ -71,13 +71,6 @@ define(
 
           console.log('toggle_connection');
 
-          /* if transfer we ask port for connect to the receiver */
-          if (this.model.get("id") == "transferRtp") {
-            /* if already connect */
-            if (box.hasClass("active")) return socket.emit("remove_connection", path, destination, function(ok) {});
-            box.html("<div class='content-port-destination' ><input id='port_destination' autofocus='autofocus' type='text' placeholder='"+$.t('specify an even port')+"'></div>");
-          }
-
           /* if transferSip we ask to add shmdata to the user */
           if (this.model.get("id") == "transferSip") {
             var attach = box.hasClass("active") ? false : true;
@@ -86,64 +79,8 @@ define(
               views.global.notification("valid", msg);
             });
           }
-          if (this.model.get("id") == "sink") {
-            /* Find information about the number of connection possible */
-            if (box.hasClass("active")) {
-              socket.emit("invoke", destination, "disconnect", [path], function(data) {});
-            } else {
-
-              socket.emit('get_info', destination, 'shmdata', function(shmdata) {
-                var nbConnectionExisting = (shmdata.reader != 'null') ? _.size(shmdata.reader) : 0;
-                var maxReader = parseInt(shmdata.max_reader);
-                if (maxReader > nbConnectionExisting  || maxReader == 0) {
-                  socket.emit("invoke", destination, "connect", [path], function(data) {});
-
-                } else {
-                  if (maxReader == 1) {
-                    socket.emit("invoke", destination, "disconnect-all", [], function(data) {
-                      socket.emit("invoke", destination, "connect", [path], function(data) {});
-                    });
-                  } else {
-                    views.global.notification('error', $.t('you have reached the maximum connection. The limit is ') + maxReader);
-                  }
-                }
-
-              });
-
-
-            }
-          }
 
         },
-
-        set_connection: function(e) {
-          var that = this;
-
-          if (e.which == 13) //touch enter
-          {
-            var box = $(e.target).parent(),
-              id = $(e.target).closest("td").data("destination"),
-              path = $(e.target).closest("tr").data("path"),
-              quiddName = $(e.target).closest("tr").data("quiddname"),
-              port = $(e.target).val(),
-              portSoap = this.model.get("destinations").get(id).get("portSoap"),
-              that = this;
-
-            socket.emit("connect_destination", quiddName, path, id, port, portSoap, function(ok) {
-              that.removeInputDestination(e);
-            });
-          }
-        },
-
-        /* 
-         *  removes the input who we defined the port
-         */
-        removeInputDestination: function(element) {
-          $(element.target).parent().parent().html("");
-        },
-
-
-
 
         /* 
          * Called for get the list of device Midi

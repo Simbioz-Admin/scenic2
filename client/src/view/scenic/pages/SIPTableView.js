@@ -16,6 +16,8 @@ define( [
      */
     var SIP = TableView.extend( {
 
+        className: 'table sip',
+
         /**
          * Initialize
          */

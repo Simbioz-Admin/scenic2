@@ -6,15 +6,18 @@ define( [
     'marionette',
     'view/scenic/pages/base/TableView',
     'view/scenic/pages/base/table/SourcesView',
+    'view/scenic/pages/rtp/RTPConnectionView',
     'view/scenic/pages/rtp/RTPDestinationsView',
     'view/scenic/pages/rtp/RTPMenus'
-], function ( _, Backbone, Marionette, TableView, SourcesView, RTPDestinationsView, RTPMenus ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, RTPConnectionView, RTPDestinationsView, RTPMenus ) {
 
     /**
      *  @constructor
      *  @augments TableView
      */
     var RTP = TableView.extend( {
+
+        className: 'table rtp',
 
         /**
          * Initialize
@@ -34,7 +37,8 @@ define( [
             }));
             this.showChildView('sources', new SourcesView({
                 table: this.model,
-                collection: this.model.getSourceCollection()
+                collection: this.model.getSourceCollection(),
+                connectionView: RTPConnectionView
             }));
             this.showChildView('destinations', new RTPDestinationsView({
                 table: this.model,

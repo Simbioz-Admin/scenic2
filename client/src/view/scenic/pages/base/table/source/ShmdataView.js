@@ -44,8 +44,11 @@ define( [
         /**
          * Initialize
          */
-        initialize: function (  ) {
+        initialize: function ( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            if ( this.options.connectionView ) {
+                this.childView = this.options.connectionView;
+            }
         },
 
         /**

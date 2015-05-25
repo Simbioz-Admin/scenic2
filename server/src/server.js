@@ -73,11 +73,6 @@ require('./bootstrap' )( function( err ) {
         function(callback) {
             // ScenicIo Client
             scenicIo.initialize(config, io, switcher);
-
-            // IRC Client
-            //FIXME: IRC is not enabled in this version
-            //irc.initialize(io);
-
             callback();
         },
 

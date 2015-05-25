@@ -61,11 +61,7 @@ define( [
          * @param event
          */
         createRTPDestination: function ( event ) {
-            //DEBUG QUICK CREATE
-            console.log("Debug quick create");
-            this.model.createRTPDestination({name:'test'+Math.random(),host:'localhost',port:8086});
-            //TODO: Have this in a scenic model
-            //this.scenicChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
+            this.scenicChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
         },
 
         /**

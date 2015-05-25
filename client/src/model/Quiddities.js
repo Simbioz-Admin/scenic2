@@ -15,29 +15,14 @@ define( [
      * @extends ScenicCollection
      */
     var Quiddities = ScenicCollection.extend( {
-        model: Quiddity,
-        methodMap:  {
+        model:     Quiddity,
+        methodMap: {
             'create': null,
             'update': null,
             'patch':  null,
             'delete': null,
             'read':   'getQuiddities'
         },
-
-        /**
-         * Ignored quiddities
-         * Internal quiddities for which we don't really care in the UI
-         * TODO: Put this on the server so that we never know about them
-         */
-        ignoredQuiddities: [
-            'dico',
-            'create_remove_spy',
-            'rtpsession',
-            'logger',
-            'runtime',
-            'logger',
-            'SOAPcontrolServer'
-        ],
 
         /**
          * Initialize
@@ -58,14 +43,12 @@ define( [
          * @param socketId
          */
         _onCreate: function ( quiddityData, socketId ) {
-            if ( !_.contains( this.ignoredQuiddities, quiddityData.class ) ) {
-                var quiddity = this.add( quiddityData, {merge: true} );
-                this.scenicChannel.vent.trigger('quiddity:added', quiddity);
-                // If we created it, start editing it
-                if ( socket.id == socketId ) {
-                    //TODO: Send quiddity:created with local flag instead
-                    quiddity.edit();
-                }
+            var quiddity = this.add( quiddityData, {merge: true} );
+            this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
+            // If we created it, start editing it
+            if ( socket.id == socketId ) {
+                //TODO: Send quiddity:created with local flag instead
+                quiddity.edit();
             }
         }
     } );

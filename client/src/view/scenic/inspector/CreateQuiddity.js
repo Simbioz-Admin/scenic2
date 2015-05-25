@@ -38,6 +38,10 @@ define( [
             );*/
         },
 
+        onAttach: function() {
+            _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
+        },
+
         create: function () {
             this.callback( {
                 type:   this.model.get( 'class' ),

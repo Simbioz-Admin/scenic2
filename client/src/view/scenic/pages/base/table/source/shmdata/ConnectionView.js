@@ -13,8 +13,8 @@ define( [
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var Source = Marionette.ItemView.extend( {
-        template: _.template( ConnectionTemplate ),
+    var ConnectionView = Marionette.ItemView.extend( {
+        template:  _.template( ConnectionTemplate ),
         className: 'connection',
 
         events: {
@@ -24,31 +24,30 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( options ) {
+        initialize: function ( options ) {
             var self = this;
 
             // Keep options internally
-            this.shmdata = options.shmdata;
+            this.shmdata     = options.shmdata;
             this.destination = options.model;
-            this.table = options.table;
+            this.table       = options.table;
 
             // Re-render when destination shmdatas change, it might mean we connected/disconnected
-            this.listenTo( this.destination.get('shmdatas'), 'update', this.render );
+            this.listenTo( this.destination.get( 'shmdatas' ), 'update', this.render );
 
             // Check if we can connect, this only need to happen once
-            // TODO: Should put into a matrix model on the server
-            this.options.table.canConnect( this.shmdata, this.destination, function( canConnect ) {
+            this.options.table.canConnect( this.shmdata, this.destination, function ( canConnect ) {
                 self.canConnect = canConnect;
-                self.$el.removeClass('enabled disabled' ).addClass( self.canConnect ? 'enabled' : 'disabled' );
+                self.$el.removeClass( 'enabled disabled' ).addClass( self.canConnect ? 'enabled' : 'disabled' );
             } );
         },
 
-        onRender: function() {
+        onRender: function () {
             // Check if we are connected
-            this.$el.removeClass('active inactive' ).addClass( this.table.isConnected( this.shmdata, this.destination ) ? 'active' : 'inactive' );
+            this.$el.removeClass( 'active inactive' ).addClass( this.table.isConnected( this.shmdata, this.destination ) ? 'active' : 'inactive' );
         },
 
-        toggleConnection: function() {
+        toggleConnection: function () {
             if ( !this.canConnect ) {
                 return;
             }
@@ -60,5 +59,5 @@ define( [
         }
     } );
 
-    return Source;
+    return ConnectionView;
 } );

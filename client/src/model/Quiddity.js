@@ -83,11 +83,7 @@ define( [
          *  then subscribing to get real-time updates
          */
         edit: function () {
-            //TODO: Get properties
-            //TODO: Get methods
-            //TODO: Subscribe socket.emit( "subscribe_info_quidd", self.id, socket.id );
-            //TODO: Unsubscribe on end edit
-            //TODO: If we choose to stay subscribed always then move this in the inspector on quiddity:created
+            //TODO: Move to inspector
             this.scenicChannel.commands.execute( 'quiddity:edit', this );
         }
 

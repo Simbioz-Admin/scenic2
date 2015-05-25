@@ -2,6 +2,7 @@
 
 var _       = require( 'underscore' );
 var i18n    = require( 'i18next' );
+var async   = require( 'async' );
 var slug    = require( 'slug' );
 var log     = require( '../lib/logger' );
 var logback = require( './logback' );
@@ -33,15 +34,32 @@ ReceiverManager.prototype.initialize = function () {
  * @param socket
  */
 ReceiverManager.prototype.bindClient = function ( socket ) {
-    //socket.on( "listRTPDestinations", this.listRTPDestinations.bind( this ) );
     socket.on( "createRTPDestination", this.createRTPDestination.bind( this ) );
     socket.on( "removeRTPDestination", this.removeRTPDestination.bind( this ) );
     socket.on( "connectRTPDestination", this.connectRTPDestination.bind( this ) );
+    socket.on( "disconnectRTPDestination", this.disconnectRTPDestination.bind( this ) );
+    socket.on( "updateRTPDestination", this.updateRTPDestination.bind( this ) );
     //
     //
     //
-    socket.on( "update_destination", this.update_destination.bind( this ) );
-    socket.on( "remove_connection", this.remove_connection.bind( this ) );
+};
+
+/**
+ * Refresh httpSdpDec of the remote receiver
+ *
+ * @param id {string} Id of receiver
+ * @param cb {object} return an error if exist
+ */
+ReceiverManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
+    var self = this;
+    setTimeout( function () {
+        var url       = 'http://' + self.config.host + ':' + self.config.soap.port + '/sdp?rtpsession=' + self.config.rtp.quiddName + '&destination=' + id;
+        log.debug( 'Refreshing httpSdpDec', url );
+        var refreshed = self.switcher.invoke( self.config.soap.controlClientPrefix + id, 'invoke1', [self.config.nameComputer, 'to_shmdata', url] );
+        if ( !refreshed ) {
+            return cb( 'Error refreshing httpSdpDec' );
+        }
+    }, 2000 );
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
@@ -52,45 +70,27 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
 //   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
 
 /**
- * List RTP Destinations
- *
- * @deprecated
- * @param cb
- * @returns {*}
- */
-/*ReceiverManager.prototype.listRTPDestinations = function ( cb ) {
- try {
- var destinations = this.switcher.invoke( 'dico', 'read', ['rtpDestinations'] );
- } catch ( e ) {
- return logback( e, cb );
- }
- if ( !destinations ) {
- return logback( i18n.t( 'Could not list RTP destinations' ), cb );
- }
- cb( null, destinations );
- };*/
-
-/**
  * Create a new RTP destination
  * Adds the destination in rtpsession and if a soap port was
  * defined we create a SOAPControlClient quiddity to create an httpsdpdec on the remote server
  *
- * @param info
+ * @param name
+ * @param host
+ * @param port
  * @param cb
  **/
-ReceiverManager.prototype.createRTPDestination = function ( info, cb ) {
-    log.debug( 'Creating RTP destination', info );
+ReceiverManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
+    log.debug( 'Creating RTP destination', name, host, port );
 
     // Validate
-    if ( !info || !info.name || !info.host ) {
+    if ( !name || !host ) {
         return logback( i18n.t( 'Missing information to create an RTP destination' ), cb );
-    } else if ( info.port && !_.isNumber( info.port ) ) {
-        return logback( i18n.t( 'Invalid port' ), cb );
+    } else if ( port && isNaN( parseInt( port ) ) ) {
+        return logback( i18n.t( 'Invalid port __port__', {port: port} ), cb );
     }
 
     // Sanity check
-    info.id   = /*slug(*/ info.name /*)*/;
-    info.host = info.host.replace( 'http://', '' );
+    host = host.replace( 'http://', '' );
 
     // Load current destinations
     try {
@@ -105,36 +105,52 @@ ReceiverManager.prototype.createRTPDestination = function ( info, cb ) {
     var destinations = result.destinations;
 
     // Check if the name is already taken
-    var nameExists = _.findWhere( destinations, {name: info.name} );
+    var nameExists = _.findWhere( destinations, {name: name} );
     if ( nameExists ) {
-        return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: info.name} ), cb );
+        return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: name} ), cb );
     }
 
     // Add to the default RTP quiddity
-    var added = this.switcher.invoke( this.config.rtp.quiddName, 'add_destination', [info.name, info.host] );
+    try {
+        var added = this.switcher.invoke( this.config.rtp.quiddName, 'add_destination', [name, host] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !added ) {
-        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', {rtpDestinationName: info.name} ), cb );
+        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', {rtpDestinationName: name} ), cb );
     }
 
     // If we have a port, we create the SOAP quiddity
-    if ( info.port ) {
-        log.debug( 'SOAP port ' + info.port + ' provided, creating quiddity...' );
+    if ( port ) {
+        log.debug( 'SOAP port ' + port + ' provided, creating quiddity...' );
 
         // Create the quiddity
-        var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', this.config.soap.controlClientPrefix + info.name );
+        try {
+            var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', this.config.soap.controlClientPrefix + name );
+        } catch ( e ) {
+            return logback( e, cb );
+        }
         if ( !createdSOAPClient ) {
-            return logback( i18n.t( 'Could not create SOAP client __soapClient__', {soapClient: info.name} ), cb );
+            return logback( i18n.t( 'Could not create SOAP client __soapClient__', {soapClient: name} ), cb );
         }
 
         // Assign the URL
-        var urlSet = this.switcher.invoke( this.config.soap.controlClientPrefix + info.name, 'set_remote_url_retry', ['http://' + info.host + ':' + info.port] );
+        try {
+            var urlSet = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+        } catch ( e ) {
+            return logback( e, cb );
+        }
         if ( !urlSet ) {
             //TODO: Should probably remove the quiddity at this point
-            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', {soapClient: info.name} ), cb );
+            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', {soapClient: name} ), cb );
         }
 
-        // Attempt to http spd dec on remote machine
-        var httpSdpDecCreated = this.switcher.invoke( this.config.soap.controlClientPrefix + info.name, 'create', ['httpsdpdec', this.config.nameComputer] );
+        // Attempt to create httpsdpdec on remote machine
+        try {
+            var httpSdpDecCreated = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', this.config.nameComputer] );
+        } catch ( e ) {
+            return logback( e, cb );
+        }
         if ( !httpSdpDecCreated ) {
             log.warn( 'Could not create httpSdpDec' );
         }
@@ -153,26 +169,39 @@ ReceiverManager.prototype.removeRTPDestination = function ( id, cb ) {
     log.debug( 'Removing RTP destination', id );
 
     // Remove the destination
-    var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_destination', [id] );
+    try {
+        var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_destination', [id] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !removed ) {
         return logback( i18n.t( 'Failed to remove RTP destination __destination__', {destination: id} ), cb );
     }
 
-    // Remove SOAP Client
-    var soapClientRemoved = this.switcher.invoke( this.config.soap.controlClientPrefix + id, 'remove', [this.config.nameComputer] );
+    // Remove Remote httpsdpdec
+    try {
+        var soapClientRemoved = this.switcher.invoke( this.config.soap.controlClientPrefix + id, 'remove', [this.config.nameComputer] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !soapClientRemoved ) {
         log.warn( 'SOAP client removal failed for __client__', {client: id} );
     }
 
     // Remove SOAP Control Client
-    var soapControlClientRemoved = this.switcher.remove( this.config.soap.controlClientPrefix + id );
+    try {
+        var soapControlClientRemoved = this.switcher.remove( this.config.soap.controlClientPrefix + id );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !soapControlClientRemoved ) {
         log.warn( 'SOAP control client removal failed for __client__', {client: id} );
     }
 
+    //TODO: As in remove connection, remove any orphan shmdata from rtp quiddity (TEST THIS)
+
     cb();
 };
-
 
 /**
  *  Action to send a shmdata to a specific receiver. Checking presence of shmdata
@@ -181,25 +210,53 @@ ReceiverManager.prototype.removeRTPDestination = function ( id, cb ) {
  * @param path {String} path of shmdata
  * @param id {String} id of receiver
  * @param port {int} Port which is sent shmata
- * @param callback {object} return true if success or send message error
+ * @param cb
  */
 ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
-    log.debug( "Connecting quiddity to RTP destination", path, id, port, soapPort );
+    log.debug( "Connecting quiddity to RTP destination", path, id, port );
 
-    // Check if the connection has already been made
-    var rtpShmdata = JSON.parse( this.switcher.get_info( this.config.rtp.quiddName, '.shmdata' ) );
-    if ( rtpShmdata && rtpShmdata.reader && _.contains( _.keys( rtpShmdata.reader ), path ) ) {
-        return logback( i18n.t( 'Already connected' ), cb );
+    if ( _.isEmpty( path ) ) {
+        return logback( i18n.t( 'Missing path' ), cb );
     }
 
-    // Make the connection
-    var dataStreamAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_data_stream', [path] );
-    if ( !dataStreamAdded ) {
-        return logback( i18n.t( 'Error adding data stream to destination __path__', {path: path} ), cb );
+    if ( _.isEmpty( id ) ) {
+        return logback( i18n.t( 'Missing destination' ), cb );
+    }
+
+    if ( _.isEmpty( port ) || isNaN( parseInt( port ) ) ) {
+        return logback( i18n.t( 'Missing or invalid port' ), cb );
+    }
+
+    // Check if the connection has already been made
+    try {
+        var rtpShmdata = JSON.parse( this.switcher.get_info( this.config.rtp.quiddName, '.shmdata' ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    var alreadyHasShmdata = false;
+    if ( rtpShmdata && rtpShmdata.reader && _.contains( _.keys( rtpShmdata.reader ), path ) ) {
+        log.debug( 'RTP is already connected to shmdata', path );
+        alreadyHasShmdata = true;
+    }
+
+    if ( !alreadyHasShmdata ) {
+        // Make the connection
+        try {
+            var dataStreamAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_data_stream', [path] );
+        } catch ( e ) {
+            return logback( e, cb );
+        }
+        if ( !dataStreamAdded ) {
+            return logback( i18n.t( 'Error adding data stream to destination __path__', {path: path} ), cb );
+        }
     }
 
     // Associate the stream with a destination on rtp
-    var udpAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
+    try {
+        var udpAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
     if ( !udpAdded ) {
         //TODO: Cancel connection
         return logback( i18n.t( 'Error udp stream to destination __path__ __id__ __port__', {
@@ -210,178 +267,137 @@ ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb 
     }
 
     // If a soap port was defined we set the shmdata to the httpsdpdec
-    //TODO: We need a way to retrieve the set SOAP port
-    /*var soapControlClient = this.switcher.get_properties_description( this.config.soap.controlClientPrefix + id );
-     if ( soapPort != null && soapPort != '' ) {
-     this.refresh_httpsdpdec( id, function ( error ) {
-     if ( error ) {
-     return log.warn( 'Could not refresh httpsdpdec.', error );
-     }
-     } );
-     }*/
+    try {
+        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( hasSoapControlClient ) {
+        this._refreshHttpSdpDec( id, function ( error ) {
+            if ( error ) {
+                log.warn( error );
+            }
+        } );
+    }
 
-    //this.io.emit( 'add_connection', quiddityId, path, port, id );
     return cb();
 };
 
-//  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
-//  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
-//  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
-//  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
-//  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
-//  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
-//
-
-
 /**
- *  Remove a receiver. Remove to dico destinations and check if nobody is
- connected to the shmdata for remove to data stream of rtpsession
-
- @param path {String} path of shmdata
- @param id {String} id of receiver
- @param callback {object} if sucess return name true
+ * Disconnect an RTP destination
+ *
+ * @param path {String} path of shmdata
+ * @param id {String} id of receiver
+ * @param callback {object} if sucess return name true
  */
-ReceiverManager.prototype.remove_connection = function ( path, id, cb ) {
-    var self = this;
-
-    /* 1. remove the association between shmdata and destination */
-    var remove = this.switcher.invoke( "defaultrtp", "remove_udp_stream_to_dest", [path, id] );
-    if ( !remove ) {
-        return cb( i18n.t( "Error to remove udp stream to destination" ) );
+ReceiverManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
+    // Remove UDP Stream
+    try {
+        var udpRemoved = this.switcher.invoke( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !udpRemoved ) {
+        return logback( i18n.t( 'Error removing UDP stream from destination' ), cb );
     }
 
-    /* 2. we remove data stream to the dico destination */
-    var destinations_rtp  = JSON.parse( this.switcher.get_property_value( "defaultrtp", "destinations-json" ) ).destinations;
-    var destinations_dico = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) );
-
-    /* 3. remove connection from dico destinations */
-    var connectWithAnother = false;
-    _.each( destinations_dico, function ( dest, i ) {
-        /* only fir receiver who disconnect */
-        if ( dest.id == id ) {
-            var newStreamsList = _.reject( dest.data_streams, function ( stream ) {
-                return stream.path == path;
-            } );
-            if ( dest.portSoap ) {
-                this.refresh_httpsdpdec( dest.id, function ( err ) {
-                    if ( err ) {
-                        return log.error( "error on refresh httpsdpdec" );
-                    }
-                } );
-            }
-
-            destinations_dico[i].data_streams = newStreamsList;
-        } else {
-            /* check if another destination is connected to this shmdata */
-            var dataStreamUse = _.where( dest.data_streams, {
-                path: path
-            } );
-            if ( dataStreamUse.length > 0 ) {
-                connectWithAnother = true;
-            }
-        }
-    }, this );
-
-    /* if nobody is connected to the shm we removed of rtpsession */
-    if ( !connectWithAnother ) {
-        log.debug( "remove shmdata of data_stream", path );
-        var removeData = this.switcher.invoke( "defaultrtp", "remove_data_stream", [path] );
-        if ( !removeData ) {
-            return log.error( "failed to remove data_stream", path );
-        }
-    } else {
-        log.debug( "Another receiver is connected to", path );
+    // Check if the shmdata is still used by another connection
+    try {
+        var destinations = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) ).destinations;
+    } catch ( e ) {
+        return logback( e );
     }
-
-    var setPropertyValueOfDico = this.switcher.invoke( "dico", "update", ["rtpDestinations", JSON.stringify( destinations_dico )] );
-    if ( !setPropertyValueOfDico ) {
-        return cb( "error when saving Destinations Dico" );
-    }
-
-
-    this.io.emit( "remove_connection", path, id );
-    //var url = 'http://' + this.config.host + ':' + this.config.soap.port + '/sdp?rtpsession=defaultrtp&destination=' + id;
-    //var updateShm = this.switcher.invoke("soapControlClient-" + id, "invoke1", [this.config.nameComputer, 'to_shmdata', url]);
-    if ( cb ) {
-        return cb( null, remove );
-    }
-};
-
-/**
- *  Update destination. Currently remove the destination and create a new with the modification
-
- @param path {String} path of shmdata
- @param oldId {String} id of  old receiver
- @param destination {json} Contain all information for create a new destination
- @param callback {object} if sucess return name message success {json}
- */
-ReceiverManager.prototype.update_destination = function ( oldId, destination, cb ) {
-
-    var self = this;
-
-    var destinations = JSON.parse( this.switcher.invoke( "dico", "read", ["rtpDestinations"] ) ),
-        data_streams = destination.data_streams;
-
-    /* 1. we remove destination */
-
-    this.remove_destination( oldId, destination.portSoap, function ( data ) {
-        if ( data.error ) {
-            return log.error( data.error );
-        }
-
-        /* 2. recreate destination*/
-
-        self.createRtpDestination( destination, function ( data ) {
-            if ( data.error ) {
-                return log.error( data.error );
-            }
-
-            /* 3. Recreate the connection */
-            /* SetTimeout is necessary for waiting recrate destination in client side for recreate connection after */
-            setTimeout( function () {
-                if ( _.size( data_streams ) > 0 ) {
-                    _.each( data_streams, function ( stream ) {
-
-                        /* 1. associate the stream with a destination on defaultrtp */
-
-                        this.connect_destination( data.destination.id, stream.path, data.destination.id, stream.port, data.destination.portSoap, function ( ok ) {
-                            if ( !ok ) {
-                                cb( {
-                                    "error": "failed to reconnect destination"
-                                } );
-                            }
-                        } )
-
-                    }, self );
-                } else {
-                    return cb( {
-                        "success": "Success update destination"
-                    } );
-                }
-            }, 500 );
+    var stillUsed = _.some( destinations, function ( destination ) {
+        return _.some( destination.data_streams, function ( dataStream ) {
+            return dataStream.path == path;
         } );
-
     } );
 
+    // If not, then remove the shmdata from the destination
+    if ( !stillUsed ) {
+        log.debug( 'Last one using shmdata', path );
+        try {
+            var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_data_stream', [path] );
+        } catch ( e ) {
+            return logback( e, cb );
+        }
+        if ( !removed ) {
+            return logback( i18n.t( 'Failed to remove data stream __path__', {path: path} ), cb );
+        }
+    } else {
+        log.debug( 'Not removing shmdata', path, 'it is still being used' );
+    }
+
+    // If a soap port was defined refresh the httpsdpdec
+    //TODO: Replace by the upcoming exist method
+    try {
+        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( hasSoapControlClient ) {
+        this._refreshHttpSdpDec( id, function ( error ) {
+            if ( error ) {
+                log.warn( error );
+            }
+        } );
+    }
+
+    cb();
 };
 
-
 /**
- *  Refresh httpsdpdec of the remote receiver
- *  @param id {string} Id of receiver
- *  @param callback {object} return an error if exist
+ * Update RTP destination.
+ * Currently removes the destination and creates a new one.
+ *
+ * TODO: This could benefit for being more granular and react according to what has changed (name, host, port)
+ *
+ * @param path {String} path of shmdata
+ * @param oldId {String} id of  old receiver
+ * @param destination {json} Contain all information for create a new destination
+ * @param callback {object} if sucess return name message success {json}
  */
-ReceiverManager.prototype.refresh_httpsdpdec = function ( id, cb ) {
+ReceiverManager.prototype.updateRTPDestination = function ( id, info, cb ) {
+    log.debug('Updating RTP destination',id,info);
 
-    /* need wait 1sec for update url rtp to the ControlClient */
-    setTimeout( function () {
-        var url       = 'http://' + this.config.host + ':' + this.config.soap.port + '/sdp?rtpsession=defaultrtp&destination=' + id;
-        log.debug( "refresh httpsdpdec of", url );
-        var updateShm = this.switcher.invoke( "soapControlClient-" + id, "invoke1", [this.config.nameComputer, 'to_shmdata', url] );
-        if ( !updateShm ) {
-            return cb( "error updateShm" );
+    var self = this;
+
+    // Keep a cache of the current destination
+    try {
+        var destinations = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) ).destinations;
+    } catch ( e ) {
+        return logback( e );
+    }
+    var destination = _.findWhere( destinations, { name: id } );
+
+    async.series( [
+        function( callback ) {
+            self.removeRTPDestination( id, callback );
+        },
+        function( callback ) {
+            self.createRTPDestination( info.name, info.host, info.port, callback );
+        },
+        function( callback ) {
+            if ( destination ) {
+                // According to the old code a setTimeout of 200ms could be necessary here
+                async.each( destination.data_streams, function ( stream, callback ) {
+                    self.connectRTPDestination( stream.path, info.name, stream.port, callback )
+                }, function( error ) {
+                    if ( error ) {
+                        callback( error );
+                    }
+                    callback();
+                } );
+            } else {
+                callback();
+            }
         }
-    }, 2000 );
+    ], function ( error ) {
+        if ( error ) {
+            return logback( error, cb );
+        }
+        cb();
+    });
 };
 
 module.exports = ReceiverManager;

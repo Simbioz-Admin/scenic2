@@ -92,7 +92,6 @@ define( [
             socket.emit( "setPropertyValue", this.collection.quiddity.id, this.id, value, function ( error ) {
                 if ( error ) {
                     // There was an error setting the value, go back to the last synced value or the default
-                    // TODO: Retrieve good value from server in that case
                     self.set( 'value', self.lastSyncedValue !== undefined ? self.lastSyncedValue : self.get( 'default' ) );
                     return self.scenicChannel.vent.trigger( 'error', error );
                 }

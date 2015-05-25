@@ -114,9 +114,6 @@ define( [
                     if ( error ) {
                         return options.error( error );
                     }
-                    if ( method == 'create' ) {
-                        self.set( 'id', result.name );
-                    }
                     options.success( result );
                 };
                 socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );

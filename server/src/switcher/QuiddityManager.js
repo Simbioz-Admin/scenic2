@@ -85,19 +85,26 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
  */
 QuiddityManager.prototype._onAdded = function ( quiddityId ) {
     // Quiddity was created, get information on its type
-    var quiddClass = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+    var quiddity = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+    log.warn(quiddity);
     // Parse the class
-    this._parseClass(quiddClass);
+    this._parseQuiddity(quiddity);
 
     // Only proceed if it's not on of the "private" quiddities, they don't matter to the client
-    if ( !_.contains( this.privateQuiddities, quiddClass.class ) ) {
+    if ( !_.contains( this.privateQuiddities, quiddity.class ) ) {
 
         // Subscribe to property/method add/remove signals
         this.switcher.subscribe_to_signal( quiddityId, "on-property-added" );
         this.switcher.subscribe_to_signal( quiddityId, "on-property-removed" );
         this.switcher.subscribe_to_signal( quiddityId, "on-method-added" );
         this.switcher.subscribe_to_signal( quiddityId, "on-method-removed" );
-        //this.switcher.subscribe_to_signal( quiddityId, "on-connection-tried" ); //TODO: What is this? SOAPcontrolClient
+
+        // SOAP Control Client
+        log.warn(quiddity);
+        if ( quiddity.class == 'SOAPcontrolClient' ) {
+            log.debug('SOAP Control Client, subscribing to on-connection-tried');
+            this.switcher.subscribe_to_signal( quiddityId, "on-connection-tried" );
+        }
 
         // Subscribe to this quiddity's tree modifications
         this.switcher.subscribe_to_signal( quiddityId, "on-tree-grafted" );
@@ -188,33 +195,9 @@ QuiddityManager.prototype._onSwitcherProperty = function ( quiddityId, property,
     if ( property == "started" && value == "false" ) {
         log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
         this.removeVuMeters( quiddityId );
-
         //
         //TODO: Remove connections
         //
-
-        //TODO: WHat does this do?
-        var destinations = this.switcher.get_property_value( "dico", "destinations" ),
-            destinations = JSON.parse( destinations );
-
-        _.each( destinations, function ( dest ) {
-            _.each( dest.data_streams, function ( stream ) {
-                log.debug( 'DESTINATION DATA SCTREAM SOMETHING', stream.quiddName, quiddityId );
-                if ( stream.quiddName == quiddityId ) {
-                    log.debug( "find quidd connected!", stream.path, stream.port );
-                    receivers.remove_connection( stream.path, dest.id );
-                }
-            } );
-        } );
-
-        /* check if another quiddities is associate to */
-        var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
-        _.each( quidds, function ( quidd ) {
-            if ( quidd.name.indexOf( "sink_" ) >= 0 && quidd.name.indexOf( quiddityId ) >= 0 ) {
-                log.debug( "WHAT IS THIS I DON'T EVEN? Remove sink", quidd.name );
-                this.switcher.remove( quidd.name );
-            }
-        } );
     }
 };
 
@@ -356,6 +339,15 @@ QuiddityManager.prototype._onSwitcherSignal = function ( quiddityId, signal, val
 
     if ( signal == "on-property-added" || signal == "on-property-removed" || signal == "on-method-added" || signal == "on-method-removed" ) {
         this.io.emit( 'signals_properties_info', quiddityId, signal, value[0] );
+    }
+
+    //  ┌─┐┌─┐┌┐┌┌┐┌┌─┐┌─┐┌┬┐┬┌─┐┌┐┌  ┌┬┐┬─┐┬┌─┐┌┬┐
+    //  │  │ │││││││├┤ │   │ ││ ││││   │ ├┬┘│├┤  ││
+    //  └─┘└─┘┘└┘┘└┘└─┘└─┘ ┴ ┴└─┘┘└┘   ┴ ┴└─┴└─┘─┴┘
+
+    if ( signal == 'on-connection-tried' ) {
+        //TODO: Do something with that
+        log.warn( ">>>", signal, quiddityId, value, "<<<" );
     }
 
     //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
@@ -618,8 +610,6 @@ QuiddityManager.prototype.getQuiddities = function ( cb ) {
 QuiddityManager.prototype.getInfo = function ( quiddityId, path, cb ) {
     log.debug( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
 
-    //TODO: Switcher could send empty response or a message instead of an error
-
     try {
         var info = JSON.parse( this.switcher.get_info( quiddityId, path ) );
     } catch ( e ) {
@@ -792,11 +782,6 @@ QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, paramete
         } ) );
     }
     cb( null, invoke );
-
-    //TODO: What the hell is this?
-    if ( method == "remove_udp_stream_to_dest" ) {
-        this.io.emit( "remove_connection", invoke, quiddityId, parameters );
-    }
 };
 
 /**
@@ -857,10 +842,9 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
     } catch ( e ) {
         return logback( e, cb );
     }
-    //FIXME: Result is false even when quiddity is removed
-    /*if ( !result ) {
-     return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
-     }*/
+    if ( !result ) {
+        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
+    }
     log.debug( "Quiddity " + quiddityId + " removed." );
     cb();
 };

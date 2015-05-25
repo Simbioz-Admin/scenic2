@@ -6,8 +6,9 @@ define( [
     'backbone',
     'lib/socket',
     'model/pages/base/Table',
-    'model/pages/rtp/RTPDestinations'
-], function ( $, _, Backbone, socket, Table, RTPDestinations ) {
+    'model/pages/rtp/RTPDestinations',
+    'model/pages/rtp/RTPDestination'
+], function ( $, _, Backbone, socket, Table, RTPDestinations, RTPDestination ) {
 
     /**
      * RTP Table
@@ -65,14 +66,20 @@ define( [
          */
         createRTPDestination: function ( info ) {
             var self = this;
-            socket.emit( 'createRTPDestination', info, function ( error ) {
-                if ( error ) {
-                    return self.scenicChannel.vent.trigger( 'error', error );
+            var rtpDestination = new RTPDestination({info: info});
+            rtpDestination.save( null, {
+                success: function( rtpDestination ) {
+                    self.scenicChannel.vent.trigger( 'rtp:created' );
+                },
+                error: function(error) {
+                    self.scenicChannel.vent.trigger( 'error', error );
                 }
-                self.scenicChannel.vent.trigger( 'rtp:created' );
-            } )
+            });
         },
 
+        getConnection: function( source, destination ) {
+            return _.findWhere( destination.get('data_streams'), { path: source.get('path') } );
+        },
 
         /**
          * Check if this destination is connected to a shmdata
@@ -80,9 +87,8 @@ define( [
          * @param source
          * @return bool
          */
-        isConnected: function( source ) {
-            //todo: check if not in the destinaton data_streams
-            return false;
+        isConnected: function( source, destination ) {
+            return this.getConnection(source, destination) != null;
         },
 
         /**
@@ -102,13 +108,35 @@ define( [
          *
          * @param shmdata
          * @param destination
+         * @param port
+         * @param cb callback
          */
-        connect: function ( shmdata, destination ) {
+        connect: function ( shmdata, destination, port, cb ) {
             var self = this;
-            socket.emit( 'connectRTPDestination', shmdata.id, destination.id, null /* TODO: port */, function( error ) {
+            socket.emit( 'connectRTPDestination', shmdata.id, destination.id, port, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
+                    return cb( error );
+                }
+                cb();
+            } );
+        },
+
+        /**
+         * Disconnect a srouce form its destination
+         * Override in concrete table classes
+         *
+         * @param source
+         * @param destination
+         */
+        disconnect: function( source, destination ) {
+            var self = this;
+            socket.emit( 'disconnectRTPDestination', source.id, destination.id, function( error ) {
+                if ( error ) {
+                    console.error( error );
+                    self.scenicChannel.vent.trigger( 'error', error );
+                    return cb( error );
                 }
             } );
         }

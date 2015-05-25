@@ -5,9 +5,10 @@ define( [
     'view/scenic/inspector/CreateQuiddity',
     'view/scenic/inspector/EditQuiddity',
     'view/scenic/inspector/CreateRTP',
+    'view/scenic/inspector/EditRTP',
     'view/scenic/inspector/ShmdataInfo',
     'text!template/scenic/inspector.html'
-], function ( _, Backbone, Marionette, CreateQuiddityView, EditQuiddityView, CreateRTPView, ShmdataInfoView, InspectorTemplate ) {
+], function ( _, Backbone, Marionette, CreateQuiddityView, EditQuiddityView, CreateRTPView, EditRTPView, ShmdataInfoView, InspectorTemplate ) {
 
     /**
      *  @constructor
@@ -50,8 +51,11 @@ define( [
 
             this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
             this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );
+
             this.scenicChannel.commands.setHandler( 'rtp:create', _.bind( this._onRTPCreate, this ) );
             this.scenicChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
+            this.scenicChannel.commands.setHandler( 'rtp:edit', _.bind( this._onRTPEdit, this ) );
+
             this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
             this.scenicChannel.commands.setHandler( 'inspector:close', _.bind( this.close, this ) );
         },
@@ -112,6 +116,19 @@ define( [
          */
         _onRTPCreated: function ( ) {
             this.close();
+        },
+
+        /**
+         * Edit RTP Handler
+         * Display the rtp edition form
+         *
+         * @param {RTPDestination} RTP Destination
+         * @private
+         */
+        _onRTPEdit: function ( rtpDestination, callback ) {
+            this.currentPanel = new EditRTPView( {model: rtpDestination, callback: callback} );
+            this.showChildView( 'content', this.currentPanel );
+            this.$el.fadeIn( 250 );
         },
 
         /**

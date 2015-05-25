@@ -16,6 +16,8 @@ define( [
      */
     var Sink = TableView.extend( {
 
+        className: 'table sink',
+
         /**
          * Initialize
          */

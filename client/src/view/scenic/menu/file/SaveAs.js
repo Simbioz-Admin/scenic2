@@ -32,11 +32,8 @@ define( [
          * Initialize
          */
         initialize: function () {
-            var self = this;
             this.model = new SaveFile();
-            _.defer( function() {
-                $( self.ui.name ).focus();
-            });
+            _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 
         saveFile: function () {

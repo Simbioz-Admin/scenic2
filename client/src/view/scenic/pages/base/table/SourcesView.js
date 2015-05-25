@@ -17,7 +17,8 @@ define( [
         childView: SourceView,
         childViewOptions: function() {
             return {
-                table: this.options.table
+                table: this.options.table,
+                connectionView: this.options.connectionView
             }
         },
 

@@ -30,6 +30,7 @@ $quiddityGap: 2px;
       >span {
         display: table-cell;
         vertical-align: middle;
+        padding: 0 1em;
       }
     }
     .actions {
@@ -102,7 +103,7 @@ $quiddityGap: 2px;
 
       .shmdata {
         background: $backgroundColorDark;
-        min-height: $leftHeaderMinHeight;
+        height: $leftHeaderMinHeight;
         border-left: $quiddityGap solid $colorBorder;
         border-bottom: 1px solid $colorBorder;
 
@@ -145,7 +146,7 @@ $quiddityGap: 2px;
             display: inline-block;
             margin-bottom: -3px;
             width: $boxWidth;
-            min-height: $boxMinHeight;
+            height: $boxMinHeight;
             border-left: 1px solid $colorBorder;
 
             .icon {
@@ -202,14 +203,13 @@ $quiddityGap: 2px;
   }
 
   .destinations {
-    min-height: $boxMinHeight;
+    height: $boxMinHeight;
     margin: 0 10px 10px $leftHeaderWidth * 2 + $quiddityGap;
     white-space: nowrap;
 
     .destination {
       display: inline-block;
       width: $boxWidth;
-      min-height: $boxMinHeight;
       background: $backgroundColorDark;
       border-left: 1px solid $colorBorder;
 
@@ -237,6 +237,41 @@ $quiddityGap: 2px;
         }
         &.calling {
           background: $green;
+        }
+      }
+    }
+  }
+
+  &.rtp {
+    .connection {
+      .port {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: table;
+        > span {
+          display: table-cell;
+          vertical-align: middle;
+          text-align: center;
+          font-size: 2em;
+          color: $textColorBrighter;
+        }
+      }
+      .portEntry {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: $backgroundColorDark;
+        .portInput {
+          background: none;
+          border: none;
+          color: $textColorBrighter;
+          border-radius: 0;
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          font-size: 2em;
         }
       }
     }

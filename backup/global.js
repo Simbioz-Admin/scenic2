@@ -69,32 +69,6 @@ define(
                     } );
                 },
 
-                create_receiver: function ( element ) {
-                    //element.stopPropagation();
-                    var template = _.template( TemplateReceiver )();
-                    $( "#inspector .inspector-info-panel" ).html( template );
-                    views.global.openPanel();
-                },
-
-                add_receiver: function ( e ) {
-                    e.preventDefault();
-                    //e.stopPropagation();
-                    var destination = {
-                        name:     $( "#clientName" ).val(),
-                        hostName: $( "#clientHost" ).val(),
-                        portSoap: $( "#clientSoap" ).val()
-                    }
-
-                    //collections.destinations.create(name, host_name, port_soap);
-
-                    socket.emit( "create_destination", destination, function ( data ) {
-                        if ( data.error ) {
-                            return views.global.notification( "error", data.error );
-                        }
-                        views.global.notification( "info", data.success );
-                        views.global.closePanel();
-                    } );
-                },
 
                 keyboardAction: function ( event ) {
                     var that = this;

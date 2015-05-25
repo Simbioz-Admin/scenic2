@@ -3,31 +3,37 @@ define( [
     'backbone',
     'marionette',
     'i18n',
-    'text!template/scenic/inspector/createRTP.html'
-], function ( _, Backbone, Marionette, i18n, CreateRTPTemplate ) {
+    'text!template/scenic/inspector/editRTP.html'
+], function ( _, Backbone, Marionette, i18n, EditRTPTemplate ) {
 
     /**
-     * Create RTP Form
+     * Edit RTP Form
      *
      * @constructor
      * @extends module:Marionette.ItemView
      */
-    var CreateRTP = Marionette.ItemView.extend( {
-        template: _.template( CreateRTPTemplate ),
-        className: 'create-rtp',
+    var EditRTP = Marionette.ItemView.extend( {
+        template: _.template( EditRTPTemplate ),
+        className: 'edit-rtp',
+
         ui:       {
             'name': '.name',
             'host': '.host',
             'port': '.port',
-            'create': '#create'
+            'edit': '#update'
         },
+
         events:   {
-            'click @ui.create': 'create'
+            'click @ui.edit': 'edit'
+        },
+
+        modelEvents: {
+            'destroy': '_onRTPDestinationRemoved'
         },
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title = $.t('Create an RTP destination');
+            this.title = $.t('Edit an RTP destination');
             this.callback = config.callback;
         },
 
@@ -35,14 +41,19 @@ define( [
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 
-        create: function() {
+        edit: function() {
             this.callback( {
                 name: this.ui.name.val(),
                 host: this.ui.host.val(),
                 port: this.ui.port.val()
             });
+            this.scenicChannel.commands.execute( 'inspector:close' );
+        },
+
+        _onRTPDestinationRemoved: function(  ) {
+            this.scenicChannel.commands.execute( 'inspector:close' );
         }
 
     } );
-    return CreateRTP;
+    return EditRTP;
 } );

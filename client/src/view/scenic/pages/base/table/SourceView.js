@@ -22,7 +22,8 @@ define( [
         childViewOptions: function() {
             return {
                 table: this.options.table,
-                collection: this.options.table.getDestinationCollection()
+                collection: this.options.table.getDestinationCollection(),
+                connectionView: this.options.connectionView
             }
         },
         childViewContainer: '.shmdatas',

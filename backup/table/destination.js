@@ -80,31 +80,6 @@ define(
 
         },
 
-        render: function() {
-          var that = this,
-          template = _.template(TemplateDestination)( this.model.toJSON());
-          $(this.el).html(template);
-          $(this.el).i18n();
-        },
-
-        toggleShow: function(state, tableName) {
-
-          /* trigger is called for all destination, we need to check if its for the good table */
-          if (this.table.get("name") == tableName) {
-            if (state == "show") {
-              $(this.el).show();
-              $("[data-destination='" + this.model.get("name") + "']").show();
-            } else {
-              $(this.el).hide();
-              $("[data-destination='" + this.model.get("name") + "']").hide();
-            }
-          }
-        },
-        /* Called when the click event is on the button edit destination */
-        edit: function() {
-          this.model.edit();
-        },
-
         sendToUserSip: function() {
           var that = this;
           var call = this.model.get('send_status') == "disconnected" ? "send" : "hang-up";
@@ -113,24 +88,6 @@ define(
             views.global.notification("valid", $.t("successfully called ") + that.model.get('name'));
           });
         },
-        /* Called when the click event is on the button remove destination */
-        removeClick: function() {
-          this.model.askDelete();
-        },
-
-
-        /* Called when the model is removed */
-        removeView: function() {
-          /* remove category in filter (check if its the last quidd of this category) */
-          if (this.model.get("category")) this.table.trigger('removeCategoryFilter', this.model.get("category"), "destination");
-          this.remove();
-
-          /* remove old box */
-          $("[data-destination='" + this.model.get('name') + "']").remove();
-
-          //reset button add table list user
-          $('[data-idUser="' + this.model.get('uri') + '"] .add_destinationSip').removeClass('call hangUp').addClass('add_table');
-        }
       });
 
     return ViewDestination;

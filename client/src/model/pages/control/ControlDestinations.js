@@ -3,7 +3,7 @@
 define( [
     'underscore',
     'backbone',
-    'model/pages/Control/ControlDestination'
+    'model/pages/control/ControlDestination'
 ], function ( _, Backbone, ControlDestination ) {
 
     /**

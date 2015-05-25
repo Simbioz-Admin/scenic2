@@ -23,13 +23,16 @@ define( [
             methods: '.methods'
         },
 
+        modelEvents: {
+            'destroy': '_onQuiddityRemoved'
+        },
+
         initialize: function ( options ) {
             this.inspector = options.inspector;
 
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.scenicChannel.vent.on( 'quiddity:removed', _.bind( this._onQuiddityRemoved, this ) );
 
-            this.title = $.t('Edit __quiddityName__', { quiddityName: this.model.get('name')});
+            this.title = $.t('Edit __quiddityName__', { quiddityName: this.model.id});
         },
 
         onBeforeShow: function() {
@@ -38,9 +41,7 @@ define( [
         },
 
         _onQuiddityRemoved: function( quiddity ) {
-            if ( quiddity.id == this.model.id ) {
-                this.scenicChannel.commands.execute( 'inspector:close' );
-            }
+            this.scenicChannel.commands.execute( 'inspector:close' );
         }
 
     } );

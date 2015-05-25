@@ -86,7 +86,6 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
 QuiddityManager.prototype._onAdded = function ( quiddityId ) {
     // Quiddity was created, get information on its type
     var quiddity = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
-    log.warn(quiddity);
     // Parse the class
     this._parseQuiddity(quiddity);
 
@@ -100,7 +99,6 @@ QuiddityManager.prototype._onAdded = function ( quiddityId ) {
         this.switcher.subscribe_to_signal( quiddityId, "on-method-removed" );
 
         // SOAP Control Client
-        log.warn(quiddity);
         if ( quiddity.class == 'SOAPcontrolClient' ) {
             log.debug('SOAP Control Client, subscribing to on-connection-tried');
             this.switcher.subscribe_to_signal( quiddityId, "on-connection-tried" );

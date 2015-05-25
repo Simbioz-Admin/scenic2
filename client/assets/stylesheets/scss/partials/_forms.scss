@@ -89,12 +89,17 @@ input[type=number],
 input[type=text],
 input[type=password] {
   outline: none;
-  border: 1px solid #ccc;
   padding: 0px 5px;
   margin: 5px 0 10px 0;
   @include border-radius(5px);
   height: 35px;
   width: 100%;
+  background: $backgroundColorDark;
+  border: none;
+  color: $textColorBrighter;
+  &:focus {
+    border: lighten($backgroundColorDark, 15%) solid 1px;
+  }
 }
 
 input[type=text].property.string,

@@ -15,6 +15,7 @@ define( [
         tagName:   'div',
         className: 'table',
         template:  _.template( TableTemplate ),
+
         regions:   {
             'menus':        '.menus',
             'destinations': '.destinations',

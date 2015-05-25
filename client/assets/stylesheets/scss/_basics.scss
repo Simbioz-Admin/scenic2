@@ -24,6 +24,13 @@ body {
   overflow-x: hidden;
 }
 
+h1 {
+  font-size: 2em;
+  line-height: 2em;
+  margin-bottom: 1em;
+  color: $textColorBrighter;
+}
+
 h3 {
   font-size: 1.4em;
   padding-bottom: 5px;

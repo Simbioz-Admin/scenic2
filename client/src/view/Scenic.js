@@ -105,10 +105,18 @@ define( [
          * @private
          */
         showPage: function ( page ) {
+            if ( this.currentPage ) {
+                this.$el.removeClass(this.currentPage.id);
+            }
             if ( page ) {
                 this.showChildView( 'page', page.getViewInstance() );
+                this.currentPage = page;
             } else {
                 this.getRegion('page' ).empty();
+                this.currentPage = null;
+            }
+            if ( this.currentPage ) {
+                this.$el.addClass(this.currentPage.id);
             }
         },
 

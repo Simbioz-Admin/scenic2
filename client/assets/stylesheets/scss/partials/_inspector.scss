@@ -1,6 +1,6 @@
 #inspector {
   position: absolute;
-  z-index: 1;
+  z-index: 40;
   width: 0;
   height: 0;
   top: 0;
@@ -78,73 +78,5 @@
       margin-top: 1em;
       height: 100px;
     }
-  }
-}
-
-/*.setMethod, .sendProperty {
-  padding: 11px 10px;
-  background: #444;
-  color: white;
-  text-decoration: none;
-  margin: 0 0 0 5px;
-  border-radius: 2px;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    background: #555;
-  }
-}
-
-.mapInput {
-  width: 60px !important;
-  padding: 0 5px !important;
-  height: 27px !important;
-}
-
-.removeModifier {
-  float: right;
-  font-size: 1.6em;
-  width: 15px;
-  height: 15px;
-  margin: 0 0 5px 0;
-  font-weight: bold;
-  &:hover {
-    cursor: pointer;
-    color: $satColor;
-  }
-}
-
-.delete {
-  color: $satColor;
-  float: left;
-  margin: 5px 0;
-  font-size: 1.2em;
-  text-decoration: none;
-  &:hover {
-    border-bottom: 1px $satColor dashed;
-  }
-}
-
-.preview-value .content-value {
-  position: absolute;
-  width: 30px;
-  padding: 8px 0;
-  @include border-radius(0 3px 3px 0);
-  text-align: center;
-  top: 40px;
-  right: 72px;
-  border: 1px #343434 solid;
-  z-index: 100;
-  background: #333;
-  color: white;
-}*/
-
-#inspector input[type=text],
-#inspector input[type=number] {
-  background: $backgroundColorDark;
-  border: none;
-  color: white;
-  &:focus {
-    border: lighten($backgroundColorDark, 15%) solid 1px;
   }
 }

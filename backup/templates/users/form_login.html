@@ -1,9 +1,8 @@
-<form id="login_sip" disabled>
-	 <div class="parameters">
-        <h1 data-i18n>Login to sip</h1>
+<form id="sip-form">
+        <h1 data-i18n>SIP Login</h1>
 
-        <label data-i18n>Address</label>
-        <input type="text" width="100%" name="address" value="<%=sip.address%>" >
+        <label for="sip-host" data-i18n>Address</label>
+        <input id="sip-host" type="text" name="sip-host" value="<%=sip.address%>" >
 
         <div class="">
             <label data-i18n>Username</label>
@@ -20,7 +19,7 @@
         </div>
         
     </div>
-    <input type="submit" id='submitSip' data-i18n="[value]login" value="login" >
+    <input type="button" id="login" class="btn btn-success" data-i18n="[value]Login" value="Login" >
 
 	
 </form>

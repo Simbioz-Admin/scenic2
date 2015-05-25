@@ -1,3 +1,6 @@
+@import "compass/css3/filter";
+@import "compass/css3/transition";
+
 .modal {
   position: fixed;
   top: 0;
@@ -10,33 +13,45 @@
   background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   .dialog {
-    width: 300px;
-    background: rgba(255, 255, 255, 0.8);
-    position: absolute;
-    padding: 20px;
-    top: 50%;
-    left: 50%;
-    margin: (-100px) 0 0 -150px;
-    text-align: center;
-    @include border-radius(2px);
+    width: 75%;
+    background: rgba(255, 255, 255, 0.75);
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    @include border-radius(0 0 6px 6px);
+    overflow: hidden;
     .message {
-      text-align: center;
-      padding: 10px 20px 10px;
-      font-size: 16px;
+      color: $textColorSubtler;
+      font-size: 1.5em;
+      line-height: 1.5em;
+      padding: 2em 3em 3em 3em;
     }
-    a.btn {
-      border: 1px solid #ccc;
-      background: $gray1;
-      padding: 4px 15px;
-      color: #999;
-      font-size: 15px;
-      @include border-radius(2px);
-      &:hover {
-        cursor: pointer;
-        color: white;
-        background-color: $satColor;
-        border: 1px solid #999;
+    .dialog-footer {
+      padding-top: 1px;
+      background: rgba( 0, 0, 0, 0.75 );
+      overflow: hidden;
+    }
+    .btn-group {
+      float: right;
+      .btn {
+        float: left;
+        margin: 0;
+        margin-left: 1px;
+        padding: 1em 3em;
+        font-size: 1.5em;
+        border-radius: 0;
+        &:last-child {
+          @include border-radius(0 0 6px 0);
+        }
       }
     }
   }
+}
+
+.interface {
+  transition: -webkit-filter 0.25s;
+}
+
+.blur .interface {
+  -webkit-filter: blur(6px);
 }

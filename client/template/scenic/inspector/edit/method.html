@@ -1,1 +1,12 @@
-<div>method</div>
+<label><%=$.t(name)%></label>
+<div class="description"><%=$.t(description)%></div>
+<div class="arguments">
+    <% _.each( args.models, function( arg ) { %>
+    <div class="argument">
+        <div class="field">
+            <input id="<%=id%>-<%=arg.id%>" name="<%=arg.id%>" class="argument <%=arg.get('type')%>" type="text" placeholder="<%=arg.get('name')%> (<%=arg.get('type')%>)">
+        </div>
+    </div>
+    <% } ); %>
+</div>
+<a class="btn invoke" id="btn-<%=id%>" data-i18n>Invoke</a>

@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/TableMenus',
+    'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/rtp/menus.html'
 ], function ( _, Backbone, Marionette, TableMenusView, RTPMenusTemplate ) {
 
@@ -22,7 +22,7 @@ define( [
         },
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'createQuidditySource',
+            'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.destination .button': 'createRTPDestination',
             'change @ui.filter': 'filter'
         },
@@ -63,7 +63,8 @@ define( [
         createRTPDestination: function ( event ) {
             //DEBUG QUICK CREATE
             console.log("Debug quick create");
-            this.model.createRTPDestination({name:'test'+Math.random(),host:'localhost',port:null});
+            this.model.createRTPDestination({name:'test'+Math.random(),host:'localhost',port:8086});
+            //TODO: Have this in a scenic model
             //this.scenicChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
         },
 

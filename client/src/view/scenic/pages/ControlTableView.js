@@ -4,11 +4,11 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Table',
-    'view/scenic/pages/base/table/Sources',
-    'view/scenic/pages/base/table/Destinations',
+    'view/scenic/pages/base/TableView',
+    'view/scenic/pages/base/table/SourcesView',
+    'view/scenic/pages/control/ControlDestinationsView',
     'view/scenic/pages/control/ControlMenus'
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, ControlMenus ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, ControlDestinationsView, ControlMenus ) {
 
     /**
      *  @constructor
@@ -36,7 +36,7 @@ define( [
                 table:      this.model,
                 collection: this.model.getSourceCollection()
             } ) );
-            this.showChildView( 'destinations', new DestinationsView( {
+            this.showChildView( 'destinations', new ControlDestinationsView( {
                 table:      this.model,
                 collection: this.model.getDestinationCollection()
             } ) );

@@ -30,6 +30,7 @@ define( [
             // Keep options internally
             this.shmdata = options.shmdata;
             this.destination = options.model;
+            this.table = options.table;
 
             // Re-render when destination shmdatas change, it might mean we connected/disconnected
             this.listenTo( this.destination.get('shmdatas'), 'update', this.render );
@@ -44,17 +45,17 @@ define( [
 
         onRender: function() {
             // Check if we are connected
-            this.$el.removeClass('active inactive' ).addClass( this.destination.isConnected( this.shmdata ) ? 'active' : 'inactive' );
+            this.$el.removeClass('active inactive' ).addClass( this.table.isConnected( this.shmdata, this.destination ) ? 'active' : 'inactive' );
         },
 
         toggleConnection: function() {
             if ( !this.canConnect ) {
                 return;
             }
-            if ( this.destination.isConnected( this.shmdata ) ) {
-                this.options.table.disconnect( this.shmdata, this.destination );
+            if ( this.table.isConnected( this.shmdata, this.destination ) ) {
+                this.table.disconnect( this.shmdata, this.destination );
             } else {
-                this.options.table.connect( this.shmdata, this.destination );
+                this.table.connect( this.shmdata, this.destination );
             }
         }
     } );

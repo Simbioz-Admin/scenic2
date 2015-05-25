@@ -26,7 +26,7 @@ define( [
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title         = $.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class name' )} );
+            this.title         = $.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class' )} );
             this.callback      = config.callback;
 
             //TODO: Handle devices stuff
@@ -40,7 +40,7 @@ define( [
 
         create: function () {
             this.callback( {
-                type:   this.model.get( 'class name' ),
+                type:   this.model.get( 'class' ),
                 name:   this.ui.name.val(),
                 device: this.ui.device.val()
             } );

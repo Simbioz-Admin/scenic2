@@ -34,7 +34,7 @@ define( [
          * @returns {boolean}
          */
         _filterQuiddityOrClass: function ( type, quiddity, useFilter ) {
-            var className = quiddity.has( 'class name' ) ? quiddity.get( 'class name' ) : quiddity.get( 'class' );
+            var className = quiddity.get( 'class' );
             var category  = quiddity.get( 'category' );
             var included  = this.has( type ) && this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
                 return category.indexOf( include ) != -1 || className.indexOf( include ) != -1;
@@ -44,16 +44,9 @@ define( [
             return included && !excluded && !filtered;
         },
 
-        filterSource: function( quiddity, useFilter ) {
-            return this._filterQuiddityOrClass( 'source', quiddity, useFilter );
-        },
-
-        filterDestination: function( quiddity, useFilter ) {
-            return this._filterQuiddityOrClass( 'destination', quiddity, useFilter );
-        },
-
         /**
          * Get source collection
+         * Override in concrete table classes to retrieve the actual collection
          *
          * @returns {quiddities|*}
          */
@@ -63,6 +56,8 @@ define( [
 
         /**
          * Get a list of possible source classes
+         * Override in concrete table classes to retrieve the actual collection
+         *
          * @returns {Array.<T>|*|boolean}
          */
         getSources : function() {
@@ -72,7 +67,31 @@ define( [
         },
 
         /**
+         * Filter source for this table
+         * Override in concrete table classes to filter the actual collection
+         *
+         * @param source
+         * @param useFilter
+         * @returns {*|boolean}
+         */
+        filterSource: function( source, useFilter ) {
+            return this._filterQuiddityOrClass( 'source', source, useFilter );
+        },
+
+        /**
+         * Get destination collection
+         * Override in concrete table classes to retrieve the actual collection
+         *
+         * @returns {quiddities|*}
+         */
+        getDestinationCollection: function() {
+            return app.quiddities;
+        },
+
+        /**
          * Get a list of possible destination classes
+         * Override in concrete table classes to retrieve the actual collection
+         *
          * @returns {Array.<T>|*|boolean}
          */
         getDestinations: function() {
@@ -82,12 +101,15 @@ define( [
         },
 
         /**
-         * Get destination collection
+         * Filter destination for this table
+         * Override in concrete table classes to filter the actual collection
          *
-         * @returns {quiddities|*}
+         * @param destination
+         * @param useFilter
+         * @returns {*|boolean}
          */
-        getDestinationCollection: function() {
-            return app.quiddities;
+        filterDestination: function( destination, useFilter ) {
+            return this._filterQuiddityOrClass( 'destination', destination, useFilter );
         },
 
         /**
@@ -97,7 +119,7 @@ define( [
          */
         createQuiddity: function ( info ) {
             var self     = this;
-            var quiddity = new Quiddity( {'class': info.type, 'newName': info.name} );
+            var quiddity = new Quiddity( {'class': info.type, 'name': info.name} );
             quiddity.save( null, {
                 success: function ( quiddity ) {
                     if ( info.device ) {
@@ -112,7 +134,29 @@ define( [
         },
 
         /**
+         * Check if this quiddity is connected to a shmdata
+         * Override in concrete table classes
+         *
+         * @param source
+         * @param destination
+         * @return bool
+         */
+        isConnected: function( source, destination ) {
+            // Check if already connected
+            var shmdataReaders = destination.get( "shmdatas" ).where( {
+                type: 'reader'
+            } );
+            if ( !shmdataReaders || shmdataReaders.length == 0 ) {
+                return false;
+            }
+            return _.some( shmdataReaders, function ( shm ) {
+                return ( shm.get( 'path' ) == source.get( 'path' ) );
+            } );
+        },
+
+        /**
          * Check if a source can connect to a destination
+         * Override in concrete table classes
          *
          * @param source
          * @param destination
@@ -124,6 +168,7 @@ define( [
 
         /**
          * Connect a source to a destination
+         * Override in concrete table classes
          *
          * @param source
          * @param destination
@@ -134,6 +179,7 @@ define( [
 
         /**
          * Disconnect a srouce form its destination
+         * Override in concrete table classes
          *
          * @param source
          * @param destination

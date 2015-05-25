@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/source/Shmdata',
+    'view/scenic/pages/base/table/source/ShmdataView',
     'text!template/scenic/pages/base/table/source.html'
 ], function ( _, Backbone, Marionette, ShmdataView, SourceTemplate ) {
 
@@ -22,7 +22,7 @@ define( [
         childViewOptions: function() {
             return {
                 table: this.options.table,
-                collection: this.model.collection
+                collection: this.options.table.getDestinationCollection()
             }
         },
         childViewContainer: '.shmdatas',

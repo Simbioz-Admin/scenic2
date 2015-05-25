@@ -131,73 +131,7 @@ define(
                     }
                 },
 
-                save_file: function ( event ) {
-                    if ( $( "#panelSave" ).length == 0 ) {
-                        $( ".panelBox" ).remove();
-                        var template = _.template( panelSaveTemplate )( {} );
-                        $( event.currentTarget ).after( template );
-                    } else {
-                        $( ".panelBox" ).remove();
-                    }
-                },
 
-                save: function ( e ) {
-                    e.preventDefault();
-                    var nameFile = $( "#name_file" ).val(),
-                        that     = this;
-
-                    if ( nameFile.indexOf( ".scenic" ) >= 0 || nameFile == "" ) {
-                        that.notification( "error", $.t( "the name is not correct (ex : save_202) " ) );
-                        return;
-                    }
-
-                    console.log( "ask for saving ", nameFile );
-                    socket.emit( "save", nameFile + ".scenic", function ( result ) {
-                        views.global.notification( "info", nameFile + " " + $.t( "is successfully saved" ) );
-                        $( ".panelBox" ).remove();
-                    } )
-                },
-
-                get_save_file_list: function ( event ) {
-                    var that = this;
-                    socket.emit( 'get_save_file_list', function ( saveFiles ) {
-
-                        if ( $( "#panelFiles" ).length == 0 ) {
-                            $( ".panelBox" ).remove();
-                            var template = _.template( panelLoadtemplate )( {
-                                files: saveFiles
-                            } );
-                            $( event.currentTarget ).after( template );
-                        } else {
-                            $( ".panelBox" ).remove();
-                        }
-                    } );
-                },
-
-                load_file: function ( e ) {
-                    var name = $( e.target ).data( 'name' );
-                    socket.emit( "load", name, function ( ok ) {
-                        if ( ok ) {
-
-                            collections.rtpDestinations.fetch( {
-                                success: function ( response ) {
-
-                                    //regenerate source transfer
-                                    $( "#sources" ).html( "" );
-                                    collections.quiddities.fetch( {
-                                        success: function () {
-                                            collections.controlDestinations.fetch();
-                                            views.users.render();
-                                        }
-                                    } );
-
-                                }
-                            } );
-                            views.global.notification( "info", $( e.target ).html() + " " + $.t( "is loaded" ) );
-                        }
-                    } );
-                    $( "#panelFiles" ).remove();
-                },
 
                 remove_save: function ( e ) {
                     var name = $( e.target ).data( "name" );

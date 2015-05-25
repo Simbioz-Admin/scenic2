@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/Source'
+    'view/scenic/pages/base/table/SourceView'
 ], function ( _, Backbone, Marionette, SourceView ) {
 
     /**

@@ -35,19 +35,28 @@ define( [
          */
         initialize: function () {
             Table.prototype.initialize.apply( this, arguments );
-
-            this.destinations = new RTPDestinations( { property: app.quiddities.get(app.config.rtp.quiddName ).get('properties' ).get('destinations-json') });
         },
 
-        /*getDestinationCollection: function() {
-            var rtp = app.quiddities.get(app.config.rtp.quiddName);
-            if ( !rtp ) {
-                return null;
+        /**
+         * Get destination collection
+         * Override in concrete table classes to retrieve the actual collection
+         *
+         * @returns {quiddities|*}
+         */
+        getDestinationCollection: function() {
+            if ( !this.destinations ) {
+                this.destinations = new RTPDestinations( null, {property: app.quiddities.get( app.config.rtp.quiddName ).get( 'properties' ).get( 'destinations-json' )} );
             }
-            var destinations = rtp.get('properties' ).get('destinations-json');
-           // if ( !destinations || !)
-            console.log( rtp, app.config.rtp.quiddName );
-        },*/
+            return this.destinations;
+        },
+
+        /**
+         * Filter destination for RTP, as we use a special collection, they all pass the test
+         * @inheritdoc
+         */
+        filterDestination: function( destination, useFilter ) {
+            return true;
+        },
 
         /**
          * Create an RTP Destination
@@ -56,13 +65,52 @@ define( [
          */
         createRTPDestination: function ( info ) {
             var self = this;
-            socket.emit('createRTPDestination', info, function( error ) {
-                if( error ) {
-                    return self.scenicChannel.vent.trigger('error', error);
+            socket.emit( 'createRTPDestination', info, function ( error ) {
+                if ( error ) {
+                    return self.scenicChannel.vent.trigger( 'error', error );
                 }
-                self.scenicChannel.vent.trigger('rtp:created');
-            })
+                self.scenicChannel.vent.trigger( 'rtp:created' );
+            } )
+        },
 
+
+        /**
+         * Check if this destination is connected to a shmdata
+         *
+         * @param source
+         * @return bool
+         */
+        isConnected: function( source ) {
+            //todo: check if not in the destinaton data_streams
+            return false;
+        },
+
+        /**
+         * Check if a source can connect to a destination
+         * Override in concrete table classes
+         *
+         * @param source
+         * @param destination
+         * @param callback
+         */
+        canConnect: function( source, destination, callback ) {
+            callback( true );
+        },
+
+        /**
+         * Connect a shmdata to a destination
+         *
+         * @param shmdata
+         * @param destination
+         */
+        connect: function ( shmdata, destination ) {
+            var self = this;
+            socket.emit( 'connectRTPDestination', shmdata.id, destination.id, null /* TODO: port */, function( error ) {
+                if ( error ) {
+                    console.error( error );
+                    self.scenicChannel.vent.trigger( 'error', error );
+                }
+            } );
         }
     } );
 

@@ -58,7 +58,7 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['create', this.get( 'class' ), this.get( 'newName' ), socket.id];
+                return ['create', this.get( 'class' ), this.get( 'name' ), socket.id];
             },
             'update': null,
             'patch':  null,

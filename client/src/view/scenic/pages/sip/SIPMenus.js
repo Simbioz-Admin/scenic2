@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/TableMenus',
+    'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/sip/menus.html'
 ], function ( _, Backbone, Marionette, TableMenusView, SIPMenusTemplate ) {
 

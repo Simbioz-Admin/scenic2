@@ -15,11 +15,9 @@ define( [
      */
 
     var ClassDescription = ScenicModel.extend( {
-        idAttribute: 'class name',
         defaults: {
-            'class name': null,
-            'long name': null,
-            'short description': null,
+            'name': null,
+            'description': null,
             'category': null,
             'author': null,
             'license': null,
@@ -46,7 +44,7 @@ define( [
 
             // Setup device-autodetect
             //TODO: Do this server-side
-            this.autoDetectDevices = _.contains( this.deviceAutoDetectList, this.get('class name'));
+            this.autoDetectDevices = _.contains( this.deviceAutoDetectList, this.get('class'));
         },
 
         /**
@@ -67,7 +65,7 @@ define( [
                     return callback ? callback( error ) : null;
                 }
                 //TODO: Parse devices
-                console.info( '>>> WHAT SHOULD I DO WITH THIS ROPERTY? >>>', property );
+                console.info( '>>> WHAT SHOULD I DO WITH THIS PROPERTY? >>>', property );
                 return callback ? callback( null, property ) : null;
             } );
         }

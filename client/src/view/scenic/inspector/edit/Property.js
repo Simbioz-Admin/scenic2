@@ -38,12 +38,10 @@ define( [
         },
 
         renderOnChange: function() {
-            console.log( this.model);
             // Ignore if only the value has changed, let the field view handle this
             if ( this.model.changedAttributes().length == 1 && this.model.hasChanged('value') ) {
                 return;
             }
-            console.log( 'rendering');
             this.render();
         },
 
@@ -57,7 +55,7 @@ define( [
         /**
          * Shows the view & template associated with the property type
          *
-         * TODO: Read-only properties
+         * TODO: Read-only properties?
          * <% if(property.writable == "false") { %>
          * <h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
          * <%=property["default value"]%>

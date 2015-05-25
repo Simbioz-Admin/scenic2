@@ -5,18 +5,18 @@ define( [
     'backbone',
     'marionette',
     'view/scenic/pages/base/table/DestinationView',
-    'text!template/scenic/pages/rtp/destination.html'
-], function ( _, Backbone, Marionette, DestinationView, RTPDestinationTemplate ) {
+    'text!template/scenic/pages/control/destination.html'
+], function ( _, Backbone, Marionette, DestinationView, ControlDestinationTemplate ) {
 
     /**
-     * RTP Destination View
+     * Control Destination View
      *
      * @constructor
      * @extends DestinationView
      */
-    var RTPDestination = DestinationView.extend( {
-        template: _.template( RTPDestinationTemplate ),
-        className: 'rtp destination',
+    var ControlDestination = DestinationView.extend( {
+        template: _.template( ControlDestinationTemplate ),
+        className: 'control destination',
 
         /**
          * Initialize
@@ -26,5 +26,5 @@ define( [
         }
     } );
 
-    return RTPDestination;
+    return ControlDestination;
 } );

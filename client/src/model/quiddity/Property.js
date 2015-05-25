@@ -16,7 +16,6 @@ define( [
 
     var Property = ScenicModel.extend( {
         defaults: {
-            'id':          null,
             'type':        null,
             'writable':    null,
             'name':        null,

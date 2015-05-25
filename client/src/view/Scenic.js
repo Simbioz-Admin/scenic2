@@ -146,7 +146,7 @@ define( [
          * @param result
          */
         closeModal: function ( callback, result ) {
-            this.$el.addClass( 'blur' );
+            this.$el.removeClass( 'blur' );
             this.getRegion( 'modal' ).empty();
             callback( result );
         },

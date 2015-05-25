@@ -15,26 +15,23 @@ define( [
      * @extends ScenicModel
      */
     var Method = ScenicModel.extend( {
-        idAttribute: 'name',
-        defaults:    function () {
+        defaults:  function () {
             return {
-                'name':               null,
-                'long name':          null,
-                'description':        null,
-                'return description': null,
-                'return type':        null,
-                'position category':  null,
-                'position weight':    0,
-                arguments:            new Arguments()
+                'name':              null,
+                'description':       null,
+                'returnDescription': null,
+                'returnType':        null,
+                'order':             0,
+                'args':              new Arguments()
             }
         },
-        methodMap:   {
+        methodMap: {
             'create': null,
             'update': null,
             'patch':  null,
             'delete': null,
             'read':   function () {
-                return ['getMethodDescription', this.collection.quiddity.id, this.get( 'name' )]
+                return ['getMethodDescription', this.collection.quiddity.id, this.id]
             }
         },
 
@@ -46,7 +43,7 @@ define( [
          */
         parse: function ( response ) {
             //Parse arguments into a collection
-            response.arguments = new Arguments( response.arguments );
+            response.args = new Arguments( response.args );
             return response;
         },
 
@@ -70,8 +67,7 @@ define( [
          */
         _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
             if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
-                console.log( this );
-                this.get( 'arguments' ).destroy();
+                this.get( 'args' ).destroy();
                 this.trigger( 'destroy', this, this.collection );
             }
         },

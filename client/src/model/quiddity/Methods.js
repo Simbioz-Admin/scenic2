@@ -48,7 +48,7 @@ define( [
          */
         _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
             if ( signal == "on-method-added" && this.quiddity.id == quiddityId ) {
-                var method = this.add( {name: name}, {merge: true} );
+                var method = this.add( {id: name}, {merge: true} );
                 //The method is empty at this point, fetch its content
                 method.fetch();
             }

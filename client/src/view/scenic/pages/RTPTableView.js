@@ -4,8 +4,8 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Table',
-    'view/scenic/pages/base/table/Sources',
+    'view/scenic/pages/base/TableView',
+    'view/scenic/pages/base/table/SourcesView',
     'view/scenic/pages/rtp/RTPDestinationsView',
     'view/scenic/pages/rtp/RTPMenus'
 ], function ( _, Backbone, Marionette, TableView, SourcesView, RTPDestinationsView, RTPMenus ) {
@@ -38,7 +38,7 @@ define( [
             }));
             this.showChildView('destinations', new RTPDestinationsView({
                 table: this.model,
-                collection: this.model.destinations
+                collection: this.model.getDestinationCollection()
             }));
         }
     } );

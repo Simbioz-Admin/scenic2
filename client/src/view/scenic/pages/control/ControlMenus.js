@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/TableMenus',
+    'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/control/menus.html'
 ], function ( _, Backbone, Marionette, TableMenusView, ControlMenusTemplate ) {
 
@@ -22,9 +22,9 @@ define( [
 
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'createQuidditySource',
+            'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.properties .button': 'dropProperties',
-            'click @ui.properties .item': 'create'
+            'click @ui.properties .item': 'createControlDestination'
         },
 
         /**
@@ -54,9 +54,9 @@ define( [
             this.drop( this.ui.properties, _.groupBy( _.map( this.model.getControlProperties(), function ( property ) {
                 return {
                     group: property.collection.quiddity.get( 'name' ),
-                    id: property.get( 'name' ),
-                    name: property.get( 'long name' ),
-                    title: property.get( 'short description' )
+                    id: property.id,
+                    name: property.get( 'name' ),
+                    title: property.get( 'description' )
                 };
             }, this ), 'group' ) );
         }

@@ -291,5 +291,6 @@
     "Failed to get methods for __quiddityId__": "Failed to get methods for __quiddityId__",
     "Failed to invoke __method__ on __quiddity__": "Failed to invoke __method__ on __quiddity__",
     "Could not get property description for __quiddityId__ property __property__": "Could not get property description for __quiddityId__ property __property__",
-    "RTP destination name (__rtpDestinationName__) already exists": "RTP destination name (__rtpDestinationName__) already exists"
+    "RTP destination name (__rtpDestinationName__) already exists": "RTP destination name (__rtpDestinationName__) already exists",
+    "Already connected": "Already connected"
 }

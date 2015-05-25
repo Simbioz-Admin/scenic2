@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/source/shmdata/Connection',
+    'view/scenic/pages/base/table/source/shmdata/ConnectionView',
     'text!template/scenic/pages/base/table/source/shmdata.html'
 ], function ( _, Backbone, Marionette, ConnectionView, ShmdataTemplate ) {
 
@@ -57,14 +57,14 @@ define( [
         },
 
         /**
-         * Sources Connections for shmdata
+         * Filter destinations in order to display connections for shmdata
          *
-         * @param quiddity
+         * @param destination
          * @returns {boolean}
          */
-        filter: function (quiddity) {
+        filter: function (destination) {
             // Get back up to the table model to filter the displayed connections
-            return this.options.table.filterDestination( quiddity, true );
+            return this.options.table.filterDestination( destination, true );
         },
 
         /**

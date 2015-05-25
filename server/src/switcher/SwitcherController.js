@@ -62,7 +62,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
     log.debug( 'Creating System Usage...' );
     switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );
-    switcher.subscribe_to_signal( this.config.systemUsage.quiddName, 'on-tree-grafted' );
 
     var setSOAPPort = true;
 

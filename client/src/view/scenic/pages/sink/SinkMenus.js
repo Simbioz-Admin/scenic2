@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/TableMenus',
+    'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/sink/menus.html'
 ], function ( _, Backbone, Marionette, TableMenusView, SinkMenusTemplate ) {
 
@@ -21,9 +21,9 @@ define( [
         },
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'createQuidditySource',
+            'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.destination .button': 'dropDestinations',
-            'click @ui.destination .item': 'create',
+            'click @ui.destination .item': 'createDestinationQuiddity',
             'change @ui.filter': 'filter'
         },
 
@@ -37,6 +37,7 @@ define( [
                 categories: categories
             }
         },
+
         initialize: function () {
             TableMenusView.prototype.initialize.apply( this, arguments );
             this.listenTo( app.quiddities, 'update', this.render );

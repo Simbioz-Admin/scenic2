@@ -5,8 +5,9 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/pages/base/Table'
-], function ( $, _, Backbone, socket, Table ) {
+    'model/pages/base/Table',
+    'model/pages/control/ControlDestinations'
+], function ( $, _, Backbone, socket, Table, ControlDestinations ) {
 
     /**
      * Control Table
@@ -41,13 +42,26 @@ define( [
         },
 
         /**
+         * Get destination collection
+         * Override in concrete table classes to retrieve the actual collection
+         *
+         * @returns {quiddities|*}
+         */
+        getDestinationCollection: function() {
+            if ( !this.destinations ) {
+                this.destinations = new ControlDestinations( null, {quiddities: app.quiddities} );
+            }
+            return this.destinations;
+        },
+
+        /**
          * Get a list of controllable properties
          */
         getControlProperties: function() {
             //TODO: Remove already assigned
             // Get source quiddity classes
             var quiddities = app.quiddities.filter( function ( quiddity ) {
-                return this.filterQuiddityOrClass( 'control', quiddity );
+                return this._filterQuiddityOrClass( 'control', quiddity );
             }, this );
             var controllables = [];
             _.each( quiddities , function( quiddity ) {

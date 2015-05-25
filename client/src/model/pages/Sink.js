@@ -65,13 +65,14 @@ define( [
          */
         connect: function ( shmdata, destination ) {
             var self = this;
-            //TODO: Move into destination quiddity
+            //TODO: Move into destination quiddity?
             var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} );
             var maxReaders              = destination.get( 'maxReaders' );
             if ( maxReaders > existingConnectionCount || maxReaders == 0 ) {
                 socket.emit( 'invokeMethod', destination.id, 'connect', [shmdata.id], function ( error, result ) {
                     if ( error ) {
                         console.error( error );
+                        self.scenicChannel.vent.trigger( 'error', error );
                     }
                 } );
             } else {

@@ -67,34 +67,6 @@ define( [
                     quiddity.edit();
                 }
             }
-        },
-
-
-        //
-        //
-        //
-        //
-        //
-
-
-
-
-
-
-        /**
-         *  Ask to the server switcher the property value of a specific quiddity
-         *  @param {string} Name of the quiddity
-         *  @param {string} property The name of the property
-         *  @param {function} callback callback to send the value
-         */
-
-        getPropertyValue: function ( quiddName, property, callback ) {
-            socket.emit( "get_property_value", quiddName, property, function ( err, propertyValue ) {
-                if ( err ) {
-                    return views.global.notification( 'error', err );
-                }
-                callback( propertyValue );
-            } );
         }
     } );
 

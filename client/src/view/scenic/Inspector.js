@@ -53,6 +53,7 @@ define( [
             this.scenicChannel.commands.setHandler( 'rtp:create', _.bind( this._onRTPCreate, this ) );
             this.scenicChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
             this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
+            this.scenicChannel.commands.setHandler( 'inspector:close', _.bind( this.close, this ) );
         },
 
         close: function () {

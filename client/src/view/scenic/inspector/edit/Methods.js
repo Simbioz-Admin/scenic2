@@ -15,6 +15,7 @@ define( [
      */
     var Methods = Marionette.CollectionView.extend( {
         childView: MethodView,
+        tagName: 'ul',
 
         excludedMethods: ['connect', 'disconnect', 'disconnect-all', 'can-sink-caps'],
 
@@ -22,7 +23,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-            //TODO: Sort
+
         },
 
         /**

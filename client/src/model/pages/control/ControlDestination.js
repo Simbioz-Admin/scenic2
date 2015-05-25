@@ -7,12 +7,12 @@ define( [
 ], function ( _, Backbone, ScenicModel ) {
 
     /**
-     * RTP Destination
+     * Control Destination
      *
      * @constructor
      * @extends ScenicModel
      */
-    var RTPDestination = ScenicModel.extend( {
+    var ControlDestination = ScenicModel.extend( {
         idAttribute: 'name',
 
         /**
@@ -23,16 +23,16 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['createRTPDestination' /* TODO */];
+                return ['__TODO__' /* TODO */];
             },
             'update': null,
             'patch':  null,
             'delete': function () {
-                return ['removeRTPDestination', this.id];
+                return ['__TODO__', this.id];
             },
             'read':   null
         }
     } );
 
-    return RTPDestination;
+    return ControlDestination;
 } );

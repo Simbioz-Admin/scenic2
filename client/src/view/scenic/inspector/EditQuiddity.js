@@ -23,13 +23,24 @@ define( [
             methods: '.methods'
         },
 
-        initialize: function () {
+        initialize: function ( options ) {
+            this.inspector = options.inspector;
+
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.scenicChannel.vent.on( 'quiddity:removed', _.bind( this._onQuiddityRemoved, this ) );
+
             this.title = $.t('Edit __quiddityName__', { quiddityName: this.model.get('name')});
         },
 
         onBeforeShow: function() {
             this.showChildView('properties', new PropertiesView({collection: this.model.get('properties')}));
             this.showChildView('methods', new MethodsView({collection: this.model.get('methods')}));
+        },
+
+        _onQuiddityRemoved: function( quiddity ) {
+            if ( quiddity.id == this.model.id ) {
+                this.scenicChannel.commands.execute( 'inspector:close' );
+            }
         }
 
     } );

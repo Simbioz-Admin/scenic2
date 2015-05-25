@@ -26,10 +26,10 @@ define( [
         mapMenu:          function ( models ) {
             return _.groupBy( _.map( models, function ( classDescription ) {
                 return {
-                    group: classDescription.get( 'category' ),
-                    id:    classDescription.get( 'class name' ),
-                    name:  classDescription.get( 'long name' ),
-                    title: classDescription.get( 'short description' )
+                    id:    classDescription.get( 'class' ),
+                    name:  classDescription.get( 'name' ),
+                    title: classDescription.get( 'description' ),
+                    group: classDescription.get( 'category' )
                 };
             }, this ), 'group' );
         },
@@ -81,7 +81,21 @@ define( [
          *
          * @param event
          */
-        createQuidditySource: function ( event ) {
+        createSourceQuiddity: function ( event ) {
+            this.closeMenu();
+            this.scenicChannel.commands.execute(
+                'quiddity:create',
+                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                _.bind( this.model.createQuiddity, this.model )
+            );
+        },
+
+        /**
+         * Handle destination creation
+         *
+         * @param event
+         */
+        createDestinationQuiddity: function ( event ) {
             this.closeMenu();
             this.scenicChannel.commands.execute(
                 'quiddity:create',

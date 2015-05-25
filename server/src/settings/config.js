@@ -42,7 +42,8 @@ var config = {
       retrieve: 1
     },
     port: null, //Automatic
-    quiddName: 'soap'
+    quiddName: 'soap',
+    controlClientPrefix: 'soapControlClient-'
   },
 
   // SIP Configuration

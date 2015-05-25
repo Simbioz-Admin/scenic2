@@ -16,7 +16,6 @@ define( [
 
         defaults: {
             'name': null,
-            'long name': null,
             'description': null,
             'type': null
         },

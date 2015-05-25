@@ -5,17 +5,17 @@ define( [
     'backbone',
     'marionette',
     'view/scenic/pages/base/table/DestinationsView',
-    'view/scenic/pages/rtp/RTPDestinationView'
-], function ( _, Backbone, Marionette, DestinationsView, RTPDestinationView ) {
+    'view/scenic/pages/control/ControlDestinationView'
+], function ( _, Backbone, Marionette, DestinationsView, ControlDestinationView ) {
 
     /**
-     * RTP Destination Collection
+     * Control Destination Collection
      *
      * @constructor
      * @augments DestinationsView
      */
-    var RTPDestinations = DestinationsView.extend( {
-        childView: RTPDestinationView,
+    var ControlDestinations = DestinationsView.extend( {
+        childView: ControlDestinationView,
 
         /**
          * Initialize
@@ -25,5 +25,5 @@ define( [
         }
     } );
 
-    return RTPDestinations;
+    return ControlDestinations;
 } );

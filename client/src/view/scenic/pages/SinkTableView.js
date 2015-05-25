@@ -4,9 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/Table',
-    'view/scenic/pages/base/table/Sources',
-    'view/scenic/pages/base/table/Destinations',
+    'view/scenic/pages/base/TableView',
+    'view/scenic/pages/base/table/SourcesView',
+    'view/scenic/pages/base/table/DestinationsView',
     'view/scenic/pages/sink/SinkMenus',
 ], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, SinkMenus ) {
 

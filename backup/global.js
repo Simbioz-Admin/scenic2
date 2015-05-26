@@ -123,6 +123,7 @@ define(
                     if ( $( "#panelInfo" ).length == 0 ) {
                         $( ".panelBox" ).remove();
                         var template = _.template( panelInfoTemplate )( {
+
                             username: config.nameComputer,
                             host:     config.host,
                             soap:     config.soap.port

@@ -8,9 +8,10 @@ define( [
     'view/scenic/pages/base/table/SourcesView',
     'view/scenic/pages/base/table/DestinationsView',
     'view/scenic/pages/sip/LoginView',
+    'view/scenic/pages/sip/ContactsView',
     'view/scenic/pages/sip/SIPMenus',
     'text!template/scenic/pages/sip/table.html'
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, LoginView, SIPMenusView, SIPTableTemplate ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, LoginView, ContactsView, SIPMenusView, SIPTableTemplate ) {
 
     /**
      *  @constructor
@@ -27,7 +28,13 @@ define( [
         initialize: function( ) {
             TableView.prototype.initialize.apply(this,arguments);
 
-            this.addRegion('contacts', '.contacts');
+            this.scenicChannel.vent.on('sip:login', this._onLogin, this);
+            this.scenicChannel.vent.on('sip:loggedin', this._onLoggedIn, this);
+            this.scenicChannel.vent.on('sip:loggedout', this._onLoggedOut, this);
+
+            this.addRegion('sip', '.sip-panel');
+
+            this.listenTo( this.model.sip, 'change:connected', this._onConnectedChanged );
         },
 
         /**
@@ -47,9 +54,41 @@ define( [
                 table: this.model,
                 collection: this.model.getDestinationCollection()
             }));
-            this.showChildView('contacts', new LoginView({
+
+            // Show SIP View depending on status
+            this.showSIPView();
+        },
+
+        showSIPView: function() {
+            if ( this.model.sip.get('connected') ) {
+                this.showChildView('sip', new ContactsView({
+                    table: this.model,
+                    model: this.model.sip,
+                    collection: this.model.sip.get('contacts')
+                }));
+            } else {
+                this.showChildView('sip', new LoginView({
+                    model: this.model
+                }));
+            }
+        },
+
+        _onConnectedChanged : function() {
+            // Show SIP View depending on status
+            this.showSIPView();
+        },
+
+        _onLogin: function() {
+            /*this.showChildView('sip', new LoginView({
                 table: this.model
-            }));
+            }));*/
+        },
+
+        _onLoggedIn: function() {
+
+        },
+
+        _onLoggedOut: function( error ) {
         }
     } );
 

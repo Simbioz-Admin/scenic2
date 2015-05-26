@@ -28,8 +28,7 @@ var config = {
   scenic: {
     ports: {
       min: 8095,
-      max: 8099,
-      retrieve: 1
+      max: 8099
     },
     port: null //Automatic
   },
@@ -38,8 +37,7 @@ var config = {
   soap: {
     ports: {
       min: 8085,
-      max: 8089,
-      retrieve: 1
+      max: 8089
     },
     port: null, //Automatic
     quiddName: 'soap',
@@ -50,12 +48,11 @@ var config = {
   sip: {
     ports: {
       min: 5060,
-      max: 5069,
-      retrieve: 1
+      max: 5069
     },
     port: null,
-    //address: "scenic.sat.qc.ca"
-    address : "10.10.30.235",
+    server: "scenic.sat.qc.ca",
+    //server : "10.10.30.247",
     quiddName: 'SIP'
   },
 

@@ -5,7 +5,7 @@ var i18n    = require( 'i18next' );
 var async   = require( 'async' );
 var slug    = require( 'slug' );
 var log     = require( '../lib/logger' );
-var logback = require( './logback' );
+var logback = require( '../utils/logback' );
 
 /**
  * Constructor
@@ -42,6 +42,28 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
     //
     //
     //
+};
+
+/**
+ * Switcher Property Callback
+ *
+ * @param quiddityId
+ * @param property
+ * @param value
+ */
+ReceiverManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
+
+};
+
+/**
+ * Switcher Signal Callback
+ *
+ * @param quiddityId
+ * @param signal
+ * @param value
+ */
+ReceiverManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
+
 };
 
 /**

@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require('underscore');
 var portastic = require('portastic');
 var log = require('../lib/logger');
 
@@ -22,7 +23,8 @@ module.exports = function( name, config, callback ) {
     } else {
         // Find port
         log.debug( 'Autodetecting ' + name + ' port number...' );
-        portastic.find( config.ports, function( err, data ) {
+        var portRequest = _.extend( _.clone(config.ports), { retrieve: 1 });
+        portastic.find( portRequest, function( err, data ) {
             if (err) {
                 return callback(err);
             }

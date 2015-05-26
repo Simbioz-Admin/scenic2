@@ -82,33 +82,7 @@ define(
             that.listStatus = listStatus;
             cb(null);
           });
-        },
-        loginSip: function(address, name, password, port, cb) {
-
-            var secretString = 'Les patates sont douces!';
-
-            var sipInformation = {
-              address: address,
-              uri: name + '@' + address,
-              name: name,
-              password: CryptoJS.AES.encrypt( password, secretString ).toString(),
-              port: port
-            };
-
-            if (localStorage["userSip"]) localStorage["userSip"] = null;
-            localStorage["userSip"] = JSON.stringify(sipInformation);
-
-            socket.emit("sip_login", sipInformation, function(err, configSip) {
-              if (err) {
-                return alert("SIP login error:\n\n" + err + "\n\nFIX GLOBAL VIEWS BEFORE APP LAUNCH TO GET BETTER NOTIFICATION THAT THIS");
-                //return views.global.notification("error", err);
-              }
-              //FIXME: views.global.notification("valid", "success login server sip");
-              $("#login_sip", this.el).remove();
-              cb(null);
-            });
-          }
-
+        }
       });
 
     return CollectionUsers;

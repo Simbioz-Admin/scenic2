@@ -5,7 +5,8 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/pages/base/Table'
+    'model/pages/base/Table',
+    'model/sip/Contact'
 ], function ( $, _, Backbone, socket, Table ) {
 
     /**
@@ -32,8 +33,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( options) {
             Table.prototype.initialize.apply( this, arguments );
+            this.sip = options.sip;
         }
     } );
 

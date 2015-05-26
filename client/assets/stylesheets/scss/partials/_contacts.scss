@@ -1,3 +1,146 @@
+$actionsWidth: 125px;
+
+.contacts {
+  header {
+    padding: 1em;
+  }
+}
+
+.contact-list {
+  border-top: 1px solid darken($backgroundColorDarker,5%);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .contact {
+    position: relative;
+    cursor: default;
+    border-bottom: 1px solid darken($backgroundColorDarker,5%);
+
+    .contact-actions-wrapper {
+      position: absolute;
+      overflow: hidden;
+      width: 0;
+      height: 100%;
+      @include transition(width 0.5s);
+    }
+
+    .contact-actions {
+      display: none;
+      background: darken($backgroundColorDarker,5%);
+    }
+
+    .contact-info {
+      width: 100%;
+      border-left: 2px solid;
+      padding: 0.75em 1em;
+      overflow: hidden;
+      background: $backgroundColorDarker;
+      @include transition(margin-left 0.5s);
+
+      .contact-name {
+        float: left;
+        font-size: 1.25em;
+        color: $textColorBrighter;
+      }
+      .contact-uri {
+        float: right;
+        color: $textColorSubtle;
+      }
+      .contact-status {
+        float: left;
+        clear: left;
+        margin-right: 0.5em;
+        color: $textColor;
+        text-transform: uppercase;
+      }
+      .contact-status-text {
+        float: left;
+        color: $textColorSubtle;
+      }
+    }
+
+    // What is the "not active" status?
+    &.active {
+
+      &:hover {
+        .contact-actions-wrapper {
+          width: $actionsWidth;
+        }
+        .contact-actions {
+          display: block;
+        }
+        .contact-info {
+          margin-left: $actionsWidth;
+        }
+      }
+
+      .contact-actions {
+        position: absolute;
+        width: $actionsWidth;
+        height: 100%;
+
+        .contact-action {
+          float: left;
+          width: 50%;
+          height: 100%;
+
+          .icon {
+            width: 100%;
+            height: 100%;
+          }
+
+          &.add-destination {
+            &:hover {
+              background: $green;
+            }
+            .icon {
+              background: url(../../icons/plus.png) center no-repeat;
+            }
+          }
+
+          &.edit-contact {
+            &:hover {
+              background: $orange;
+            }
+            .icon {
+              background: url(../../icons/740-gear.png) center center no-repeat;
+            }
+          }
+        }
+      }
+    }
+
+    //TODO: Why both? Enum says available but tree says online
+    &.available, &.online {
+      .contact-info {
+        border-left-color: $green;
+      }
+    }
+
+    &.busy {
+      .contact-info {
+        border-left-color: $orange;
+      }
+    }
+
+    &.away {
+      .contact-info {
+        border-left-color: $red;
+      }
+    }
+
+    &.offline {
+      .contact-info {
+        border-left-color: #000;
+      }
+      opacity: 0.5;
+    }
+  }
+
+
+}
+
+
 div.users {
   width: 220px;
   background: #222;
@@ -230,69 +373,6 @@ div.users {
     }
     &[data-statusUser='offline'] .information {
       border-color: #555;
-    }
-  }
-  /* LOGIN FORM */
-  #login_sip {
-    background: #222;
-    padding: 20px;
-    color: white;
-    position: relative;
-    z-index: 2;
-    display: inline-block;
-    .parameters {
-      display: inline-block;
-    }
-    h1 {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-    label {
-      font-size: 14px;
-    }
-    input {
-      background: #111;
-      color: white;
-      border-color: #222;
-    }
-    .half {
-      width: 47%;
-      float: left;
-      position: relative;
-      margin-right: 7px;
-      input {
-        width: 95%;
-      }
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-    input[type=submit] {
-      background: #111;
-      width: inherit;
-      margin: 5px 0;
-      line-height: 30px;
-      height: 30px;
-      font-size: 14px;
-      padding: 0 10px;
-      cursor: pointer;
-      &:hover {
-        background: #333;
-      }
-    }
-  }
-}
-
-.editUser {
-  //Edit user
-  .remove {
-    background: none;
-    color: white;
-    border: none;
-    cursor: pointer;
-    float: right;
-    &:hover {
-      color: red;
     }
   }
 }

@@ -39,13 +39,13 @@ require('./bootstrap' )( function( err ) {
 
     async.series( [
 
+        // Translations
         function( callback ) {
-            // Translations
             i18n.initialize( callback );
         },
 
+        // Server setup
         function( callback ) {
-            // Server setup
             log.debug( "Setting up server..." );
 
             app = require('express')();
@@ -57,33 +57,33 @@ require('./bootstrap' )( function( err ) {
             checkPort( 'Scenic GUI', config.scenic, callback );
         },
 
+        // Socket.io
         function( callback ) {
-            // Socket.io
             log.debug( "Setting up socket.io..." );
             io = socketIo( server );
             callback();
         },
 
+        // Switcher
         function(callback) {
-            // Switcher
             switcher = new SwitcherController( config, io );
             switcher.initialize( callback );
         },
 
+        // ScenicIo Client
         function(callback) {
-            // ScenicIo Client
             scenicIo.initialize(config, io, switcher);
             callback();
         },
 
+        // Server startup
         function( callback ) {
-            // Server startup
             log.debug( "Starting server..." );
             server.listen( config.scenic.port, callback );
         },
 
+        // Routes
         function( callback ) {
-            // Routes
             log.debug( "Setting up routes..." );
             routes( app, config, switcher );
             callback();

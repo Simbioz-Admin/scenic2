@@ -3,7 +3,7 @@
 var _       = require( 'underscore' );
 var i18n    = require( 'i18next' );
 var log     = require( '../lib/logger' );
-var logback = require( './logback' );
+var logback = require( '../utils/logback' );
 
 /**
  * Constructor
@@ -44,8 +44,7 @@ function QuiddityManager( config, switcher, io ) {
  * Initialize
  */
 QuiddityManager.prototype.initialize = function () {
-    this.switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
-    this.switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
+
 };
 
 /**
@@ -66,15 +65,12 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( "invokeMethod", this.invokeMethod.bind( this ) );
     socket.on( "create", this.create.bind( this ) );
     socket.on( "remove", this.remove.bind( this ) );
-    //
-    //
-    //
-    socket.on( "get_quiddity_description", this.get_description.bind( this ) );
-    socket.on( "get_property_value", this.get_property_value.bind( this ) );
-    socket.on( "subscribe_info_quidd", this.subscribe_info_quidd.bind( this ) );
-    socket.on( "unsubscribe_info_quidd", this.unsubscribe_info_quidd.bind( this ) );
-    socket.on( "setPropertyValueOfDico", this.set_property_value_of_dico.bind( this ) );
-    socket.on( "removeValuePropertyOfDico", this.remove_property_value_of_dico.bind( this ) );
+    //socket.on( "get_quiddity_description", this.get_description.bind( this ) );
+    //socket.on( "get_property_value", this.get_property_value.bind( this ) );
+    //socket.on( "subscribe_info_quidd", this.subscribe_info_quidd.bind( this ) );
+    //socket.on( "unsubscribe_info_quidd", this.unsubscribe_info_quidd.bind( this ) );
+    //socket.on( "setPropertyValueOfDico", this.set_property_value_of_dico.bind( this ) );
+    //socket.on( "removeValuePropertyOfDico", this.remove_property_value_of_dico.bind( this ) );
 };
 
 /**
@@ -162,15 +158,14 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
  * @param quiddityId
  * @param property
  * @param value
- * @private
  */
-QuiddityManager.prototype._onSwitcherProperty = function ( quiddityId, property, value ) {
+QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
     // We exclude byte-rate because it dispatches every second
     if ( property != "byte-rate" ) {
         log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
     }
 
-    // We have to get the property info in order to parse its value correctly\
+    // We have to get the property info in order to parse its value correctly
     try {
         var propertyInfo = JSON.parse( this.switcher.get_property_description( quiddityId, property ) );
     } catch ( e ) {
@@ -205,9 +200,8 @@ QuiddityManager.prototype._onSwitcherProperty = function ( quiddityId, property,
  * @param quiddityId
  * @param signal
  * @param value
- * @private
  */
-QuiddityManager.prototype._onSwitcherSignal = function ( quiddityId, signal, value ) {
+QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
     // We exclude byte-rate from debug because it dispatches every second
     if ( quiddityId != "systemusage" ) {
@@ -256,14 +250,6 @@ QuiddityManager.prototype._onSwitcherSignal = function ( quiddityId, signal, val
             shmdataReaderInfo.type  = "reader";
             this.io.emit( "addShmdata", quiddityId, shmdataReaderInfo );
         }
-
-        // TODO: SIP
-        if ( quiddityId == this.config.sip.quiddName && value[0].indexOf( ".buddy" ) >= 0 ) {
-            //TODO : Get Better method for get information about user without split value
-            var idUser   = value[0].split( "." )[2];
-            var infoUser = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + idUser ) );
-            this.io.emit( 'infoUser', infoUser );
-        }
     }
 
     //  ┌┬┐┬─┐┌─┐┌─┐  ┌─┐┬─┐┬ ┬┌┐┌┌─┐┌┬┐
@@ -286,13 +272,6 @@ QuiddityManager.prototype._onSwitcherSignal = function ( quiddityId, signal, val
                 path: value[0].replace( ".shmdata.reader.", "" ),
                 type: 'reader'
             } );
-        }
-
-        //TODO: SIP
-        if ( quiddityId == this.config.sip.quiddName ) {
-            var userId   = value[0].split( "." )[2];
-            var userInfo = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + userId ) );
-            this.io.emit( 'infoUser', userInfo );
         }
     }
 
@@ -854,7 +833,7 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
 //  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
 //  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
 
-QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
+/*QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
     log.debug( "get Description quidd", quiddName );
 
     var quiddDescription = JSON.parse( this.switcher.get_quiddity_description( quiddName ) );
@@ -865,9 +844,9 @@ QuiddityManager.prototype.get_description = function ( quiddName, cb ) {
     }
 
     cb( null, quiddDescription );
-};
+};*/
 
-QuiddityManager.prototype.get_properties_values = function ( quiddName ) {
+/*QuiddityManager.prototype.get_properties_values = function ( quiddName ) {
     var self            = this;
     var propertiesQuidd = this.switcher.get_properties_description( quiddName );
     if ( propertiesQuidd == "" ) {
@@ -887,9 +866,9 @@ QuiddityManager.prototype.get_properties_values = function ( quiddName ) {
     }, this );
 
     return propertiesQuidd;
-};
+};*/
 
-QuiddityManager.prototype.get_property_value = function ( quiddName, property, cb ) {
+/*QuiddityManager.prototype.get_property_value = function ( quiddName, property, cb ) {
     log.debug( "Get property value", quiddName, property );
     if ( quiddName && property ) {
         try {
@@ -907,19 +886,19 @@ QuiddityManager.prototype.get_property_value = function ( quiddName, property, c
         return;
     }
     cb( null, property_value );
-};
+};*/
 
-QuiddityManager.prototype.subscribe_info_quidd = function ( quiddName, socketId ) {
+/*QuiddityManager.prototype.subscribe_info_quidd = function ( quiddName, socketId ) {
     log.debug( "socketId (" + socketId + ") subscribe info " + quiddName );
     this.config.subscribe_quidd_info[socketId] = quiddName;
-};
+};*/
 
-QuiddityManager.prototype.unsubscribe_info_quidd = function ( quiddName, socketId ) {
+/*QuiddityManager.prototype.unsubscribe_info_quidd = function ( quiddName, socketId ) {
     log.debug( "socketId (" + socketId + ") unsubscribe info " + quiddName );
     delete this.config.subscribe_quidd_info[socketId];
-};
+};*/
 
-QuiddityManager.prototype.set_property_value_of_dico = function ( property, value, callback ) {
+/*QuiddityManager.prototype.set_property_value_of_dico = function ( property, value, callback ) {
     var currentValueDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", [property] ) );
     if ( currentValueDicoProperty ) {
         currentValueDicoProperty[currentValueDicoProperty.length] = value;
@@ -930,9 +909,9 @@ QuiddityManager.prototype.set_property_value_of_dico = function ( property, valu
     this.switcher.set_property_value( "dico", property, JSON.stringify( currentValueDicoProperty ) );
     this.io.emit( "setDicoValue", property, value );
     callback( "ok" );
-};
+};*/
 
-QuiddityManager.prototype.remove_property_value_of_dico = function ( property, name ) {
+/*QuiddityManager.prototype.remove_property_value_of_dico = function ( property, name ) {
     var self                      = this;
     var currentValuesDicoProperty = JSON.parse( this.switcher.invoke( "dico", "read", [property] ) );
     var newValuesDico             = [];
@@ -943,10 +922,10 @@ QuiddityManager.prototype.remove_property_value_of_dico = function ( property, n
     } );
 
     if ( property == "controlDestinations" ) {
-        /* parse all quidds for remove mapper associate */
+        /!* parse all quidds for remove mapper associate *!/
         var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities;
 
-        /* Remove quiddity sink base on quidd removed */
+        /!* Remove quiddity sink base on quidd removed *!/
         _.each( quidds, function ( quidd ) {
             if ( quidd.name.indexOf( "mapper" ) >= 0 && quidd.name.indexOf( name ) >= 0 ) {
                 this.switcher.remove( quidd.name );
@@ -958,6 +937,6 @@ QuiddityManager.prototype.remove_property_value_of_dico = function ( property, n
 
     this.switcher.invoke( "dico", "update", [property, JSON.stringify( newValuesDico )] );
     this.io.emit( "removeValueOfPropertyDico", property, name );
-};
+};*/
 
 module.exports = QuiddityManager;

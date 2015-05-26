@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
 var _         = require( 'underscore' );
 var i18n      = require( 'i18next' );
 var cryptoJS  = require( 'crypto-js' );
+var async     = require( 'async' );
 var log       = require( '../lib/logger' );
-var logback   = require( './logback' );
+var logback   = require( '../utils/logback' );
 var checkPort = require( '../utils/check-port' );
 
 var secretString = 'Les patates sont douces!';
@@ -36,20 +37,92 @@ SipManager.prototype.initialize = function( ) {
  * @param socket
  */
 SipManager.prototype.bindClient = function ( socket ) {
-    socket.on( "getContacts", this.getContacts.bind( this ) );
+    socket.on( 'sipLogin', this.login.bind( this ) );
+    socket.on( 'getContacts', this.getContacts.bind( this ) );
+    socket.on( 'addContact', this.addContact.bind( this ) );
     //
     //
     //
-    socket.on( "sip_logout", this.logout.bind( this ) );
-    socket.on( "sip_login", this.login.bind( this ) );
-    socket.on( "addUser", this.addUser.bind( this ) );
-    socket.on( "addUserToDestinationMatrix", this.addUserToDestinationMatrix.bind( this ) );
-    socket.on( "removeUserToDestinationMatrix", this.removeUserToDestinationMatrix.bind( this ) );
-    socket.on( "attachShmdataToUser", this.attachShmdataToUser.bind( this ) );
-    socket.on( "callUser", this.callUser.bind( this ) );
-    socket.on( "getListStatus", this.getListStatus.bind( this ) );
-    socket.on( "hangUpUser", this.hangUpUser.bind( this ) );
-    socket.on( "removeUser", this.removeUser.bind( this ) );
+    socket.on( 'sip_logout', this.logout.bind( this ) );
+    socket.on( 'addUserToDestinationMatrix', this.addUserToDestinationMatrix.bind( this ) );
+    socket.on( 'removeUserToDestinationMatrix', this.removeUserToDestinationMatrix.bind( this ) );
+    socket.on( 'attachShmdataToUser', this.attachShmdataToUser.bind( this ) );
+    socket.on( 'callUser', this.callUser.bind( this ) );
+    socket.on( 'getListStatus', this.getListStatus.bind( this ) );
+    socket.on( 'hangUpUser', this.hangUpUser.bind( this ) );
+    socket.on( 'removeUser', this.removeUser.bind( this ) );
+};
+
+
+/**
+ * Switcher Property Callback
+ *
+ * @param quiddityId
+ * @param property
+ * @param value
+ */
+SipManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
+
+};
+
+/**
+ * Switcher Signal Callback
+ *
+ * @param quiddityId
+ * @param signal
+ * @param value
+ */
+SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
+    if ( ( signal == 'on-tree-grafted' || signal == 'on-tree-pruned' ) && quiddityId == this.config.sip.quiddName && value[0].indexOf( '.buddy' ) == 0 ) {
+        //TODO: We need a new way to get added buddies that don't require tree grafts and dot splits
+        var buddyId = value[0].split( '.' )[2];
+        var contact = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + buddyId ) );
+
+        // Parse contact
+        this._parseContact( contact );
+
+        this.io.emit( 'contactInfo', contact );
+    }
+};
+
+/**
+ * Add User to SIP
+ *
+ * @param uri
+ * @param user
+ * @param cb
+ */
+SipManager.prototype._addUser = function ( uri, user, cb ) {
+    log.debug( 'Adding SIP user', uri, user );
+    try {
+        var addedBuddy = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
+    } catch ( e ) {
+        return cb( e );
+    }
+    if ( !addedBuddy ) {
+        return cb( i18n.t('Error adding SIP user __user__', { user: uri } ) );
+    }
+
+    try {
+        var setName = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [user, uri] );
+    } catch ( e ) {
+        return cb( e );
+    }
+    if ( !setName ) {
+        return cb( i18n.t('Error setting SIP user name to __user__ for __uri__', {user:user, uri:uri} ) );
+    }
+    cb( );
+};
+
+/**
+ * Parse contact into a more manageable format for the client
+ *
+ * @param contact
+ * @private
+ */
+SipManager.prototype._parseContact = function( contact ) {
+    contact.id = contact.uri;
+    return contact;
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
@@ -60,6 +133,124 @@ SipManager.prototype.bindClient = function ( socket ) {
 //   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
 
 /**
+ * SIP Login
+ *
+ * @param credentials
+ * @param cb
+ */
+SipManager.prototype.login = function ( credentials, cb ) {
+    log.info( 'SIP login attempt: ' + credentials.name + '@' + credentials.address + ':' + credentials.port );
+
+    if ( !credentials ) {
+        return logback(i18n.t('Missing credentials'), cb);
+    }
+
+    if ( !credentials.server ) {
+        return logback(i18n.t('Missing server'), cb);
+    }
+
+    if ( !credentials.user ) {
+        return logback(i18n.t('Missing user'), cb);
+    }
+
+    var sipConfig = _.clone( this.config.sip );
+    if ( credentials.port ) {
+        if ( isNaN( parseInt( credentials.port ) ) ) {
+            return logback(i18n.t('Invalid SIP Port __port__',{ port: credentials.port}));
+        }
+        sipConfig.port = credentials.port;
+    }
+
+    // Remove previous
+    try {
+        var hasSip = this.switcher.has_quiddity( this.config.sip.quiddName);
+    } catch( e ) {
+        return logback( e, cb );
+    }
+    if ( hasSip ) {
+        log.debug('Removing previous SIP quiddity instance');
+        try {
+            this.switcher.remove( this.config.sip.quiddName );
+        } catch( e ) {
+            return logback( e, cb );
+        }
+    }
+
+    // Setup new instance
+    var self = this;
+    async.series( [
+
+        // Check if port is available
+        function( callback ) {
+            checkPort( 'SIP', sipConfig, callback );
+        },
+
+        // Create SIP quiddity
+        function( callback ) {
+            // Creation
+            log.debug( 'Creating new SIP quiddity');
+            try {
+                var sip = self.switcher.create( 'sip', self.config.sip.quiddName );
+            } catch( e ) {
+                return callback( i18n.t('Error creating SIP quiddity (__error__)', {error:e.toString()}) );
+            }
+            if ( !sip || sip == 'false') {
+                return callback(i18n.t('Error creating SIP quiddity'));
+            }
+
+            // Subscription (We already subscribe to all)
+            /*log.debug('Subscribing to SIP registration status');
+            try {
+                self.switcher.subscribe_to_property( self.config.sip.quiddName, 'sip-registration' );
+            } catch( e ) {
+                return callback( i18n.t('Error subscribing to SIP registration (__error__)', {error:e.toString()}) );
+            }*/
+
+            // Unregister all (Fresh quiddity no need for that)
+            /*try {
+                self.switcher.invoke( self.config.sip.quiddName, 'unregister', [] );
+            } catch( e ) {
+                return callback( i18n.t('Error unregistering all SIP users (__error__)', {error:e.toString()}) );
+            }*/
+
+            // Port
+            log.debug('Setting SIP port');
+            try {
+                var port = self.switcher.set_property_value( self.config.sip.quiddName, 'port', String(sipConfig.port) );
+            } catch( e ) {
+                return callback( i18n.t('Error setting SIP port to __port__ (__error__)', {port:sipConfig.port, error: e.toString()}) );
+            }
+            if ( !port || port == 'false' ) {
+                return callback( i18n.t('Error setting SIP port to __port__', { port: sipConfig.port } ) );
+            }
+
+            // Register
+            log.debug('Registering user');
+            var decrypted = cryptoJS.AES.decrypt( credentials.password, secretString ).toString( cryptoJS.enc.Utf8 );
+            try {
+                var registered = self.switcher.invoke( self.config.sip.quiddName, 'register', [credentials.user + '@' + credentials.server, decrypted] );
+            } catch( e ) {
+                return callback( i18n.t('Error registering SIP user (__error__)', {error:e.toString()}) );
+            }
+            if ( !registered || registered == 'false' ) {
+                return callback( i18n.t( 'SIP authentication failed' ) );
+            }
+            callback();
+        },
+
+        // Add User
+        function( callback ) {
+            self._addUser( credentials.user + '@' + credentials.server, credentials.user, callback );
+        }
+    ], function( error ) {
+        if (error) {
+            return logback( error, cb );
+        }
+        cb();
+    });
+};
+
+/**
  * Get Contacts List
  *
  * @param cb
@@ -67,14 +258,43 @@ SipManager.prototype.bindClient = function ( socket ) {
 SipManager.prototype.getContacts = function ( cb ) {
     log.debug( 'Getting contacts' );
     try {
-        var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.' ) );
+        var hasSipQuiddity = this.switcher.has_quiddity( this.config.sip.quiddName );
     } catch ( e ) {
         return logback( e, cb );
     }
-    if ( !users ) {
-        return logback( i18n.t( "Could not get contacts" ) );
+    if ( !hasSipQuiddity ) {
+        cb(null, []);
     }
-    cb( null, users );
+    try {
+        var contacts = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.buddy' ) );
+    } catch ( e ) {
+        return logback( e, cb );
+    }
+    if ( !contacts ) {
+        return logback( i18n.t( 'Could not get contacts' ) );
+    }
+
+    // Parse contacts
+    contacts = _.values(contacts);
+    _.each( contacts, this._parseContact, this );
+
+    cb( null, contacts );
+};
+
+/**
+ * Add Contact
+ *
+ * @param uri
+ * @param cb
+ */
+SipManager.prototype.addContact = function ( uri, cb ) {
+    log.debug( 'Adding contact', uri );
+    this._addUser( uri, uri, function(error) {
+        if ( error ) {
+            return logback( error, cb );
+        }
+        cb();
+    } );
 };
 
 
@@ -87,103 +307,42 @@ SipManager.prototype.getContacts = function ( cb ) {
 //
 
 
-/*
- *  @function addListUser
- *  @description add to the array listUsers a new users
- */
-SipManager.prototype._addUser = function ( URI, name, cb ) {
-    log.debug( "Adding SIP user..." );
-    var addBuddy = this.switcher.invoke( this.config.sip.quiddName, "add_buddy", [URI] );
-    if ( !addBuddy ) {
-        return cb( "Error adding SIP user " + URI );
-    }
-    var setName = this.switcher.invoke( this.config.sip.quiddName, "name_buddy", [name, URI] );
-    if ( !setName ) {
-        return cb( "Error setting SIP user name to " + name + " for " + URI );
-    }
 
-    /* Insert a new entry in the dico users */
-    var newEntry = this.switcher.invoke( "usersSip", "update", [URI, name] );
-
-    /* save the dico users */
-    var usersSavePath = this.config.scenicSavePath + "users.json";
-    var saveDicoUsers = this.switcher.invoke( "usersSip", "save", [usersSavePath] );
-    if ( !saveDicoUsers ) {
-        return cb( "Error saving usersSip dictionary to " + usersSavePath );
-    }
-
-    cb( null, "Successfully added SIP user " + URI );
-};
 
 /*
  *  @function _createSip
  *  @description set the connection with the server sip. This function is called a initialization of switcher
  */
 SipManager.prototype._createSip = function ( name, password, address, port, cb ) {
-    log.debug( "Creating SIP quiddity", {name: name, address: address, port: port} );
-    //@TODO : Encrypt client side and decrypt server side the password
-
-    /* Create the server SIP */
-    this.config.sip.quiddName = this.switcher.create( "sip", this.config.sip.quiddName );
-    if ( !this.config.sip.quiddName ) {
-        var msgError = i18n.t( "Error creating SIP quiddity" );
-        log.error( msgError );
-        return cb( msgError );
-    }
-    this.switcher.subscribe_to_property( this.config.sip.quiddName, 'sip-registration' );
-    this.switcher.invoke( this.config.sip.quiddName, "unregister", [] );
-
-    /* Define port for Sip Server */
-    var port = this.switcher.set_property_value( this.config.sip.quiddName, "port", port );
-    if ( !port ) {
-        return log.error( "Error setting SIP quiddity port to " + port );
-    }
-
-    /* Connect to the server SIP */
-    var decrypted = cryptoJS.AES.decrypt( password, secretString ).toString( cryptoJS.enc.Utf8 );
-
-    log.debug( "Attempting SIP server connection", {name: name + "@" + address, password: decrypted} );
-
-    var register = this.switcher.invoke( this.config.sip.quiddName, "register", [name + "@" + address, decrypted] );
-
-    console.log( register, this.config.sip.quiddName, name, address, decrypted );
-
-    if ( !register ) {
-        return log.error( i18n.t( "SIP server authentication failed" ) );
-    }
-
-    /* subscribe to the modification on this quiddity */
-    this.switcher.subscribe_to_signal( this.config.sip.quiddName, "on-tree-grafted" );
-    this.switcher.subscribe_to_signal( this.config.sip.quiddName, "on-tree-pruned" );
 
     /* Add user connected to the sip quiddity */
-    this._addUser( name + "@" + address, name, function ( err ) {
+    this._addUser( name + '@' + address, name, function ( err ) {
         if ( err ) {
             return log.error( err );
         }
     } );
 
     /* Create dico for DestinationsSip */
-    var destinationsSip = this.switcher.create( 'dico', 'destinationsSip' );
+   /* var destinationsSip = this.switcher.create( 'dico', 'destinationsSip' );
     if ( !destinationsSip ) {
-        return log.error( "Error creating destinationsSip dictionary" );
-    }
+        return log.error( 'Error creating destinationsSip dictionary' );
+    }*/
 
     /* Create a dico for Users Save */
-    var usersDico = this.switcher.create( "dico", "usersSip" );
+    /*var usersDico = this.switcher.create( 'dico', 'usersSip' );
     if ( !usersDico ) {
-        return log.error( "Error creating usersSip dictionary" );
-    }
+        return log.error( 'Error creating usersSip dictionary' );
+    }*/
 
     /* Try load file users dico */
-    var loadUsers = this.switcher.invoke( "usersSip", "load", [this.config.scenicSavePath + "/users.json"] );
+    var loadUsers = this.switcher.invoke( 'usersSip', 'load', [this.config.scenicSavePath + '/users.json'] );
     if ( !loadUsers ) {
-        log.warn( "No saved file exists for usersSip dictionary" );
+        log.warn( 'No saved file exists for usersSip dictionary' );
     }
 
     if ( loadUsers ) {
         /* Load Dico Users in quiddity SIP */
-        var users = JSON.parse( this.switcher.get_info( "usersSip", ".dico" ) );
+        var users = JSON.parse( this.switcher.get_info( 'usersSip', '.dico' ) );
 
         if ( !users.error ) {
             _.each( users, function ( username, key ) {
@@ -197,8 +356,8 @@ SipManager.prototype._createSip = function ( name, password, address, port, cb )
         }
     }
 
-    if ( register == "false" ) {
-        var msgErr = i18n.t( "Error registering SIP quiddity" );
+    if ( register == 'false' ) {
+        var msgErr = i18n.t( 'Error registering SIP quiddity' );
         log.error( msgErr );
         return cb( msgErr, null );
     }
@@ -215,9 +374,9 @@ SipManager.prototype._createSip = function ( name, password, address, port, cb )
  */
 SipManager.prototype.getListUsers = function () {
 
-    var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, "." ) );
+    var users = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.' ) );
     /* get users added to the tab Sip */
-    var destinationSip = JSON.parse( this.switcher.get_info( "destinationsSip", ".dico" ) );
+    var destinationSip = JSON.parse( this.switcher.get_info( 'destinationsSip', '.dico' ) );
     var keys           = _.keys( destinationSip );
     _.each( users.buddy, function ( user, i ) {
         if ( _.contains( keys, user.uri ) ) {
@@ -225,7 +384,7 @@ SipManager.prototype.getListUsers = function () {
         }
     } );
 
-    log.debug( "Get List users", users );
+    log.debug( 'Get List users', users );
     if ( !users.error ) {
         return users.buddy;
     } else {
@@ -233,93 +392,57 @@ SipManager.prototype.getListUsers = function () {
     }
 };
 
-/*
- *  @function login
- *  @description Log user to the server sip
- */
-SipManager.prototype.login = function ( sip, cb ) {
-    var self = this;
-
-    log.debug( "SIP login attempt: " + sip.name + '@' + sip.address + ':' + sip.port );
-
-    // Remove potential previous SIP quiddity
-    this.switcher.remove( this.config.sip.quiddName );
-
-    checkPort( 'SIP', this.config.sip, function ( error ) {
-        if ( error ) {
-            log.error( error );
-            return cb( error );
-        }
-        // Create new SIP quiddity
-        self._createSip( sip.name, sip.password, sip.address, sip.port, function ( err ) {
-            if ( err ) {
-                return cb( err );
-            }
-            return cb( null, sip );
-        } );
-    } );
-};
 
 /*
  *  @function logout
  *  @description logout from the server SIP
  */
 SipManager.prototype.logout = function ( cb ) {
-    log.debug( "ask for logout to the server sip" );
-    var unregister = this.switcher.invoke( this.config.sip.quiddName, "unregister", [] );
-    console.log( "unregister", unregister );
+    log.debug( 'ask for logout to the server sip' );
+    var unregister = this.switcher.invoke( this.config.sip.quiddName, 'unregister', [] );
+    console.log( 'unregister', unregister );
     if ( this.switcher.remove( this.config.sip.quiddName ) ) {
         return cb( null, true );
     } else {
-        var msgErr = i18n.t( "error when try logout server sip" );
+        var msgErr = i18n.t( 'error when try logout server sip' );
         log.error( msgErr )
         return cb( msgErr, false );
     }
 
 };
 
-/*
- *  @function _addUser
- *  @description Add a new user in the dico and server sip
- */
-SipManager.prototype.addUser = function ( uri, cb ) {
-    log.debug( "ask to add user ", uri );
-    this._addUser( uri, uri, function ( err, info ) {
-        return cb( err, info );
-    } );
-};
 
 /*
  *  @function addDestinationSip
  */
 SipManager.prototype.addUserToDestinationMatrix = function ( uri, cb ) {
-    log.debug( "ask to add ", uri, " to the destinationSip" );
+    log.debug( 'ask to add ', uri, ' to the destinationSip' );
 
-    var addDestinationSip = this.switcher.invoke( "destinationsSip", "update", [uri, uri] );
+    var addDestinationSip = this.switcher.invoke( 'destinationsSip', 'update', [uri, uri] );
     if ( !addDestinationSip ) {
-        var err = i18n.t( "Error add DestinationSip " ) + uri;
+        var err = i18n.t( 'Error add DestinationSip ' ) + uri;
         log.error( err );
         cb( err );
         return;
     }
-    this.io.emit( "addDestinationSip", uri );
-    cb( null, "successfully added destination " + uri );
+    this.io.emit( 'addDestinationSip', uri );
+    cb( null, 'successfully added destination ' + uri );
 };
 
 /*
  *  @function removeDestinationSip
  */
 SipManager.prototype.removeUserToDestinationMatrix = function ( uri, cb ) {
-    log.debug( "ask to remove ", uri, " to the destinationSip" );
-    var removeDestinationSip = this.switcher.invoke( "destinationsSip", "remove", [uri] );
+    log.debug( 'ask to remove ', uri, ' to the destinationSip' );
+    var removeDestinationSip = this.switcher.invoke( 'destinationsSip', 'remove', [uri] );
     if ( !removeDestinationSip ) {
-        var err = i18n.t( "Error remove DestinationSip " ) + uri;
+        var err = i18n.t( 'Error remove DestinationSip ' ) + uri;
         log.error( err );
         cb( err );
         return;
     }
-    this.io.emit( "removeDestinationSip", uri );
-    cb( null, i18n.t( "successfully remove destination " ) + uri );
+    this.io.emit( 'removeDestinationSip', uri );
+    cb( null, i18n.t( 'successfully remove destination ' ) + uri );
 
     /* hang up client if called */
     var call = this.switcher.invoke( this.config.sip.quiddName, 'hang-up', [uri] );
@@ -334,18 +457,18 @@ SipManager.prototype.removeUserToDestinationMatrix = function ( uri, cb ) {
  *  @function addShmdataToUserSip
  */
 SipManager.prototype.attachShmdataToUser = function ( user, path, attach, cb ) {
-    log.debug( "Shmdata to contact", user, path, attach );
-    var attachShm = this.switcher.invoke( this.config.sip.quiddName, "attach_shmdata_to_contact", [path, user, String( attach )] );
-    var type      = (attach) ? "attach" : "detach";
+    log.debug( 'Shmdata to contact', user, path, attach );
+    var attachShm = this.switcher.invoke( this.config.sip.quiddName, 'attach_shmdata_to_contact', [path, user, String( attach )] );
+    var type      = (attach) ? 'attach' : 'detach';
 
     if ( !attachShm ) {
-        var err = "error " + type + " shmdata to the user sip";
+        var err = 'error ' + type + ' shmdata to the user sip';
         log.error( err );
         return cb( err );
     }
 
-    // this.io.emit("addShmdataToUserSip", )
-    cb( null, "successfully " + type + " Shmdata to the destination SIP" );
+    // this.io.emit('addShmdataToUserSip', )
+    cb( null, 'successfully ' + type + ' Shmdata to the destination SIP' );
 };
 
 SipManager.prototype.callUser = function ( uri, cb ) {
@@ -376,9 +499,9 @@ SipManager.prototype.updateUser = function ( uri, name, statusText, status, cb )
 
     if ( name ) {
         log.debug( 'Update name of the uri ' + uri + ' by ' + name );
-        var updateName = this.switcher.invoke( this.config.sip.quiddName, "name_buddy", [name, uri] );
+        var updateName = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [name, uri] );
         if ( !updateName ) {
-            var msgError = "Error update name " + name;
+            var msgError = 'Error update name ' + name;
             log.error( msgError );
             return cb( msgError );
         }
@@ -393,40 +516,40 @@ SipManager.prototype.updateUser = function ( uri, name, statusText, status, cb )
     }
 
     /* Update name user of dico Users and save */
-    var dicoUser      = this.switcher.invoke( "usersSip", "update", [uri, name] );
-    var saveDicoUsers = this.switcher.invoke( "usersSip", "save", [this.config.scenicSavePath + "/users.json"] );
+    var dicoUser      = this.switcher.invoke( 'usersSip', 'update', [uri, name] );
+    var saveDicoUsers = this.switcher.invoke( 'usersSip', 'save', [this.config.scenicSavePath + '/users.json'] );
     if ( !saveDicoUsers ) {
-        return cb( "error saved dico users" );
+        return cb( 'error saved dico users' );
     }
     cb( null, i18n.t( 'successfully update ' ) + name );
 
 };
 
 SipManager.prototype.removeUser = function ( uri, cb ) {
-    log.debug( "remove User " + uri );
-    var removeBuddy = this.switcher.invoke( this.config.sip.quiddName, "del_buddy", [uri] );
+    log.debug( 'remove User ' + uri );
+    var removeBuddy = this.switcher.invoke( this.config.sip.quiddName, 'del_buddy', [uri] );
     if ( !removeBuddy ) {
-        return cb( i18n.t( "Error remove __name__ to the sip server", {name: name} ) );
+        return cb( i18n.t( 'Error remove __name__ to the sip server', {name: name} ) );
     }
 
     /* Remove entry in the dico users */
-    var removeEntry = this.switcher.invoke( "usersSip", "remove", [uri] );
+    var removeEntry = this.switcher.invoke( 'usersSip', 'remove', [uri] );
 
     /* save the dico users */
-    var saveDicoUsers = this.switcher.invoke( "usersSip", "save", [this.config.scenicSavePath + "/users.json"] );
+    var saveDicoUsers = this.switcher.invoke( 'usersSip', 'save', [this.config.scenicSavePath + '/users.json'] );
     if ( !saveDicoUsers ) {
-        return cb( i18n.t( "error saved dico users" ) );
+        return cb( i18n.t( 'error saved dico users' ) );
     }
 
-    cb( null, i18n.t( "User __uri__ successfully removed", {uri: uri} ) );
-    this.io.emit( "removeUser", uri );
+    cb( null, i18n.t( 'User __uri__ successfully removed', {uri: uri} ) );
+    this.io.emit( 'removeUser', uri );
 
 };
 
 SipManager.prototype.getListStatus = function ( cb ) {
     log.debug( 'ask get list users' );
-    var listStatus = this.switcher.get_property_description( this.config.sip.quiddName, "status" );
-    if ( listStatus != "" ) {
+    var listStatus = this.switcher.get_property_description( this.config.sip.quiddName, 'status' );
+    if ( listStatus != '' ) {
         cb( null, JSON.parse( listStatus ).values );
     } else {
         cb( null, [] );

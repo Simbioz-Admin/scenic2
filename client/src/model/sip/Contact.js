@@ -15,7 +15,16 @@ define( [
      */
 
     var Contact = ScenicModel.extend( {
-        idAttribute: 'uri',
+
+        methodMap:   {
+            'create': function () {
+                return ['addContact', this.get( 'uri' )];
+            },
+            'update': null,
+            'patch':  null,
+            'delete': null,
+            'read':   null
+        },
 
         /**
          * Initialize

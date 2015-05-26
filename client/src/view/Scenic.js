@@ -39,7 +39,7 @@ define( [
      * @augments module:Marionette.LayoutView
      */
     var ScenicView = Marionette.LayoutView.extend( {
-        template: _.template(ScenicTemplate),
+        template: _.template( ScenicTemplate ),
         el:       '#scenic',
 
         regions: {
@@ -58,10 +58,10 @@ define( [
 
             this.notifications = new NotificationsView();
 
-            this.pages = new Pages( null, {config: this.app.config });
+            this.pages = new Pages( null, {config: this.app.config} );
             this.pages.add( new SinkPage( {viewClass: SinkView} ) );
             this.pages.add( new RTPPage( {viewClass: RTPView} ) );
-            this.pages.add( new SIPPage( {viewClass: SIPView} ) );
+            this.pages.add( new SIPPage( {sip: app.sip, viewClass: SIPView} ) );
             this.pages.add( new ControlPage( {viewClass: ControlView} ) );
             this.pages.add( new SettingsPage( {viewClass: SettingsView} ) );
 
@@ -87,14 +87,14 @@ define( [
          * Special case for the moment as we don't use a master application view to render us
          */
         onRender: function () {
-            this.showChildView( 'menu', new MenuView( ) );
-            this.showChildView( 'tabs', new TabsView( { collection: this.pages } ) );
+            this.showChildView( 'menu', new MenuView() );
+            this.showChildView( 'tabs', new TabsView( {collection: this.pages} ) );
             this.showChildView( 'usage', new SystemUsageView() );
             this.showChildView( 'inspector', new InspectorView() );
 
             this.showPage( this.pages.getCurrentPage() );
 
-            this.$el.fadeIn(500);
+            this.$el.fadeIn( 500 );
         },
 
         /**
@@ -106,17 +106,17 @@ define( [
          */
         showPage: function ( page ) {
             if ( this.currentPage ) {
-                this.$el.removeClass(this.currentPage.id);
+                this.$el.removeClass( this.currentPage.id );
             }
             if ( page ) {
                 this.showChildView( 'page', page.getViewInstance() );
                 this.currentPage = page;
             } else {
-                this.getRegion('page' ).empty();
+                this.getRegion( 'page' ).empty();
                 this.currentPage = null;
             }
             if ( this.currentPage ) {
-                this.$el.addClass(this.currentPage.id);
+                this.$el.addClass( this.currentPage.id );
             }
         },
 
@@ -203,7 +203,7 @@ define( [
          * @param fileName
          * @private
          */
-        _onFileLoading: function( fileName ) {
+        _onFileLoading: function ( fileName ) {
             this.stopSpinner = spin();
         },
 
@@ -212,7 +212,7 @@ define( [
          * @param fileName
          * @private
          */
-        _onFileLoaded: function( fileName ) {
+        _onFileLoaded: function ( fileName ) {
             this.stopSpinner();
         },
 
@@ -222,7 +222,7 @@ define( [
          * @param fileName
          * @private
          */
-        _onFileError: function( fileName ) {
+        _onFileError: function ( fileName ) {
             this.stopSpinner();
         }
     } );

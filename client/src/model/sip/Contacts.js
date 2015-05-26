@@ -5,7 +5,7 @@ define( [
     'backbone',
     'lib/socket',
     'model/base/ScenicCollection',
-    'model/Contact'
+    'model/sip/Contact'
 ], function ( _, Backbone, socket, ScenicCollection, Contact ) {
 
     /**
@@ -31,7 +31,7 @@ define( [
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            this.onSocket( 'infoUser', _.bind( this._onUserInfo, this ) );
+            this.onSocket( 'contactInfo', _.bind( this._onUserInfo, this ) );
         },
 
         /**

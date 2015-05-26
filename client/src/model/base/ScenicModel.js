@@ -3,9 +3,10 @@
 define( [
     'underscore',
     'backbone',
+    'i18n',
     'lib/socket',
     'model/base/BaseModel'
-], function ( _, Backbone, socket, BaseModel ) {
+], function ( _, Backbone, i18n, socket, BaseModel ) {
 
     /**
      * Scenic Model
@@ -119,7 +120,7 @@ define( [
                 socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
                 model.trigger( 'request', model, socket, options );
             } else {
-                return options.error( 'Invalid request' );
+                return options.error( i18n.t('Invalid request __method__', {method: method} ) );
             }
         }
     } );

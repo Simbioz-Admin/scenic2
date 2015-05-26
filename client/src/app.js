@@ -6,31 +6,27 @@ define( [
     'async',
     'jquery',
     'i18n',
+    // Internal Lib
+    'model/SIPConnection',
     // Model
     'model/SaveFiles',
     'model/ClassDescriptions',
     'model/Quiddities',
-    //'model/connections/SIPDestinations',
-    //'model/connections/RTPDestinations',
-    //'model/connections/ControlDestinations',
-    'model/Contacts',
     // View
     'view/Scenic'
 ], function ( _, Backbone, Mutators, async, $, i18n,
+              // Internal Libs
+              SIPConnection,
               // Models
               SaveFiles, ClassDescriptions, Quiddities,
-              Contacts,
               // Views
               ScenicView ) {
 
-    var saveFiles           = null;
-    var classDescriptions   = null;
-    var quiddities          = null;
-    var sipDestinations     = null;
-    var rtpDestinations     = null;
-    var controlDestinations = null;
-    var contacts            = null;
-    var tables              = null;
+    var saveFiles         = null;
+    var classDescriptions = null;
+    var quiddities        = null;
+    var sip               = null;
+    var tables            = null;
 
     var config = null;
 
@@ -46,8 +42,8 @@ define( [
 
         async.series( [
 
+            // Translations
             function ( callback ) {
-                // Translations
                 i18n.init( {
                     lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
                     cookieName:   'lang',
@@ -58,51 +54,34 @@ define( [
                 } );
             },
 
+            // Get class descriptions
             function ( callback ) {
-                // Get class descriptions
                 self.saveFiles = new SaveFiles();
                 self.saveFiles.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
+            // Get class descriptions
             function ( callback ) {
-                // Get class descriptions
                 self.classDescriptions = new ClassDescriptions();
                 self.classDescriptions.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
+            // Get Quiddities
             function ( callback ) {
-                // Get Quiddities
                 self.quiddities = new Quiddities();
                 self.quiddities.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 
-            /*function ( callback ) {
-             // Get RTP Destinations
-             self.sipDestinations = new SIPDestinations();
-             //self.sipDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-             callback();
-             },*/
-
-            /*function ( callback ) {
-             // Get RTP Destinations
-             self.rtpDestinations = new RTPDestinations();
-             self.rtpDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-             },*/
-
-            /*function ( callback ) {
-             // Get Control Destinations
-             self.controlDestinations = new ControlDestinations();
-             self.controlDestinations.fetch( {success: _.partial( callback, null ), error: callback} );
-             },*/
-
+            // SIP
             function ( callback ) {
-                self.contacts = new Contacts();
-                self.contacts.fetch( {success: _.partial( callback, null ), error: callback} );
+                self.sip = new SIPConnection();
+                //self.sip.autoconnect( {success: _.partial( callback, null ), error: callback} );
+                callback();
             }
 
         ], function ( error ) {
             if ( error ) {
-                alert( error );
+                alert( error.toString() );
                 console.error( error );
                 if ( callback ) {
                     callback( error );
@@ -123,16 +102,13 @@ define( [
     };
 
     return {
-        config:              config,
-        initialize:          initialize,
-        saveFiles:           saveFiles,
-        classDescriptions:   classDescriptions,
-        quiddities:          quiddities,
-        sipDestinations:     sipDestinations,
-        rtpDestinations:     rtpDestinations,
-        controlDestinations: controlDestinations,
-        contacts:            contacts,
-        tables:              tables
+        config:            config,
+        initialize:        initialize,
+        saveFiles:         saveFiles,
+        classDescriptions: classDescriptions,
+        quiddities:        quiddities,
+        sip:               sip,
+        tables:            tables
     };
 } )
 ;

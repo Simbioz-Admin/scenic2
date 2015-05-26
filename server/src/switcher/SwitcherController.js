@@ -9,7 +9,7 @@ var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
 var ReceiverManager = require( './ReceiverManager' );
 var log             = require( '../lib/logger' );
-var logback         = require( './logback' );
+var logback         = require( '../utils/logback' );
 var checkPort       = require( '../utils/check-port' );
 
 /**
@@ -43,6 +43,8 @@ SwitcherController.prototype.initialize = function ( callback ) {
 
     // Switcher Callbacks
     switcher.register_log_callback( this._onSwitcherLog.bind( this ) );
+    switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
+    switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
 
     /**
      * DEFAULTS
@@ -147,6 +149,34 @@ SwitcherController.prototype.bindClient = function ( socket ) {
  */
 SwitcherController.prototype._onSwitcherLog = function ( message ) {
     log.switcher( message );
+};
+
+/**
+ * Switcher Property Callback
+ *
+ * @param quiddityId
+ * @param property
+ * @param value
+ * @private
+ */
+SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, property, value ) {
+    this.quiddityManager.onSwitcherProperty( quiddityId, property, value );
+    this.receiverManager.onSwitcherProperty( quiddityId, property, value );
+    this.sipManager.onSwitcherProperty( quiddityId, property, value );
+};
+
+/**
+ * Switcher Signal Callback
+ *
+ * @param quiddityId
+ * @param signal
+ * @param value
+ * @private
+ */
+SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, value ) {
+    this.quiddityManager.onSwitcherSignal( quiddityId, signal, value );
+    this.receiverManager.onSwitcherSignal( quiddityId, signal, value );
+    this.sipManager.onSwitcherSignal( quiddityId, signal, value );
 };
 
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗

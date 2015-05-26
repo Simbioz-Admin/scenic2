@@ -10,14 +10,16 @@ var customLevels = {
     debug: 1,
     info: 2,
     warn: 3,
-    error: 4
+    error: 4,
+    logback: 4 // Error utility for socket callbacks, has to trace one level higher
   },
   colors: {
     switcher: 'magenta',
     debug: 'gray',
     info: 'blue',
     warn: 'yellow',
-    error: 'red'
+    error: 'red',
+    logback: 'red'
   }
 };
 
@@ -51,6 +53,9 @@ var log = new(winston.Logger)({
 log.addFilter( function(msg, meta, level) {
   if ( level == 'error' ) {
     msg = traceCaller( 5 ) + ": " + msg;
+  } else if ( level == 'logback' ) {
+    // Error utility for socket callbacks, has to go one level deeper than normal error for traces
+    msg = traceCaller( 6 ) + ': ' + msg;
   } else if ( level == 'switcher' ) {
     var prefix = msg.split(':')[0];
     switch( prefix.split('-' ).pop() ) {

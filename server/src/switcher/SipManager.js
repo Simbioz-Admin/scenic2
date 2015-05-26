@@ -163,7 +163,7 @@ SipManager.prototype.login = function ( credentials, cb ) {
 
     // Remove previous
     try {
-        var hasSip = this.switcher.has_quiddity( this.config.sip.quiddName);
+        var hasSip = JSON.parse( this.switcher.has_quiddity( this.config.sip.quiddName) );
     } catch( e ) {
         return logback( e, cb );
     }
@@ -258,13 +258,14 @@ SipManager.prototype.login = function ( credentials, cb ) {
 SipManager.prototype.getContacts = function ( cb ) {
     log.debug( 'Getting contacts' );
     try {
-        var hasSipQuiddity = this.switcher.has_quiddity( this.config.sip.quiddName );
+        var hasSipQuiddity = JSON.parse( this.switcher.has_quiddity( this.config.sip.quiddName ) );
     } catch ( e ) {
         return logback( e, cb );
     }
     if ( !hasSipQuiddity ) {
-        cb(null, []);
+        return cb(null, []);
     }
+
     try {
         var contacts = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.buddy' ) );
     } catch ( e ) {
@@ -400,7 +401,6 @@ SipManager.prototype.getListUsers = function () {
 SipManager.prototype.logout = function ( cb ) {
     log.debug( 'ask for logout to the server sip' );
     var unregister = this.switcher.invoke( this.config.sip.quiddName, 'unregister', [] );
-    console.log( 'unregister', unregister );
     if ( this.switcher.remove( this.config.sip.quiddName ) ) {
         return cb( null, true );
     } else {

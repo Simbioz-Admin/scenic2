@@ -290,7 +290,7 @@ ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb 
 
     // If a soap port was defined we set the shmdata to the httpsdpdec
     try {
-        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
+        var hasSoapControlClient = JSON.parse( this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id ) );
     } catch ( e ) {
         return logback( e, cb );
     }
@@ -351,9 +351,8 @@ ReceiverManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
     }
 
     // If a soap port was defined refresh the httpsdpdec
-    //TODO: Replace by the upcoming exist method
     try {
-        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
+        var hasSoapControlClient = JSON.parse( this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id ) );
     } catch ( e ) {
         return logback( e, cb );
     }

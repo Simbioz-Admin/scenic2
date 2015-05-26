@@ -717,7 +717,6 @@ QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
  * @returns {*}
  */
 QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, cb ) {
-    console.log(quiddityId, method);
     try {
         var result = JSON.parse( this.switcher.get_method_description( quiddityId, method ) );
     } catch ( e ) {

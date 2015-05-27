@@ -14,6 +14,7 @@ define( [
      * @augments module:Marionette.CollectionView
      */
     var Sources = Marionette.CollectionView.extend( {
+        className: 'source-list',
         childView: SourceView,
         childViewOptions: function() {
             return {

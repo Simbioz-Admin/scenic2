@@ -34,7 +34,7 @@ define( [
         },
 
         ui: {
-            info: '.actions .action.info'
+            info: '.actions .action.more'
         },
 
         events: {

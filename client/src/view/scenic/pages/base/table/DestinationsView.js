@@ -15,6 +15,7 @@ define( [
      */
     var Destinations = Marionette.CollectionView.extend( {
         childView: DestinationView,
+        className: 'destination-list',
 
         /**
          * Initialize

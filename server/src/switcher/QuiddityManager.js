@@ -260,6 +260,8 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 
         // Shmdata Writer
         if ( value[0].indexOf( ".shmdata.writer" ) >= 0 ) {
+            // VU Meters
+            this.removeVuMeters(quiddityId);
             this.io.emit( "removeShmdata", quiddityId, {
                 path: value[0].replace( ".shmdata.writer.", "" ),
                 type: 'writer'

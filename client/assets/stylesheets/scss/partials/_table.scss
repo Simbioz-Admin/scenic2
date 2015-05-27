@@ -1,63 +1,203 @@
-$leftHeaderWidth: 125px;
-$leftHeaderMinHeight: 50px;
-$boxWidth: $leftHeaderWidth;
-$boxMinHeight: $leftHeaderMinHeight;
-$quiddityGap: 2px;
+$sourceWidth: 125px;
+$shmdataWidth: 125px;
+$shmdataGap: 2px;
+
+$rowMinHeight: 50px;
+$boxWidth: $sourceWidth;
+//$boxMinHeight: $rowMinHeight;
 
 .table {
-  margin: 25px 0 0 50px;
-  position: relative;
+  .matrix {
+    display: inline-block;
+    margin: 25px 25px 25px 50px;
 
-  .sources-title {
-    position: absolute;
-    color: $textColor;
-    text-transform: uppercase;
-    font-size: 1.25em;
-    transform: rotate(270deg);
-    transform-origin: bottom right;
-    top: 50px;
-    left: -72px;
-  }
+    .heading {
+      position: absolute;
+      color: $textColor;
+      text-transform: uppercase;
+      font-size: 1.25em;
+    }
 
-  .destinations-title {
-    position: absolute;
-    left: 150px;
-    top: 15px;
-    color: $textColor;
-    text-transform: uppercase;
-    font-size: 1.25em;
-  }
+    .destinations-row {
+      position: relative;
+      min-height: $rowMinHeight + 11px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid $textColorSubtle;
+      padding-bottom: 10px;
 
+      .heading {
+        left: 155px;
+        bottom: 10px;
+      }
 
-  .controls {
-    display: table-cell;
-    position: relative;
-    vertical-align: middle;
+      .destinations {
+        margin-left: $sourceWidth + $shmdataGap + $shmdataWidth;
+
+        .info {
+          text-align: center;
+        }
+
+        .destination-list {
+          display: table;
+
+          .destination {
+            display: table-cell;
+            position: relative;
+            vertical-align: middle;
+            border-left: 1px solid $backgroundColor;
+            background: $backgroundColorDark;
+
+            .controls {
+              width: $boxWidth;
+              min-height: $rowMinHeight;
+            }
+          }
+        }
+      }
+    }
+
+    .sources-row {
+      position: relative;
+
+      .heading {
+        transform: rotate(270deg);
+        transform-origin: right;
+        left: -80px;
+        top: 0;
+      }
+
+      .sources {
+
+        .source-list {
+          overflow: hidden;
+
+          .source {
+            position: relative;
+            min-height: $rowMinHeight;
+            margin-bottom: 1em;
+            background: $backgroundColorDark;
+
+            .controls {
+              width: $sourceWidth;
+              position: absolute;
+              height: 100%;
+            }
+
+            .shmdatas {
+              margin-left: $sourceWidth;
+              background-color: $backgroundColor;
+
+              .shmdata {
+                position: relative;
+                background: $backgroundColorDarkish;
+                border-left: $shmdataGap solid $red;
+
+                &.active {
+                  border-left: $shmdataGap solid $green;
+                }
+
+                &:not(:last-child) {
+                  margin-bottom: 1px;
+                }
+
+                .controls {
+                  display: table;
+                  width: $shmdataWidth;
+                  height: $rowMinHeight;
+
+                  .info {
+                    display: table-cell;
+                    vertical-align: middle;
+                  }
+                }
+
+                .connections {
+                  display: table;
+                  height: $rowMinHeight;
+                  margin-left: $shmdataWidth;
+
+                  .connection {
+                    display: table-cell;
+                    border-left: 1px solid $backgroundColor;
+
+                    &.enabled {
+                      cursor: pointer;
+                      background: $backgroundColorDark;
+                      &.active {
+                        background: $backgroundColorDarker;
+                        &:hover {
+                          background: $red url(../../icons/x.png) no-repeat center;
+                        }
+                        .icon {
+                          background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
+                        }
+                      }
+                      &.inactive {
+                        background: $backgroundColorDark;
+                        &:hover {
+                          cursor: pointer;
+                          background: $green url(../../icons/plus.png) center no-repeat;
+                        }
+                      }
+                    }
+
+                    &.disabled {
+                      cursor: not-allowed;
+                      background: $disabled;
+                    }
+
+                    .controls {
+                      //height: $rowMinHeight;
+                      position: relative;
+                      height: 100%;
+                    }
+
+                    .icon {
+                      position: absolute;
+                      width: 100%;
+                      height: 100%;
+                      opacity: 0.25;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .heading {
+      //display: table-cell;
+    }
+
+    .box {
+    }
+
+    .controls {
+      //width: $boxWidth;
+    }
 
     .info {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      color: $textColorBrighter;
-      text-align: center;
-      white-space: normal;
-      word-break: break-word;
-      vertical-align: middle;
+      word-break: break-all;
       padding: 1em;
       .class {
         font-weight: bold;
         display: block;
+        color: $textColorBrighter;
       }
       .name {
         display: block;
         color: $textColor;
       }
     }
+
     .actions {
       position: absolute;
-      left: 0;
       width: 100%;
       height: 100%;
+      top: 0;
+      left: 0;
       background: $backgroundColorDarker;
       opacity: 0;
 
@@ -108,161 +248,31 @@ $quiddityGap: 2px;
         }
       }
     }
+
   }
 
-  .quiddity {
-    background: $backgroundColorDark;
-    min-height: $boxMinHeight;
+  // SIP
 
-    .shmdatas {
-      display: table-cell;
-
-      .shmdata {
-        display: table;
-        background: $backgroundColorDarkish;
-        height: $leftHeaderMinHeight;
-        border-left: $quiddityGap solid $colorBorder;
-        border-bottom: 1px solid $colorBorder;
-
-        .controls {
-          &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0px;
-            left: -2px;
-            width: 2px;
-            background: $satColor;
-          }
-        }
-
-        &.active .controls:before {
-          background: $green;
-        }
-
-        &.sip {
-          .controls {
-            .user {
-              color: $textColorBrighter;
-              font-weight: bold;
-              background-color: #2c2c2c;
-              padding: 5px 1em;
-            }
-            .info {
-              position: relative;
-              padding: 0.25em 0;
-            }
-          }
-        }
-
-        .connections {
-          display: table;
-
-          .connection {
-            display: table-cell;
-            width: $boxWidth;
-            height: $boxMinHeight;
-            border-left: 1px solid $colorBorder;
-
-            .icon {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              opacity: 0.25;
-            }
-            &.enabled {
-              cursor: pointer;
-              background: $backgroundColorDark;
-              &.active {
-                background: $backgroundColorDarker;
-                &:hover {
-                  background: $red url(../../icons/x.png) no-repeat center;
-                }
-                .icon {
-                  background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
-                }
-              }
-              &.inactive {
-                background: $backgroundColorDark;
-                &:hover {
-                  cursor: pointer;
-                  background: $green url(../../icons/plus.png) center no-repeat;
-                }
-              }
-            }
-            &.disabled {
-              cursor: not-allowed;
-              background: $disabled;
-            }
-          }
-        }
-
-        &:last-child {
-          border-bottom: none !important;
-        }
-      }
+  &.sip {
+    .sip-panel {
+      position: fixed;
+      width: $contactsWidth;
+      top: $headerHeight;
+      bottom: 0;
+      right: 0;
+      background: $backgroundColorDarker;
+      overflow-y: auto;
+      overflow-x: hidden;
+      @include box-shadow(0px 0px 10px 0px rgba(0, 0, 0, 0.25));
     }
-  }
 
-  .sources {
-    .source {
-      display: table;
-      margin-bottom: 6px;
-      white-space: nowrap;
-      .controls {
-        width: $boxWidth;
-        vertical-align: top;
-        .info {
-          text-align: left;
-        }
-      }
-    }
-  }
+    .login {
+      padding: 2em;
+      color: $textColor;
 
-  .destinations {
-    display: table;
-    height: $boxMinHeight + 10px;
-    margin: 0 10px 10px $leftHeaderWidth * 2 + $quiddityGap;
-    padding-bottom: 10px;
-    white-space: nowrap;
-    border-bottom: 1px solid $textColorSubtle;
-    min-width: 100%;
-
-    .destination {
-      display: table-cell;//inline-block;
-      width: $boxWidth;
-      background: $backgroundColorDark;
-      border-left: 1px solid $colorBorder;
-      overflow: hidden;
-
-      .controls {
-        .info {
-          text-align: center;
-        }
-        .actions {
-          .action {
-            .checkbox {
-              margin: 8px;
-            }
-          }
-        }
-      }
-
-      .status {
+      #sipLogin {
         width: 100%;
-        height: 2px;
-        position: absolute;
-        bottom: 0;
-        z-index: 10;
-        &.disconnected {
-          background: $satColor;
-        }
-        &.wait {
-          background: $orange;
-        }
-        &.calling {
-          background: $green;
-        }
+        padding: 1em;
       }
     }
   }
@@ -303,29 +313,65 @@ $quiddityGap: 2px;
       }
     }
   }
+}
 
-  // SIP
+.none {
+  .table {
 
-  &.sip {
-    .sip-panel {
-      position: fixed;
-      width: $contactsWidth;
-      top: $headerHeight;
-      bottom: 0;
-      right: 0;
-      background: $backgroundColorDarker;
-      overflow-y: auto;
-      overflow-x: hidden;
-      @include box-shadow(0px 0px 10px 0px rgba(0,0,0,0.25));
+    .quiddity {
+      //min-height: $boxMinHeight;
+
+      .shmdatas {
+        display: table-cell;
+
+        .shmdata {
+
+          &.sip {
+            .controls {
+              .user {
+                color: $textColorBrighter;
+                font-weight: bold;
+                background-color: #2c2c2c;
+                padding: 5px 1em;
+              }
+              .info {
+                position: relative;
+                padding: 0.25em 0;
+              }
+            }
+          }
+        }
+      }
     }
 
-    .login {
-      padding: 2em;
-      color: $textColor;
+    .destinations {
+      .destination {
+        .controls {
+          .actions {
+            .action {
+              .checkbox {
+                margin: 8px;
+              }
+            }
+          }
+        }
 
-      #sipLogin {
-        width: 100%;
-        padding: 1em;
+        .status {
+          width: 100%;
+          height: 2px;
+          position: absolute;
+          bottom: 0;
+          z-index: 10;
+          &.disconnected {
+            background: $satColor;
+          }
+          &.wait {
+            background: $orange;
+          }
+          &.calling {
+            background: $green;
+          }
+        }
       }
     }
   }

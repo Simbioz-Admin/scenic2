@@ -33,6 +33,9 @@ define( [
          */
         initialize: function () {
             this.model = new SaveFile();
+        },
+
+        onAttach: function() {
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 

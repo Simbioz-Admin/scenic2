@@ -15,7 +15,7 @@ define( [
      */
     var Destination = Marionette.ItemView.extend( {
         template: _.template( DestinationTemplate ),
-        className: 'quiddity destination',
+        className: 'destination',
 
         ui: {
             edit: '.actions .action.edit',

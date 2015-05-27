@@ -43,11 +43,23 @@ define( [
         },
 
         showFileList: function() {
-            this.showChildView( 'panel', new FilesView( { collection: app.saveFiles } ) );
+            if ( this.currentPanel == 'open') {
+                this.currentPanel = null;
+                this.getRegion('panel' ).empty();
+            } else {
+                this.currentPanel = 'open';
+                this.showChildView( 'panel', new FilesView( {collection: app.saveFiles} ) );
+            }
         },
 
         saveFileAs: function() {
-            this.showChildView( 'panel', new SaveAsView() );
+            if ( this.currentPanel == 'save') {
+                this.currentPanel = null;
+                this.getRegion('panel' ).empty();
+            } else {
+                this.currentPanel = 'save';
+                this.showChildView( 'panel', new SaveAsView() );
+            }
         }
     } );
 

@@ -25,13 +25,18 @@ define( [
          * @param options
          */
         initialize: function ( models, options ) {
-            this.wrappedProperty = options.property;
+            this.quiddity = options.quiddity;
+            this.listenTo( this.quiddity.get( 'properties' ), 'update', this.updateProperty, this );
+            this.updateProperty();
+        },
 
-            // By listening to "change" and using "set" we are merely wrapping the property as a collection
-            this.listenTo( this.wrappedProperty, 'change', this.updateCollection, this );
-
-            // Call it to initialize
-            this.updateCollection();
+        updateProperty: function() {
+            this.wrappedProperty = this.quiddity.get( 'properties' ).get( 'destinations-json' );
+            if ( this.wrappedProperty ) {
+                this.stopListening( this.quiddity.get( 'properties' ), 'update', this.updateProperty, this );
+                this.listenTo( this.wrappedProperty, 'change', this.updateCollection, this );
+                this.updateCollection();
+            }
         },
 
         /**

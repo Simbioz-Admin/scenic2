@@ -19,7 +19,6 @@ define( [
         className:          'shmdata',
 
         childView:          ConnectionView,
-
         childViewOptions: function() {
             return {
                 shmdata: this.model,

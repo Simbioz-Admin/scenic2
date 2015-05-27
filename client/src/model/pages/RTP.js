@@ -46,7 +46,7 @@ define( [
          */
         getDestinationCollection: function() {
             if ( !this.destinations ) {
-                this.destinations = new RTPDestinations( null, {property: app.quiddities.get( app.config.rtp.quiddName ).get( 'properties' ).get( 'destinations-json' )} );
+                this.destinations = new RTPDestinations( null, {quiddity: app.quiddities.get( app.config.rtp.quiddName )} );
             }
             return this.destinations;
         },

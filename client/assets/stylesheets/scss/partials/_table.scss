@@ -7,6 +7,16 @@ $boxWidth: $sourceWidth;
 //$boxMinHeight: $rowMinHeight;
 
 .table {
+
+  .title {
+    font-weight: 300;
+    font-size: 4em;
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    color: $textColorBrighter;
+  }
+
   .matrix {
     display: inline-block;
     margin: 25px 25px 25px 50px;
@@ -73,7 +83,6 @@ $boxWidth: $sourceWidth;
 
           .source {
             position: relative;
-            min-height: $rowMinHeight;
             margin-bottom: 1em;
             background: $backgroundColorDark;
 
@@ -84,6 +93,7 @@ $boxWidth: $sourceWidth;
             }
 
             .shmdatas {
+              min-height: $rowMinHeight;
               margin-left: $sourceWidth;
               background-color: $backgroundColor;
 

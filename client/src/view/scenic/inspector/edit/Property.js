@@ -27,7 +27,7 @@ define( [
         },
 
         modelEvents: {
-            'change:name': 'renderOnChange'
+            'change': 'renderOnChange'
         },
 
         /**
@@ -39,7 +39,7 @@ define( [
 
         renderOnChange: function() {
             // Ignore if only the value has changed, let the field view handle this
-            if ( this.model.changedAttributes().length == 1 && this.model.hasChanged('value') ) {
+            if ( _.keys(this.model.changedAttributes()).length == 1 && this.model.hasChanged('value') ) {
                 return;
             }
             this.render();

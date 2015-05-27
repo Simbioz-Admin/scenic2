@@ -16,7 +16,7 @@ define( [
      */
     var Inspector = Marionette.LayoutView.extend( {
         tagName:   'div',
-        className: 'info-panel ui-draggable',
+        className: 'info-panel',
         template:  _.template( InspectorTemplate ),
 
         ui: {
@@ -48,6 +48,8 @@ define( [
                 containment: "window",
                 opacity:     0.75
             } );
+            // We need absolute at the start... to align right
+            this.$el.css('position', '');
 
             this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
             this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );

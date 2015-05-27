@@ -1,10 +1,5 @@
 #inspector {
-  position: absolute;
   z-index: 40;
-  width: 0;
-  height: 0;
-  top: 0;
-  left: 0;
 }
 
 .info-panel {
@@ -21,6 +16,10 @@
   @include border-radius(6px);
   @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
 
+  .sip & {
+    right: $contactsWidth + 20px;
+  }
+
   .title {
     color: white;
     font-size: 1.4em;
@@ -35,6 +34,7 @@
     overflow: auto;
     padding: 20px;
     line-height: 1.4em;
+    max-height: 600px;
   }
 
   .close {
@@ -78,5 +78,14 @@
       margin-top: 1em;
       height: 100px;
     }
+  }
+}
+
+
+.property {
+  margin-bottom: 10px;
+  .description {
+    margin-bottom: 1em;
+    color: $textColorSubtle;
   }
 }

@@ -16,9 +16,17 @@ define( [
     var Method = Marionette.ItemView.extend( {
         template: _.template( MethodTemplate ),
         className: 'method',
+
         ui: {
+
         },
+
         events: {
+
+        },
+
+        modelEvents: {
+            'change': 'renderOnChange'
         },
 
         /**
@@ -26,6 +34,10 @@ define( [
          */
         initialize: function( ) {
 
+        },
+
+        renderOnChange: function() {
+            this.render();
         }
     } );
 

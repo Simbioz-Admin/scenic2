@@ -81,11 +81,31 @@
   }
 }
 
+.properties, .methods {
+  @include clearfix;
+}
 
 .property {
   margin-bottom: 10px;
+  @include clearfix;
   .description {
     margin-bottom: 1em;
     color: $textColorSubtle;
+  }
+}
+
+input.property.string,
+input.method {
+  width: 73%;
+  float: left;
+}
+
+.field {
+  .update {
+    float: left;
+    margin-left: 6px;
+    width: 60px;
+    padding: 9px;
+    height: 35px;
   }
 }

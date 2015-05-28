@@ -109,7 +109,7 @@ QuiddityManager.prototype._onAdded = function ( quiddityId ) {
             var properties = JSON.parse( this.switcher.get_properties_description( quiddityId ) ).properties;
             _.each( properties, function ( property ) {
                 this._parseProperty(property);
-                log.debug( "Subscribing to property", property.name, "of", quiddityId );
+                log.debug( "Subscribing to property " + property.name + " (" + property.id + ") of " + quiddityId );
                 this.switcher.subscribe_to_property( quiddityId, property.id );
             }, this );
         } catch ( e ) {

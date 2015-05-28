@@ -42,6 +42,7 @@ define( [
                     return callback ? callback( error ) : null;
                 }
                 // Refresh the quiddities after a reload
+                app.quiddities.reset();
                 app.quiddities.fetch( {
                     success: function () {
                         self.scenicChannel.vent.trigger( 'file:loaded', self.get( 'name' ) );

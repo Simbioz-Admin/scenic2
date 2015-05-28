@@ -74,12 +74,18 @@ define( [
 
         /**
          * Invoke method
-         *
-         * @param args
-         * @param callback
          */
-        invoke: function ( args, callback ) {
-            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.id, args, callback );
+        invoke: function ( callback ) {
+            var self = this;
+            this.get('args' ).pluck('value');
+            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.id, this.get('args' ).pluck('value'), function( error, result ) {
+                if ( error ) {
+                    self.scenicChannel.vent.trigger('error', error );
+                }
+                if ( callback ) {
+                    callback( error, result );
+                }
+            } );
         }
     } );
 

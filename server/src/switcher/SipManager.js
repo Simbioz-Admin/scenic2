@@ -197,7 +197,7 @@ SipManager.prototype._reconnect = function ( uri, cb ) {
  * @param cb
  */
 SipManager.prototype.login = function ( credentials, cb ) {
-    log.info( 'SIP login attempt: ' + credentials.name + '@' + credentials.address + ':' + credentials.port );
+    log.info( 'SIP login attempt: ' + credentials.user + '@' + credentials.server + ':' + credentials.port );
 
     if ( !credentials ) {
         return logback( i18n.t( 'Missing credentials' ), cb );
@@ -224,6 +224,8 @@ SipManager.prototype.login = function ( credentials, cb ) {
     } catch ( e ) {
         return logback( e, cb );
     }
+
+    //TODO: Remove once sip-registration property bug is resolved (we don't get notified of status changes
     if ( hasSip ) {
         log.debug( 'Removing previous SIP quiddity instance' );
         try {
@@ -245,14 +247,16 @@ SipManager.prototype.login = function ( credentials, cb ) {
         // Create SIP quiddity
         function ( callback ) {
             // Creation
-            log.debug( 'Creating new SIP quiddity' );
-            try {
-                var sip = self.switcher.create( 'sip', self.config.sip.quiddName );
-            } catch ( e ) {
-                return callback( i18n.t( 'Error creating SIP quiddity (__error__)', {error: e.toString()} ) );
-            }
-            if ( !sip || sip == 'false' ) {
-                return callback( i18n.t( 'Error creating SIP quiddity' ) );
+            if ( !hasSip ) {
+                log.debug( 'Creating new SIP quiddity' );
+                try {
+                    var sip = self.switcher.create( 'sip', self.config.sip.quiddName );
+                } catch ( e ) {
+                    return callback( i18n.t( 'Error creating SIP quiddity (__error__)', {error: e.toString()} ) );
+                }
+                if ( !sip || sip == 'false' ) {
+                    return callback( i18n.t( 'Error creating SIP quiddity' ) );
+                }
             }
 
             // Subscription (We already subscribe to all)
@@ -308,7 +312,6 @@ SipManager.prototype.login = function ( credentials, cb ) {
             return logback( error, cb );
         }
 
-        // Return useful info about the SIP connection
         cb();
     } );
 };

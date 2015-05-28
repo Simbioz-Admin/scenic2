@@ -29,7 +29,8 @@
     "backbone": "~1.2.0",
     "underscore": "~1.8.3",
     "marionette": "~2.4.1",
-    "toastr": "~2.1.1"
+    "toastr": "~2.1.1",
+    "cocktail": "~0.5.10"
   },
   "dependencies": {},
   "resolutions": {

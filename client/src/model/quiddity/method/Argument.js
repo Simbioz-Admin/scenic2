@@ -17,7 +17,9 @@ define( [
         defaults: {
             'name': null,
             'description': null,
-            'type': null
+            'type': null,
+            // Dynamic
+            'value': null
         },
 
         /**

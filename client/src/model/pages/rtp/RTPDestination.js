@@ -24,7 +24,7 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['createRTPDestination', this.get('info' ).name, this.get('info' ).host, this.get('info' ).port];
+                return ['createSIPDestination', this.get('info').user, this.get('info').path, this.get('info').attach];
             },
             'update': null,
             'patch':  null,

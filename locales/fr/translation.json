@@ -300,5 +300,6 @@
     "Error setting SIP port to __port__ (__error__)": "Error setting SIP port to __port__ (__error__)",
     "Error creating SIP quiddity (__error__)": "Error creating SIP quiddity (__error__)",
     "SIP authentication failed": "SIP authentication failed",
-    "Missing user": "Missing user"
+    "Missing user": "Missing user",
+    "Could not call contact": "Could not call contact"
 }

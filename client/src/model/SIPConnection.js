@@ -231,7 +231,7 @@ define( [
             localStorage.setItem( 'sip.port', port );
             localStorage.setItem( 'sip.user', user );
 
-            socket.emit( 'sipLogin', credentials, function ( error ) {
+            socket.emit( 'sipLogin', credentials, function ( error, sipConfig ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'sip:loggedout', error );
                     return self.scenicChannel.vent.trigger( 'error', error );

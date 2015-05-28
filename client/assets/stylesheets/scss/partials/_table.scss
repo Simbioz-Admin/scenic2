@@ -250,7 +250,7 @@ $boxWidth: $sourceWidth;
         }
         &.remove {
           &:hover {
-            background: $satColor;
+            background: $red;
           }
           .icon {
             background: url(../../icons/711-trash.png) center center no-repeat;
@@ -284,6 +284,33 @@ $boxWidth: $sourceWidth;
         width: 100%;
         padding: 1em;
       }
+    }
+
+
+    .actions {
+      .action {
+        &.call {
+          &:hover {
+            background: $blue;
+          }
+          .icon {
+            background: url(../../icons/735-phone.png) center center no-repeat;
+          }
+        }
+        &.hangup {
+          &:hover {
+            background: $blue;
+          }
+          .icon {
+            background: url(../../icons/hang-up.png) center center no-repeat;
+          }
+        }
+      }
+    }
+
+    .connected .actions .action.call,
+    .disconnected .actions .action.hangup {
+      display: none;
     }
   }
 

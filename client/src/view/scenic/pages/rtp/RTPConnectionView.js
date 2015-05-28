@@ -46,8 +46,6 @@ define( [
             ConnectionView.prototype.initialize.apply( this, arguments );
 
             this.listenTo( this.model, 'change:data_streams', this.render );
-
-
         },
 
         onBeforeRender: function () {

@@ -29,8 +29,20 @@
     <fieldset>
         <legend data-i18n>SIP Connection</legend>
         <div class="input-group">
-            <label>SIP Port</label>
+            <label>Configured SIP Port</label>
+            <% if ( config.sip.port ) { %>
             <input type="text" readonly value="<%=config.sip.port%>">
+            <% } else { %>
+            <input type="text" readonly value="Automatic" data-i18n="[value]Automatic">
+            <% } %>
+        </div>
+        <div class="input-group">
+            <label>SIP Port</label>
+            <% if ( sip && sip.get('properties').get('port') ) { %>
+            <input type="text" readonly value="<%=sip.get('properties').get('port').get('value')%>">
+            <% } else { %>
+            <input type="text" readonly value="No current SIP session" data-i18n="[value]No current SIP session">
+            <% } %>
         </div>
     </div>
     </fieldset>

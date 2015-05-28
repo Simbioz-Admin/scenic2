@@ -6,12 +6,13 @@ define( [
     'marionette',
     'view/scenic/pages/base/TableView',
     'view/scenic/pages/base/table/SourcesView',
-    'view/scenic/pages/base/table/DestinationsView',
+    'view/scenic/pages/sip/SIPDestinationsView',
+    'view/scenic/pages/sip/SIPConnectionView',
     'view/scenic/pages/sip/LoginView',
     'view/scenic/pages/sip/ContactsView',
     'view/scenic/pages/sip/SIPMenus',
     'text!template/scenic/pages/sip/table.html'
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, LoginView, ContactsView, SIPMenusView, SIPTableTemplate ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, SIPDestinationsView, SIPConnectionView, LoginView, ContactsView, SIPMenusView, SIPTableTemplate ) {
 
     /**
      *  @constructor
@@ -48,9 +49,10 @@ define( [
             }));
             this.showChildView('sources', new SourcesView({
                 table: this.model,
-                collection: this.model.getSourceCollection()
+                collection: this.model.getSourceCollection(),
+                connectionView: SIPConnectionView
             }));
-            this.showChildView('destinations', new DestinationsView({
+            this.showChildView('destinations', new SIPDestinationsView({
                 table: this.model,
                 collection: this.model.getDestinationCollection()
             }));

@@ -65,13 +65,13 @@ define( [
             } else {
                 _.each( info, function ( cpu, name ) {
                     if ( (cpu.total * 100) < 95 ) {
-                        $( "[data-cpu='" + name + "']", this.el ).removeClass( "alert" );
+                        $( "[data-cpu='" + name + "']", this.el ).removeClass( "cpu-alert" );
                     }
                     $( "[data-cpu='" + name + "']", this.el ).animate( {
                         "height": cpu.total * 100 + "%"
                     }, 500, function () {
                         if ( (cpu.total * 100) > 95 ) {
-                            $( "[data-cpu='" + name + "']", this.el ).addClass( "alert" );
+                            $( "[data-cpu='" + name + "']", this.el ).addClass( "cpu-alert" );
                         }
                     } );
                 }, this );

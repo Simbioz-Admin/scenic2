@@ -21,7 +21,7 @@ define( [
         },
         events: {
             'click @ui.source .button': 'dropSources',
-            'click @ui.source .item': 'createQuidditySource',
+            'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.destination .button': 'dropDestinations',
             'click @ui.destination .item': 'create',
             'change @ui.filter': 'filter'

@@ -25,6 +25,21 @@ define( [
             }
         },
 
+        mutators: {
+            config: {
+                transient: true,
+                get: function() {
+                    return app.config;
+                }
+            },
+            sip: {
+                transient: true,
+                get: function() {
+                    return app.quiddities.get(app.config.sip.quiddName);
+                }
+            }
+        },
+
         /**
          * Initialize
          */

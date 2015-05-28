@@ -46,6 +46,42 @@ define( [
             if ( this.id == uri ) {
                 this.trigger( 'destroy', this, this.collection );
             }
+        },
+
+        /**
+         * Call Contact
+         */
+        call: function(cb) {
+            var self = this;
+            socket.emit('callContact', this.id, function( error ) {
+                if ( error ) {
+                    self.scenicChannel.vent.trigger('error', error);
+                    if ( cb ) {
+                        return cb(error);
+                    }
+                }
+                if ( cb ) {
+                    cb();
+                }
+            });
+        },
+
+        /**
+         * Hang Up Contact
+         */
+        hangUp: function(cb) {
+            var self = this;
+            socket.emit('hangUpContact', this.id, function( error ) {
+                if ( error ) {
+                    self.scenicChannel.vent.trigger('error', error);
+                    if ( cb ) {
+                        return cb(error);
+                    }
+                }
+                if ( cb ) {
+                    cb();
+                }
+            });
         }
     } );
     return Contact;

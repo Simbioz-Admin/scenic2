@@ -61,9 +61,11 @@ SwitcherController.prototype.initialize = function ( callback ) {
     switcher.create( 'rtpsession', this.config.rtp.quiddName );
 
     // Create quiddity systemusage to get information about the CPU usage
+    // System usage is a privcate quiddity so we manually subscribe to it events
     log.debug( 'Creating System Usage...' );
     switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );
+    this.switcher.subscribe_to_signal( 'systemusage', "on-tree-grafted" );
 
     var setSOAPPort = true;
 

@@ -2,11 +2,36 @@
 <div class="content">
     <fieldset>
         <legend data-i18n>Scenic Server</legend>
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" readonly value="<%=config.nameComputer%>">
+        </div>
+        <div class="input-group">
+            <label>Version</label>
+            <input type="text" readonly value="<%=config.version%>">
+        </div>
+        <div class="input-group">
+            <label>Server Address</label>
+            <input type="text" readonly value="<%=config.host%>">
+        </div>
+        <div class="input-group">
+            <label>Server Port</label>
+            <input type="text" readonly value="<%=config.scenic.port%>">
+        </div>
     </fieldset>
     <fieldset>
-        <legend data-i18n>RTP Connection</legend>
+        <legend data-i18n>SOAP Server</legend>
+        <div class="input-group">
+            <label>SOAP Port</label>
+            <input type="text" readonly value="<%=config.soap.port%>">
+        </div>
     </fieldset>
     <fieldset>
         <legend data-i18n>SIP Connection</legend>
+        <div class="input-group">
+            <label>SIP Port</label>
+            <input type="text" readonly value="<%=config.sip.port%>">
+        </div>
+    </div>
     </fieldset>
 </div>

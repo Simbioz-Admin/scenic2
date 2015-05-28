@@ -16,6 +16,12 @@ define( [
         className: 'settings',
         template: _.template(SettingsTemplate),
 
+        templateHelpers: function() {
+            return {
+                config: app.config
+            }
+        },
+
         /**
          * Initialize
          */

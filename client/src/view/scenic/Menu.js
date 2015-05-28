@@ -24,7 +24,6 @@ define( [
         },
 
         ui : {
-            'info': '.info',
             'load': '.load',
             'save': '.save',
             'lang': '.lang'

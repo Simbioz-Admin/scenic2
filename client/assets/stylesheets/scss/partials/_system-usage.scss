@@ -40,8 +40,8 @@
       position: relative;
     }
   }
-  .alert {
-    background: $satColor !important;
+  .cpu-alert {
+    background: $red !important;
   }
   .memory {
     .content {

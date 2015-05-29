@@ -33,16 +33,16 @@ define( [
             this.sip = options.sip;
 
             // Handlers
-            this.onSocket( 'contactInfo', _.bind( this._onUserInfo, this ) );
+            this.onSocket( 'contactInfo', _.bind( this._onContactInfo, this ) );
         },
 
         /**
-         * User Info Handler
+         * Contact Info Handler
          *
          * @param userInfo
          * @private
          */
-        _onUserInfo: function( userInfo ) {
+        _onContactInfo: function( userInfo ) {
             this.add( userInfo, { merge: true } );
         }
     } );

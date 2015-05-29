@@ -27,7 +27,11 @@ define( [
         },
 
         events: {
-            'click @ui.login': 'login'
+            'click @ui.login': 'login',
+            'keypress @ui.server': 'checkForEnterKey',
+            'keypress @ui.user': 'checkForEnterKey',
+            'keypress @ui.password': 'checkForEnterKey',
+            'keypress @ui.port': 'checkForEnterKey'
         },
 
         getTemplate: function() {
@@ -54,6 +58,14 @@ define( [
         onRender: function() {
             $('*', this.$el).prop('disabled', false);
             this.$el.fadeTo( 250, 1.0 );
+        },
+
+        checkForEnterKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 13 ) {
+                event.preventDefault();
+                this.login();
+            }
         },
 
         /**

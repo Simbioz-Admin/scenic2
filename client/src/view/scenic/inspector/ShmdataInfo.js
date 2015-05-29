@@ -16,7 +16,8 @@ define( [
         className: 'shmdata-info',
 
         modelEvents: {
-            'change': 'render'
+            'change': 'render',
+            'keypress': 'checkForEscapeKey'
         },
 
         templateHelpers: function() {
@@ -46,7 +47,14 @@ define( [
 
         initialize: function () {
             this.title = $.t('Shmdata info for __shmdata__', { shmdata: this.model.get('name')});
+        },
 
+        checkForEscapeKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 27 ) {
+                event.preventDefault();
+                this.scenicChannel.commands.execute( 'inspector:close' );
+            }
         }
     } );
 

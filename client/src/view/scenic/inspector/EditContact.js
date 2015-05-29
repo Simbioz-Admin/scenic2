@@ -3,41 +3,39 @@ define( [
     'backbone',
     'marionette',
     'i18n',
-    'text!template/scenic/inspector/editRTP.html'
-], function ( _, Backbone, Marionette, i18n, EditRTPTemplate ) {
+    'text!template/scenic/inspector/editContact.html'
+], function ( _, Backbone, Marionette, i18n, EditContactTemplate ) {
 
     /**
-     * Edit RTP Form
+     * Edit Contact Form
      *
      * @constructor
      * @extends module:Marionette.ItemView
      */
-    var EditRTP = Marionette.ItemView.extend( {
-        template: _.template( EditRTPTemplate ),
-        className: 'edit-rtp',
+    var EditContact = Marionette.ItemView.extend( {
+        template: _.template( EditContactTemplate ),
+        className: 'edit-contact',
 
         ui:       {
             'name': '.name',
-            'host': '.host',
-            'port': '.port',
-            'update': '#update'
+            'update': '#update',
+            'delete': '#delete'
         },
 
         events:   {
-            'click @ui.update': 'edit',
+            'click @ui.update': 'update',
+            'click @ui.delete': 'delete',
             'keydown': 'checkForEscapeKey',
-            'keypress @ui.name': 'checkForEnterKey',
-            'keypress @ui.host': 'checkForEnterKey',
-            'keypress @ui.port': 'checkForEnterKey'
+            'keypress @ui.name': 'checkForEnterKey'
         },
 
         modelEvents: {
-            'destroy': '_onRTPDestinationRemoved'
+            'destroy': '_onContactRemoved'
         },
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title = $.t('Edit an RTP destination');
+            this.title = $.t('Edit Contact');
             this.callback = config.callback;
         },
 
@@ -47,6 +45,7 @@ define( [
 
         checkForEscapeKey: function( event ) {
             var key = event.which || event.keyCode;
+            console.log( key );
             if ( key == 27 ) {
                 event.preventDefault();
                 this.scenicChannel.commands.execute( 'inspector:close' );
@@ -60,20 +59,29 @@ define( [
                 this.update();
             }
         },
-        
+
         update: function() {
-            this.callback( {
-                name: this.ui.name.val(),
-                host: this.ui.host.val(),
-                port: this.ui.port.val()
-            });
+            if ( this.ui.name.val() != this.model.get('name')) {
+                this.callback( {
+                    name: this.ui.name.val()
+                } );
+            }
             this.scenicChannel.commands.execute( 'inspector:close' );
         },
 
-        _onRTPDestinationRemoved: function(  ) {
+        delete: function() {
+            var self = this;
+            this.scenicChannel.commands.execute( 'confirm', $.t('Are you sure you want to remove __contact__ from your contacts?', {contact:this.model.get('name')}), function( confirmed ) {
+                if ( confirmed ) {
+                    self.model.destroy();
+                }
+            });
+        },
+
+        _onContactRemoved: function(  ) {
             this.scenicChannel.commands.execute( 'inspector:close' );
         }
 
     } );
-    return EditRTP;
+    return EditContact;
 } );

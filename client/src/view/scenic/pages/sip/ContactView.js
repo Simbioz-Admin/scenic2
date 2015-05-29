@@ -23,7 +23,8 @@ define( [
         },
 
         events: {
-            'click @ui.add': 'addContactAsDestination'
+            'click @ui.add': 'addContactAsDestination',
+            'click @ui.edit': 'editContact'
         },
 
         attributes: function () {
@@ -33,7 +34,7 @@ define( [
         },
 
         modelEvents: {
-            'change:status': 'render'
+            'change': 'render'
         },
 
         /**
@@ -51,6 +52,10 @@ define( [
 
         addContactAsDestination: function() {
             this.table.addDestination( this.model );
+        },
+
+        editContact: function() {
+            this.model.edit();
         }
     } );
 

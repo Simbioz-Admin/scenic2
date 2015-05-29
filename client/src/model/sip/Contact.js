@@ -23,16 +23,21 @@ define( [
             uri: null,
             send_status: null,
             recv_status: null,
-            name: null
+            name: null,
+            self: false
         },
 
         methodMap:   {
             'create': function () {
                 return ['addContact', this.get( 'uri' )];
             },
-            'update': null,
+            'update':function () {
+                return ['updateContact', this.get( 'uri' ), { name: this.get('name') }];
+            },
             'patch':  null,
-            'delete': null,
+            'delete': function() {
+                return ['removeContact', this.get('uri')];
+            },
             'read':   null
         },
 
@@ -92,6 +97,21 @@ define( [
                     cb();
                 }
             });
+        },
+
+        /**
+         *  Edit Contact
+         */
+        edit: function () {
+            var self = this;
+            this.scenicChannel.commands.execute( 'contact:edit', this, function( info ) {
+                socket.emit( 'updateContact', self.id, info, function( error ) {
+                    if ( error ) {
+                        self.scenicChannel.vent.trigger( 'error', error );
+                        return;
+                    }
+                } )
+            } );
         }
     } );
     return Contact;

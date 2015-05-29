@@ -79,11 +79,8 @@ define( [
 
         /**
          *  Edit Quiddity
-         *  Put the quiddity in edit mode by updating its properties and descriptions,
-         *  then subscribing to get real-time updates
          */
         edit: function () {
-            //TODO: Move to inspector
             this.scenicChannel.commands.execute( 'quiddity:edit', this );
         }
 

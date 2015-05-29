@@ -18,11 +18,12 @@ define( [
         className: 'contact self',
 
         ui: {
-
+            'alias': '#alias'
         },
 
         events: {
-
+            'keypress @ui.alias': 'checkForEnterKey',
+            'blur @ui.alias': 'update'
         },
 
         modelEvents: {
@@ -45,6 +46,23 @@ define( [
         onRender: function () {
             // Update Dynamic Attributes
             this.$el.attr( this.attributes() );
+        },
+
+        checkForEnterKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 13 ) {
+                event.preventDefault();
+                this.update();
+            }
+        },
+
+        update: function() {
+            var self = this;
+            this.model.save({name: this.ui.alias.val()}, {
+                error: function ( error ) {
+                    self.scenicChannel.vent.trigger('error', error);
+                }
+            });
         }
     } );
 

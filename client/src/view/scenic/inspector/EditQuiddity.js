@@ -27,6 +27,10 @@ define( [
             'destroy': '_onQuiddityRemoved'
         },
 
+        events: {
+            'keypress': 'checkForEscapeKey'
+        },
+
         initialize: function ( options ) {
             this.inspector = options.inspector;
 
@@ -38,6 +42,14 @@ define( [
         onBeforeShow: function() {
             this.showChildView('properties', new PropertiesView({collection: this.model.get('properties')}));
             this.showChildView('methods', new MethodsView({collection: this.model.get('methods')}));
+        },
+
+        checkForEscapeKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 27 ) {
+                event.preventDefault();
+                this.scenicChannel.commands.execute( 'inspector:close' );
+            }
         },
 
         _onQuiddityRemoved: function( quiddity ) {

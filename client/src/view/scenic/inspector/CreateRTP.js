@@ -22,7 +22,11 @@ define( [
             'create': '#create'
         },
         events:   {
-            'click @ui.create': 'create'
+            'click @ui.create': 'create',
+            'keydown': 'checkForEscapeKey',
+            'keypress @ui.name': 'checkForEnterKey',
+            'keypress @ui.host': 'checkForEnterKey',
+            'keypress @ui.port': 'checkForEnterKey'
         },
 
         initialize: function ( config ) {
@@ -33,6 +37,22 @@ define( [
 
         onAttach: function() {
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
+        },
+
+        checkForEscapeKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 27 ) {
+                event.preventDefault();
+                this.scenicChannel.commands.execute( 'inspector:close' );
+            }
+        },
+
+        checkForEnterKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 13 ) {
+                event.preventDefault();
+                this.create();
+            }
         },
 
         create: function() {

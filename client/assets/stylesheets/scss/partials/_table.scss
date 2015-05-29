@@ -319,6 +319,14 @@ $boxWidth: $sourceWidth;
     .disconnected .actions .action.hangup {
       display: none;
     }
+
+    .disconnected {
+      border-bottom: 2px solid $red;
+    }
+
+    .connected {
+      border-bottom: 2px solid $green;
+    }
   }
 
   // RTP

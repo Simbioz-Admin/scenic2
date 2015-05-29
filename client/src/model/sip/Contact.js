@@ -48,7 +48,7 @@ define( [
             ScenicModel.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            this.onSocket( 'removeUser', _.bind( this._onRemoved, this ) );
+            //this.onSocket( 'removeUser', _.bind( this._onRemoved, this ) );
         },
 
         /**
@@ -57,11 +57,11 @@ define( [
          * @param {String} uri
          * @private
          */
-        _onRemoved: function ( uri ) {
+        /*_onRemoved: function ( uri ) {
             if ( this.id == uri ) {
                 this.trigger( 'destroy', this, this.collection );
             }
-        },
+        },*/
 
         /**
          * Call Contact

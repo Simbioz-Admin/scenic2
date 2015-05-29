@@ -170,12 +170,14 @@ SipManager.prototype._loadContacts = function ( callback ) {
                         // We have those appearing at oone point during dev, just clearing them out
                         delete contact['null'];
                     });
+                    log.debug(contacts);
                     callback( null, contacts);
+                } else {
+                    callback( null, {} );
                 }
-                callback( null, [] );
             } );
         } else {
-            return callback( null, [] );
+            return callback( null, {} );
         }
     } );
 };
@@ -204,6 +206,7 @@ SipManager.prototype._saveContacts = function ( contacts, callback ) {
  */
 SipManager.prototype._updateContact = function ( uri, name, callback ) {
     var self = this;
+    log.info('Updating contact', uri, name );
     self._loadContacts( function ( error, contacts ) {
         if ( error ) {
             log.warn( error );
@@ -234,6 +237,7 @@ SipManager.prototype._updateContact = function ( uri, name, callback ) {
  */
 SipManager.prototype._removeContact = function ( uri, callback ) {
     var self = this;
+    log.info('Removing contact', uri);
     self._loadContacts( function ( error, contacts ) {
         if ( error ) {
             log.warn( error );
@@ -711,6 +715,8 @@ SipManager.prototype.updateContact = function ( uri, info, cb ) {
         }
 
         self._updateContact( uri, info.name, cb );
+    } else {
+        cb();
     }
 };
 

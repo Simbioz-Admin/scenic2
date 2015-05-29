@@ -1,4 +1,5 @@
 {
     "Error while updating contact name (__error__)": "Error while updating contact name (__error__)",
-    "Missing information to add contact": "Missing information to add contact"
+    "Missing information to add contact": "Missing information to add contact",
+    "SIP authentication failed": "SIP authentication failed"
 }

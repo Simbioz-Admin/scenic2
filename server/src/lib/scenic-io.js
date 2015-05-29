@@ -47,9 +47,6 @@ module.exports = {
              */
             socket.on( 'disconnect', function () {
 
-                //Remove subscription information
-                delete config.subscribe_quidd_info[socket.id];
-
                 //If the user disconnecting is the "master" user, we set a timeout before exiting the application
                 if ( masterSocketId == socket.id && config.standalone == false ) {
                     self.refreshTimeout = setTimeout( function () {

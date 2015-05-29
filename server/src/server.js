@@ -105,7 +105,7 @@ require('./bootstrap' )( function( err ) {
         message += colors.yellow(rpad(" Log level",        25 )) + config.logLevel + "\n";
         message += "\nSIP Information\n";
         message += colors.gray(repeat('–', 50)) + '\n';
-        message += colors.yellow(rpad(" Address",  25 )) + config.sip.address + "\n";
+        message += colors.yellow(rpad(" Address",  25 )) + config.sip.server + "\n";
         message += colors.yellow(rpad(" Port",     25 )) + config.sip.port + "\n";
         message += colors.yellow(rpad(" Username", 25 )) + config.sip.name + "\n";
         message += colors.gray(repeat('–', 50)) + '\n';

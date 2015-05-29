@@ -48,12 +48,15 @@ require( {
         'punch'
     ]
 }, [
-    // Load our app module and pass it to our definition function
+    'underscore',
     'app',
     'lib/util',
     'lib/socket',
      app = {} //The only global variable I'll tolerate
-], function ( application, util, socket ) {
+], function ( _, application, util, socket ) {
+
+    // Global message bus
+    var scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
     // "Facade" the application
     app = application;
@@ -65,9 +68,5 @@ require( {
     } );
 
     // When the server is closed or crashes shutdown the app
-    //TODO: Actually close the app
-    socket.on( "shutdown", function () {
-        console.log( "SHUTDOWN" );
-        $( "body" ).html( "<div id='shutdown'>the server has turned off</div>" );
-    } );
+    socket.on( "shutdown", _.bind( app.shutdown, app ) );
 } );

@@ -8,20 +8,22 @@ define( [
     'jquery',
     'i18n',
     // Internal Lib
-    'model/SIPConnection',
+    'lib/socket',
     // Model
     'model/SaveFiles',
     'model/ClassDescriptions',
     'model/Quiddities',
+    'model/SIPConnection',
     // View
-    'view/Scenic'
+    'view/Scenic',
+    'view/ShutdownView'
 ], function ( _, Backbone, Mutators, Marionette, async, $, i18n,
               // Internal Libs
-              SIPConnection,
+              socket,
               // Models
-              SaveFiles, ClassDescriptions, Quiddities,
+              SaveFiles, ClassDescriptions, Quiddities, SIPConnection,
               // Views
-              ScenicView ) {
+              ScenicView, ShutdownView ) {
 
     var saveFiles         = null;
     var classDescriptions = null;
@@ -37,9 +39,15 @@ define( [
             return;
         }
 
+        // Global message bus
+        this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
+        // Configuration
         this.config = config;
 
         var self = this;
+
+        window.s = socket;
 
         async.series( [
 
@@ -110,8 +118,8 @@ define( [
             }
 
             // Scenic Main View
-            var scenicView = new ScenicView( self );
-            scenicView.render();
+            self.scenicView = new ScenicView( self );
+            self.scenicView.render();
 
             if ( callback ) {
                 callback();
@@ -121,9 +129,18 @@ define( [
         this.initialized = true;
     };
 
+    var shutdown = function() {
+        this.scenicChannel.vent.trigger( 'shutdown' );
+        socket.close();
+        this.scenicView.destroy();
+        this.shutdownView = new ShutdownView( this );
+        this.shutdownView.render();
+    };
+
     return {
         config:            config,
         initialize:        initialize,
+        shutdown:          shutdown,
         saveFiles:         saveFiles,
         classDescriptions: classDescriptions,
         quiddities:        quiddities,

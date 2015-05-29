@@ -12,18 +12,17 @@ module.exports = {
     i18n.init( {
       //lng: "fr",
       saveMissing:   true,
-      // cookieName : 'lang',
-      // useCookie : true,
       ns:            'translation',
       resGetPath:    'locales/__lng__/__ns__.json',
       resSetPath:    'locales/__lng__/__ns__.json',
-      fallbackLng:   'fr',
+      fallbackLng:   false,
       preload:       ['en', 'fr'],
-      sendMissingTo: 'fallback',
       keyseparator:  "::",
       nsseparator:   ':::',
       debug:         false
-    }, function() { callback() } );
+    }, function( ) {
+      callback();
+    } );
 
     /*function () {
       log.debug( "Parsing quiddities and properties translations..." );

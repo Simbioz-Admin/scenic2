@@ -281,7 +281,7 @@ ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb 
     }
     if ( !udpAdded ) {
         //TODO: Cancel connection
-        return logback( i18n.t( 'Error udp stream to destination __path__ __id__ __port__', {
+        return logback( i18n.t( 'Error adding udp stream to destination __path__ __id__ __port__', {
             path: path,
             id:   id,
             port: port

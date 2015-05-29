@@ -1,28 +1,4 @@
-//Model control_property
-idAttribute: "name",
-    defaults: {
-    "name": null,
-        "property": null,
-        "quiddName": null
-}
-socket.emit("removeValuePropertyOfDico", "controlDestinations", that.get("name"));
 
-// Model destinationRtp
-
-defaults: {
-    "id": null,
-        "name": null,
-        "hostName": null,
-        "portSoap": null,
-        "data_streams": [],
-        "in_tab": true
-}
-
-socket.emit("remove_destination", that.get("id"), that.get("portSoap"), function(data) {
-    if (data.error) {
-        return views.global.notifications("error", data.error);
-    }
-});
 
 /* Called when user leave a class Quiddity with device autodetect */
 

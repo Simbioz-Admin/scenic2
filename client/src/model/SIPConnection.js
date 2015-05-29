@@ -40,9 +40,10 @@ define( [
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
-            this.set( 'server', localStorage.getItem( 'sip.server' ) ? localStorage.getItem( 'sip.server' ) : app.config.sip.server );
-            this.set( 'port', localStorage.getItem( 'sip.port' ) ? localStorage.getItem( 'sip.port' ) : app.config.sip.port );
-            this.set( 'user', localStorage.getItem( 'sip.user' ) );
+            var sip = localStorage.getItem('sip');
+            this.set( 'server', sip && sip.server ? sip.server : app.config.sip.server );
+            this.set( 'port', sip && sip.port ? sip.port : app.config.sip.port );
+            this.set( 'user', sip && sip.user ? sip.user : null );
 
             this.quiddityId = app.config.sip.quiddName;
             this.propertyName = 'sip-registration';
@@ -75,9 +76,7 @@ define( [
                 password: CryptoJS.AES.encrypt( password, this.secretString ).toString()
             };
 
-            localStorage.setItem( 'sip.server', server );
-            localStorage.setItem( 'sip.port', port );
-            localStorage.setItem( 'sip.user', user );
+            localStorage.setItem( 'sip', { server: server, port: port, user: user } );
 
             socket.emit( 'sipLogin', credentials, function ( error ) {
                 if ( error ) {

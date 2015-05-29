@@ -39,11 +39,11 @@ NPM dependencies will be downloaded automatically.
 
 ##### Setup
 
-    npm install i18next-parser
+    sudo npm install -g i18next-parser
 
 ##### Updating translation files: 
 
-    i18next -l fr --directoryFilter '!node_modules, !.git, !assets' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n translation_client -k :: -s :::
+    i18next -l fr --directoryFilter '!.git, !.idea, !node_modules, !bower_components, !backup, !test, !tools, !assets' --fileFilter '*.js,*.html' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n translation -k :: -s :::
 
 ##### Updating client side translation 
 

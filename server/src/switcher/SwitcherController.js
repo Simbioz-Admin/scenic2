@@ -126,10 +126,7 @@ SwitcherController.prototype.bindClient = function ( socket ) {
     socket.on( "getFiles", this.getSaveFiles.bind( this ) );
     socket.on( "loadFile", this.loadSaveFile.bind( this ) );
     socket.on( "saveFile", this.saveFile.bind( this ) );
-    //
-    //
-    //
-    socket.on( "deleteFile", this.remove_save.bind( this ) );
+    socket.on( "deleteFile", this.deleteFile.bind( this ) );
 
     this.quiddityManager.bindClient( socket );
     this.sipManager.bindClient( socket );
@@ -213,9 +210,10 @@ SwitcherController.prototype.close = function () {
  * @param cb
  */
 SwitcherController.prototype.getSaveFiles = function ( cb ) {
-    fs.readdir( this.config.scenicSavePath, function ( error, files ) {
+    var path = this.config.scenicSavePath;
+    fs.readdir( path, function ( error, files ) {
         if ( error ) {
-            return logback( error, cb );
+            return logback( i18n.t('Failed to read save files from __path__ (__error__)', {path:path, error: error}), cb);
         }
         cb( null, files );
     } );
@@ -233,10 +231,11 @@ SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
     try {
         var load = switcher.load_history_from_scratch( path );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( i18n.t('Failed to load file __path__ (__error__)', {path: path, error: e.toString()}), cb );
+
     }
     if ( !load || load == 'false' ) {
-        return logback( 'Failed to load file ' + path, cb );
+        return logback( i18n.t('Failed to load file __path__', {path: path} ), cb );
     }
     log.info( "Loaded scenic file: " + path );
     cb();
@@ -254,10 +253,10 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
     try {
         var save = switcher.save_history( path );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( i18n.t('Failed to save file __path__ (__error__)', {path: path, error: e.toString()}), cb );
     }
     if ( !save || save == 'false' ) {
-        return logback( 'Failed to save file ' + path, cb );
+        return logback( i18n.t('Failed to save file __path__', {path: path}), cb );
     }
     log.info( "Saved scenic file: " + path );
     cb();
@@ -270,18 +269,19 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
  * @param name
  * @param cb
  */
-SwitcherController.prototype.remove_save = function ( name, cb ) {
+SwitcherController.prototype.deleteFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
     log.debug( "Removing scenic file: " + path );
-    var fs   = require( 'fs' );
-    fs.unlink( path, function ( err ) {
-        if ( err ) {
-            log.warn( err );
-            return cb( err );
-        }
-        cb();
-    } );
+    try {
+        fs.unlink( path, function ( error ) {
+            if ( error ) {
+                return logback( i18n.t('Failed to delete file __path__ (__error__)', {path:path, error: error}), cb);
+            }
+            cb();
+        } );
+    } catch ( e ) {
+        return logback( i18n.t('Failed to delete file __path__ (__error__)', {path: path, error: e.toString()}), cb);
+    }
 };
-
 
 module.exports = SwitcherController;

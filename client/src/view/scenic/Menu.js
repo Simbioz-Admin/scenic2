@@ -31,14 +31,21 @@ define( [
 
         events:    {
             'click @ui.load': 'showFileList',
-            'click @ui.save': 'saveFileAs'
+            'click @ui.save': 'saveFileAs',
+            'click @ui.lang': 'changeLanguage'
         },
 
         /**
          * Initialize
          */
         initialize: function () {
+            // Main communication channel
+            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+        },
 
+        onAttach: function() {
+            $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
         },
 
         showFileList: function() {
@@ -59,6 +66,10 @@ define( [
                 this.currentPanel = 'save';
                 this.showChildView( 'panel', new SaveAsView() );
             }
+        },
+
+        changeLanguage: function(event) {
+            this.scenicChannel.commands.execute('set:language', $(event.currentTarget ).data('lang') );
         }
     } );
 

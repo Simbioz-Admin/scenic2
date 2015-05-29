@@ -3,6 +3,7 @@ define( [
     'underscore',
     'backbone',
     'mutators',
+    'marionette',
     'async',
     'jquery',
     'i18n',
@@ -14,7 +15,7 @@ define( [
     'model/Quiddities',
     // View
     'view/Scenic'
-], function ( _, Backbone, Mutators, async, $, i18n,
+], function ( _, Backbone, Mutators, Marionette, async, $, i18n,
               // Internal Libs
               SIPConnection,
               // Models
@@ -46,9 +47,28 @@ define( [
             function ( callback ) {
                 i18n.init( {
                     lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
-                    cookieName:   'lang',
-                    ns:           'translation'
+                    lng: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
+                    ns:           'translation',
+                    fallbackLng: false
                 } ).done( function () {
+                    // Replace Marionette's renderer with one that supports i18n
+                    var render = Marionette.Renderer.render;
+                    Marionette.Renderer.render = function (template, data){
+                        data = _.extend(data, {_t: i18n.t});
+                        return render(template, data);
+                    };
+                    // Replace ItemView's attachElContent to run 19n after attaching
+                    Marionette.ItemView.prototype.attachElContent = function(html) {
+                        this.$el.html(html);
+                        this.$el.i18n();
+                        return this;
+                    };
+                    // Replace CollectionView's attachElContent to run 19n after attaching
+                    Marionette.CollectionView.prototype.attachElContent = function(html) {
+                        this.$el.html(html);
+                        this.$el.i18n();
+                        return this;
+                    };
                     $( 'body' ).i18n();
                     callback();
                 } );

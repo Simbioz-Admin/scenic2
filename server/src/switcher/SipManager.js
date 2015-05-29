@@ -49,8 +49,6 @@ SipManager.prototype.bindClient = function ( socket ) {
     //
     //
     socket.on( 'sip_logout', this.logout.bind( this ) );
-    socket.on( 'addUserToDestinationMatrix', this.addUserToDestinationMatrix.bind( this ) );
-    socket.on( 'removeUserToDestinationMatrix', this.removeUserToDestinationMatrix.bind( this ) );
     socket.on( 'getListStatus', this.getListStatus.bind( this ) );
     socket.on( 'removeUser', this.removeUser.bind( this ) );
 };
@@ -585,48 +583,6 @@ SipManager.prototype.logout = function ( cb ) {
         return cb( msgErr, false );
     }
 
-};
-
-
-/*
- *  @function addDestinationSip
- */
-SipManager.prototype.addUserToDestinationMatrix = function ( uri, cb ) {
-    log.debug( 'ask to add ', uri, ' to the destinationSip' );
-
-    var addDestinationSip = this.switcher.invoke( 'destinationsSip', 'update', [uri, uri] );
-    if ( !addDestinationSip ) {
-        var err = i18n.t( 'Error add DestinationSip ' ) + uri;
-        log.error( err );
-        cb( err );
-        return;
-    }
-    this.io.emit( 'addDestinationSip', uri );
-    cb( null, 'successfully added destination ' + uri );
-};
-
-/*
- *  @function removeDestinationSip
- */
-SipManager.prototype.removeUserToDestinationMatrix = function ( uri, cb ) {
-    log.debug( 'ask to remove ', uri, ' to the destinationSip' );
-    var removeDestinationSip = this.switcher.invoke( 'destinationsSip', 'remove', [uri] );
-    if ( !removeDestinationSip ) {
-        var err = i18n.t( 'Error remove DestinationSip ' ) + uri;
-        log.error( err );
-        cb( err );
-        return;
-    }
-    this.io.emit( 'removeDestinationSip', uri );
-    cb( null, i18n.t( 'successfully remove destination ' ) + uri );
-
-    /* hang up client if called */
-    var call = this.switcher.invoke( this.config.sip.quiddName, 'hang-up', [uri] );
-    if ( !call ) {
-        var msg = i18n.t( 'error called uri : ' ) + uri;
-        log.error( msg );
-        return cb( msg )
-    }
 };
 
 

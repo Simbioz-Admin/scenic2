@@ -69,6 +69,7 @@ define( [
 
             // Wreqr Handlers
             this.scenicChannel.commands.setHandler( 'confirm', this._onConfirm, this );
+            this.scenicChannel.commands.setHandler( 'set:language', this.setLanguage, this );
 
             //TODO: Put in notification manager
             this.scenicChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
@@ -79,7 +80,6 @@ define( [
 
             // TODO: Legacy
             $( document ).tooltip();
-            $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
         },
 
         /**
@@ -120,6 +120,17 @@ define( [
             }
         },
 
+        setLanguage: function( language ) {
+            if ( !_.contains(this.app.config.locale.supported)) {
+                console.warn('Invalid language', language);
+            }
+            var currentLanguage = localStorage.getItem('lang');
+            if ( currentLanguage != language ) {
+                localStorage.setItem('lang', language);
+                location.reload();
+            }
+        },
+
         //  ███╗   ███╗ ██████╗ ██████╗  █████╗ ██╗
         //  ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║
         //  ██╔████╔██║██║   ██║██║  ██║███████║██║
@@ -138,7 +149,7 @@ define( [
         _onConfirm: function ( message, callback ) {
             if ( !callback ) {
                 callback = message;
-                message  = $.t( 'Are you sure?"' );
+                message  = $.t( 'Are you sure?' );
             }
             this.$el.addClass( 'blur' );
             this.showChildView( 'modal', new ConfirmationView( {

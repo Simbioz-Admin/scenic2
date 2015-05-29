@@ -683,7 +683,7 @@ QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, va
         log.debug( 'The property ' + property + ' of ' + quiddityId + ' was set to ' + value );
         cb();
     } else {
-        return logback( i18n.t( 'Missing arguments to set property value:' ) + ' ' + quiddityId + ' ' + property + ' ' + value, cb );
+        return logback( i18n.t( 'Missing arguments to set property value' ) + ' ' + quiddityId + ' ' + property + ' ' + value, cb );
     }
 };
 

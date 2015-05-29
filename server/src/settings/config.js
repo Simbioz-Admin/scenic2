@@ -70,6 +70,9 @@ var config = {
     supported: ['en', 'fr']
   },
 
+  defaultPanelPage: 'sip',
+
+
 
 
 
@@ -78,10 +81,6 @@ var config = {
   passSet: null,
   loadFile: false,
   nameComputer: os.hostname(),
-  defaultPanelTable: "transfer",
-
-  listQuiddsAndSocketId: {},
-  subscribe_quidd_info: {},
   scenicDependenciesPath: scenicHomePath,
   scenicSavePath: scenicHomePath + "/save_files/",
   pathLogs: scenicHomePath + '/logs/',

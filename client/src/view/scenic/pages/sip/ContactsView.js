@@ -36,10 +36,6 @@ define( [
          * @returns {boolean}
          */
         filter: function (contact) {
-            console.log( typeof( contact.get('self') ), contact.get('self'), contact.get('uri'), contact);
-            if ( contact.get('self') == false ) {
-                console.log( 'stop here');
-            }
             return !contact.get('self');
         }
     } );

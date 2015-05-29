@@ -105,7 +105,11 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
  * @param cb
  */
 SipManager.prototype._addContact = function ( uri, user, cb ) {
-    log.debug( 'Adding SIP user', uri, user );
+    if ( uri == null || user == null ) {
+        return cb(i18n.t('Missing information to add contact'));
+    }
+
+    log.debug( 'Adding SIP contact', uri, user );
     try {
         var addedBuddy = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
     } catch ( e ) {
@@ -179,6 +183,8 @@ SipManager.prototype._saveContacts = function ( contacts, callback ) {
     var self = this;
     log.info( 'Saving contacts', self.config.contactsPath );
     log.debug( contacts );
+    // Safety, we had null keys polluting the contacts sometimes
+    delete contacts[null];
     fs.writeFile( self.config.contactsPath, JSON.stringify( contacts ), callback );
 };
 
@@ -429,6 +435,7 @@ SipManager.prototype.login = function ( credentials, cb ) {
                 }
 
                 if ( contacts[credentials.user + '@' + credentials.server] ) {
+                    console.log(contacts);
                     _.each( contacts[credentials.user + '@' + credentials.server], function ( contactName, contactURI ) {
                         // addUser is synchronous, callback is only there to get error information
                         self._addContact( contactURI, contactName, function ( error ) {

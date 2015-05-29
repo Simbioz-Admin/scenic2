@@ -164,7 +164,15 @@ SipManager.prototype._loadContacts = function ( callback ) {
                     return callback( 'Error parsing contacts (' + e.toString() + ')' );
                 }
 
-                callback( null, contacts ? contacts : [] );
+                if ( contacts ) {
+                    // Cleanup
+                    _.each( contacts, function( contact ) {
+                        // We have those appearing at oone point during dev, just clearing them out
+                        delete contact['null'];
+                    });
+                    callback( null, contacts);
+                }
+                callback( null, [] );
             } );
         } else {
             return callback( null, [] );
@@ -183,8 +191,6 @@ SipManager.prototype._saveContacts = function ( contacts, callback ) {
     var self = this;
     log.info( 'Saving contacts', self.config.contactsPath );
     log.debug( contacts );
-    // Safety, we had null keys polluting the contacts sometimes
-    delete contacts[null];
     fs.writeFile( self.config.contactsPath, JSON.stringify( contacts ), callback );
 };
 

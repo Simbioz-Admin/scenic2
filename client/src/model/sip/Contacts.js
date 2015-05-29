@@ -27,8 +27,10 @@ define( [
         /**
          * Initialize
          */
-        initialize: function() {
+        initialize: function( options ) {
             ScenicCollection.prototype.initialize.apply(this,arguments);
+
+            this.sip = options.sip;
 
             // Handlers
             this.onSocket( 'contactInfo', _.bind( this._onUserInfo, this ) );

@@ -16,6 +16,16 @@ define( [
 
     var Contact = ScenicModel.extend( {
 
+        defaults: {
+            status: 'offline',
+            status_text: '',
+            subscription_state: '',
+            uri: null,
+            send_status: null,
+            recv_status: null,
+            name: null
+        },
+
         methodMap:   {
             'create': function () {
                 return ['addContact', this.get( 'uri' )];

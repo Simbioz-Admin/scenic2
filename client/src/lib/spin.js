@@ -1,7 +1,8 @@
 define( [
+    'jquery',
     'spin'
-], function ( Spinner ) {
-    var opts = {
+], function ( $, Spinner ) {
+    var defaults = {
         lines:     13, // The number of lines to draw
         length:    30, // The length of each line
         width:     8, // The line thickness
@@ -19,19 +20,38 @@ define( [
         top:       '50%', // Top position relative to parent
         left:      '50%' // Left position relative to p
     };
+
+    $.fn.spin = function ( opts, color ) {
+
+        return this.each( function () {
+            var $this  = $( this );
+            var data = $this.data();
+
+            if ( data.spinner ) {
+                data.spinner.stop();
+                delete data.spinner
+            }
+            if ( opts !== false ) {
+                console.log( defaults );
+                opts         = $.extend( defaults, opts );
+                data.spinner = new Spinner( opts ).spin( this )
+            }
+        } )
+    };
+
     return function () {
         if ( $( '#spinner-container' ).length == 0 ) {
             $( 'body' ).append( '<div id="spinner-container"></div>' );
         }
         var container = $( '#spinner-container' );
         container.hide();
-        var spinner   = new Spinner( opts ).spin( container.get( 0 ) );
-        container.fadeIn(250);
+        var spinner   = new Spinner( defaults ).spin( container.get( 0 ) );
+        container.fadeIn( 250 );
         return function () {
-            container.fadeOut(250, function() {
+            container.fadeOut( 250, function () {
                 spinner.stop();
                 $( '#spinner-container' ).remove();
-            });
+            } );
         }
     }
 } );

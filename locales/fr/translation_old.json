@@ -270,5 +270,6 @@
   "Failed to delete file ": "Impossible d'effaces le fichier",
   "Failed to load file ": "",
   "Failed to save file ": "",
-  "Missing arguments to set property value: sda": ""
+  "Missing arguments to set property value: sda": "",
+  "error when try logout server sip": ""
 }

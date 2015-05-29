@@ -53,6 +53,17 @@ define( [
         },
 
         /**
+         * Filter shmdata per table
+         *
+         * @param shmdata
+         * @returns {boolean}
+         */
+        filter: function (shmdata) {
+            // Get back up to the table model to filter the displayed connections
+            return this.options.table.filterShmdata( shmdata, true );
+        },
+
+        /**
          * Edit Handler
          * @param event
          */

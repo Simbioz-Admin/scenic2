@@ -83,6 +83,7 @@ var config = {
   nameComputer: os.hostname(),
   scenicDependenciesPath: scenicHomePath,
   scenicSavePath: scenicHomePath + "/save_files/",
+  contactsPath: scenicHomePath + "/contacts.json",
   pathLogs: scenicHomePath + '/logs/',
 };
 

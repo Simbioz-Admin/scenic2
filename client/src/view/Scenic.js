@@ -121,7 +121,7 @@ define( [
         },
 
         setLanguage: function( language ) {
-            if ( !_.contains(this.app.config.locale.supported)) {
+            if ( !_.contains(this.app.config.locale.supported, language)) {
                 console.warn('Invalid language', language);
             }
             var currentLanguage = localStorage.getItem('lang');

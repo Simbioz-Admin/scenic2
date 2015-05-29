@@ -2,11 +2,11 @@
     <h2 data-i18n>SIP Login</h2>
 
     <label for="sipServer" data-i18n>Address</label>
-    <input id="sipServer" name="sipServer" type="text" placeholder="Server" data-i18n="[placeholder]Server" value="<%=sip.server%>">
+    <input id="sipServer" name="sipServer" type="text" placeholder="Server" data-i18n="[placeholder]Server" value="<%=server%>">
 
     <div class="">
         <label for="sipUsername" data-i18n>Username</label>
-        <input id="sipUsername" name="sipUsername" type="text" placeholder="Username" data-i18n="[placeholder]Username" value="<%=sip.user%>" autofocus>
+        <input id="sipUsername" name="sipUsername" type="text" placeholder="Username" data-i18n="[placeholder]Username" value="<%=user%>" autofocus>
 
     </div>
     <div class="">
@@ -15,7 +15,7 @@
     </div>
     <div class="">
         <label for="sipPort" data-i18n>Port</label>
-        <input id="sipPort" name="sipPort" type="text" placeholder="Port (leave blank for auto)" data-i18n="[placeholder]Port (leave blank for auto)" value="<%=sip.port%>">
+        <input id="sipPort" name="sipPort" type="text" placeholder="Port (leave blank for auto)" data-i18n="[placeholder]Port (leave blank for auto)" value="<%=port%>">
     </div>
 
     <% if ( error ) { %>

@@ -4,8 +4,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!template/scenic/pages/sip/login.html'
-], function ( _, Backbone, Marionette, LoginTemplate ) {
+    'lib/spin',
+    'text!template/scenic/pages/sip/login.html',
+    'text!template/scenic/pages/sip/connecting.html'
+], function ( _, Backbone, Marionette, spin, LoginTemplate, ConnectingTemplate ) {
 
     /**
      * SIP Login View
@@ -14,7 +16,6 @@ define( [
      * @extends module:Marionette.ItemVIew
      */
     var LoginView = Marionette.ItemView.extend( {
-        template:  _.template( LoginTemplate ),
         className: 'login',
 
         ui: {
@@ -29,10 +30,17 @@ define( [
             'click @ui.login': 'login'
         },
 
+        getTemplate: function() {
+            if ( this.model.get('connecting')) {
+                return _.template(ConnectingTemplate);
+            } else {
+                return _.template(LoginTemplate);
+            }
+        },
+
         templateHelpers: function () {
             return {
-                sip: this.model.sip.toJSON(),
-                error: this.options.error
+                error: this.error
             };
         },
 
@@ -43,12 +51,30 @@ define( [
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
         },
 
+        onRender: function() {
+            $('*', this.$el).prop('disabled', false);
+            this.$el.fadeTo( 250, 1.0 );
+        },
+
         /**
          * Login
          */
         login: function () {
+            var self = this;
+            $('*', this.$el).prop('disabled', true);
+            this.$el.fadeTo( 250, 0.5, function() {
+                if ( !self.isDestroyed ) {
+                    self.render();
+                }
+            } );
+
             // TODO: Validation
-            this.model.sip.login( this.ui.server.val(), this.ui.port.val(), this.ui.user.val(), this.ui.password.val() );
+            this.model.login( this.ui.server.val(), this.ui.port.val(), this.ui.user.val(), this.ui.password.val(), function( error ) {
+                if ( error ) {
+                    self.error = error;
+                    self.render();
+                }
+            } );
         }
     } );
 

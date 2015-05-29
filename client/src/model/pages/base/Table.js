@@ -45,6 +45,16 @@ define( [
         },
 
         /**
+         * Filter shmdata for access from this table
+         *
+         * @param shmdata
+         * @returns {boolean}
+         */
+        _filterShmdata: function ( shmdata ) {
+            return true;
+        },
+
+        /**
          * Get source collection
          * Override in concrete table classes to retrieve the actual collection
          *
@@ -76,6 +86,18 @@ define( [
          */
         filterSource: function( source, useFilter ) {
             return this._filterQuiddityOrClass( 'source', source, useFilter );
+        },
+
+        /**
+         * Filter shmdata
+         * Override in concrete table classes to filter the actual collection
+         *
+         * @param shmdata
+         * @param useFilter
+         * @returns {*|boolean}
+         */
+        filterShmdata: function( shmdata ) {
+            return this._filterShmdata( shmdata );
         },
 
         /**
@@ -163,7 +185,8 @@ define( [
          * @param callback
          */
         canConnect: function( source, destination, callback ) {
-            //
+            callback( false );
+            return false;
         },
 
         /**

@@ -83,7 +83,10 @@ define( [
          * @inheritdoc
          */
         canConnect: function( source, destination, callback ) {
-            callback( true );
+            var isRaw = source.get('category') == 'video';
+            var can = !isRaw;
+            callback( can );
+            return can;
         },
 
         /**

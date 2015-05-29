@@ -286,6 +286,13 @@ $boxWidth: $sourceWidth;
       }
     }
 
+    .connecting {
+      font-size: 2em;
+      color: $textColorBrighter;
+      font-weight: 300;
+      top: 45%;
+      position: absolute;
+    }
 
     .actions {
       .action {

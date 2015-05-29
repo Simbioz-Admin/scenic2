@@ -9,10 +9,10 @@ define( [
     'view/scenic/pages/sip/SIPDestinationsView',
     'view/scenic/pages/sip/SIPConnectionView',
     'view/scenic/pages/sip/LoginView',
-    'view/scenic/pages/sip/ContactsView',
+    'view/scenic/pages/sip/PanelView',
     'view/scenic/pages/sip/SIPMenus',
     'text!template/scenic/pages/sip/table.html'
-], function ( _, Backbone, Marionette, TableView, SourcesView, SIPDestinationsView, SIPConnectionView, LoginView, ContactsView, SIPMenusView, SIPTableTemplate ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, SIPDestinationsView, SIPConnectionView, LoginView, PanelView, SIPMenusView, SIPTableTemplate ) {
 
     /**
      *  @constructor
@@ -63,27 +63,23 @@ define( [
 
         showSIPView: function() {
             if ( this.model.sip.get('connected') ) {
-                this.showChildView('sip', new ContactsView({
-                    table: this.model,
-                    model: this.model.sip,
-                    collection: this.model.sip.get('contacts')
+                this.showChildView('sip', new PanelView({
+                    model: this.model
                 }));
             } else {
                 this.showChildView('sip', new LoginView({
-                    model: this.model
+                    table: this.model,
+                    model: this.model.sip
                 }));
             }
         },
 
         _onConnectedChanged : function() {
-            // Show SIP View depending on status
             this.showSIPView();
         },
 
         _onLogin: function() {
-            /*this.showChildView('sip', new LoginView({
-                table: this.model
-            }));*/
+
         },
 
         _onLoggedIn: function() {

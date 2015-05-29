@@ -4,34 +4,22 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/sip/ContactView',
-    'text!template/scenic/pages/sip/contacts.html'
-], function ( _, Backbone, Marionette, ContactView, ContactsTemplate ) {
+    'view/scenic/pages/sip/ContactView'
+], function ( _, Backbone, Marionette, ContactView ) {
 
     /**
      * Contacts View
      *
      * @constructor
-     * @extends module:Marionette.CompositeView
+     * @extends module:Marionette.CollectionVIew
      */
-    var ContactsView = Marionette.CompositeView.extend( {
-        template: _.template( ContactsTemplate ),
-        className: 'contacts',
-
+    var ContactsView = Marionette.CollectionView.extend( {
+        className: 'contact-list',
         childView: ContactView,
         childViewOptions: function() {
             return {
                 table: this.options.table
             }
-        },
-        childViewContainer: '.contact-list',
-        
-        ui: {
-            addContact: '#sipAddContactInput'
-        },
-        
-        events: {
-            'keypress @ui.addContact': '_onAddContactKeypress'
         },
 
         /**
@@ -42,16 +30,13 @@ define( [
         },
 
         /**
-         * AddContactInput Keypress Handler
-         * 
-         * @param event
-         * @private
+         * Contacts View Filter
+         *
+         * @param contact
+         * @returns {boolean}
          */
-        _onAddContactKeypress: function( event ) {
-            var key = event.which || event.keyCode;
-            if ( key == 13 ) {
-                this.model.addContact( this.ui.addContact.val() );
-            }
+        filter: function (contact) {
+            return !contact.get('self');
         }
     } );
 

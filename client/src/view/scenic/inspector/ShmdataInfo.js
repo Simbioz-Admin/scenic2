@@ -15,6 +15,10 @@ define( [
         template: _.template( ShmdataInfoTemplate ),
         className: 'shmdata-info',
 
+        modelEvents: {
+            'change': 'render'
+        },
+
         templateHelpers: function() {
 
             var capabilities = this.model.get('caps').split(', ');

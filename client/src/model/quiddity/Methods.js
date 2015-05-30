@@ -35,7 +35,7 @@ define( [
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
             //Handlers
-            this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
+            this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
         },
 
         /**
@@ -46,7 +46,7 @@ define( [
          * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
+        _onSignal: function ( quiddityId, signal, name ) {
             if ( signal == "on-method-added" && this.quiddity.id == quiddityId ) {
                 var method = this.add( {id: name}, {merge: true} );
                 //The method is empty at this point, fetch its content

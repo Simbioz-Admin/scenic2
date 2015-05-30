@@ -44,7 +44,7 @@ define( [
 
             // Handlers
             this.onSocket( 'removeShmdata', _.bind( this._onRemoved, this ) );
-            this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( "propertyChanged", _.bind( this._onPropertyChanged, this ) );
         },
 
         /**
@@ -68,7 +68,7 @@ define( [
          *  @param {string} value The value of the property
          *  @private
          */
-        _onSignalsPropertiesValue: function ( quiddName, prop, value ) {
+        _onPropertyChanged: function ( quiddName, prop, value ) {
             if ( prop == "byte-rate" && quiddName.indexOf( 'vumeter_' ) == 0 ) {
                 var shmdataName = quiddName.replace( "vumeter_", "" );
                 if ( shmdataName == this.id ) {

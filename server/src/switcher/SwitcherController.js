@@ -7,7 +7,7 @@ var async           = require( 'async' );
 var switcher        = require( 'switcher' );
 var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
-var ReceiverManager = require( './ReceiverManager' );
+var RtpManager      = require( './RtpManager' );
 var log             = require( '../lib/logger' );
 var logback         = require( '../utils/logback' );
 var checkPort       = require( '../utils/check-port' );
@@ -26,7 +26,7 @@ function SwitcherController( config, io ) {
 
     this.quiddityManager = new QuiddityManager( config, switcher, io );
     this.sipManager      = new SipManager( config, switcher, io );
-    this.receiverManager = new ReceiverManager( config, switcher, io );
+    this.rtpManager = new RtpManager( config, switcher, io );
 }
 
 /**
@@ -65,15 +65,15 @@ SwitcherController.prototype.initialize = function ( callback ) {
     log.debug( 'Creating System Usage...' );
     switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );
-    this.switcher.subscribe_to_signal( 'systemusage', "on-tree-grafted" );
+    switcher.subscribe_to_signal( this.config.systemUsage.quiddName, 'on-tree-grafted' );
 
     var setSOAPPort = true;
 
     // Load file if specified
     if ( this.config.loadFile ) {
         log.info( 'Loading save file ' + this.config.loadFile );
-        var load = switcher.load_history_from_scratch( this.config.loadFile );
-        if ( load == 'true' ) {
+        var loaded = JSON.parse( switcher.load_history_from_scratch( this.config.loadFile ) );
+        if ( loaded ) {
             log.info( 'Save file loaded.' );
             setSOAPPort = false;
         } else {
@@ -93,7 +93,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
                         callback( error );
                         return process.exit();
                     }
-                    switcher.invoke( "soap", "set_port", [self.config.soap.port] );
+                    switcher.invoke( self.config.soap.quiddName, 'set_port', [self.config.soap.port] );
                     callback();
                 } );
             } else {
@@ -105,7 +105,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
             // Initialize managers
             self.quiddityManager.initialize();
             self.sipManager.initialize();
-            self.receiverManager.initialize();
+            self.rtpManager.initialize();
             callback();
         }
 
@@ -130,7 +130,7 @@ SwitcherController.prototype.bindClient = function ( socket ) {
 
     this.quiddityManager.bindClient( socket );
     this.sipManager.bindClient( socket );
-    this.receiverManager.bindClient( socket );
+    this.rtpManager.bindClient( socket );
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
@@ -160,7 +160,7 @@ SwitcherController.prototype._onSwitcherLog = function ( message ) {
  */
 SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, property, value ) {
     this.quiddityManager.onSwitcherProperty( quiddityId, property, value );
-    this.receiverManager.onSwitcherProperty( quiddityId, property, value );
+    this.rtpManager.onSwitcherProperty( quiddityId, property, value );
     this.sipManager.onSwitcherProperty( quiddityId, property, value );
 };
 
@@ -174,7 +174,7 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
  */
 SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, value ) {
     this.quiddityManager.onSwitcherSignal( quiddityId, signal, value );
-    this.receiverManager.onSwitcherSignal( quiddityId, signal, value );
+    this.rtpManager.onSwitcherSignal( quiddityId, signal, value );
     this.sipManager.onSwitcherSignal( quiddityId, signal, value );
 };
 
@@ -192,7 +192,7 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
 SwitcherController.prototype.close = function () {
     log.info( "Server scenic is now closed" );
     if ( this.io ) {
-        this.io.emit( "shutdown", true );
+        this.io.emit( 'shutdown' );
     }
     switcher.close();
 };
@@ -211,12 +211,20 @@ SwitcherController.prototype.close = function () {
  */
 SwitcherController.prototype.getSaveFiles = function ( cb ) {
     var path = this.config.scenicSavePath;
-    fs.readdir( path, function ( error, files ) {
-        if ( error ) {
-            return logback( i18n.t('Failed to read save files from __path__ (__error__)', {path:path, error: error}), cb);
-        }
-        cb( null, files );
-    } );
+    try {
+        fs.readdir( path, function ( error, files ) {
+            if ( error ) {
+                return logback( i18n.t( 'Failed to read save files from __path__ (__error__)', {
+                    path:  path,
+                    error: error
+                } ), cb );
+            }
+            cb( null, files );
+        } );
+    } catch ( e ) {
+        return logback( i18n.t('Error while reading save files from __path__ (__error__)', {path: path, error: e.toString()}), cb);
+
+    }
 };
 
 /**
@@ -229,12 +237,12 @@ SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
     log.debug( "Loading scenic file: " + path );
     try {
-        var load = switcher.load_history_from_scratch( path );
+        var loaded = JSON.parse( switcher.load_history_from_scratch( path ) );
     } catch ( e ) {
-        return logback( i18n.t('Failed to load file __path__ (__error__)', {path: path, error: e.toString()}), cb );
+        return logback( i18n.t('Error while loading file __path__ (__error__)', {path: path, error: e.toString()}), cb );
 
     }
-    if ( !load || load == 'false' ) {
+    if ( !loaded ) {
         return logback( i18n.t('Failed to load file __path__', {path: path} ), cb );
     }
     log.info( "Loaded scenic file: " + path );
@@ -251,11 +259,11 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
     log.debug( "Saving scenic file: " + path );
     try {
-        var save = switcher.save_history( path );
+        var save = JSON.parse( switcher.save_history( path ) );
     } catch ( e ) {
-        return logback( i18n.t('Failed to save file __path__ (__error__)', {path: path, error: e.toString()}), cb );
+        return logback( i18n.t('Error while saving file __path__ (__error__)', {path: path, error: e.toString()}), cb );
     }
-    if ( !save || save == 'false' ) {
+    if ( !save ) {
         return logback( i18n.t('Failed to save file __path__', {path: path}), cb );
     }
     log.info( "Saved scenic file: " + path );
@@ -275,7 +283,7 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
     try {
         fs.unlink( path, function ( error ) {
             if ( error ) {
-                return logback( i18n.t('Failed to delete file __path__ (__error__)', {path:path, error: error}), cb);
+                return logback( i18n.t('Error while deleting file __path__ (__error__)', {path:path, error: error}), cb);
             }
             cb();
         } );

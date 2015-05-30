@@ -3,7 +3,6 @@
 var _       = require( 'underscore' );
 var i18n    = require( 'i18next' );
 var async   = require( 'async' );
-var slug    = require( 'slug' );
 var log     = require( '../lib/logger' );
 var logback = require( '../utils/logback' );
 
@@ -15,7 +14,7 @@ var logback = require( '../utils/logback' );
  * @param io
  * @constructor
  */
-function ReceiverManager( config, switcher, io ) {
+function RtpManager( config, switcher, io ) {
     this.config   = config;
     this.switcher = switcher;
     this.io       = io;
@@ -24,7 +23,7 @@ function ReceiverManager( config, switcher, io ) {
 /**
  * Initialize
  */
-ReceiverManager.prototype.initialize = function () {
+RtpManager.prototype.initialize = function () {
 
 };
 
@@ -33,7 +32,7 @@ ReceiverManager.prototype.initialize = function () {
  *
  * @param socket
  */
-ReceiverManager.prototype.bindClient = function ( socket ) {
+RtpManager.prototype.bindClient = function ( socket ) {
     socket.on( "createRTPDestination", this.createRTPDestination.bind( this ) );
     socket.on( "removeRTPDestination", this.removeRTPDestination.bind( this ) );
     socket.on( "connectRTPDestination", this.connectRTPDestination.bind( this ) );
@@ -51,7 +50,7 @@ ReceiverManager.prototype.bindClient = function ( socket ) {
  * @param property
  * @param value
  */
-ReceiverManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
+RtpManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
 
 };
 
@@ -62,7 +61,7 @@ ReceiverManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
  * @param signal
  * @param value
  */
-ReceiverManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
+RtpManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
 };
 
@@ -72,7 +71,7 @@ ReceiverManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
  * @param id {string} Id of receiver
  * @param cb {object} return an error if exist
  */
-ReceiverManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
+RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
     var self = this;
     setTimeout( function () {
         var url       = 'http://' + self.config.host + ':' + self.config.soap.port + '/sdp?rtpsession=' + self.config.rtp.quiddName + '&destination=' + id;
@@ -101,7 +100,7 @@ ReceiverManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
  * @param port
  * @param cb
  **/
-ReceiverManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
+RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
     log.debug( 'Creating RTP destination', name, host, port );
 
     // Validate
@@ -187,7 +186,7 @@ ReceiverManager.prototype.createRTPDestination = function ( name, host, port, cb
  * @param id {string} rtp destination quiddity id
  * @param cb {object} callback
  */
-ReceiverManager.prototype.removeRTPDestination = function ( id, cb ) {
+RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
     log.debug( 'Removing RTP destination', id );
 
     // Remove the destination
@@ -234,7 +233,7 @@ ReceiverManager.prototype.removeRTPDestination = function ( id, cb ) {
  * @param port {int} Port which is sent shmata
  * @param cb
  */
-ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
+RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
     log.debug( "Connecting quiddity to RTP destination", path, id, port );
 
     if ( _.isEmpty( path ) ) {
@@ -312,7 +311,7 @@ ReceiverManager.prototype.connectRTPDestination = function ( path, id, port, cb 
  * @param id {String} id of receiver
  * @param callback {object} if sucess return name true
  */
-ReceiverManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
+RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
     // Remove UDP Stream
     try {
         var udpRemoved = this.switcher.invoke( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
@@ -378,7 +377,7 @@ ReceiverManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
  * @param destination {json} Contain all information for create a new destination
  * @param callback {object} if sucess return name message success {json}
  */
-ReceiverManager.prototype.updateRTPDestination = function ( id, info, cb ) {
+RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
     log.debug('Updating RTP destination',id,info);
 
     var self = this;
@@ -421,4 +420,4 @@ ReceiverManager.prototype.updateRTPDestination = function ( id, info, cb ) {
     });
 };
 
-module.exports = ReceiverManager;
+module.exports = RtpManager;

@@ -47,8 +47,6 @@ define( [
 
         var self = this;
 
-        window.s = socket;
-
         async.series( [
 
             // Translations

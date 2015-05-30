@@ -47,8 +47,8 @@ define( [
             } );
 
             // Handlers
-            this.onSocket( "signals_properties_info", _.bind( this._onSignalsPropertiesInfo, this ) );
-            this.onSocket( "signals_properties_value", _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
+            this.onSocket( "propertyChanged", _.bind( this._onPropertyChanged, this ) );
         },
 
         /**
@@ -59,7 +59,7 @@ define( [
          * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
+        _onSignal: function ( quiddityId, signal, name ) {
             if ( signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
                 this.trigger( 'destroy', this, this.collection );
             }
@@ -73,7 +73,7 @@ define( [
          * @param {string} property The name of the property or method
          * @param {string} value The value of the property
          */
-        _onSignalsPropertiesValue: function ( quiddityId, property, value ) {
+        _onPropertyChanged: function ( quiddityId, property, value ) {
             if ( this.collection.quiddity.id == quiddityId && this.id == property && this.get( 'value' ) != value ) {
                 this.set( 'value', value );
                 // Keep last synced value as a backup in case setting a value fails

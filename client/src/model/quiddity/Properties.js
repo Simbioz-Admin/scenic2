@@ -35,8 +35,8 @@ define( [
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
             //Handlers
-            this.onSocket( 'signals_properties_info', _.bind( this._onSignalsPropertiesInfo, this ) );
-            this.onSocket( 'signals_properties_value', _.bind( this._onSignalsPropertiesValue, this ) );
+            this.onSocket( 'onSignal', _.bind( this._onSignal, this ) );
+            this.onSocket( 'propertyChanged', _.bind( this._onPropertyChanged, this ) );
         },
 
         /**
@@ -47,7 +47,7 @@ define( [
          * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignalsPropertiesInfo: function ( quiddityId, signal, name ) {
+        _onSignal: function ( quiddityId, signal, name ) {
             if ( signal == 'on-property-added' && this.quiddity.id == quiddityId ) {
                 var property = this.add( {id: name}, {merge: true} );
                 //console.debug( 'Property info', property );
@@ -64,7 +64,7 @@ define( [
          *  @param {string} key The name of the property or method
          *  @param {string} value The value of the property
          */
-        _onSignalsPropertiesValue: function ( quiddityId, key, value ) {
+        _onPropertyChanged: function ( quiddityId, key, value ) {
             if ( this.quiddity.id == quiddityId && this.get(key) == null ) {
                 // Somehow the property doesn't exists, create it but stay safe with merge
                 var property = this.add({id: key, value:value}, {merge:true});

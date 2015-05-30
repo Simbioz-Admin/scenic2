@@ -25,20 +25,21 @@ describe( 'Configuration', function () {
         should.exist( config.lang );
         should.exist( config.host );
 
+        should.exist( config.rtp );
         should.exist( config.rtp.quiddName );
         config.rtp.quiddName.should.be.a( 'string' );
+
+        should.exist( config.systemUsage );
+        should.exist( config.systemUsage.quiddName );
+        config.systemUsage.quiddName.should.be.a( 'string' );
+        should.exist( config.systemUsage.period );
+        config.systemUsage.period.should.be.a( 'number' );
 
         should.exist( config.nameComputer );
         config.nameComputer.should.be.a( 'string' );
 
-        should.exist( config.quiddExclude );
-        config.quiddExclude.should.be.an.instanceOf( Array );
-
-        should.exist( config.propertiesExclude );
-        config.propertiesExclude.should.be.an.instanceOf( Array );
-
-        should.exist( config.deviceAutoDetect );
-        config.deviceAutoDetect.should.be.an.instanceOf( Array );
+        should.exist( config.defaultPanelPage );
+        config.defaultPanelPage.should.be.a( 'string' );
 
         should.exist( config.scenicDependenciesPath );
         config.scenicDependenciesPath.should.be.a( 'string' );
@@ -46,13 +47,11 @@ describe( 'Configuration', function () {
         should.exist( config.scenicSavePath );
         config.scenicSavePath.should.be.a( 'string' );
 
+        should.exist( config.contactsPath );
+        config.contactsPath.should.be.a( 'string' );
 
         should.exist( config.pathLogs );
         config.pathLogs.should.be.a( 'string' );
-
-
-        should.exist( config.systemusagePeriod );
-        //TODO: It is a string but represents a number
     } );
 
     it( 'should contain scenic configuration', function () {
@@ -62,8 +61,6 @@ describe( 'Configuration', function () {
         config.scenic.ports.min.should.be.greaterThan( 1024 );
         should.exist( config.scenic.ports.max );
         config.scenic.ports.max.should.be.greaterThan( config.scenic.ports.min );
-        should.exist( config.scenic.ports.retrieve );
-        config.scenic.ports.retrieve.should.equal( 1 ); //For now
         should.not.exist( config.scenic.port ); // We auto-detect ports
     } );
 
@@ -74,8 +71,6 @@ describe( 'Configuration', function () {
         config.soap.ports.min.should.be.greaterThan( 1024 );
         should.exist( config.soap.ports.max );
         config.soap.ports.max.should.be.greaterThan( config.soap.ports.min );
-        should.exist( config.soap.ports.retrieve );
-        config.soap.ports.retrieve.should.equal( 1 ); //For now
         should.not.exist( config.soap.port ); // We auto-detect ports
     } );
 
@@ -86,11 +81,12 @@ describe( 'Configuration', function () {
         config.sip.ports.min.should.be.greaterThan( 1024 );
         should.exist( config.sip.ports.max );
         config.sip.ports.max.should.be.greaterThan( config.sip.ports.min );
-        should.exist( config.sip.ports.retrieve );
-        config.sip.ports.retrieve.should.equal( 1 ); //For now
         should.not.exist( config.sip.port ); // We auto-detect ports
 
         should.exist( config.sip.quiddName );
         config.sip.quiddName.should.be.a( 'string' );
+
+        should.exist( config.sip.server );
+        config.sip.server.should.be.a( 'string' );
     } );
 } );

@@ -837,7 +837,7 @@ QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, paramete
 
     //TODO: Return values are unclear, does an empty string means an error occurred?
 
-    if ( !result ) {
+    if ( result == null ) {
         return logback( i18n.t( 'Failed to invoke __method__ on __quiddity__', {
             quiddity: quiddityId,
             method:   method

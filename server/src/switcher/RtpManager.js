@@ -251,18 +251,18 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
         return logback( i18n.t( 'Missing destination' ), cb );
     }
 
-    if ( _.isEmpty( port ) || isNaN( parseInt( port ) ) ) {
+    if ( isNaN( parseInt( port ) ) ) {
         return logback( i18n.t( 'Missing or invalid port' ), cb );
     }
 
     // Check if the connection has already been made
     try {
-        var rtpShmdata = JSON.parse( this.switcher.get_info( this.config.rtp.quiddName, '.shmdata' ) );
+        var rtpShmdata = JSON.parse( this.switcher.get_info( this.config.rtp.quiddName, '.shmdata.reader' ) );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     var alreadyHasShmdata = false;
-    if ( rtpShmdata && rtpShmdata.reader && _.contains( _.keys( rtpShmdata.reader ), path ) ) {
+    if ( rtpShmdata && _.contains( _.keys( rtpShmdata ), path ) ) {
         log.debug( 'RTP is already connected to shmdata', path );
         alreadyHasShmdata = true;
     }
@@ -272,7 +272,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
         try {
             var dataStreamAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_data_stream', [path] );
         } catch ( e ) {
-            return logback( e, cb );
+            return logback( e.toString(), cb );
         }
         if ( !dataStreamAdded ) {
             return logback( i18n.t( 'Error adding data stream to destination __path__', {path: path} ), cb );
@@ -283,7 +283,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
     try {
         var udpAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( !udpAdded ) {
         //TODO: Cancel connection
@@ -296,9 +296,9 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
 
     // If a soap port was defined we set the shmdata to the httpsdpdec
     try {
-        var hasSoapControlClient = JSON.parse( this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id ) );
+        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( hasSoapControlClient ) {
         this._refreshHttpSdpDec( id, function ( error ) {
@@ -316,14 +316,14 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
  *
  * @param path {String} path of shmdata
  * @param id {String} id of receiver
- * @param callback {object} if sucess return name true
+ * @param cb
  */
 RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
     // Remove UDP Stream
     try {
         var udpRemoved = this.switcher.invoke( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( !udpRemoved ) {
         return logback( i18n.t( 'Error removing UDP stream from destination' ), cb );
@@ -331,15 +331,19 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
 
     // Check if the shmdata is still used by another connection
     try {
-        var destinations = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) ).destinations;
+        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
     } catch ( e ) {
-        return logback( e );
+        return logback( e.toString(), cb );
     }
-    var stillUsed = _.some( destinations, function ( destination ) {
-        return _.some( destination.data_streams, function ( dataStream ) {
-            return dataStream.path == path;
+    var stillUsed = false;
+    if ( result && result.destinations && _.isArray( result.destinations ) ) {
+        var destinations = result.destinations;
+        stillUsed        = _.some( destinations, function ( destination ) {
+            return _.some( destination.data_streams, function ( dataStream ) {
+                return dataStream.path == path;
+            } );
         } );
-    } );
+    }
 
     // If not, then remove the shmdata from the destination
     if ( !stillUsed ) {
@@ -347,7 +351,7 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
         try {
             var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_data_stream', [path] );
         } catch ( e ) {
-            return logback( e, cb );
+            return logback( e.toString(), cb );
         }
         if ( !removed ) {
             return logback( i18n.t( 'Failed to remove data stream __path__', {path: path} ), cb );
@@ -358,9 +362,9 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
 
     // If a soap port was defined refresh the httpsdpdec
     try {
-        var hasSoapControlClient = JSON.parse( this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id ) );
+        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( hasSoapControlClient ) {
         this._refreshHttpSdpDec( id, function ( error ) {
@@ -379,39 +383,41 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
  *
  * TODO: This could benefit for being more granular and react according to what has changed (name, host, port)
  *
- * @param path {String} path of shmdata
- * @param oldId {String} id of  old receiver
- * @param destination {json} Contain all information for create a new destination
- * @param callback {object} if sucess return name message success {json}
+ * @param id
+ * @param info
+ * @param cb
  */
 RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
-    log.debug('Updating RTP destination',id,info);
+    log.debug( 'Updating RTP destination', id, info );
 
     var self = this;
 
     // Keep a cache of the current destination
     try {
-        var destinations = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) ).destinations;
+        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
     } catch ( e ) {
-        return logback( e );
+        return logback( e.toString(), cb );
     }
-    var destination = _.findWhere( destinations, { name: id } );
+    var destination = null;
+    if ( result && result.destinations && _.isArray( result.destinations ) ) {
+        destination = _.findWhere( result.destinations, {name: id} );
+    }
 
     async.series( [
-        function( callback ) {
+        function ( callback ) {
             self.removeRTPDestination( id, callback );
         },
-        function( callback ) {
+        function ( callback ) {
             self.createRTPDestination( info.name, info.host, info.port, callback );
         },
-        function( callback ) {
+        function ( callback ) {
             if ( destination ) {
                 // According to the old code a setTimeout of 200ms could be necessary here
                 async.each( destination.data_streams, function ( stream, callback ) {
                     self.connectRTPDestination( stream.path, info.name, stream.port, callback )
-                }, function( error ) {
+                }, function ( error ) {
                     if ( error ) {
-                        callback( error );
+                        return callback( error );
                     }
                     callback();
                 } );
@@ -424,7 +430,7 @@ RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
             return logback( error, cb );
         }
         cb();
-    });
+    } );
 };
 
 module.exports = RtpManager;

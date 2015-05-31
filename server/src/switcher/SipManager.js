@@ -54,48 +54,31 @@ SipManager.prototype.bindClient = function ( socket ) {
     socket.on( 'getListStatus', this.getListStatus.bind( this ) );
 };
 
+//  ██████╗  █████╗ ██████╗ ███████╗███████╗██████╗ ███████╗
+//  ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗██╔════╝
+//  ██████╔╝███████║██████╔╝███████╗█████╗  ██████╔╝███████╗
+//  ██╔═══╝ ██╔══██║██╔══██╗╚════██║██╔══╝  ██╔══██╗╚════██║
+//  ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║███████║
+//  ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝
 
 /**
- * Switcher Property Callback
+ * Parse contact into a more manageable format for the client
  *
- * @param quiddityId
- * @param property
- * @param value
+ * @param contact
+ * @private
  */
-SipManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
-
+SipManager.prototype._parseContact = function ( contact ) {
+    contact.id   = contact.uri;
+    contact.self = ( this.uri == contact.uri );
+    return contact;
 };
 
-/**
- * Switcher Signal Callback
- *
- * @param quiddityId
- * @param signal
- * @param value
- */
-SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
-    if ( ( signal == 'on-tree-grafted' || signal == 'on-tree-pruned' ) && quiddityId == this.config.sip.quiddName && value[0].indexOf( '.buddy' ) == 0 ) {
-        //TODO: We need a new way to get added buddies that don't require tree grafts and dot splits
-        //TODO: This is pretty much useless for leaving buddies, as we don't have access tot heir info at this point
-        var buddyId = value[0].split( '.' )[2];
-
-        try {
-            var contact = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + buddyId ) );
-        } catch ( e ) {
-            return log.error( e );
-        }
-
-        if ( !contact || contact.error ) {
-            // We silently fail here because leaving contacts don't exist obviously
-            return;
-        }
-
-        // Parse contact
-        this._parseContact( contact );
-
-        this.io.emit( 'contactInfo', contact );
-    }
-};
+//  ██╗███╗   ██╗████████╗███████╗██████╗ ███╗   ██╗ █████╗ ██╗     ███████╗
+//  ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗████╗  ██║██╔══██╗██║     ██╔════╝
+//  ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝██╔██╗ ██║███████║██║     ███████╗
+//  ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██║╚██╗██║██╔══██║██║     ╚════██║
+//  ██║██║ ╚████║   ██║   ███████╗██║  ██║██║ ╚████║██║  ██║███████╗███████║
+//  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝
 
 /**
  * Add User to SIP
@@ -128,18 +111,6 @@ SipManager.prototype._addContact = function ( uri, user, cb ) {
         return cb( i18n.t( 'Error setting SIP user name to __user__ for __uri__', {user: user, uri: uri} ) );
     }
     cb();
-};
-
-/**
- * Parse contact into a more manageable format for the client
- *
- * @param contact
- * @private
- */
-SipManager.prototype._parseContact = function ( contact ) {
-    contact.id   = contact.uri;
-    contact.self = this.uri == contact.uri;
-    return contact;
 };
 
 /**
@@ -313,6 +284,55 @@ SipManager.prototype._reconnect = function ( uri, cb ) {
         }
         cb();
     } );
+};
+
+//  ███████╗██╗   ██╗██████╗ ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+//  ██╔════╝██║   ██║██╔══██╗██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+//  ███████╗██║   ██║██████╔╝███████╗██║     ██████╔╝██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+//  ╚════██║██║   ██║██╔══██╗╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+//  ███████║╚██████╔╝██████╔╝███████║╚██████╗██║  ██║██║██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+//  ╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+/**
+ * Switcher Property Callback
+ *
+ * @param quiddityId
+ * @param property
+ * @param value
+ */
+SipManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
+
+};
+
+/**
+ * Switcher Signal Callback
+ *
+ * @param quiddityId
+ * @param signal
+ * @param value
+ */
+SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
+    if ( ( signal == 'on-tree-grafted' || signal == 'on-tree-pruned' ) && quiddityId == this.config.sip.quiddName && value[0].indexOf( '.buddy' ) == 0 ) {
+        //TODO: We need a new way to get added buddies that don't require tree grafts and dot splits
+        //TODO: This is pretty much useless for leaving buddies, as we don't have access tot heir info at this point
+        var buddyId = value[0].split( '.' )[2];
+
+        try {
+            var contact = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + buddyId ) );
+        } catch ( e ) {
+            return log.error( e );
+        }
+
+        if ( !contact || contact.error ) {
+            // We silently fail here because leaving contacts don't exist obviously
+            return;
+        }
+
+        // Parse contact
+        this._parseContact( contact );
+
+        this.io.emit( 'contactInfo', contact );
+    }
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗

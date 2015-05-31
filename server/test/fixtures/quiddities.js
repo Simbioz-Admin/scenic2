@@ -1188,16 +1188,44 @@ module.exports = {
         return {
             "destinations" : [
                 {
-                    "name" : "destination name",
+                    "name" : "destination 1 name",
                     "host_name" : "localhost",
                     "data_streams" : [
                         {
-                            "path" : "/tmp/switcher_nodeserver_audiotestsrc1_audio",
+                            "path" : "/tmp/switcher_nodeserver_audiotestsrc0_audio",
                             "port" : "9090"
+                        },
+                        {
+                            "path" : "/tmp/switcher_nodeserver_audiotestsrc1_audio",
+                            "port" : "9092"
+                        }
+                    ]
+                },
+                {
+                    "name" : "destination 2 name",
+                    "host_name" : "localhost",
+                    "data_streams" : [
+                        {
+                            "path" : "/tmp/switcher_nodeserver_audiotestsrc2_audio",
+                            "port" : "9094"
                         }
                     ]
                 }
             ]
+        }
+    },
+
+    contact: function() {
+        return {
+            uri: 'buddy@sip.server'
+        }
+    },
+
+    contact_parsed: function() {
+        return {
+            id: 'buddy@sip.server',
+            uri: 'buddy@sip.server',
+            self: false
         }
     }
 

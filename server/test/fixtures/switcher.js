@@ -26,6 +26,7 @@ module.exports = function () {
         get_classes_doc:            sinon.stub(),
         get_quiddities_description: sinon.stub(),
         get_methods_description:    sinon.stub(),
-        get_method_description:     sinon.stub()
+        get_method_description:     sinon.stub(),
+        has_quiddity:               sinon.stub()
     }
 };

@@ -3,5 +3,6 @@
     "Missing information to add contact": "Missing information to add contact",
     "SIP authentication failed": "SIP authentication failed",
     "Failed to create __className__ __quiddityName__": "Failed to create __className__ __quiddityName__",
-    "Could not get informations for __quiddityId__": "Could not get informations for __quiddityId__"
+    "Could not get informations for __quiddityId__": "Could not get informations for __quiddityId__",
+    "Failed to invoke __method__ on __quiddity__": "Failed to invoke __method__ on __quiddity__"
 }

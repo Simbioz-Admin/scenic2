@@ -16,6 +16,7 @@ describe( 'Switcher Controller', function () {
     var switcherController;
     var checkPort;
     var fs;
+    var cb;
 
     before( function ( done ) {
         var i18n = require( '../../src/lib/i18n' );
@@ -23,21 +24,24 @@ describe( 'Switcher Controller', function () {
     } );
 
     beforeEach( function () {
-        switcher    = switcherStub();
-        config      = {};
-        io          = {};
-        io.emit     = sinon.spy();
-        checkPort   = sinon.stub();
+        switcher               = switcherStub();
+        config                 = {};
+        io                     = {};
+        io.emit                = sinon.spy();
+        checkPort              = sinon.stub();
         checkPort.yields();
-        fs          = {};
+        fs                     = {};
         var SwitcherController = proxyquire( '../../src/switcher/SwitcherController', {
             'switcher':            switcher,
             'fs':                  fs,
             '../utils/check-port': checkPort,
             '../lib/logger':       logStub(),
-            '../utils/logback':    function(e,c) { c(e);}
+            '../utils/logback':    function ( e, c ) {
+                c( e );
+            }
         } );
         switcherController     = new SwitcherController( config, io );
+        cb                     = sinon.stub();
     } );
 
     afterEach( function () {
@@ -47,6 +51,7 @@ describe( 'Switcher Controller', function () {
         switcherController = null;
         checkPort          = null;
         fs                 = null;
+        cb                 = null;
     } );
 
     function setupForInit() {
@@ -83,7 +88,6 @@ describe( 'Switcher Controller', function () {
             should.exist( switcherController.rtpManager );
             switcherController.rtpManager.should.be.an.instanceOf( require( '../../src/switcher/RtpManager' ) );
         } );
-
 
         it( 'should initialize correctly', function ( done ) {
             setupForInit();
@@ -245,8 +249,6 @@ describe( 'Switcher Controller', function () {
             fs.readdir = sinon.stub();
             fs.readdir.yields( null, files );
 
-            var cb = sinon.stub();
-
             switcherController.getSaveFiles( cb );
 
             fs.readdir.should.have.been.calledOnce;
@@ -261,9 +263,7 @@ describe( 'Switcher Controller', function () {
 
             fs.readdir = sinon.stub();
             fs.readdir.throws( error );
-
-            var cb = sinon.stub();
-
+            
             switcherController.getSaveFiles( cb );
 
             cb.should.have.been.calledOnce;
@@ -275,8 +275,6 @@ describe( 'Switcher Controller', function () {
 
             fs.readdir = sinon.stub();
             fs.readdir.yields( error, null );
-
-            var cb = sinon.stub();
 
             switcherController.getSaveFiles( cb );
 
@@ -290,8 +288,6 @@ describe( 'Switcher Controller', function () {
             config.scenicSavePath = 'some/path/';
 
             switcher.load_history_from_scratch.returns( 'true' ); // Switcher strings
-
-            var cb = sinon.stub();
 
             switcherController.loadSaveFile( file, cb );
 
@@ -310,8 +306,6 @@ describe( 'Switcher Controller', function () {
 
             switcher.load_history_from_scratch.throws( error );
 
-            var cb = sinon.stub();
-
             switcherController.loadSaveFile( file, cb );
 
             cb.should.have.been.calledOnce;
@@ -325,8 +319,6 @@ describe( 'Switcher Controller', function () {
 
             switcher.load_history_from_scratch.returns( 'false' );
 
-            var cb = sinon.stub();
-
             switcherController.loadSaveFile( file, cb );
 
             cb.should.have.been.calledOnce;
@@ -339,8 +331,6 @@ describe( 'Switcher Controller', function () {
             config.scenicSavePath = 'some/path/';
 
             switcher.save_history.returns( 'true' ); // Switcher strings
-
-            var cb = sinon.stub();
 
             switcherController.saveFile( file, cb );
 
@@ -359,8 +349,6 @@ describe( 'Switcher Controller', function () {
 
             switcher.save_history.throws( error );
 
-            var cb = sinon.stub();
-
             switcherController.saveFile( file, cb );
 
             cb.should.have.been.calledOnce;
@@ -373,8 +361,6 @@ describe( 'Switcher Controller', function () {
             config.scenicSavePath = 'some/path/';
 
             switcher.save_history.returns( 'false' );
-
-            var cb = sinon.stub();
 
             switcherController.saveFile( file, cb );
 
@@ -389,8 +375,6 @@ describe( 'Switcher Controller', function () {
 
             fs.unlink = sinon.stub();
             fs.unlink.yields( null );
-
-            var cb = sinon.stub();
 
             switcherController.deleteFile( file, cb );
 
@@ -408,8 +392,6 @@ describe( 'Switcher Controller', function () {
             fs.unlink = sinon.stub();
             fs.unlink.throws( error );
 
-            var cb = sinon.stub();
-
             switcherController.deleteFile( file, cb );
 
             cb.should.have.been.calledOnce;
@@ -423,14 +405,11 @@ describe( 'Switcher Controller', function () {
             fs.unlink = sinon.stub();
             fs.unlink.yields( error, null );
 
-            var cb = sinon.stub();
-
             switcherController.deleteFile( file, cb );
 
             cb.should.have.been.calledOnce;
             cb.should.have.been.calledWithMatch( error );
         } );
-
 
     } );
 

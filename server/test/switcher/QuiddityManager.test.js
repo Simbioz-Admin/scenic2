@@ -16,6 +16,7 @@ describe( 'Quiddity Manager', function () {
     var config;
     var io;
     var quiddityManager;
+    var cb;
 
     before( function ( done ) {
         var i18n = require( '../../src/lib/i18n' );
@@ -37,6 +38,7 @@ describe( 'Quiddity Manager', function () {
         quiddityManager         = new QuiddityManager( config, switcher, io );
         quiddityManager.logback = sinon.stub();
         quiddityManager.logback.yields();
+        cb                      = sinon.stub();
     } );
 
     afterEach( function () {
@@ -44,6 +46,7 @@ describe( 'Quiddity Manager', function () {
         config          = null;
         io              = null;
         quiddityManager = null;
+        cb              = null;
     } );
 
     // Hey, dummy test to get started
@@ -96,47 +99,47 @@ describe( 'Quiddity Manager', function () {
     describe( 'Parsers', function () {
 
         it( 'should parse classes', function () {
-            quiddityManager._parseClass( quiddities.class()).should.eql( quiddities.class_parsed() );
+            quiddityManager._parseClass( quiddities.class() ).should.eql( quiddities.class_parsed() );
         } );
 
         it( 'should parse quiddities', function () {
-            quiddityManager._parseQuiddity( quiddities.quiddity()).should.eql( quiddities.quiddity_parsed() );
+            quiddityManager._parseQuiddity( quiddities.quiddity() ).should.eql( quiddities.quiddity_parsed() );
         } );
 
         it( 'should parse boolean property', function () {
-            quiddityManager._parseProperty( quiddities.property_bool()).should.eql( quiddities.property_bool_parsed() );
+            quiddityManager._parseProperty( quiddities.property_bool() ).should.eql( quiddities.property_bool_parsed() );
         } );
 
         it( 'should parse double property', function () {
-            quiddityManager._parseProperty( quiddities.property_double()).should.eql( quiddities.property_double_parsed() );
+            quiddityManager._parseProperty( quiddities.property_double() ).should.eql( quiddities.property_double_parsed() );
         } );
 
         it( 'should parse float property', function () {
-            quiddityManager._parseProperty( quiddities.property_float()).should.eql( quiddities.property_float_parsed() );
+            quiddityManager._parseProperty( quiddities.property_float() ).should.eql( quiddities.property_float_parsed() );
         } );
 
         it( 'should parse int property', function () {
-            quiddityManager._parseProperty( quiddities.property_int()).should.eql( quiddities.property_int_parsed() );
+            quiddityManager._parseProperty( quiddities.property_int() ).should.eql( quiddities.property_int_parsed() );
         } );
 
         it( 'should parse uint property', function () {
-            quiddityManager._parseProperty( quiddities.property_uint()).should.eql( quiddities.property_uint_parsed() );
+            quiddityManager._parseProperty( quiddities.property_uint() ).should.eql( quiddities.property_uint_parsed() );
         } );
 
         it( 'should parse json string property', function () {
-            quiddityManager._parseProperty( quiddities.property_string_json()).should.eql( quiddities.property_string_json_parsed() );
+            quiddityManager._parseProperty( quiddities.property_string_json() ).should.eql( quiddities.property_string_json_parsed() );
         } );
 
         it( 'should parse string property', function () {
-            quiddityManager._parseProperty( quiddities.property_string()).should.eql( quiddities.property_string_parsed() );
+            quiddityManager._parseProperty( quiddities.property_string() ).should.eql( quiddities.property_string_parsed() );
         } );
 
         it( 'should parse enum property', function () {
-            quiddityManager._parseProperty( quiddities.property_enum()).should.eql( quiddities.property_enum_parsed() );
+            quiddityManager._parseProperty( quiddities.property_enum() ).should.eql( quiddities.property_enum_parsed() );
         } );
 
         it( 'should parse method', function () {
-            quiddityManager._parseMethod( quiddities.method()).should.eql( quiddities.method_parsed() );
+            quiddityManager._parseMethod( quiddities.method() ).should.eql( quiddities.method_parsed() );
         } );
     } );
 
@@ -145,7 +148,7 @@ describe( 'Quiddity Manager', function () {
         it( 'should register added quiddity correctly', function () {
             var id = 'someId';
 
-            var quiddityClass = quiddityManager._parseQuiddity( quiddities.class());
+            var quiddityClass = quiddityManager._parseQuiddity( quiddities.class() );
 
             switcher.get_quiddity_description.returns( JSON.stringify( quiddities.class() ) );
             switcher.get_properties_description.returns( JSON.stringify( quiddities.properties() ) );
@@ -668,7 +671,6 @@ describe( 'Quiddity Manager', function () {
         describe( 'Quiddity Classes', function () {
 
             it( 'should follow protocol', function () {
-                var cb = sinon.stub();
 
                 // Make a list of parsed public classes, _parseClass is already tested so trust it
                 var public_classes = _.clone( quiddities.classes_doc_public() ).classes;
@@ -684,7 +686,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should follow protocol with empty classes', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( JSON.stringify( {classes: []} ) );
 
@@ -696,7 +697,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var cb    = sinon.stub();
                 var error = 'some error';
 
                 switcher.get_classes_doc.throws( error );
@@ -709,7 +709,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var cb    = sinon.stub();
                 var error = 'some error';
 
                 switcher.get_classes_doc.returns( JSON.stringify( {error: error} ) );
@@ -722,7 +721,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( null );
 
@@ -734,7 +732,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null classes', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( JSON.stringify( {classes: null} ) );
 
@@ -746,7 +743,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage classes 1', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( JSON.stringify( {classes: 'not an array'} ) );
 
@@ -758,7 +754,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage classes 2', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( JSON.stringify( {classes: {not: 'an array'}} ) );
 
@@ -770,7 +765,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns without classes', function () {
-                var cb = sinon.stub();
 
                 switcher.get_classes_doc.returns( JSON.stringify( {} ) );
 
@@ -786,7 +780,6 @@ describe( 'Quiddity Manager', function () {
         describe( 'Quiddities', function () {
 
             it( 'should follow protocol', function () {
-                var cb = sinon.stub();
 
                 // Make a list of parsed public quiddities, _parseQuiddity is already tested so trust it
                 var public_quiddities = _.clone( quiddities.quiddities_public() ).quiddities;
@@ -802,7 +795,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should follow protocol with empty quiddities', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: []} ) );
 
@@ -814,7 +806,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var cb    = sinon.stub();
                 var error = 'some error';
 
                 switcher.get_quiddities_description.throws( error );
@@ -827,7 +818,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var cb    = sinon.stub();
                 var error = 'some error';
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {error: error} ) );
@@ -840,7 +830,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( null );
 
@@ -852,7 +841,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null classes', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: null} ) );
 
@@ -864,7 +852,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage quiddities 1', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: 'not an array'} ) );
 
@@ -876,7 +863,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage quiddities 2', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: {not: 'an array'}} ) );
 
@@ -888,7 +874,6 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns without quiddities', function () {
-                var cb = sinon.stub();
 
                 switcher.get_quiddities_description.returns( JSON.stringify( {} ) );
 
@@ -906,7 +891,6 @@ describe( 'Quiddity Manager', function () {
             it( 'should follow protocol', function () {
                 var id   = 'someId';
                 var path = '.some.path';
-                var cb   = sinon.stub();
 
                 switcher.get_info.returns( JSON.stringify( quiddities.tree() ) );
 
@@ -921,7 +905,6 @@ describe( 'Quiddity Manager', function () {
             it( 'should follow protocol with empty tree', function () {
                 var id   = 'someId';
                 var path = '.some.path';
-                var cb   = sinon.stub();
 
                 switcher.get_info.returns( JSON.stringify( {} ) );
 
@@ -937,7 +920,6 @@ describe( 'Quiddity Manager', function () {
                 var id    = 'someId';
                 var path  = '.some.path';
                 var error = 'some error';
-                var cb    = sinon.stub();
 
                 switcher.get_info.throws( error );
 
@@ -953,7 +935,6 @@ describe( 'Quiddity Manager', function () {
                 var id    = 'someId';
                 var path  = '.some.path';
                 var error = 'some error';
-                var cb    = sinon.stub();
 
                 switcher.get_info.returns( JSON.stringify( {error: error} ) );
 
@@ -968,7 +949,6 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns null', function () {
                 var id   = 'someId';
                 var path = '.some.path';
-                var cb   = sinon.stub();
 
                 switcher.get_info.returns( null );
 
@@ -983,7 +963,6 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns garbage', function () {
                 var id   = 'someId';
                 var path = '.some.path';
-                var cb   = sinon.stub();
 
                 switcher.get_info.returns( 'this is not an object' );
 
@@ -1001,7 +980,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 // Make a list of parsed public quiddities, _parseProperty is already tested so trust it
                 var properties = _.clone( quiddities.properties() ).properties;
@@ -1019,9 +997,8 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty properties', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties:[]} ) );
+                switcher.get_properties_description.returns( JSON.stringify( {properties: []} ) );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1032,9 +1009,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var id = 'someId';
+                var id    = 'someId';
                 var error = 'some error';
-                var cb = sinon.stub();
 
                 switcher.get_properties_description.throws( error );
 
@@ -1047,11 +1023,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var id = 'someId';
+                var id    = 'someId';
                 var error = 'some error';
-                var cb = sinon.stub();
 
-                switcher.get_properties_description.returns( JSON.stringify({error:error }));
+                switcher.get_properties_description.returns( JSON.stringify( {error: error} ) );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1063,7 +1038,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_properties_description.returns( null );
 
@@ -1077,7 +1051,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null properties', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_properties_description.returns( JSON.stringify( {properties: null} ) );
 
@@ -1091,7 +1064,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage properties 1', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_properties_description.returns( JSON.stringify( {properties: 'not an array'} ) );
 
@@ -1105,9 +1077,8 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage properties 2', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties: { not: 'an array'}} ) );
+                switcher.get_properties_description.returns( JSON.stringify( {properties: {not: 'an array'}} ) );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1119,7 +1090,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns without properties', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_properties_description.returns( JSON.stringify( {} ) );
 
@@ -1136,9 +1106,8 @@ describe( 'Quiddity Manager', function () {
         describe( 'Getting Property', function () {
 
             it( 'should follow protocol', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_property_description.returns( JSON.stringify( quiddities.property_double() ) );
 
@@ -1151,11 +1120,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error with empty property', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_property_description.returns( JSON.stringify({} ) );
+                switcher.get_property_description.returns( JSON.stringify( {} ) );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1166,10 +1134,9 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error    = 'some error';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_property_description.throws( error );
 
@@ -1182,12 +1149,11 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error    = 'some error';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_property_description.returns( JSON.stringify({error:error}) );
+                switcher.get_property_description.returns( JSON.stringify( {error: error} ) );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1198,9 +1164,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_property_description.returns( null );
 
@@ -1213,9 +1178,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage property 1', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_property_description.returns( 'not a property' );
 
@@ -1228,11 +1192,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage property 2', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_property_description.returns( JSON.stringify([{not:'a property'}]) );
+                switcher.get_property_description.returns( JSON.stringify( [{not: 'a property'}] ) );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1247,90 +1210,84 @@ describe( 'Quiddity Manager', function () {
         describe( 'Setting Property', function () {
 
             it( 'should follow protocol', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var value = 'val';
-                var cb = sinon.stub();
+                var value    = 'val';
 
                 switcher.set_property_value.returns( true );
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.have.been.calledOnce;
-                switcher.set_property_value.should.have.been.calledWith( id, property, String(value) );
+                switcher.set_property_value.should.have.been.calledWith( id, property, String( value ) );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithExactly();
             } );
 
             it( 'should return error when missing quiddity', function () {
-                var id = null;
+                var id       = null;
                 var property = 'prop';
-                var value = 'val';
-                var cb = sinon.stub();
+                var value    = 'val';
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when missing property', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = null;
-                var value = 'val';
-                var cb = sinon.stub();
+                var value    = 'val';
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when missing value', function () {
-                var id = 'someId';
+                var id       = 'someId';
                 var property = 'prop';
-                var value = null;
-                var cb = sinon.stub();
+                var value    = null;
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when switcher throws', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error    = 'some error';
+                var id       = 'someId';
                 var property = 'prop';
-                var value = 'val';
-                var cb = sinon.stub();
+                var value    = 'val';
 
                 switcher.set_property_value.throws( error );
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.have.been.calledOnce;
-                switcher.set_property_value.should.have.been.calledWith( id, property, String(value) );
+                switcher.set_property_value.should.have.been.calledWith( id, property, String( value ) );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
             } );
 
             it( 'should return error when switcher returns false', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error    = 'some error';
+                var id       = 'someId';
                 var property = 'prop';
-                var value = 'val';
-                var cb = sinon.stub();
+                var value    = 'val';
 
                 switcher.set_property_value.returns( false );
 
                 quiddityManager.setPropertyValue( id, property, value, cb );
 
                 switcher.set_property_value.should.have.been.calledOnce;
-                switcher.set_property_value.should.have.been.calledWith( id, property, String(value) );
+                switcher.set_property_value.should.have.been.calledWith( id, property, String( value ) );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( '' );
             } );
@@ -1341,7 +1298,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 // Make a list of parsed public quiddities, _parseMethod is already tested so trust it
                 var methods = _.clone( quiddities.methods() ).methods;
@@ -1359,9 +1315,8 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty methods', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods:[]} ) );
+                switcher.get_methods_description.returns( JSON.stringify( {methods: []} ) );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1372,9 +1327,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var id = 'someId';
+                var id    = 'someId';
                 var error = 'some error';
-                var cb = sinon.stub();
 
                 switcher.get_methods_description.throws( error );
 
@@ -1387,11 +1341,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var id = 'someId';
+                var id    = 'someId';
                 var error = 'some error';
-                var cb = sinon.stub();
 
-                switcher.get_methods_description.returns( JSON.stringify({error:error }));
+                switcher.get_methods_description.returns( JSON.stringify( {error: error} ) );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1403,7 +1356,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_methods_description.returns( null );
 
@@ -1417,7 +1369,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null methods', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_methods_description.returns( JSON.stringify( {methods: null} ) );
 
@@ -1431,7 +1382,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage methods 1', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_methods_description.returns( JSON.stringify( {methods: 'not an array'} ) );
 
@@ -1445,9 +1395,8 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage methods 2', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods: { not: 'an array'}} ) );
+                switcher.get_methods_description.returns( JSON.stringify( {methods: {not: 'an array'}} ) );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1459,7 +1408,6 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns without methods', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.get_methods_description.returns( JSON.stringify( {} ) );
 
@@ -1476,9 +1424,8 @@ describe( 'Quiddity Manager', function () {
         describe( 'Getting Method', function () {
 
             it( 'should follow protocol', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_method_description.returns( JSON.stringify( quiddities.method() ) );
 
@@ -1491,11 +1438,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error with empty method', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_method_description.returns( JSON.stringify({} ) );
+                switcher.get_method_description.returns( JSON.stringify( {} ) );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1506,10 +1452,9 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher throws', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error  = 'some error';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_method_description.throws( error );
 
@@ -1522,12 +1467,11 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns error', function () {
-                var error = 'some error';
-                var id = 'someId';
+                var error  = 'some error';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_method_description.returns( JSON.stringify({error:error}) );
+                switcher.get_method_description.returns( JSON.stringify( {error: error} ) );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1538,9 +1482,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns null', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_method_description.returns( null );
 
@@ -1553,9 +1496,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage method 1', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
                 switcher.get_method_description.returns( 'not a method' );
 
@@ -1568,11 +1510,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return error when switcher returns garbage method 2', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var cb = sinon.stub();
 
-                switcher.get_method_description.returns( JSON.stringify([{not:'a method'}]) );
+                switcher.get_method_description.returns( JSON.stringify( [{not: 'a method'}] ) );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1587,10 +1528,9 @@ describe( 'Quiddity Manager', function () {
         describe( 'Invoking Method', function () {
 
             it( 'should follow protocol', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var args = ['arg1', 'arg2'];
-                var cb = sinon.stub();
+                var args   = ['arg1', 'arg2'];
 
                 switcher.invoke.returns( 'true' );
 
@@ -1599,14 +1539,13 @@ describe( 'Quiddity Manager', function () {
                 switcher.invoke.should.have.been.calledOnce;
                 switcher.invoke.should.have.been.calledWith( id, method, args );
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith(null, true);
+                cb.should.have.been.calledWith( null, true );
             } );
 
             it( 'should return error when missing quiddity', function () {
-                var id = null;
+                var id     = null;
                 var method = 'prop';
-                var args = ['arg1', 'arg2'];
-                var cb = sinon.stub();
+                var args   = ['arg1', 'arg2'];
 
                 switcher.invoke.returns( 'true' );
 
@@ -1614,14 +1553,13 @@ describe( 'Quiddity Manager', function () {
 
                 switcher.invoke.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when missing method', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = null;
-                var args = ['arg1', 'arg2'];
-                var cb = sinon.stub();
+                var args   = ['arg1', 'arg2'];
 
                 switcher.invoke.returns( 'true' );
 
@@ -1629,14 +1567,13 @@ describe( 'Quiddity Manager', function () {
 
                 switcher.invoke.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when missing arguments', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var args = null;
-                var cb = sinon.stub();
+                var args   = null;
 
                 switcher.invoke.returns( 'true' );
 
@@ -1644,14 +1581,13 @@ describe( 'Quiddity Manager', function () {
 
                 switcher.invoke.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when arguments is not an array', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var args = {not:'an array'};
-                var cb = sinon.stub();
+                var args   = {not: 'an array'};
 
                 switcher.invoke.returns( 'true' );
 
@@ -1659,15 +1595,14 @@ describe( 'Quiddity Manager', function () {
 
                 switcher.invoke.should.not.have.been.called;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch('');
+                cb.should.have.been.calledWithMatch( '' );
             } );
 
             it( 'should return error when switcher throws', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 var method = 'prop';
-                var args = ['arg1', 'arg2'];
-                var error = 'some error';
-                var cb = sinon.stub();
+                var args   = ['arg1', 'arg2'];
+                var error  = 'some error';
 
                 switcher.invoke.throws( error );
 
@@ -1679,13 +1614,27 @@ describe( 'Quiddity Manager', function () {
                 cb.should.have.been.calledWithMatch( error );
             } );
 
-            it( 'should return error when switcher returns false', function () {
-                var id = 'someId';
+            it( 'should return error when switcher returns null', function () {
+                var id     = 'someId';
                 var method = 'prop';
-                var args = ['arg1', 'arg2'];
-                var cb = sinon.stub();
+                var args   = ['arg1', 'arg2'];
 
-                switcher.invoke.returns( 'false' );
+                switcher.invoke.returns( null );
+
+                quiddityManager.invokeMethod( id, method, args, cb );
+
+                switcher.invoke.should.have.been.calledOnce;
+                switcher.invoke.should.have.been.calledWith( id, method, args );
+                cb.should.have.been.calledOnce;
+                cb.should.have.been.calledWithMatch( '' );
+            } );
+
+            it( 'should return error when switcher returns null as string', function () {
+                var id     = 'someId';
+                var method = 'prop';
+                var args   = ['arg1', 'arg2'];
+
+                switcher.invoke.returns( 'null' );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1699,16 +1648,15 @@ describe( 'Quiddity Manager', function () {
 
         } );
 
-        describe( 'Creating Quiddities', function(){
+        describe( 'Creating Quiddities', function () {
 
-            it( 'should follow protocol', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should follow protocol', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var cb = sinon.stub();
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns(JSON.stringify(quiddities.quiddity()));
+                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1719,17 +1667,16 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed());
-            });
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+            } );
 
-            it( 'should follow protocol without a name', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should follow protocol without a name', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var cb = sinon.stub();
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns(JSON.stringify(quiddities.quiddity()));
+                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
 
                 quiddityManager.create( type, null, socketId, cb );
 
@@ -1740,17 +1687,16 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed());
-            });
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+            } );
 
-            it( 'should follow protocol with an empty name', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should follow protocol with an empty name', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var cb = sinon.stub();
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns(JSON.stringify(quiddities.quiddity()));
+                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
 
                 quiddityManager.create( type, '', socketId, cb );
 
@@ -1761,15 +1707,14 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed());
-            });
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+            } );
 
-            it( 'should return error when switcher throws at create', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher throws at create', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var error = 'some error';
-                var cb = sinon.stub();
+                var error    = 'some error';
 
                 switcher.create.throws( error );
 
@@ -1782,14 +1727,13 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
-            });
+            } );
 
-            it( 'should return error when switcher returns null at create', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher returns null at create', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var error = 'some error';
-                var cb = sinon.stub();
+                var error    = 'some error';
 
                 switcher.create.returns( null );
 
@@ -1802,17 +1746,16 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( '' );
-            });
+            } );
 
-            it( 'should return error when switcher throws at quiddity description', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher throws at quiddity description', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var error = 'some error';
-                var cb = sinon.stub();
+                var error    = 'some error';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.throws(error);
+                switcher.get_quiddity_description.throws( error );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1824,17 +1767,16 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithExactly( error );
-            });
+            } );
 
-            it( 'should return error when switcher returns error at quiddity description', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher returns error at quiddity description', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var error = 'some error';
-                var cb = sinon.stub();
+                var error    = 'some error';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns(JSON.stringify({error:error}));
+                switcher.get_quiddity_description.returns( JSON.stringify( {error: error} ) );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1846,16 +1788,15 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
-            });
+            } );
 
-            it( 'should return error when switcher returns null at quiddity description', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher returns null at quiddity description', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var cb = sinon.stub();
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns(null);
+                switcher.get_quiddity_description.returns( null );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1867,16 +1808,15 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( '' );
-            });
+            } );
 
-            it( 'should return error when switcher returns garbage at quiddity description', function() {
-                var type = 'some type';
-                var name = 'some name';
+            it( 'should return error when switcher returns garbage at quiddity description', function () {
+                var type     = 'some type';
+                var name     = 'some name';
                 var socketId = 'some socket id';
-                var cb = sinon.stub();
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns('pouet');
+                switcher.get_quiddity_description.returns( 'pouet' );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1888,14 +1828,13 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( '' );
-            });
-        });
+            } );
+        } );
 
-        describe( 'Removeing Quiddities', function() {
+        describe( 'Removeing Quiddities', function () {
 
-            it( 'should follow protocol', function() {
+            it( 'should follow protocol', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
                 switcher.remove.returns( true );
 
@@ -1905,13 +1844,12 @@ describe( 'Quiddity Manager', function () {
                 switcher.remove.should.have.been.calledWithExactly( id );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( );
-            });
+                cb.should.have.been.calledWithExactly();
+            } );
 
-            it( 'should return error when switcher throws', function() {
-                var id = 'someId';
+            it( 'should return error when switcher throws', function () {
+                var id    = 'someId';
                 var error = 'some error';
-                var cb = sinon.stub();
 
                 switcher.remove.throws( error );
 
@@ -1922,13 +1860,12 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
-            });
+            } );
 
-            it( 'should return error when switcher returns false', function() {
+            it( 'should return error when switcher returns false', function () {
                 var id = 'someId';
-                var cb = sinon.stub();
 
-                switcher.remove.returns( false);
+                switcher.remove.returns( false );
 
                 quiddityManager.remove( id, cb );
 
@@ -1937,8 +1874,8 @@ describe( 'Quiddity Manager', function () {
 
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( '' );
-            });
-        });
+            } );
+        } );
     } )
 
 } );

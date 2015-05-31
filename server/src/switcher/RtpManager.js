@@ -111,31 +111,34 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
     }
 
     // Sanity check
+    //TODO: Parse URL for real
     host = host.replace( 'http://', '' );
 
     // Load current destinations
     try {
         var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( !result || result.error ) {
-        return logback( result ? result.error : i18n.t( 'Could not load RTP destinations.' ), cb );
+        return logback( i18n.t( 'Could not load RTP destinations.' ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 
-    var destinations = result.destinations;
+    if ( result.destinations && _.isArray( result.destinations ) ) {
+        var destinations = result.destinations;
 
-    // Check if the name is already taken
-    var nameExists = _.findWhere( destinations, {name: name} );
-    if ( nameExists ) {
-        return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: name} ), cb );
+        // Check if the name is already taken
+        var nameExists = _.findWhere( destinations, {name: name} );
+        if ( nameExists ) {
+            return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: name} ), cb );
+        }
     }
 
     // Add to the default RTP quiddity
     try {
         var added = this.switcher.invoke( this.config.rtp.quiddName, 'add_destination', [name, host] );
     } catch ( e ) {
-        return logback( e, cb );
+        return logback( e.toString(), cb );
     }
     if ( !added ) {
         return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', {rtpDestinationName: name} ), cb );
@@ -149,7 +152,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         try {
             var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', this.config.soap.controlClientPrefix + name );
         } catch ( e ) {
-            return logback( e, cb );
+            return logback( e.toString(), cb );
         }
         if ( !createdSOAPClient ) {
             return logback( i18n.t( 'Could not create SOAP client __soapClient__', {soapClient: name} ), cb );
@@ -159,7 +162,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         try {
             var urlSet = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
         } catch ( e ) {
-            return logback( e, cb );
+            return logback( e.toString(), cb );
         }
         if ( !urlSet ) {
             //TODO: Should probably remove the quiddity at this point
@@ -170,10 +173,10 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         try {
             var httpSdpDecCreated = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', this.config.nameComputer] );
         } catch ( e ) {
-            return logback( e, cb );
+            return logback( e.toString(), cb );
         }
         if ( !httpSdpDecCreated ) {
-            log.warn( 'Could not create httpSdpDec' );
+            return logback( i18n.t( 'Could not create httpSdpDec' ), cb );
         }
     }
 
@@ -193,9 +196,11 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
     try {
         var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_destination', [id] );
     } catch ( e ) {
-        return logback( e, cb );
+        //TODO: Probably continue removing when it fails
+        return logback( e.toString(), cb );
     }
     if ( !removed ) {
+        //TODO: Probably continue removing when it fails
         return logback( i18n.t( 'Failed to remove RTP destination __destination__', {destination: id} ), cb );
     }
 
@@ -203,7 +208,8 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
     try {
         var soapClientRemoved = this.switcher.invoke( this.config.soap.controlClientPrefix + id, 'remove', [this.config.nameComputer] );
     } catch ( e ) {
-        return logback( e, cb );
+        //TODO: Probably continue removing when it fails
+        return logback( e.toString(), cb );
     }
     if ( !soapClientRemoved ) {
         log.warn( 'SOAP client removal failed for __client__', {client: id} );
@@ -213,7 +219,8 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
     try {
         var soapControlClientRemoved = this.switcher.remove( this.config.soap.controlClientPrefix + id );
     } catch ( e ) {
-        return logback( e, cb );
+        //TODO: Probably continue removing when it fails
+        return logback( e.toString(), cb );
     }
     if ( !soapControlClientRemoved ) {
         log.warn( 'SOAP control client removal failed for __client__', {client: id} );

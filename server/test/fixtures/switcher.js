@@ -12,6 +12,7 @@ module.exports = function () {
         subscribe_to_signal:        sinon.stub(),
         subscribe_to_property:      sinon.stub(),
         create:                     sinon.stub(),
+        remove:                     sinon.stub(),
         set_property_value:         sinon.stub(),
         invoke:                     sinon.stub(),
         load_history_from_scratch:  sinon.stub(),
@@ -20,6 +21,11 @@ module.exports = function () {
         get_quiddity_description:   sinon.stub(),
         get_properties_description: sinon.stub(),
         get_property_description:   sinon.stub(),
-        get_info:                   sinon.stub()
+        get_property_value:         sinon.stub(),
+        get_info:                   sinon.stub(),
+        get_classes_doc:            sinon.stub(),
+        get_quiddities_description: sinon.stub(),
+        get_methods_description:    sinon.stub(),
+        get_method_description:     sinon.stub()
     }
 };

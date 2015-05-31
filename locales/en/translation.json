@@ -1,5 +1,7 @@
 {
     "Error while updating contact name (__error__)": "Error while updating contact name (__error__)",
     "Missing information to add contact": "Missing information to add contact",
-    "SIP authentication failed": "SIP authentication failed"
+    "SIP authentication failed": "SIP authentication failed",
+    "Failed to create __className__ __quiddityName__": "Failed to create __className__ __quiddityName__",
+    "Could not get informations for __quiddityId__": "Could not get informations for __quiddityId__"
 }

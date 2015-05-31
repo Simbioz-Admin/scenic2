@@ -53,7 +53,7 @@ define( [
                     console.error( error );
                     callback( false );
                 }
-                callback( canSink == 'true' );
+                callback( canSink );
             } );
         },
 

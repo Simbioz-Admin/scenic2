@@ -396,9 +396,10 @@ SipManager.prototype.login = function ( credentials, cb ) {
     async.series( [
 
         // Check if port is available
-        function ( callback ) {
+        // SIP uses UDP, so this doesn't work
+        /*function ( callback ) {
             checkPort( 'SIP', self.config.sip, callback );
-        },
+        },*/
 
         // Create SIP quiddity
         function ( callback ) {

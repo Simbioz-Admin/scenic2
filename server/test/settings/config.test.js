@@ -76,12 +76,13 @@ describe( 'Configuration', function () {
 
     it( 'should contain sip configuration', function () {
         should.exist( config.sip );
-        should.exist( config.sip.ports );
-        should.exist( config.sip.ports.min );
-        config.sip.ports.min.should.be.greaterThan( 1024 );
-        should.exist( config.sip.ports.max );
-        config.sip.ports.max.should.be.greaterThan( config.sip.ports.min );
-        should.not.exist( config.sip.port ); // We auto-detect ports
+        should.not.exist( config.sip.ports ); //Removed as SIP uses UDP ports
+        //should.exist( config.sip.ports.min );
+        //config.sip.ports.min.should.be.greaterThan( 1024 );
+        //should.exist( config.sip.ports.max );
+        //config.sip.ports.max.should.be.greaterThan( config.sip.ports.min );
+        should.exist( config.sip.port ); // We auto-detect ports
+        config.sip.port.should.equal(5060); //Auto dectection was not working with UDP ports
 
         should.exist( config.sip.quiddName );
         config.sip.quiddName.should.be.a( 'string' );

@@ -567,7 +567,7 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId,
 
     // Get new quiddity information
     try {
-        var quiddInfo = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+        var quiddInfo = this.switcher.get_quiddity_description( quiddityId );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }

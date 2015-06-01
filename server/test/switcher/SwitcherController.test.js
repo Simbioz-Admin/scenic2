@@ -24,7 +24,6 @@ describe( 'Switcher Controller', function () {
     } );
 
     beforeEach( function () {
-        switcher               = switcherStub();
         config                 = {};
         io                     = {};
         io.emit                = sinon.spy();
@@ -32,7 +31,7 @@ describe( 'Switcher Controller', function () {
         checkPort.yields();
         fs                     = {};
         var SwitcherController = proxyquire( '../../src/switcher/SwitcherController', {
-            'switcher':            switcher,
+            'switcher':            switcherStub,
             'fs':                  fs,
             '../utils/check-port': checkPort,
             '../lib/logger':       logStub(),
@@ -42,6 +41,7 @@ describe( 'Switcher Controller', function () {
         } );
         switcherController     = new SwitcherController( config, io );
         cb                     = sinon.stub();
+        switcher               = switcherController.switcher;
     } );
 
     afterEach( function () {
@@ -263,7 +263,7 @@ describe( 'Switcher Controller', function () {
 
             fs.readdir = sinon.stub();
             fs.readdir.throws( error );
-            
+
             switcherController.getSaveFiles( cb );
 
             cb.should.have.been.calledOnce;

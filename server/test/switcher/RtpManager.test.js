@@ -24,7 +24,7 @@ describe( 'RTP Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = switcherStub();
+        switcher           = new switcherStub.QuiddityManager();
         config             = {
             nameComputer: 'computer-name',
             rtp:          {
@@ -34,6 +34,7 @@ describe( 'RTP Manager', function () {
                 soapControlClientPrefix: 'soap-control-client-prefix'
             }
         };
+
         io                 = {};
         io.emit            = sinon.spy();
         var RtpManager     = proxyquire( '../../src/switcher/RtpManager', {

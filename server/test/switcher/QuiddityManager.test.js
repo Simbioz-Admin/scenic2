@@ -24,7 +24,7 @@ describe( 'Quiddity Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher                = switcherStub();
+        switcher                = new switcherStub.QuiddityManager();
         config                  = {};
         io                      = {};
         io.emit                 = sinon.spy();

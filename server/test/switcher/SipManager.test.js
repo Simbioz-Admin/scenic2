@@ -24,7 +24,7 @@ describe( 'Sip Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = switcherStub();
+        switcher           = new switcherStub.QuiddityManager();
         config             = {
             sip: {
                 quiddName: 'sip-quiddity-name'

@@ -59,9 +59,9 @@ clean:
 #	rm -fr node_modules
 
 tests:
-	mocha server/test/**/*.test.js
-	mocha client/test/**/*.test.js
-	mocha test/**/*.test.js
+	NODE_PATH=~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/**/*.test.js
+#	mocha client/test/**/*.test.js
+#	mocha test/**/*.test.js
 
 dist:
 	mkdir -p $(ARCHIVE)

@@ -22,7 +22,7 @@ var checkPort       = require( '../utils/check-port' );
 function SwitcherController( config, io ) {
     this.config   = config;
     this.io       = io;
-    this.switcher = new switcher.QuiddityManager('test');
+    this.switcher = new switcher.QuiddityManager();
 
     this.quiddityManager = new QuiddityManager( config, this.switcher, io );
     this.sipManager      = new SipManager( config, this.switcher, io );

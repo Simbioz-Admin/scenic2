@@ -22,7 +22,7 @@ module.exports = function( name, config, callback ) {
         } );
     } else {
         // Find port
-        log.debug( 'Autodetecting ' + name + ' port number...' );
+        log.debug( 'Autodetecting ' + name + ' port number in the range ' + config.ports.min + '-' + config.ports.max + '...' );
         var portRequest = _.extend( _.clone(config.ports), { retrieve: 1 });
         portastic.find( portRequest, function( err, data ) {
             if (err) {
@@ -31,8 +31,9 @@ module.exports = function( name, config, callback ) {
             if (!data) {
                 return callback( 'No available ' + name + ' port found in the range ' + config.min + '-' + config.max );
             }
+            log.debug('    Found port ' + data);
             config.port = data;
             callback( null, config.port );
         } );
     }
-}
+};

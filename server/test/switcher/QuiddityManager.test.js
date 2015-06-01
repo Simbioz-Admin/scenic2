@@ -946,7 +946,7 @@ describe( 'Quiddity Manager', function () {
                 cb.should.have.been.calledWithMatch( error );
             } );
 
-            it( 'should return error when switcher returns null', function () {
+            it( 'should return null when switcher returns null', function () {
                 var id   = 'someId';
                 var path = '.some.path';
 
@@ -957,7 +957,21 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); // Assume any string
+                cb.should.have.been.calledWithExactly( null, null ); // Assume any string
+            } );
+
+            it( 'should return null when switcher returns json null', function () {
+                var id   = 'someId';
+                var path = '.some.path';
+
+                switcher.get_info.returns( 'null' );
+
+                quiddityManager.getTreeInfo( id, path, cb );
+
+                switcher.get_info.should.have.been.calledOnce;
+                switcher.get_info.should.have.been.calledWith( id, path );
+                cb.should.have.been.calledOnce;
+                cb.should.have.been.calledWithExactly( null, null ); // Assume any string
             } );
 
             it( 'should return error when switcher returns garbage', function () {

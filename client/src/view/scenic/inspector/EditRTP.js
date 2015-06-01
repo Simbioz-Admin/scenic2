@@ -24,7 +24,7 @@ define( [
         },
 
         events:   {
-            'click @ui.update': 'edit',
+            'click @ui.update': 'update',
             'keydown': 'checkForEscapeKey',
             'keypress @ui.name': 'checkForEnterKey',
             'keypress @ui.host': 'checkForEnterKey',

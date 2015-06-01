@@ -73,7 +73,7 @@ define( [
             var self = this;
 
             this.set( 'server', server );
-            this.set( 'port', port );
+            this.set( 'port', _.isEmpty(port) ? this.get('port') : port );
             this.set( 'user', user );
             this.set( 'uri', user + '@' + server );
 

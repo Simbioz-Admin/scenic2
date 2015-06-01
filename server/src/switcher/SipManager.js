@@ -7,7 +7,6 @@ var cryptoJS  = require( 'crypto-js' );
 var async     = require( 'async' );
 var log       = require( '../lib/logger' );
 var logback   = require( '../utils/logback' );
-var checkPort = require( '../utils/check-port' );
 
 var secretString = 'Les patates sont douces!';
 
@@ -381,30 +380,14 @@ SipManager.prototype.login = function ( credentials, cb ) {
         return logback( e, cb );
     }
 
-    //TODO: Remove once sip-registration property bug is resolved (we don't get notified of status changes
-    if ( hasSip ) {
-        log.debug( 'Removing previous SIP quiddity instance' );
-        try {
-            this.switcher.remove( this.config.sip.quiddName );
-        } catch ( e ) {
-            return logback( e, cb );
-        }
-    }
-
     // Setup new instance
     var self = this;
     async.series( [
 
-        // Check if port is available
-        function ( callback ) {
-            checkPort( 'SIP', self.config.sip, callback );
-        },
-
         // Create SIP quiddity
         function ( callback ) {
             // Creation
-            //TODO: Remove || hasSip once sip-registration property bug is resolved (we don't get notified of status changes
-            if ( !hasSip || hasSip ) {
+            if ( !hasSip ) {
                 log.debug( 'Creating new SIP quiddity' );
                 try {
                     var sip = self.switcher.create( 'sip', self.config.sip.quiddName );
@@ -415,13 +398,6 @@ SipManager.prototype.login = function ( credentials, cb ) {
                     return callback( i18n.t( 'Error creating SIP quiddity' ) );
                 }
             }
-
-            // Unregister all (Fresh quiddity no need for that)
-            /*try {
-             self.switcher.invoke( self.config.sip.quiddName, 'unregister', [] );
-             } catch( e ) {
-             return callback( i18n.t('Error unregistering all SIP users (__error__)', {error:e.toString()}) );
-             }*/
 
             // Port
             log.debug( 'Setting SIP port' );
@@ -508,16 +484,6 @@ SipManager.prototype.logout = function ( cb ) {
     }
     if ( !loggedOut ) {
         return logback( i18n.t( 'Could not log out from SIP' ) );
-    }
-
-    try {
-        //This one is boolean for whatever reason...
-        var removed = this.switcher.remove( this.config.sip.quiddName );
-    } catch ( e ) {
-        return logback( i18n.t( 'Error while removing SIP quiddity (__error__)', {error: e.toString()} ) );
-    }
-    if ( !loggedOut ) {
-        return logback( i18n.t( 'Could not remove SIP quiddity' ) );
     }
 
     cb();

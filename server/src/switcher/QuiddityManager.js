@@ -396,21 +396,23 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
                     // VU Meters
                     log.debug( 'Creating VU meters for ' + quiddityId );
                     var shmdataWriters     = JSON.parse( this.switcher.get_info( quiddityId, '.shmdata.writer' ) );
-                    _.each( shmdataWriters, function ( shmdata, name ) {
-                        var path = 'vumeter_' + name;
-                        //TODO: This could probably be better if we query fakesinks instead of keeping them internally
-                        var vuMeterExists = _.findWhere( this.vuMeters, {path: path} );
-                        if ( !vuMeterExists ) {
-                            log.debug( 'Creating VU meter for shmdata ' + name );
-                            var vuMeter = this.switcher.create( 'fakesink', path );
-                            if ( vuMeter ) {
-                                this.vuMeters.push( {quiddity: quiddityId, path: vuMeter} );
-                                this.switcher.invoke( vuMeter, 'connect', [name] );
-                            } else {
-                                log.warn( 'Could not create VU Meter for ' + name );
+                    if ( shmdataWriters ) {
+                        _.each( shmdataWriters, function ( shmdata, name ) {
+                            var path = 'vumeter_' + name;
+                            //TODO: This could probably be better if we query fakesinks instead of keeping them internally
+                            var vuMeterExists = _.findWhere( this.vuMeters, {path: path} );
+                            if ( !vuMeterExists ) {
+                                log.debug( 'Creating VU meter for shmdata ' + name );
+                                var vuMeter = this.switcher.create( 'fakesink', path );
+                                if ( vuMeter ) {
+                                    this.vuMeters.push( {quiddity: quiddityId, path: vuMeter} );
+                                    this.switcher.invoke( vuMeter, 'connect', [name] );
+                                } else {
+                                    log.warn( 'Could not create VU Meter for ' + name );
+                                }
                             }
-                        }
-                    }, this );
+                        }, this );
+                    }
 
                     this.io.emit( 'addShmdata', quiddityId, shmdataWriterInfo );
                 }
@@ -668,7 +670,7 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
         return logback( e.toString(), cb );
     }
 
-    if ( !result || result.error ) {
+    if ( result && result.error ) {
         return logback( i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 

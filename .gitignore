@@ -1,7 +1,10 @@
-assets/css/.sass-cache
+.sass-cache
 logs/logging-file.log
 logging-file.log
 node_modules/
 save_files/*
 *~
 npm-debug.log
+bower_components
+*.css.map
+.idea/workspace.xml

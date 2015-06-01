@@ -1,0 +1,186 @@
+#header {
+  width: 100%;
+  height: $headerHeight;
+  background: #333;
+  position: fixed;
+  top: 0;
+  z-index: 20;
+  @include box-shadow(0px 0px 6px 0px rgba(0,0,0,0.5));
+
+  .logo {
+    position: absolute;
+    left: -8px;
+    top: -20px;
+  }
+
+  nav.menu {
+    float: right;
+    margin: 10px;
+    ul.mainMenu {
+      color: $textColorBrighter;
+      li {
+        float: left;
+        &:not(:last-child) {
+          margin-right: 1px;
+        }
+        a {
+          display: block;
+          position: relative;
+          padding: 15px 10px 15px 48px;
+          background-color: #2c2c2c;
+          text-transform: uppercase;
+          cursor: pointer;
+          &:hover {
+            background-color: $backgroundColorDarker;
+            &:before {
+              opacity: 1.00;
+            }
+          }
+          &:before {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            top: 7px;
+            left: 10px;
+            opacity: 0.5;
+          }
+        }
+        .load {
+          &:before {
+            background: url(../../icons/710-folder.png) no-repeat center;
+          }
+        }
+        .save {
+          &:before {
+            background: url(../../icons/785-floppy-disk.png) no-repeat center;
+          }
+        }
+        .info {
+          &:before {
+            background: url(../../icons/724-info.png) no-repeat center;
+          }
+        }
+        .lang {
+          font-size: 10px;
+          padding: 5px 5px 4px;
+          margin: 0;
+          display: block;
+          background: #2c2c2c;
+          color: white;
+          border: none;
+          &.active {
+            color: $satColor;
+          }
+          &:hover {
+            background: #222;
+            cursor: pointer;
+          }
+          &:not(:last-child) {
+            margin-bottom: 1px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.panelBox {
+  width: 250px;
+  padding: 15px 20px 10px;
+  background: #2a2a2a;
+  position: absolute;
+  top: 60px;
+  color: white;
+  font-size: 1.3em;
+  @include box-shadow(0px 9px 25px -10px #2a2a2a);
+  //+border-radius(3px)
+  &:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 7px solid #2a2a2a;
+    position: absolute;
+    top: -7px;
+    right: 10px;
+  }
+  .infoTitle {
+    font-weight: bold;
+  }
+  .info {
+    width: 100px;
+  }
+}
+
+#panelInfo {
+  right: 106px;
+  div {
+    width: 90px;
+    float: left;
+    margin: 0 0 10px 0;
+  }
+}
+
+#panelSave {
+  right: 60px;
+  padding: 5px 10px 2px;
+  input[type=text] {
+    height: 35px;
+    background: none;
+    @include border-radius(0);
+    border: 1px solid #444;
+    color: white;
+  }
+}
+
+#panelFiles {
+  right: 17px;
+  .file {
+    cursor: pointer;
+    display: inline-block;
+    border-bottom: 1px solid #444;
+    margin: 0 0 2px 0;
+    width: 220px;
+    padding: 4px;
+    position: relative;
+    font-size: 16px;
+    &:hover {
+      background: $satColor;
+    }
+  }
+  .remove_save {
+    display: inline-block;
+    border-bottom: 1px solid #444;
+    padding: 4px;
+    font-size: 18px;
+    &:hover {
+      background: $satColor;
+      cursor: pointer;
+    }
+  }
+}

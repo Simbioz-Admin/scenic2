@@ -1,0 +1,49 @@
+<div class="menus"></div>
+<div class="content">
+    <fieldset>
+        <legend data-i18n>Scenic Server</legend>
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" readonly value="<%=config.nameComputer%>">
+        </div>
+        <div class="input-group">
+            <label>Version</label>
+            <input type="text" readonly value="<%=config.version%>">
+        </div>
+        <div class="input-group">
+            <label>Server Address</label>
+            <input type="text" readonly value="<%=config.host%>">
+        </div>
+        <div class="input-group">
+            <label>Server Port</label>
+            <input type="text" readonly value="<%=config.scenic.port%>">
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend data-i18n>SOAP Server</legend>
+        <div class="input-group">
+            <label>SOAP Port</label>
+            <input type="text" readonly value="<%=config.soap.port%>">
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend data-i18n>SIP Connection</legend>
+        <div class="input-group">
+            <label>Configured SIP Port</label>
+            <% if ( config.sip.port ) { %>
+            <input type="text" readonly value="<%=config.sip.port%>">
+            <% } else { %>
+            <input type="text" readonly value="Automatic" data-i18n="[value]Automatic">
+            <% } %>
+        </div>
+        <div class="input-group">
+            <label>SIP Port</label>
+            <% if ( sip && sip.get('properties').get('port') ) { %>
+            <input type="text" readonly value="<%=sip.get('properties').get('port').get('value')%>">
+            <% } else { %>
+            <input type="text" readonly value="No current SIP session" data-i18n="[value]No current SIP session">
+            <% } %>
+        </div>
+    </div>
+    </fieldset>
+</div>

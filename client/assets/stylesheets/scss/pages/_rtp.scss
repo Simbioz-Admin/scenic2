@@ -1,0 +1,11 @@
+#page {
+  .menus .rtp {
+    .menu {
+      &.destination {
+        .button {
+          background: url(../../icons/plus-small.png) no-repeat 8px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,248 @@
+fieldset {
+  position: relative;
+  margin: 1em;
+}
+
+legend {
+  font-size: 2em;
+  font-weight: 300;
+  color: $textColorBrighter;
+  border-bottom: 1px solid $textColorSubtler;
+  line-height: 2em;
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.checkbox {
+  display: inline-block;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: $red;
+  box-shadow: inset 0 0 1px darken($red, 25%);
+  text-shadow: 1px 1px 0px darken( $red, 10%);
+  position: relative;
+  @include border-radius(5px);
+  color: white;
+  width: 55px;
+  text-align: right;
+  @include transition(0.5s);
+
+  &:after {
+    content: "OFF";
+    font-size: 12px;
+  }
+
+  &:before {
+    content: " ";
+    position: absolute;
+    background: #f0f0f0;
+    top: 2px;
+    z-index: 99999;
+    left: 2px;
+    width: 15px;
+    color: #FFF;
+    height: 20px;
+    @include border-radius(4px);
+    @include transition(0.2s);
+    box-shadow: 0 0 1px darken($red, 25%);
+  }
+
+  &:checked + label {
+    background: $green;
+    text-align: left;
+    box-shadow: inset 0 0 1px darken($green, 25%);
+    text-shadow: 1px 1px 0px darken( $green, 10%);
+    &:after {
+      content: "ON";
+    }
+    &:before {
+      right: 2px;
+      left: inherit;
+      box-shadow: 0 0 1px darken($green, 25%);
+    }
+  }
+}
+
+select, input, textarea {
+  font-family: $font-family;
+}
+
+select {
+  width: 100%;
+  margin: 0 0 10px 0;
+  border-radius: 3px;
+  border: lighten($backgroundColorDark, 10%) 1px solid;
+  background: $backgroundColorDark;
+  color: $textColor;
+  font-size: 14px;
+  padding: 8px;
+  height: 2.5em;
+  option {
+    background: #fefefe;
+    padding: 4px 0;
+  }
+}
+
+textarea {
+  background: $backgroundColorDark;
+  color: $textColor;
+  border: none;
+}
+
+input[type=number],
+input[type=text],
+input[type=password] {
+  outline: none;
+  padding: 0px 5px;
+  margin: 5px 0 10px 0;
+  @include border-radius(5px);
+  height: 35px;
+  width: 100%;
+  background: $backgroundColorDark;
+  border: none;
+  color: $textColorBrighter;
+  &:focus {
+    border: lighten($backgroundColorDark, 15%) solid 1px;
+  }
+}
+
+input[type=checkbox] {
+  display: none;
+}
+
+input[type=submit] {
+  background: #111;
+  color: white;
+  border: none;
+  @include border-radius(3px);
+  width: 200px;
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+label {
+  font-size: 1.4em;
+  input[type=checkbox] {
+    vertical-align: bottom;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.input-group {
+  position: relative;
+}
+
+.btn {
+  display: block;
+  margin: 5px 0 10px 0;
+  padding: 0.5em 1em;
+  color: $textColorBrighter;
+  text-shadow: 1px 1px 0px darken( $backgroundColorDark, 10%);
+  font-size: 1.25em;
+  text-align: center;
+  border-radius: 6px;
+  background: $backgroundColorDark;
+  border: lighten( $backgroundColorDark, 5% ) 1px solid;
+  cursor: pointer;
+  &:hover {
+    background: $backgroundColor;
+  }
+  &:active {
+    background: $backgroundColorLight;
+  }
+
+  &.btn-danger {
+    background: $red;
+    text-shadow: 1px 1px 0px darken( $red, 10%);
+    border: lighten( $red, 10% ) 1px solid;
+    &:hover {
+      background: lighten($red, 5% );
+    }
+    &:active {
+      background: lighten($red, 15% );;
+    }
+  }
+
+  &.btn-warning {
+    background: $orange;
+    text-shadow: 1px 1px 0px darken( $orange, 10%);
+    border: lighten( $orange, 10% ) 1px solid;
+    &:hover {
+      background: lighten($orange, 5% );
+    }
+    &:active {
+      background: lighten($orange, 15% );;
+    }
+  }
+
+  &.btn-info {
+    background: $blue;
+    text-shadow: 1px 1px 0px darken( $blue, 10%);
+    border: lighten( $blue, 10% ) 1px solid;
+    &:hover {
+      background: lighten($blue, 5% );
+    }
+    &:active {
+      background: lighten($blue, 15% );;
+    }
+  }
+
+  &.btn-success {
+    background: $green;
+    text-shadow: 1px 1px 0px darken( $green, 10%);
+    border: lighten( $green, 10% ) 1px solid;
+    &:hover {
+      background: lighten($green, 5% );
+    }
+    &:active {
+      background: lighten($green, 15% );;
+    }
+  }
+}
+
+.btn-group {
+  .btn {
+    margin: 0 0 10px 0;
+    border-radius: 0;
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+    &:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+  }
+}
+
+.ui-slider {
+  background: #eee;
+  float: left;
+  width: 63%;
+  margin: 12px 20px 0 12px;
+  @include border-radius(5px);
+  .ui-slider-range {
+    background: $blue;
+    @include border-radius(5px);
+  }
+  .ui-slider-handle {
+    background: #fcfcfc;
+    @include border-radius(3px);
+    width: 24px;
+    height: 16px;
+    top: -4px;
+    margin-left: -12px;
+    &:hover {
+      background: white;
+    }
+  }
+}
+
+input.slider {
+  width: 60px;
+  padding: 0 8px;
+  height: 22px;
+  text-align: center;
+  color: $textColorBrighter;
+}

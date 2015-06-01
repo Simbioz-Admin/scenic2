@@ -1,14 +1,28 @@
-Scenic2 release notes
+Scenic release notes
 ===================
-Scenic2 2.0.24 (2014-09-12)
+
+Scenic 2.1.0 (2015-05-12)
+------------------------
+This release is a major release in the stable 2.0 series.
+
+New Features
+
+* SIP Integration
+* Improved UI
+
+Fixed bugs:
+
+* Many, taking over from a previous programmer so I can't list precisely
+
+Scenic 2.0.24 (2014-09-12)
 -------------------------
 This release is a bugfix release in the stable 2.0 series.
 
 Fixed bugs:
 
-* Fix epress path
+* Fix express path
 
-Scenic2 2.0.22 (2014-09-11)
+Scenic 2.0.22 (2014-09-11)
 -------------------------
 This release is a bugfix release in the stable 2.0 series.
 
@@ -16,7 +30,7 @@ Fixed bugs:
 
 * path issues introduced in previous release
 
-Scenic2 2.0.18 (2014-09-10)
+Scenic 2.0.18 (2014-09-10)
 -------------------------
 This release is a developer snapshot in the stable 2.0 series.
 
@@ -43,7 +57,7 @@ Known bugs:
 * CPU meter displays +1 CPU which is a total average (first meter)
 * There is no indication of the actual network bandwidth consumption only a relative amount capped at 15MBps
 
-Scenic2 2.0.16 (2014-06-10)
+Scenic 2.0.16 (2014-06-10)
 -------------------------
 This a bug-fix release developer snapshot in the stable 2.0 series.
 
@@ -55,9 +69,9 @@ Fixed bugs:
 
 Known bugs: 
 
-* Automatic launch of Scenic2 following the modules installation may fail. Quitting the chrome application and relaunching scenic2 works
+* Automatic launch of Scenic following the modules installation may fail. Quitting the chrome application and relaunching scenic works
 
-Scenic2 2.0.12 (2014-04-10)
+Scenic 2.0.12 (2014-04-10)
 -------------------------
 This a bug-fix release developer snapshot in the stable 2.0 series.
 
@@ -68,10 +82,10 @@ Fixe bugs:
 
 Known bugs: 
 
-* If install script was triggered due to missing node modules, the automatic launch of Scenic2 following the modules installation fails. Quitting the chro
-me application and relaunching scenic2 works
+* If install script was triggered due to missing node modules, the automatic launch of Scenic following the modules installation fails. Quitting the chro
+me application and relaunching scenic works
 
-Scenic2 2.0.8 (2014-04-01)
+Scenic 2.0.8 (2014-04-01)
 -------------------------
 This release is a developer snapshot in the stable 2.0 series.
 
@@ -88,7 +102,7 @@ Known bugs:
 * Sometimes the engine crashes when rapidly creating and distroying quiddities, including when loading from saved file
 
 
-Scenic2 0.2.0 (2013-10-15)
+Scenic 0.2.0 (2013-10-15)
 -------------------------
 This release is a developer snapshot in the stable 0.4 series.
 
@@ -106,7 +120,7 @@ Known bugs:
 * No obvious error messages when communication with remote host is not possible
 
 
-Scenic2 0.2.0 (2013-07-05)
+Scenic 0.2.0 (2013-07-05)
 -------------------------
 This release is a developer snapshot in the stable 0.2 series.
 
@@ -116,5 +130,5 @@ New features:
 
 Known bugs: 
 
-* scenic2 sometimes leaves completely at server start
+* scenic sometimes leaves completely at server start
 

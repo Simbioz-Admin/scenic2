@@ -1,0 +1,46 @@
+#scenic {
+  display: none;
+}
+
+.alert {
+  background: rgba(0,0,0,0.5);
+  border-radius: 6px;
+  padding: 1em;
+  margin-bottom: 1em;
+  color: $yellow;
+
+  &.alert-danger, &.alert-error {
+    color: $red;
+  }
+
+  &.alert-warning {
+    color: $orange;
+  }
+
+  &.alert-info {
+    color: $blue;
+  }
+
+  &.alert-success {
+    color: $green;
+  }
+}
+
+
+
+
+
+
+
+.ui-tooltip {
+  background: #333;
+  color: white;
+  font-size: 1.1em;
+  @include border-radius(3px);
+  border: none;
+  line-height: 1.2em;
+}
+
+.hidden {
+  display: none;
+}

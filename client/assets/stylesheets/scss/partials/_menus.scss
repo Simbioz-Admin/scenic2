@@ -1,0 +1,41 @@
+.menu {
+  .panel {
+    position: fixed;
+    right: 0;
+    top: $headerHeight;
+    padding-top: 1em;
+    background: $backgroundColorDarker;
+    color: $textColor;
+
+    .title {
+      padding: 0.5em;
+      font-size: 2em;
+      color: $textColorBrighter;
+    }
+
+    .files {
+      max-height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      .file {
+        padding: 1em;
+        font-size: 1.5em;
+        overflow: hidden;
+        &:hover {
+          background: $satColor;
+          color: $textColorBrighter;
+        }
+        .name {
+          float: left;
+          margin-right: 1em;
+          a {
+            cursor: default;
+          }
+        }
+        .remove {
+          float: right;
+        }
+      }
+    }
+  }
+}

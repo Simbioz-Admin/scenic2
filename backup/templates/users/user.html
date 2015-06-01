@@ -1,0 +1,26 @@
+<% if(!itsMe){ %>
+	<div class="actionsOnUser">
+		<% var button = (!in_tab) ? 'add_table' : 'hidden' %>
+		<div class="action <%=button%> add_destinationSip"></div>
+		<div class="action edit_user"></div>
+	</div>
+<% } %>
+
+<div class="information">
+	<h3><%=name%></h3>
+	<div class="last_message">
+		<% if(itsMe){%>
+			<div id="currentStatus"><%=status%>
+				<ul>
+					<% _.each(collections.contacts.listStatus, function(status){ %>
+						<li class="listStatus" data-status="<%=status.value%>"><%=status.name%></li>
+					<% }); %>
+				</ul>
+			</div>
+			<input type="text" id="statusText" value="<%=status_text%>">
+		<% }else { %>
+	 		<%=status_text%>  (<%=status%>)
+		<% } %>
+		
+	</div>
+</div>

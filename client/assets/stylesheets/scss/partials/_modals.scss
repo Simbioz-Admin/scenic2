@@ -1,0 +1,57 @@
+@import "compass/css3/filter";
+@import "compass/css3/transition";
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  .dialog {
+    width: 75%;
+    background: rgba(255, 255, 255, 0.75);
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    @include border-radius(0 0 6px 6px);
+    overflow: hidden;
+    .message {
+      color: $textColorSubtler;
+      font-size: 1.5em;
+      line-height: 1.5em;
+      padding: 2em 3em 3em 3em;
+    }
+    .dialog-footer {
+      padding-top: 1px;
+      background: rgba( 0, 0, 0, 0.75 );
+      overflow: hidden;
+    }
+    .btn-group {
+      float: right;
+      .btn {
+        float: left;
+        margin: 0;
+        margin-left: 1px;
+        padding: 1em 3em;
+        font-size: 1.5em;
+        border-radius: 0;
+        &:last-child {
+          @include border-radius(0 0 6px 0);
+        }
+      }
+    }
+  }
+}
+
+.interface {
+  transition: -webkit-filter 0.25s;
+}
+
+.blur .interface {
+  -webkit-filter: blur(6px);
+}

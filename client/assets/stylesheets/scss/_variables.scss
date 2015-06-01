@@ -1,0 +1,38 @@
+$font-family: "Exo 2", "Open Sans", sans-serif;
+$base-font-size: 10px;
+$base-line-height: 12px;
+
+$headerHeight: 60px;
+$tabsWidth: 70px;
+
+$contactsWidth: 250px;
+
+$gray1: #f1f1f1;
+$gray2: #333;
+$satColor: #be2620;
+$colorBorder: #3a3a3a;
+
+$textColorBrighter: #fff;
+$textColor: #aaa;
+$textColorSubtle: #595959;
+$textColorSubtler: #404040;
+
+$backgroundColorLight: #4c4c4c;
+$backgroundColor: #3b3b3b;
+$backgroundColorDark: #333333;
+$backgroundColorDarkish: #2c2c2c;
+$backgroundColorDarker: #222222;
+
+$disabled: darken( $backgroundColor, 1% );
+$active: $backgroundColorDarker;
+
+$red: #bd362f;//$satColor;
+$orange: #f89406;//orange;
+$yellow: #f8d64c;
+$green: #51a351;//#01b101;
+$blue: #2f96b4;//#1f9cff;
+
+@mixin shadow1 {
+  @include box-shadow( rgba(black, 0.25) 0px 0px 24px);
+  @include box-shadow( rgba(black, 0.5) 0px 0px 6px);
+}

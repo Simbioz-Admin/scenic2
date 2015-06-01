@@ -1,0 +1,13 @@
+<div id="sub-menu">
+    <div class="overlay"></div>
+    <div class="content">
+        <% _.each(groups, function(items, group){ %>
+        <div class="group"><%=group%></div>
+        <div class="items">
+            <% _.each(items, function(item) { %>
+            <a class="item" data-id="<%=item.id%>" title="<%=item.title%>"><%=item.name%></a>
+            <% }); %>
+        </div>
+        <% }); %>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+#usage {
+  position: absolute;
+  width: $tabsWidth;
+  bottom: 0;
+  z-index: 10;
+}
+
+#system-usage {
+  color: white;
+  position: absolute;
+  width: 100%;
+  background: #222;
+  bottom: 0;
+  .content {
+    margin: 5px 10px 10px 10px;
+  }
+  .info {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    float: left;
+    border-top: 1px solid #111;
+    .label {
+      font-size: 10px;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+  }
+  .cpu {
+    .bar {
+      width: 5px;
+      height: 2%;
+      background: #555;
+      position: absolute;
+      bottom: 0;
+    }
+    .content {
+      height: 22px;
+      width: 100%;
+      position: relative;
+    }
+  }
+  .cpu-alert {
+    background: $red !important;
+  }
+  .memory {
+    .content {
+      margin-top: 8px;
+    }
+  }
+  .network {
+    padding-bottom: 3px;
+    font-size: 9px;
+    color: #ccc;
+    .iface {
+      padding-top: 4px;
+      .name {
+        background-color: #333;
+        font-weight: bold;
+        padding: 2px;
+        margin-bottom: 2px;
+      }
+      .receive, .transfer {
+        @include clearfix;
+        .lbl {
+          color: #aaa;
+          float: left;
+        }
+        .value {
+          float: right;
+        }
+      }
+    }
+  }
+  .total {
+    font-size: 14px;
+  }
+  .text {
+    font-size: 10px;
+  }
+}

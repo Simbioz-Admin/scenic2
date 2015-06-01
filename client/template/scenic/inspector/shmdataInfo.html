@@ -1,0 +1,8 @@
+<div class="name"><%=path%></div>
+<dl class="capabilities">
+    <% _.each( capabilities, function( capability ) { %>
+        <dt><span class="property"><%= capability.property %></span><span class="type"><%= capability.type %></span></dt>
+        <dd><span class="value"><%= capability.value %></span></dd>
+    <% } ) %>
+</dl>
+<textarea class="capabilities-raw" readonly><%=caps%></textarea>

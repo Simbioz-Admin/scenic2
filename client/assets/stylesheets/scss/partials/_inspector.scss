@@ -1,0 +1,111 @@
+#inspector {
+  z-index: 40;
+}
+
+.info-panel {
+  display: none;
+  top: $headerHeight + 20px;
+  right: 20px;
+  width: 300px;
+  background: $backgroundColorDarker;
+  color: $textColor;
+  min-width: 300px;
+  min-height: 100px;
+  position: fixed;
+  overflow: hidden;
+  @include border-radius(6px);
+  @include box-shadow(rgba(black, 0.5) 0px 0px 26px -8px);
+
+  .sip & {
+    right: $contactsWidth + 20px;
+  }
+
+  .title {
+    color: white;
+    font-size: 1.4em;
+    padding: 0 5px 0 20px;
+    line-height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    background: #2a2a2a;
+  }
+
+  .content {
+    overflow: auto;
+    padding: 20px;
+    line-height: 1.4em;
+    max-height: 600px;
+  }
+
+  .close {
+    background: $backgroundColor;
+    padding: 0 8px;
+    height: 30px;
+    line-height: 30px;
+    float: right;
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-weight: bold;
+    font-size: 1.4em;
+    cursor: pointer;
+    &:hover {
+      background: $satColor;
+    }
+  }
+
+  .shmdata-info {
+    .name {
+      margin-bottom: 1em;
+    }
+    .capabilities {
+      .property {
+        padding-right: 1em;
+        color: $textColor;
+      }
+      .type {
+        color: $textColorSubtler;
+      }
+      .value {
+        padding-left: 1em;
+        color: $textColorSubtle;
+      }
+    }
+
+    .capabilities-raw {
+      width: 100%;
+      margin-top: 1em;
+      height: 100px;
+    }
+  }
+}
+
+.properties, .methods {
+  @include clearfix;
+}
+
+.property {
+  margin-bottom: 10px;
+  @include clearfix;
+  .description {
+    margin-bottom: 1em;
+    color: $textColorSubtle;
+  }
+}
+
+input.property.string,
+input.method {
+  width: 73%;
+  float: left;
+}
+
+.field {
+  .update {
+    float: left;
+    margin-left: 6px;
+    width: 60px;
+    padding: 9px;
+    height: 35px;
+  }
+}

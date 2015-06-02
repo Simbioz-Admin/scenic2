@@ -60,7 +60,7 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignal: function ( quiddityId, signal, name ) {
-            if ( signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
+            if ( !this.isNew() && signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -74,7 +74,7 @@ define( [
          * @param {string} value The value of the property
          */
         _onPropertyChanged: function ( quiddityId, property, value ) {
-            if ( this.collection.quiddity.id == quiddityId && this.id == property && this.get( 'value' ) != value ) {
+            if ( !this.isNew() && this.collection.quiddity.id == quiddityId && this.id == property && this.get( 'value' ) != value ) {
                 this.set( 'value', value );
                 // Keep last synced value as a backup in case setting a value fails
                 this.lastSyncedValue = value;

@@ -4,6 +4,11 @@
     <option name="compassConfigPath" value="$MODULE_DIR$/client/assets/stylesheets/config.rb" />
     <option name="compassExecutableFilePath" value="/usr/local/bin/compass" />
     <option name="compassSupportEnabled" value="true" />
+    <option name="importPaths">
+      <list>
+        <option value="/var/lib/gems/1.9.1/gems/compass-core-1.0.3/stylesheets" />
+      </list>
+    </option>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -24,6 +29,7 @@
     <orderEntry type="library" name="Node Modules" level="project" />
     <orderEntry type="library" name="Bower Components" level="project" />
     <orderEntry type="library" name="Compass" level="project" />
+    <orderEntry type="library" name="compass-library" level="project" />
   </component>
   <component name="RModuleSettingsStorage">
     <LOAD_PATH number="0" />

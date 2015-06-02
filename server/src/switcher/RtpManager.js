@@ -257,7 +257,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
 
     // Check if the connection has already been made
     try {
-        var rtpShmdata = JSON.parse( this.switcher.get_info( this.config.rtp.quiddName, '.shmdata.reader' ) );
+        var rtpShmdata = this.switcher.get_info( this.config.rtp.quiddName, '.shmdata.reader' );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }

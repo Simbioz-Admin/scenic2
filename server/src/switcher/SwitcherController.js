@@ -22,7 +22,8 @@ var checkPort       = require( '../utils/check-port' );
 function SwitcherController( config, io ) {
     this.config   = config;
     this.io       = io;
-    this.switcher = new switcher.QuiddityManager();
+    this.switcher = new switcher.Switcher( 'scenic', this._onSwitcherLog.bind( this ) );
+    //this.switcherLogger = new switcher.Logger( this._onSwitcherLog.bind( this ) );
 
     this.quiddityManager = new QuiddityManager( config, this.switcher, io );
     this.sipManager      = new SipManager( config, this.switcher, io );
@@ -42,7 +43,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
     var self = this;
 
     // Switcher Callbacks
-    this.switcher.register_log_callback( this._onSwitcherLog.bind( this ) );
+    //this.switcher.register_log_callback( this._onSwitcherLog.bind( this ) );
     this.switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
     this.switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
 
@@ -72,7 +73,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
     // Load file if specified
     if ( this.config.loadFile ) {
         log.info( 'Loading save file ' + this.config.loadFile );
-        var loaded = JSON.parse( this.switcher.load_history_from_scratch( this.config.loadFile ) );
+        var loaded = this.switcher.load_history_from_scratch( this.config.loadFile );
         if ( loaded ) {
             log.info( 'Save file loaded.' );
             setSOAPPort = false;
@@ -115,6 +116,10 @@ SwitcherController.prototype.initialize = function ( callback ) {
         }
         callback();
     } );
+};
+
+SwitcherController.prototype.release = function() {
+    this.switcher.release();
 };
 
 /**
@@ -237,7 +242,7 @@ SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
     log.debug( "Loading scenic file: " + path );
     try {
-        var loaded = JSON.parse( this.switcher.load_history_from_scratch( path ) );
+        var loaded = this.switcher.load_history_from_scratch( path );
     } catch ( e ) {
         return logback( i18n.t('Error while loading file __path__ (__error__)', {path: path, error: e.toString()}), cb );
 
@@ -259,7 +264,7 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
     log.debug( "Saving scenic file: " + path );
     try {
-        var save = JSON.parse( this.switcher.save_history( path ) );
+        var save = this.switcher.save_history( path );
     } catch ( e ) {
         return logback( i18n.t('Error while saving file __path__ (__error__)', {path: path, error: e.toString()}), cb );
     }

@@ -42,7 +42,7 @@ define( [
             var checked = this.ui.property.is( ':checked' );
             this.ui.property.val( checked ).attr( 'checked', checked );
             // Update the model
-            this.model.updateValue( this.ui.property.val() );
+            this.model.updateValue( this.ui.property.val() == 'true' );
         },
 
         /**

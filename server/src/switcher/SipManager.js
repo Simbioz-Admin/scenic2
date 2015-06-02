@@ -317,7 +317,7 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
         var buddyId = value[0].split( '.' )[2];
 
         try {
-            var contact = JSON.parse( this.switcher.get_info( quiddityId, '.buddy.' + buddyId ) );
+            var contact = this.switcher.get_info( quiddityId, '.buddy.' + buddyId );
         } catch ( e ) {
             return log.error( e );
         }
@@ -375,7 +375,7 @@ SipManager.prototype.login = function ( credentials, cb ) {
 
     // Remove previous
     try {
-        var hasSip = JSON.parse( this.switcher.has_quiddity( this.config.sip.quiddName ) );
+        var hasSip = this.switcher.has_quiddity( this.config.sip.quiddName );
     } catch ( e ) {
         return logback( e, cb );
     }
@@ -421,7 +421,7 @@ SipManager.prototype.login = function ( credentials, cb ) {
             } catch ( e ) {
                 return callback( i18n.t( 'Error registering SIP user (__error__)', {error: e.toString()} ) );
             }
-            if ( !registered || registered == 'false' ) {
+            if ( !registered ) {
                 return callback( i18n.t( 'SIP authentication failed' ) );
             }
             callback();
@@ -478,7 +478,7 @@ SipManager.prototype.logout = function ( cb ) {
     this.uri = null;
 
     try {
-        var loggedOut = JSON.parse( this.switcher.invoke( this.config.sip.quiddName, 'unregister', [] ) );
+        var loggedOut = this.switcher.invoke( this.config.sip.quiddName, 'unregister', [] );
     } catch ( e ) {
         return logback( i18n.t( 'Error while logging out (__error__)', {error: e.toString()} ) );
     }
@@ -497,7 +497,7 @@ SipManager.prototype.logout = function ( cb ) {
 SipManager.prototype.getContacts = function ( cb ) {
     log.debug( 'Getting contacts' );
     try {
-        var hasSipQuiddity = JSON.parse( this.switcher.has_quiddity( this.config.sip.quiddName ) );
+        var hasSipQuiddity = this.switcher.has_quiddity( this.config.sip.quiddName );
     } catch ( e ) {
         return logback( e, cb );
     }
@@ -506,7 +506,7 @@ SipManager.prototype.getContacts = function ( cb ) {
     }
 
     try {
-        var contacts = JSON.parse( this.switcher.get_info( this.config.sip.quiddName, '.buddy' ) );
+        var contacts = this.switcher.get_info( this.config.sip.quiddName, '.buddy' );
     } catch ( e ) {
         return logback( e, cb );
     }
@@ -650,7 +650,7 @@ SipManager.prototype.detachShmdataFromContact = function ( path, uri, cb ) {
  */
 SipManager.prototype.callContact = function ( uri, cb ) {
     try {
-        var called = JSON.parse( this.switcher.invoke( this.config.sip.quiddName, 'send', [uri] ) );
+        var called = this.switcher.invoke( this.config.sip.quiddName, 'send', [uri] );
     } catch ( e ) {
         return logback( i18n.t( 'Error calling contact (__error__)', {error: e.toString()} ), cb );
     }
@@ -669,7 +669,7 @@ SipManager.prototype.callContact = function ( uri, cb ) {
  */
 SipManager.prototype.hangUpContact = function ( uri, cb ) {
     try {
-        var hanged = JSON.parse( this.switcher.invoke( this.config.sip.quiddName, 'hang-up', [uri] ) );
+        var hanged = this.switcher.invoke( this.config.sip.quiddName, 'hang-up', [uri] );
     } catch ( e ) {
         return logback( i18n.t( 'Error hanging up on contact (__error__)', {error: e.toString()} ), cb );
     }
@@ -692,7 +692,7 @@ SipManager.prototype.updateContact = function ( uri, info, cb ) {
     if ( info.name ) {
         log.debug( 'Updating name of the contact ' + uri + ' to ' + info.name );
         try {
-            var nameUpdated = JSON.parse( this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [info.name, uri] ) );
+            var nameUpdated = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [info.name, uri] );
         } catch ( e ) {
             return logback( i18n.t( 'Error while updating contact name (__error__)', {error: e.toString()} ), cb );
         }

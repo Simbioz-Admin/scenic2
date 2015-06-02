@@ -41,7 +41,6 @@ define( [
          * @param info
          */
         renderSystemUsage: function ( info ) {
-            info = $.parseJSON( info );
             delete info.cpu.cpu;
             this.renderCpu( info.cpu );
             this.renderMemory( info.mem );

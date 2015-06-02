@@ -4,7 +4,6 @@ var _ = require('underscore');
 var path = require('path');
 var i18next = require('i18next');
 var express = require('express');
-var switcher = require('switcher');
 
 module.exports = function( app, config, switcherController ) {
 

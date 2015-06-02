@@ -25,10 +25,7 @@ define( [
                 "name":             null,
                 "class":            null,
                 "category":         null,
-                "long name":        null,
                 "description":      null,
-                "encoder_category": null,
-                "view":             null,
                 "properties":       new Properties(),
                 "methods":          new Methods(),
                 "shmdatas":         new Shmdatas()

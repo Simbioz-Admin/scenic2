@@ -64,7 +64,7 @@ tests:
 #	mocha test/**/*.test.js
 
 test-qm:
-	NODE_PATH=~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/integration/QuiddityLifecycle.test.js
+	NODE_PATH=~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/integration/QuiddityLifecycle.test.js
 
 dist:
 	mkdir -p $(ARCHIVE)

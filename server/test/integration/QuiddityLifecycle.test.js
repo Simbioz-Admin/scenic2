@@ -1,3 +1,4 @@
+var async = require('async');
 var proxyquire = require( 'proxyquire' ).noCallThru();
 var chai       = require( "chai" );
 var sinon      = require( "sinon" );
@@ -34,6 +35,7 @@ describe( 'Quiddity Lifecycle', function () {
             '../utils/check-port': checkPort,
             '../lib/logger':       logStub(),
             '../utils/logback':    function ( e, c ) {
+                if ( e ) { console.error( e ); }
                 c( e );
             }
         } );
@@ -42,6 +44,7 @@ describe( 'Quiddity Lifecycle', function () {
     } );
 
     afterEach( function () {
+        switcherController.release();
         config             = null;
         io                 = null;
         switcherController = null;
@@ -61,242 +64,52 @@ describe( 'Quiddity Lifecycle', function () {
             cb.should.have.been.calledWithExactly( null, quidd_res );
         });
 
-        it('should create a quiddity', function() {
+        it('should create a quiddity and start it', function( done ) {
             var quidd = quiddities.quiddity();
             var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
+            async.series( [
+                function( callback ) {
+                    switcherController.quiddityManager.create( 'audiotestsrc', 'audio', 'socketId', callback );
+                },
+
+                function( callback ) {
+                    switcherController.quiddityManager.setPropertyValue( 'audio', 'started', true, callback );
+                }
+            ], function( error ) {
+                if ( error ) {
+                    return done( error )
+                }
+
+                var val = switcherController.switcher.get_property_value('audio', 'started');
+
+                should.exist( val );
+                val.should.equal(true);
+
+                //TODO: Test here
+                done();
+
+            } );
         });
 
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
+        it('should create a fakesink and start it', function( ) {
+            var created = switcherController.switcher.create( 'fakesink' );
+            should.exist( created );
+            created.should.be.equal('fakesink0');
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
+            var val = switcherController.switcher.get_quiddity_description('fakesink0');
+
+            should.exist( val );
+
+            console.log( val );
         });
 
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
+        it('should create a sip quiddity', function() {
+            switcherController.quiddityManager.create('sip', 'sip', 'socketId', cb);
 
             cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
+            cb.should.have.been.calledWith( null );
         });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        it('should create a quiddity', function() {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
-        });
-
-        
-
 
     });
 });

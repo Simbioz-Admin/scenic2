@@ -85,7 +85,7 @@ define( [
         },
 
         _onStartedChanged: function( model, value ) {
-            if ( value == 'true' ) {
+            if ( value ) {
                 this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
             } else {
                 this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );

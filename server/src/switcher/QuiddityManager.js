@@ -222,7 +222,7 @@ QuiddityManager.prototype._parseMethod = function ( method ) {
 QuiddityManager.prototype._onAdded = function ( quiddityId ) {
     // Quiddity was created, get information on its type
     try {
-        var quiddityClass = JSON.parse( this.switcher.get_quiddity_description( quiddityId ) );
+        var quiddityClass = this.switcher.get_quiddity_description( quiddityId );
     } catch ( e ) {
         return log.error( 'Error while retrieving quiddity information', quiddityId, e );
     }
@@ -256,7 +256,7 @@ QuiddityManager.prototype._onAdded = function ( quiddityId ) {
 
         // Then subscribe to all of the quiddity's properties
         try {
-            var properties = JSON.parse( this.switcher.get_properties_description( quiddityId ) ).properties;
+            var properties = this.switcher.get_properties_description( quiddityId ).properties;
             _.each( properties, function ( property ) {
                 this._parseProperty( property );
                 log.debug( 'Subscribing to property ' + property.name + ' (' + property.id + ') of ' + quiddityId );
@@ -297,7 +297,7 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
  */
 QuiddityManager.prototype.removeVuMeters = function ( quiddityId ) {
     log.debug( 'Removing VU meters for ' + quiddityId );
-    //TODO: Maybe use var quidds = JSON.parse( this.switcher.get_quiddities_description() ).quiddities; and look for quidd.name.indexOf( 'vumeter_' ) && quidd.name.indexOf( quiddName )
+    //TODO: Maybe use var quidds = this.switcher.get_quiddities_description() ).quiddities; and look for quidd.name.indexOf( 'vumeter_' ) && quidd.name.indexOf( quiddName
     this.vuMeters = _.filter( this.vuMeters, function ( vuMeter ) {
         if ( vuMeter.quiddity == quiddityId ) {
             log.debug( 'Removing VU meter: ' + vuMeter.path );
@@ -332,7 +332,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     // We have to get the property info in order to parse its value correctly
     // This looks like it isn't necessary but we need the description to handle the value type
     try {
-        var propertyInfo = JSON.parse( this.switcher.get_property_description( quiddityId, property ) );
+        var propertyInfo = this.switcher.get_property_description( quiddityId, property );
     } catch ( e ) {
         return log.error( e );
     }
@@ -349,7 +349,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     this.io.emit( 'propertyChanged', quiddityId, property, value );
 
     // If stopping a quiddity, check for associated shmdata and remove them
-    if ( property == 'started' && value == 'false' ) {
+    if ( property == 'started' && !value ) {
         log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
         this.removeVuMeters( quiddityId );
         //
@@ -383,7 +383,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
             var path = value[0].replace( '.shmdata.writer.', '' );
             if ( !_.isEmpty( path ) ) {
                 try {
-                    var shmdataWriterInfo = JSON.parse( this.switcher.get_info( quiddityId, value[0] ) );
+                    var shmdataWriterInfo = this.switcher.get_info( quiddityId, value[0] );
                 } catch ( e ) {
                     log.error( e );
                 }
@@ -395,25 +395,27 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 
                     // VU Meters
                     log.debug( 'Creating VU meters for ' + quiddityId );
-                    var shmdataWriters     = JSON.parse( this.switcher.get_info( quiddityId, '.shmdata.writer' ) );
+                    /*var shmdataWriters     = this.switcher.get_info( quiddityId, '.shmdata.writer' );
                     if ( shmdataWriters ) {
                         _.each( shmdataWriters, function ( shmdata, name ) {
                             var path = 'vumeter_' + name;
                             //TODO: This could probably be better if we query fakesinks instead of keeping them internally
                             var vuMeterExists = _.findWhere( this.vuMeters, {path: path} );
                             if ( !vuMeterExists ) {
-                                log.debug( 'Creating VU meter for shmdata ' + name );
+                                log.debug( 'Creating VU meter for shmdata ' + name, path );
+                                console.log( this.switcher );
                                 var vuMeter = this.switcher.create( 'fakesink', path );
+                                console.log( vuMeter );
                                 if ( vuMeter ) {
                                     this.vuMeters.push( {quiddity: quiddityId, path: vuMeter} );
-                                    this.switcher.invoke( vuMeter, 'connect', [name] );
+                                    console.log(this.switcher.invoke( vuMeter, 'connect', [name] ));
                                 } else {
                                     log.warn( 'Could not create VU Meter for ' + name );
                                 }
                             }
                         }, this );
-                    }
-
+                    }*/
+console.log('done');
                     this.io.emit( 'addShmdata', quiddityId, shmdataWriterInfo );
                 }
             }
@@ -424,7 +426,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
             var path = value[0].replace( '.shmdata.reader.', '' );
             if ( !_.isEmpty( path ) ) {
                 try {
-                    var shmdataReaderInfo = JSON.parse( this.switcher.get_info( quiddityId, value[0] ) );
+                    var shmdataReaderInfo = this.switcher.get_info( quiddityId, value[0] );
                 } catch ( e ) {
                     log.error( e );
                 }
@@ -612,7 +614,7 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
 QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
     log.debug( 'Getting quiddity classes' );
     try {
-        var result = JSON.parse( this.switcher.get_classes_doc() );
+        var result = this.switcher.get_classes_doc();
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -637,7 +639,7 @@ QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
 QuiddityManager.prototype.getQuiddities = function ( cb ) {
     log.debug( 'Getting quiddities' );
     try {
-        var result = JSON.parse( this.switcher.get_quiddities_description() );
+        var result = this.switcher.get_quiddities_description();
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -665,7 +667,7 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
     log.debug( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
 
     try {
-        var result = JSON.parse( this.switcher.get_info( quiddityId, path ) );
+        var result = this.switcher.get_info( quiddityId, path );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -687,7 +689,7 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
 QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
     log.debug( 'Getting properties for quiddity: ' + quiddityId );
     try {
-        var result = JSON.parse( this.switcher.get_properties_description( quiddityId ) );
+        var result = this.switcher.get_properties_description( quiddityId );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -710,11 +712,13 @@ QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
  * @param cb
  */
 QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property, cb ) {
+    console.log('getting', quiddityId, property);
     try {
-        var result = JSON.parse( this.switcher.get_property_description( quiddityId, property ) );
+        var result = this.switcher.get_property_description( quiddityId, property );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
+    console.log( result );
     if ( !result || result.error || _.isEmpty( result ) || _.isArray( result ) ) {
         return logback( i18n.t( 'Could not get property description for __quiddityId__ property __property__', {
                 quiddityId: quiddityId,
@@ -770,7 +774,7 @@ QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, va
 QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
     log.debug( 'Getting methods for quiddity: ' + quiddityId );
     try {
-        var result = JSON.parse( this.switcher.get_methods_description( quiddityId ) );
+        var result = this.switcher.get_methods_description( quiddityId );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -796,7 +800,7 @@ QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
  */
 QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, cb ) {
     try {
-        var result = JSON.parse( this.switcher.get_method_description( quiddityId, method ) );
+        var result = this.switcher.get_method_description( quiddityId, method );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -832,7 +836,7 @@ QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, paramete
     //TODO: Returned strings might cause errors when parsed
 
     try {
-        var result = JSON.parse(this.switcher.invoke( quiddityId, method, parameters ));
+        var result = this.switcher.invoke( quiddityId, method, parameters );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }

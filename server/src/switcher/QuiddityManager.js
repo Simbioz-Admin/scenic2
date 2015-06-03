@@ -29,7 +29,14 @@ function QuiddityManager( config, switcher, io ) {
      * Private quiddities that should not be sent to the client
      * @type {string[]}
      */
-    this.privateQuiddities = ['dico', 'create_remove_spy'/*, 'rtpsession'*/, 'logger', 'runtime', 'systemusage', 'SOAPcontrolServer'];
+    this.privateQuiddities = [
+        'dico',
+        'create_remove_spy',
+        'logger',
+        'runtime',
+        'systemusage',
+        'SOAPcontrolServer'
+    ];
 
     /**
      * Allowed shmdata types

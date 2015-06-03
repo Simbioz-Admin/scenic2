@@ -26,7 +26,17 @@ define( [
                 type:        "transfer",
                 description: $.t( "Manage connexions with host destination" ),
                 source:      {
-                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+                    include: [
+                        "sip",
+                        "src",
+                        "source",
+                        "httpsdpdec",
+                        "pclmergesink",
+                        "pcltomeshsink",
+                        "pcldetectsink",
+                        "texturetomeshsink",
+                        "meshmergesink"
+                    ]
                 }
             }
         },

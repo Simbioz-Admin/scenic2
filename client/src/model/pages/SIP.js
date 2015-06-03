@@ -5,9 +5,8 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
-    'model/pages/base/Table',
-    'model/pages/sip/SIPDestinations'
-], function ( $, _, Backbone, socket, Table, SIPDestinations ) {
+    'model/pages/base/Table'
+], function ( $, _, Backbone, socket, Table ) {
 
     /**
      * SIP Table
@@ -25,7 +24,17 @@ define( [
                 type:        "transfer",
                 description: $.t( "Manage transfer of shmdatas to SIP contacts" ),
                 source:      {
-                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"]
+                    include: [
+                        "sip",
+                        "src",
+                        "source",
+                        "httpsdpdec",
+                        "pclmergesink",
+                        "pcltomeshsink",
+                        "pcldetectsink",
+                        "texturetomeshsink",
+                        "meshmergesink"
+                    ]
                 }
             }
         },
@@ -45,29 +54,35 @@ define( [
          * @returns {quiddities|*}
          */
         getDestinationCollection: function() {
-            if ( !this.destinations ) {
-                this.destinations = new SIPDestinations( null, {quiddity: app.quiddities.get( app.config.sip.quiddName )} );
-            }
-            return this.destinations;
+            return this.sip.get('contacts');
         },
 
         /**
          * Add a potential destination
+         * Flag the contact to be temporarily show in destinations
+         * Normally only contacts with connections appear as a destination
          *
          * @param contact
          */
         addDestination: function( contact ) {
-            this.destinations.add( contact, { merge: true } );
+            contact.set('showInDestinations', true);
+            // A little hack here to trigger marionette's rendering of the collectionview
+            contact.collection.trigger('reset');
         },
 
         /**
-         * Filter destination for RTP, as we use a special collection, they all pass the test
+         * Filter destination for SIP
+         * Shows both contacts with connections and contacts flagged to be shown temporarily
+         *
          * @inheritdoc
          */
         filterDestination: function( destination, useFilter ) {
-            return true;
+            return destination.has('connection') || destination.get('showInDestinations');
         },
 
+        /**
+         * Retrieve the connection between a source and destination
+         */
         getConnection: function( source, destination ) {
             return destination.get('connection') ? destination.get('connection')[source.get('path')] : null;
         },
@@ -94,10 +109,8 @@ define( [
          */
         connect: function( source, destination ) {
             var self = this;
-            //TODO: Hang up and call again
             socket.emit( 'attachShmdataToContact', source.id, destination.id, function( error ) {
                 if (error ) {
-                    console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );
@@ -108,10 +121,8 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            //TODO: Hang up and call again
             socket.emit( 'detachShmdataFromContact', source.id, destination.id, function( error ) {
                 if (error ) {
-                    console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );

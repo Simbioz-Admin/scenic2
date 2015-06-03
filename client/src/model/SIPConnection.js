@@ -29,8 +29,8 @@ define( [
                 server:     null,
                 user:       null,
                 port:       null,
-                self:       new Contact({self:true}),
-                contacts:   new Contacts( {sip: this} )
+                self:       new Contact( { self: true } ),
+                contacts:   new Contacts( { sip: this } )
             }
         },
 

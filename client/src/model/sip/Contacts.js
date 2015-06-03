@@ -16,6 +16,7 @@ define( [
      */
     var Contacts = ScenicCollection.extend( {
         model:      Contact,
+
         methodMap:  {
             'create': null,
             'update': null,

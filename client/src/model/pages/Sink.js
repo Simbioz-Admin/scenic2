@@ -24,7 +24,17 @@ define( [
                 type:        'sink',
                 description: $.t( "Manage audio/video devices and connections" ),
                 source:      {
-                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "texturetomeshsink", "pcldetectsink", "meshmergesink"]
+                    include: [
+                        "sip",
+                        "src",
+                        "source",
+                        "httpsdpdec",
+                        "pclmergesink",
+                        "pcltomeshsink",
+                        "texturetomeshsink",
+                        "pcldetectsink",
+                        "meshmergesink"
+                    ]
                 },
                 destination: {
                     include: ["sink"],

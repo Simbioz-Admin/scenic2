@@ -40,13 +40,13 @@ SipManager.prototype.bindClient = function ( socket ) {
     socket.on( 'sipLogin', this.login.bind( this ) );
     socket.on( 'sipLogout', this.logout.bind( this ) );
     socket.on( 'getContacts', this.getContacts.bind( this ) );
-    socket.on( 'addContact', this.addContact.bind( this ) );
-    socket.on( 'removeContact', this.removeContact.bind( this ) );
+    socket.on( 'addContact', this._onAddContact.bind( this ) );
+    socket.on( 'removeContact', this._onRemoveContact.bind( this ) );
+    socket.on( 'updateContact', this._onUpdateContact.bind( this ) );
     socket.on( 'attachShmdataToContact', this.attachShmdataToContact.bind( this ) );
     socket.on( 'detachShmdataFromContact', this.detachShmdataFromContact.bind( this ) );
     socket.on( 'callContact', this.callContact.bind( this ) );
     socket.on( 'hangUpContact', this.hangUpContact.bind( this ) );
-    socket.on( 'updateContact', this.updateContact.bind( this ) );
     //
     //
     //
@@ -72,45 +72,49 @@ SipManager.prototype._parseContact = function ( contact ) {
     return contact;
 };
 
-//  ██╗███╗   ██╗████████╗███████╗██████╗ ███╗   ██╗ █████╗ ██╗     ███████╗
-//  ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗████╗  ██║██╔══██╗██║     ██╔════╝
-//  ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝██╔██╗ ██║███████║██║     ███████╗
-//  ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██║╚██╗██║██╔══██║██║     ╚════██║
-//  ██║██║ ╚████║   ██║   ███████╗██║  ██║██║ ╚████║██║  ██║███████╗███████║
-//  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝
+//  ███╗   ███╗███████╗████████╗██╗  ██╗ ██████╗ ██████╗ ███████╗
+//  ████╗ ████║██╔════╝╚══██╔══╝██║  ██║██╔═══██╗██╔══██╗██╔════╝
+//  ██╔████╔██║█████╗     ██║   ███████║██║   ██║██║  ██║███████╗
+//  ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
+//  ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
+//  ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
 
 /**
  * Add User to SIP
  *
  * @param uri
- * @param user
- * @param cb
+ * @param name
  */
-SipManager.prototype._addContact = function ( uri, user, cb ) {
-    if ( uri == null || user == null ) {
-        return cb(i18n.t('Missing information to add contact'));
+SipManager.prototype.addContact = function ( uri, name ) {
+    if ( uri == null || name == null ) {
+        throw i18n.t('Missing information to add contact');
     }
 
-    log.info( 'Adding SIP contact', uri, user );
-
-    try {
-        var addedBuddy = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
-    } catch ( e ) {
-        return cb( e );
-    }
-    if ( !addedBuddy ) {
-        return cb( i18n.t( 'Error adding SIP user __user__', {user: uri} ) );
+    var contactAdded = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
+    if ( !contactAdded ) {
+        throw i18n.t( 'Could not add contact __contact__', {contact: uri} );
     }
 
-    try {
-        var setName = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [user, uri] );
-    } catch ( e ) {
-        return cb( e );
-    }
+    var setName = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [name, uri] );
     if ( !setName ) {
-        return cb( i18n.t( 'Error setting SIP user name to __user__ for __uri__', {user: user, uri: uri} ) );
+        throw i18n.t( 'Error setting contact name to __name__ for __contact__', {name: name, contact: uri} );
     }
-    cb();
+};
+
+/**
+ * Remove User from SIP
+ *
+ * @param uri
+ */
+SipManager.prototype.removeContact = function ( uri ) {
+    if ( uri == null ) {
+        throw i18n.t('Missing information to remove contact');
+    }
+
+    var contactRemoved = this.switcher.invoke( this.config.sip.quiddName, 'del_buddy', [uri] );
+    if ( !contactRemoved ) {
+        throw i18n.t( 'Could not remove contact __contact__', {contact: uri} );
+    }
 };
 
 /**
@@ -178,7 +182,7 @@ SipManager.prototype._saveContacts = function ( contacts, callback ) {
  * @param callback
  * @private
  */
-SipManager.prototype._updateContact = function ( uri, name, callback ) {
+SipManager.prototype._updateSavedContact = function ( uri, name, callback ) {
     log.info('Updating contact', uri, name );
 
     var self = this;
@@ -211,7 +215,7 @@ SipManager.prototype._updateContact = function ( uri, name, callback ) {
  * @param callback
  * @private
  */
-SipManager.prototype._removeContact = function ( uri, callback ) {
+SipManager.prototype._removeSavedContact = function ( uri, callback ) {
     log.info('Removing contact', uri);
 
     var self = this;
@@ -431,16 +435,13 @@ SipManager.prototype.login = function ( credentials, cb ) {
             if ( !registered ) {
                 return callback( i18n.t( 'SIP authentication failed' ) );
             }
-            callback();
-        },
 
-        // Add User
-        function ( callback ) {
-            self._addContact( credentials.user + '@' + credentials.server, credentials.user, callback );
-        },
+            try {
+                self.addContact( credentials.user + '@' + credentials.server, credentials.user );
+            } catch ( e ) {
+                callback( i18n.t('Error while adding self to contacts (__error__)', {error: e.toString()}) );
+            }
 
-        // Load Contacts
-        function ( callback ) {
             self._loadContacts( function ( error, contacts ) {
                 if ( error ) {
                     log.warn( error );
@@ -450,11 +451,11 @@ SipManager.prototype.login = function ( credentials, cb ) {
                 if ( contacts[credentials.user + '@' + credentials.server] ) {
                     _.each( contacts[credentials.user + '@' + credentials.server], function ( contactName, contactURI ) {
                         // addUser is synchronous, callback is only there to get error information
-                        self._addContact( contactURI, contactName, function ( error ) {
-                            if ( error ) {
-                                log.warn( error );
-                            }
-                        } );
+                        try {
+                            self.addContact( contactURI, contactName );
+                        } catch ( e ) {
+                            log.warn( e.toString() );
+                        }
                     } );
                 }
 
@@ -534,18 +535,17 @@ SipManager.prototype.getContacts = function ( cb ) {
  * @param uri
  * @param cb
  */
-SipManager.prototype.addContact = function ( uri, cb ) {
+SipManager.prototype._onAddContact = function ( uri, cb ) {
     log.info( 'Adding contact', uri );
 
-    var self = this;
-    this._addContact( uri, uri, function ( error ) {
-        if ( error ) {
-            return logback( error, cb );
-        }
+    try {
+        this.addContact( uri, uri );
+    } catch( e ) {
+        return logback( i18n.t('Error while adding contact (__error__)', {error: e.toString()}), cb);
+    }
 
-        // Update save file
-        self._updateContact( uri, uri, cb );
-    } );
+    // Update save file
+    this._updateSavedContact( uri, uri, cb );
 };
 
 /**
@@ -555,23 +555,46 @@ SipManager.prototype.addContact = function ( uri, cb ) {
  * @param cb
  * @returns {*}
  */
-SipManager.prototype.removeContact = function ( uri, cb ) {
+SipManager.prototype._onRemoveContact = function ( uri, cb ) {
     log.info( 'Removing contact', uri );
 
     try {
-        var contactRemoved = this.switcher.invoke( this.config.sip.quiddName, 'del_buddy', [uri] );
-    } catch ( e ) {
-        return logback( i18n.t( 'Error while removing contact __contact__ (__error__)', {
-            contact: uri,
-            error:   e.toString()
-        } ), cb )
-    }
-    if ( !contactRemoved ) {
-        return logback( i18n.t( 'Could not remove contact __contact__', {contact: uri} ), cb );
+        this.removeContact( uri );
+    } catch( e ) {
+        return logback( i18n.t('Error while removing contact (__error__)', {error: e.toString()}), cb );
     }
 
-    // Remove from save file
-    this._removeContact( uri, cb );
+    // Update save file
+    this._removeSavedContact( uri, cb );
+};
+
+/**
+ * Update contact
+ *
+ * @param uri
+ * @param info
+ * @param cb
+ * @returns {*}
+ */
+SipManager.prototype._onUpdateContact = function ( uri, info, cb ) {
+    log.info('Updating contact', uri, info );
+
+    var self = this;
+    if ( info.name ) {
+        log.debug( 'Updating name of the contact ' + uri + ' to ' + info.name );
+        try {
+            var nameUpdated = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [info.name, uri] );
+        } catch ( e ) {
+            return logback( i18n.t( 'Error while updating contact name (__error__)', {error: e.toString()} ), cb );
+        }
+        if ( !nameUpdated ) {
+            return logback( i18n.t( 'Could not update contact name' ), cb );
+        }
+
+        self._updateSavedContact( uri, info.name, cb );
+    } else {
+        cb();
+    }
 };
 
 /**
@@ -693,34 +716,6 @@ SipManager.prototype.hangUpContact = function ( uri, cb ) {
     cb();
 };
 
-/**
- * Update contact
- *
- * @param uri
- * @param info
- * @param cb
- * @returns {*}
- */
-SipManager.prototype.updateContact = function ( uri, info, cb ) {
-    log.info('Updating contact', uri, info );
-
-    var self = this;
-    if ( info.name ) {
-        log.debug( 'Updating name of the contact ' + uri + ' to ' + info.name );
-        try {
-            var nameUpdated = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [info.name, uri] );
-        } catch ( e ) {
-            return logback( i18n.t( 'Error while updating contact name (__error__)', {error: e.toString()} ), cb );
-        }
-        if ( !nameUpdated ) {
-            return logback( i18n.t( 'Could not update contact name' ), cb );
-        }
-
-        self._updateContact( uri, info.name, cb );
-    } else {
-        cb();
-    }
-};
 
 //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
 //  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝

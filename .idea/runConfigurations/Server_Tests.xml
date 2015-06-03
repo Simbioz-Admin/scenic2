@@ -3,7 +3,10 @@
     <node-options />
     <working-directory>$PROJECT_DIR$/server/src</working-directory>
     <pass-parent-env>true</pass-parent-env>
-    <envs />
+    <envs>
+      <env name="NODE_PATH" value="~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs" />
+      <env name="" value="" />
+    </envs>
     <ui>bdd</ui>
     <extra-mocha-options />
     <test-directory>$PROJECT_DIR$/server/test</test-directory>

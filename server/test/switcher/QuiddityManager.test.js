@@ -24,7 +24,7 @@ describe( 'Quiddity Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher                = new switcherStub.QuiddityManager();
+        switcher                = new switcherStub.Switcher();
         config                  = {};
         io                      = {};
         io.emit                 = sinon.spy();
@@ -69,11 +69,12 @@ describe( 'Quiddity Manager', function () {
             should.exist( quiddityManager.quidditySocketMap );
             quiddityManager.quidditySocketMap.should.be.an( 'object' );
 
-            should.exist( quiddityManager.vuMeters );
-            quiddityManager.vuMeters.should.be.an( 'array' );
-
             should.exist( quiddityManager.privateQuiddities );
             quiddityManager.privateQuiddities.should.be.an( 'array' );
+
+
+            should.exist( quiddityManager.shmdataTypes );
+            quiddityManager.shmdataTypes.should.be.an( 'array' );
         } );
 
         it( 'should bind to clients', function () {
@@ -150,8 +151,8 @@ describe( 'Quiddity Manager', function () {
 
             var quiddityClass = quiddityManager._parseQuiddity( quiddities.class() );
 
-            switcher.get_quiddity_description.returns( JSON.stringify( quiddities.class() ) );
-            switcher.get_properties_description.returns( JSON.stringify( quiddities.properties() ) );
+            switcher.get_quiddity_description.returns( quiddities.class() );
+            switcher.get_properties_description.returns( quiddities.properties() );
 
             quiddityManager._onAdded( id );
 
@@ -180,7 +181,7 @@ describe( 'Quiddity Manager', function () {
 
         it( 'should stop when registering added private quiddity', function () {
             var id = 'someId';
-            switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity_private() ) );
+            switcher.get_quiddity_description.returns( quiddities.quiddity_private() );
 
             quiddityManager._onAdded( id );
 
@@ -210,7 +211,7 @@ describe( 'Quiddity Manager', function () {
 
         it( 'should stop when registering added quiddity returns error', function () {
             var error = 'some error';
-            switcher.get_quiddity_description.returns( JSON.stringify( {error: error} ) );
+            switcher.get_quiddity_description.returns( {error: error} );
 
             quiddityManager._onAdded( 0 );
 
@@ -241,12 +242,7 @@ describe( 'Quiddity Manager', function () {
         it( 'should cleanup when quiddity is removed', function () {
             var id = 'someId';
 
-            var removeVuMeters = sinon.stub( quiddityManager, 'removeVuMeters' );
-
             quiddityManager._onRemoved( id );
-
-            removeVuMeters.should.have.been.calledOnce;
-            removeVuMeters.should.have.been.calledWith( id );
 
             io.emit.should.have.been.calledOnce;
             io.emit.should.have.been.calledWith( 'remove', id );
@@ -261,7 +257,7 @@ describe( 'Quiddity Manager', function () {
             var property = 'prop';
             var value    = 'val';
 
-            switcher.get_property_description.returns( JSON.stringify( quiddities.property_double() ) );
+            switcher.get_property_description.returns( quiddities.property_double() );
 
             quiddityManager.onSwitcherProperty( quiddity, property, value );
 
@@ -294,7 +290,7 @@ describe( 'Quiddity Manager', function () {
             var value    = 'val';
             var error    = 'some error';
 
-            switcher.get_property_description.returns( JSON.stringify( {error: error} ) );
+            switcher.get_property_description.returns( {error: error} );
 
             quiddityManager.onSwitcherProperty( quiddity, property, value );
 
@@ -340,12 +336,9 @@ describe( 'Quiddity Manager', function () {
     describe( 'Signals Events', function () {
 
         it( 'should notify clients and cleanup when quiddity is removed', function () {
-            var quiddityRemoveVUMetersStub = sinon.stub( quiddityManager, 'removeVuMeters' );
             quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
             io.emit.should.have.been.calledOnce;
             io.emit.should.have.been.calledWith( 'remove', 'anything' );
-            quiddityRemoveVUMetersStub.calledOnce;
-            quiddityRemoveVUMetersStub.calledWith( 'anything' );
         } );
 
         it( 'should internally add quiddity on quiddity created', function () {
@@ -442,11 +435,11 @@ describe( 'Quiddity Manager', function () {
             var shm    = 'something';
             var val    = '.shmdata.' + type + '.' + shm;
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_writer() ) );
+            switcher.get_info.returns( quiddities.shmdata_writer() );
 
             quiddityManager.onSwitcherSignal( id, signal, [val] );
 
-            switcher.get_info.should.have.been.calledTwice;
+            switcher.get_info.should.have.been.calledOnce;
             switcher.get_info.should.have.been.calledWith( id, val );
             //Skipped second call, relevant to deprecated vu meters
 
@@ -496,7 +489,7 @@ describe( 'Quiddity Manager', function () {
             var val    = '.shmdata.' + type + '.' + shm;
             var error  = 'some error';
 
-            switcher.get_info.returns( JSON.stringify( {error: error} ) );
+            switcher.get_info.returns( {error: error} );
 
             quiddityManager.onSwitcherSignal( id, signal, [val] );
 
@@ -526,7 +519,7 @@ describe( 'Quiddity Manager', function () {
             var shm    = 'something';
             var val    = '.shmdata.' + type + '.' + shm;
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_reader() ) );
+            switcher.get_info.returns( quiddities.shmdata_reader() );
 
             quiddityManager.onSwitcherSignal( id, signal, [val] );
 
@@ -579,7 +572,7 @@ describe( 'Quiddity Manager', function () {
             var val    = '.shmdata.' + type + '.' + shm;
             var error  = 'some error';
 
-            switcher.get_info.returns( JSON.stringify( {error: error} ) );
+            switcher.get_info.returns( {error: error} );
 
             quiddityManager.onSwitcherSignal( id, signal, [val] );
 
@@ -676,7 +669,7 @@ describe( 'Quiddity Manager', function () {
                 var public_classes = _.clone( quiddities.classes_doc_public() ).classes;
                 _.each( public_classes, quiddityManager._parseClass, quiddityManager );
 
-                switcher.get_classes_doc.returns( JSON.stringify( quiddities.classes_doc() ) );
+                switcher.get_classes_doc.returns( quiddities.classes_doc() );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -687,7 +680,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty classes', function () {
 
-                switcher.get_classes_doc.returns( JSON.stringify( {classes: []} ) );
+                switcher.get_classes_doc.returns( {classes: []}  );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -711,7 +704,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns error', function () {
                 var error = 'some error';
 
-                switcher.get_classes_doc.returns( JSON.stringify( {error: error} ) );
+                switcher.get_classes_doc.returns( {error: error} );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -733,7 +726,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null classes', function () {
 
-                switcher.get_classes_doc.returns( JSON.stringify( {classes: null} ) );
+                switcher.get_classes_doc.returns( {classes: null} );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -744,7 +737,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage classes 1', function () {
 
-                switcher.get_classes_doc.returns( JSON.stringify( {classes: 'not an array'} ) );
+                switcher.get_classes_doc.returns(  {classes: 'not an array'} );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -755,7 +748,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage classes 2', function () {
 
-                switcher.get_classes_doc.returns( JSON.stringify( {classes: {not: 'an array'}} ) );
+                switcher.get_classes_doc.returns(  {classes: {not: 'an array'}} );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -766,7 +759,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns without classes', function () {
 
-                switcher.get_classes_doc.returns( JSON.stringify( {} ) );
+                switcher.get_classes_doc.returns(  {} );
 
                 quiddityManager.getQuiddityClasses( cb );
 
@@ -785,7 +778,7 @@ describe( 'Quiddity Manager', function () {
                 var public_quiddities = _.clone( quiddities.quiddities_public() ).quiddities;
                 _.each( public_quiddities, quiddityManager._parseQuiddity, quiddityManager );
 
-                switcher.get_quiddities_description.returns( JSON.stringify( quiddities.quiddities() ) );
+                switcher.get_quiddities_description.returns(  quiddities.quiddities() );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -796,7 +789,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty quiddities', function () {
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: []} ) );
+                switcher.get_quiddities_description.returns(  {quiddities: []} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -820,7 +813,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns error', function () {
                 var error = 'some error';
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_quiddities_description.returns(  {error: error} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -842,7 +835,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns null classes', function () {
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: null} ) );
+                switcher.get_quiddities_description.returns(  {quiddities: null} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -853,7 +846,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage quiddities 1', function () {
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: 'not an array'} ) );
+                switcher.get_quiddities_description.returns(  {quiddities: 'not an array'} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -864,7 +857,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns garbage quiddities 2', function () {
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {quiddities: {not: 'an array'}} ) );
+                switcher.get_quiddities_description.returns(  {quiddities: {not: 'an array'}} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -875,7 +868,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return error when switcher returns without quiddities', function () {
 
-                switcher.get_quiddities_description.returns( JSON.stringify( {} ) );
+                switcher.get_quiddities_description.returns(  {} );
 
                 quiddityManager.getQuiddities( cb );
 
@@ -892,7 +885,7 @@ describe( 'Quiddity Manager', function () {
                 var id   = 'someId';
                 var path = '.some.path';
 
-                switcher.get_info.returns( JSON.stringify( quiddities.tree() ) );
+                switcher.get_info.returns(  quiddities.tree() );
 
                 quiddityManager.getTreeInfo( id, path, cb );
 
@@ -906,7 +899,7 @@ describe( 'Quiddity Manager', function () {
                 var id   = 'someId';
                 var path = '.some.path';
 
-                switcher.get_info.returns( JSON.stringify( {} ) );
+                switcher.get_info.returns(  {} );
 
                 quiddityManager.getTreeInfo( id, path, cb );
 
@@ -936,7 +929,7 @@ describe( 'Quiddity Manager', function () {
                 var path  = '.some.path';
                 var error = 'some error';
 
-                switcher.get_info.returns( JSON.stringify( {error: error} ) );
+                switcher.get_info.returns(  {error: error} );
 
                 quiddityManager.getTreeInfo( id, path, cb );
 
@@ -960,7 +953,7 @@ describe( 'Quiddity Manager', function () {
                 cb.should.have.been.calledWithExactly( null, null ); // Assume any string
             } );
 
-            it( 'should return null when switcher returns json null', function () {
+            it( 'should return error when switcher des not return an object', function () {
                 var id   = 'someId';
                 var path = '.some.path';
 
@@ -971,7 +964,7 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, null ); // Assume any string
+                cb.should.have.been.calledWithMatch( '' ); // Assume any string
             } );
 
             it( 'should return error when switcher returns garbage', function () {
@@ -999,7 +992,7 @@ describe( 'Quiddity Manager', function () {
                 var properties = _.clone( quiddities.properties() ).properties;
                 _.each( properties, quiddityManager._parseProperty, quiddityManager );
 
-                switcher.get_properties_description.returns( JSON.stringify( quiddities.properties() ) );
+                switcher.get_properties_description.returns(  quiddities.properties() );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1012,7 +1005,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should follow protocol with empty properties', function () {
                 var id = 'someId';
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties: []} ) );
+                switcher.get_properties_description.returns(  {properties: []} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1040,7 +1033,7 @@ describe( 'Quiddity Manager', function () {
                 var id    = 'someId';
                 var error = 'some error';
 
-                switcher.get_properties_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_properties_description.returns(  {error: error} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1066,7 +1059,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns null properties', function () {
                 var id = 'someId';
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties: null} ) );
+                switcher.get_properties_description.returns(  {properties: null} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1079,7 +1072,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns garbage properties 1', function () {
                 var id = 'someId';
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties: 'not an array'} ) );
+                switcher.get_properties_description.returns(  {properties: 'not an array'} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1092,7 +1085,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns garbage properties 2', function () {
                 var id = 'someId';
 
-                switcher.get_properties_description.returns( JSON.stringify( {properties: {not: 'an array'}} ) );
+                switcher.get_properties_description.returns(  {properties: {not: 'an array'}} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1105,7 +1098,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns without properties', function () {
                 var id = 'someId';
 
-                switcher.get_properties_description.returns( JSON.stringify( {} ) );
+                switcher.get_properties_description.returns(  {} );
 
                 quiddityManager.getProperties( id, cb );
 
@@ -1123,7 +1116,7 @@ describe( 'Quiddity Manager', function () {
                 var id       = 'someId';
                 var property = 'prop';
 
-                switcher.get_property_description.returns( JSON.stringify( quiddities.property_double() ) );
+                switcher.get_property_description.returns(  quiddities.property_double() );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1137,7 +1130,7 @@ describe( 'Quiddity Manager', function () {
                 var id       = 'someId';
                 var property = 'prop';
 
-                switcher.get_property_description.returns( JSON.stringify( {} ) );
+                switcher.get_property_description.returns(  {} );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1167,7 +1160,7 @@ describe( 'Quiddity Manager', function () {
                 var id       = 'someId';
                 var property = 'prop';
 
-                switcher.get_property_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_property_description.returns(  {error: error} );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1209,7 +1202,7 @@ describe( 'Quiddity Manager', function () {
                 var id       = 'someId';
                 var property = 'prop';
 
-                switcher.get_property_description.returns( JSON.stringify( [{not: 'a property'}] ) );
+                switcher.get_property_description.returns(  [{not: 'a property'}] );
 
                 quiddityManager.getPropertyDescription( id, property, cb );
 
@@ -1317,7 +1310,7 @@ describe( 'Quiddity Manager', function () {
                 var methods = _.clone( quiddities.methods() ).methods;
                 _.each( methods, quiddityManager._parseMethod, quiddityManager );
 
-                switcher.get_methods_description.returns( JSON.stringify( quiddities.methods() ) );
+                switcher.get_methods_description.returns(  quiddities.methods() );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1330,7 +1323,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should follow protocol with empty methods', function () {
                 var id = 'someId';
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods: []} ) );
+                switcher.get_methods_description.returns(  {methods: []} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1358,7 +1351,7 @@ describe( 'Quiddity Manager', function () {
                 var id    = 'someId';
                 var error = 'some error';
 
-                switcher.get_methods_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_methods_description.returns(  {error: error} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1384,7 +1377,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns null methods', function () {
                 var id = 'someId';
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods: null} ) );
+                switcher.get_methods_description.returns(  {methods: null} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1397,7 +1390,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns garbage methods 1', function () {
                 var id = 'someId';
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods: 'not an array'} ) );
+                switcher.get_methods_description.returns(  {methods: 'not an array'} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1410,7 +1403,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns garbage methods 2', function () {
                 var id = 'someId';
 
-                switcher.get_methods_description.returns( JSON.stringify( {methods: {not: 'an array'}} ) );
+                switcher.get_methods_description.returns(  {methods: {not: 'an array'}} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1423,7 +1416,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return error when switcher returns without methods', function () {
                 var id = 'someId';
 
-                switcher.get_methods_description.returns( JSON.stringify( {} ) );
+                switcher.get_methods_description.returns(  {} );
 
                 quiddityManager.getMethods( id, cb );
 
@@ -1441,7 +1434,7 @@ describe( 'Quiddity Manager', function () {
                 var id     = 'someId';
                 var method = 'prop';
 
-                switcher.get_method_description.returns( JSON.stringify( quiddities.method() ) );
+                switcher.get_method_description.returns(  quiddities.method() );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1455,7 +1448,7 @@ describe( 'Quiddity Manager', function () {
                 var id     = 'someId';
                 var method = 'prop';
 
-                switcher.get_method_description.returns( JSON.stringify( {} ) );
+                switcher.get_method_description.returns(  {} );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1485,7 +1478,7 @@ describe( 'Quiddity Manager', function () {
                 var id     = 'someId';
                 var method = 'prop';
 
-                switcher.get_method_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_method_description.returns(  {error: error} );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1527,7 +1520,7 @@ describe( 'Quiddity Manager', function () {
                 var id     = 'someId';
                 var method = 'prop';
 
-                switcher.get_method_description.returns( JSON.stringify( [{not: 'a method'}] ) );
+                switcher.get_method_description.returns(  [{not: 'a method'}] );
 
                 quiddityManager.getMethodDescription( id, method, cb );
 
@@ -1546,7 +1539,7 @@ describe( 'Quiddity Manager', function () {
                 var method = 'prop';
                 var args   = ['arg1', 'arg2'];
 
-                switcher.invoke.returns( 'true' );
+                switcher.invoke.returns( true );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1561,7 +1554,7 @@ describe( 'Quiddity Manager', function () {
                 var method = 'prop';
                 var args   = ['arg1', 'arg2'];
 
-                switcher.invoke.returns( 'true' );
+                switcher.invoke.returns( true );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1575,7 +1568,7 @@ describe( 'Quiddity Manager', function () {
                 var method = null;
                 var args   = ['arg1', 'arg2'];
 
-                switcher.invoke.returns( 'true' );
+                switcher.invoke.returns( true );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1589,7 +1582,7 @@ describe( 'Quiddity Manager', function () {
                 var method = 'prop';
                 var args   = null;
 
-                switcher.invoke.returns( 'true' );
+                switcher.invoke.returns( true );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1603,7 +1596,7 @@ describe( 'Quiddity Manager', function () {
                 var method = 'prop';
                 var args   = {not: 'an array'};
 
-                switcher.invoke.returns( 'true' );
+                switcher.invoke.returns( true );
 
                 quiddityManager.invokeMethod( id, method, args, cb );
 
@@ -1643,21 +1636,6 @@ describe( 'Quiddity Manager', function () {
                 cb.should.have.been.calledWithMatch( '' );
             } );
 
-            it( 'should return error when switcher returns null as string', function () {
-                var id     = 'someId';
-                var method = 'prop';
-                var args   = ['arg1', 'arg2'];
-
-                switcher.invoke.returns( 'null' );
-
-                quiddityManager.invokeMethod( id, method, args, cb );
-
-                switcher.invoke.should.have.been.calledOnce;
-                switcher.invoke.should.have.been.calledWith( id, method, args );
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' );
-            } );
-
             //TODO: Cover other cases when return values are better defined
 
         } );
@@ -1670,7 +1648,7 @@ describe( 'Quiddity Manager', function () {
                 var socketId = 'some socket id';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
+                switcher.get_quiddity_description.returns(  quiddities.quiddity() );
 
                 quiddityManager.create( type, name, socketId, cb );
 
@@ -1690,7 +1668,7 @@ describe( 'Quiddity Manager', function () {
                 var socketId = 'some socket id';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
+                switcher.get_quiddity_description.returns(  quiddities.quiddity() );
 
                 quiddityManager.create( type, null, socketId, cb );
 
@@ -1710,7 +1688,7 @@ describe( 'Quiddity Manager', function () {
                 var socketId = 'some socket id';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns( JSON.stringify( quiddities.quiddity() ) );
+                switcher.get_quiddity_description.returns(  quiddities.quiddity() );
 
                 quiddityManager.create( type, '', socketId, cb );
 
@@ -1790,7 +1768,7 @@ describe( 'Quiddity Manager', function () {
                 var error    = 'some error';
 
                 switcher.create.returns( name );
-                switcher.get_quiddity_description.returns( JSON.stringify( {error: error} ) );
+                switcher.get_quiddity_description.returns(  {error: error} );
 
                 quiddityManager.create( type, name, socketId, cb );
 

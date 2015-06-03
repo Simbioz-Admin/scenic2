@@ -24,7 +24,7 @@ describe( 'Sip Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = new switcherStub.QuiddityManager();
+        switcher           = new switcherStub.Switcher();
         config             = {
             sip: {
                 quiddName: 'sip-quiddity-name'
@@ -110,7 +110,7 @@ describe( 'Sip Manager', function () {
             var signal = 'on-tree-grafted';
             var value = ['.buddy.0.something'];
 
-            switcher.get_info.returns(JSON.stringify(quiddities.contact()));
+            switcher.get_info.returns(quiddities.contact());
 
             sipManager.onSwitcherSignal( id, signal, value );
 
@@ -126,7 +126,7 @@ describe( 'Sip Manager', function () {
             var signal = 'on-tree-pruned';
             var value = ['.buddy.0.something'];
 
-            switcher.get_info.returns(JSON.stringify(quiddities.contact()));
+            switcher.get_info.returns(quiddities.contact());
 
             sipManager.onSwitcherSignal( id, signal, value );
 
@@ -181,7 +181,7 @@ describe( 'Sip Manager', function () {
             var value = ['.buddy.0.something'];
             var error = 'some error';
 
-            switcher.get_info.returns(JSON.stringify({error:error}));
+            switcher.get_info.returns({error:error});
 
             sipManager.onSwitcherSignal( id, signal, value );
 

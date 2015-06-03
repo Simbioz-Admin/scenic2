@@ -26,18 +26,17 @@ function QuiddityManager( config, switcher, io ) {
     this.quidditySocketMap = {};
 
     /**
-     * VU Meter List
-     * This is how we keep track of created vu meters
-     * @type {Array}
-     */
-    this.vuMeters = [];
-
-    /**
      * Private quiddities that should not be sent to the client
      * @type {string[]}
      */
     this.privateQuiddities = ['dico', 'create_remove_spy'/*, 'rtpsession'*/, 'logger', 'runtime', 'systemusage', 'SOAPcontrolServer'];
 
+    /**
+     * Allowed shmdata types
+     *
+     * @type {string[]}
+     */
+    this.shmdataTypes = ['reader','writer'];
 }
 
 /**
@@ -281,32 +280,11 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
     log.debug( 'Quiddity ' + quiddityId + ' removed' );
 
     // Remove related stuff
-    this.removeVuMeters( quiddityId );
     //TODO: Remove connections?
     //TODO: Remove control destinations?
 
     // Broadcast to clients
     this.io.emit( 'remove', quiddityId );
-};
-
-/**
- * Remove quiddity's VU meters
- *
- * @deprecated
- * @param quiddityId
- */
-QuiddityManager.prototype.removeVuMeters = function ( quiddityId ) {
-    log.debug( 'Removing VU meters for ' + quiddityId );
-    //TODO: Maybe use var quidds = this.switcher.get_quiddities_description() ).quiddities; and look for quidd.name.indexOf( 'vumeter_' ) && quidd.name.indexOf( quiddName
-    this.vuMeters = _.filter( this.vuMeters, function ( vuMeter ) {
-        if ( vuMeter.quiddity == quiddityId ) {
-            log.debug( 'Removing VU meter: ' + vuMeter.path );
-            this.switcher.remove( vuMeter.path );
-            return false;
-        } else {
-            return true;
-        }
-    }, this );
 };
 
 //  ███████╗██╗   ██╗██████╗ ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
@@ -336,7 +314,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     } catch ( e ) {
         return log.error( e );
     }
-    if ( !propertyInfo || propertyInfo.error ) {
+    if ( !propertyInfo || !_.isObject(propertyInfo) || propertyInfo.error ) {
         return log.error( 'Could not get property description for', quiddityId, property, value, propertyInfo ? propertyInfo.error : '' );
     }
 
@@ -351,7 +329,6 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     // If stopping a quiddity, check for associated shmdata and remove them
     if ( property == 'started' && !value ) {
         log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
-        this.removeVuMeters( quiddityId );
         //
         //TODO: Remove connections
         //
@@ -367,8 +344,11 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
  */
 QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
+    var parts = value[0].split('.');
+    parts.shift();
+
     // We exclude byte-rate from debug because it dispatches every second
-    if ( quiddityId != 'systemusage' ) {
+    if ( quiddityId != this.config.systemUsage.quiddName && parts[0] != 'shmdata' ) {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
     }
 
@@ -376,66 +356,24 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   │ ├┬┘├┤ ├┤   │ ┬├┬┘├─┤├┤  │ ├┤  ││
     //   ┴ ┴└─└─┘└─┘  └─┘┴└─┴ ┴└   ┴ └─┘─┴┘
 
-    if ( quiddityId != 'systemusage' && signal == 'on-tree-grafted' ) {
+    if ( quiddityId !=  this.config.systemUsage.quiddName && signal == 'on-tree-grafted' ) {
 
         // Shmdata Writer
-        if ( value[0].indexOf( '.shmdata.writer' ) >= 0 ) {
-            var path = value[0].replace( '.shmdata.writer.', '' );
-            if ( !_.isEmpty( path ) ) {
+        if ( parts[0] == 'shmdata' && parts.length >= 3 ) {
+            var graftedShmdataType = parts[1];
+            var graftedShmdataPath = parts[2];
+            if ( !_.isEmpty( graftedShmdataPath ) && _.contains(this.shmdataTypes, graftedShmdataType) ) {
                 try {
-                    var shmdataWriterInfo = this.switcher.get_info( quiddityId, value[0] );
+                    var shmdataInfo = this.switcher.get_info( quiddityId, value[0] );
                 } catch ( e ) {
                     log.error( e );
                 }
-                if ( !shmdataWriterInfo || shmdataWriterInfo.error ) {
-                    log.error( shmdataWriterInfo ? shmdataWriterInfo.error : 'Could not get shmdata writer info' );
+                if ( !shmdataInfo || !_.isObject(shmdataInfo) || shmdataInfo.error ) {
+                    log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
                 } else {
-                    shmdataWriterInfo.path = path;
-                    shmdataWriterInfo.type = 'writer';
-
-                    // VU Meters
-                    log.debug( 'Creating VU meters for ' + quiddityId );
-                    /*var shmdataWriters     = this.switcher.get_info( quiddityId, '.shmdata.writer' );
-                    if ( shmdataWriters ) {
-                        _.each( shmdataWriters, function ( shmdata, name ) {
-                            var path = 'vumeter_' + name;
-                            //TODO: This could probably be better if we query fakesinks instead of keeping them internally
-                            var vuMeterExists = _.findWhere( this.vuMeters, {path: path} );
-                            if ( !vuMeterExists ) {
-                                log.debug( 'Creating VU meter for shmdata ' + name, path );
-                                console.log( this.switcher );
-                                var vuMeter = this.switcher.create( 'fakesink', path );
-                                console.log( vuMeter );
-                                if ( vuMeter ) {
-                                    this.vuMeters.push( {quiddity: quiddityId, path: vuMeter} );
-                                    console.log(this.switcher.invoke( vuMeter, 'connect', [name] ));
-                                } else {
-                                    log.warn( 'Could not create VU Meter for ' + name );
-                                }
-                            }
-                        }, this );
-                    }*/
-console.log('done');
-                    this.io.emit( 'addShmdata', quiddityId, shmdataWriterInfo );
-                }
-            }
-        }
-
-        // Shmdata Reader
-        if ( value[0].indexOf( '.shmdata.reader' ) >= 0 ) {
-            var path = value[0].replace( '.shmdata.reader.', '' );
-            if ( !_.isEmpty( path ) ) {
-                try {
-                    var shmdataReaderInfo = this.switcher.get_info( quiddityId, value[0] );
-                } catch ( e ) {
-                    log.error( e );
-                }
-                if ( !shmdataReaderInfo || shmdataReaderInfo.error ) {
-                    log.error( shmdataReaderInfo ? shmdataReaderInfo.error : 'Could not get shmdata reader info' );
-                } else {
-                    shmdataReaderInfo.path = path;
-                    shmdataReaderInfo.type = 'reader';
-                    this.io.emit( 'addShmdata', quiddityId, shmdataReaderInfo );
+                    shmdataInfo.path = graftedShmdataPath;
+                    shmdataInfo.type = graftedShmdataType;
+                    this.io.emit( 'addShmdata', quiddityId, shmdataInfo );
                 }
             }
         }
@@ -445,28 +383,16 @@ console.log('done');
     //   │ ├┬┘├┤ ├┤   ├─┘├┬┘│ ││││├┤  ││
     //   ┴ ┴└─└─┘└─┘  ┴  ┴└─└─┘┘└┘└─┘─┴┘
 
-    if ( quiddityId != 'systemusage' && signal == 'on-tree-pruned' ) {
+    if ( quiddityId !=  this.config.systemUsage.quiddName && signal == 'on-tree-pruned' ) {
 
         // Shmdata Writer
-        if ( value[0].indexOf( '.shmdata.writer' ) >= 0 ) {
-            var path = value[0].replace( '.shmdata.writer.', '' );
-            if ( !_.isEmpty( path ) ) {
-                // VU Meters
-                this.removeVuMeters( quiddityId );
+        if ( parts[0] == 'shmdata' && parts.length >= 3 ) {
+            var prunedShmdataType = parts[1];
+            var prunedShmdataPath = parts[2];
+            if ( !_.isEmpty( prunedShmdataPath ) && _.contains(this.shmdataTypes, prunedShmdataType) ) {
                 this.io.emit( 'removeShmdata', quiddityId, {
-                    path: path,
-                    type: 'writer'
-                } );
-            }
-        }
-
-        // Shmdata Reader
-        if ( value[0].indexOf( '.shmdata.reader' ) >= 0 ) {
-            var path = value[0].replace( '.shmdata.reader.', '' );
-            if ( !_.isEmpty( path ) ) {
-                this.io.emit( 'removeShmdata', quiddityId, {
-                    path: path,
-                    type: 'reader'
+                    type: prunedShmdataType,
+                    path: prunedShmdataPath
                 } );
             }
         }
@@ -528,7 +454,7 @@ console.log('done');
     //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
     //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
 
-    if ( quiddityId == 'systemusage' && signal == 'on-tree-grafted' ) {
+    if ( quiddityId ==  this.config.systemUsage.quiddName && signal == 'on-tree-grafted' ) {
         var info = this.switcher.get_info( quiddityId, value[0] );
         this.io.emit( 'systemusage', info );
     }
@@ -575,7 +501,7 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId,
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
-    if ( !quiddInfo || quiddInfo.error ) {
+    if ( !quiddInfo || quiddInfo.error || !_.isObject( quiddInfo ) ) {
         return logback( i18n.t( 'Failed to get information for quiddity __quiddityId__', {quiddityId: quiddityId} ) + ( quiddInfo && quiddInfo ? ' ' + quiddInfo.error : '' ), cb );
     }
 
@@ -672,7 +598,7 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
         return logback( e.toString(), cb );
     }
 
-    if ( result && result.error ) {
+    if ( result && ( !_.isObject(result) || result.error )  ) {
         return logback( i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 
@@ -718,8 +644,7 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
-    console.log( result );
-    if ( !result || result.error || _.isEmpty( result ) || _.isArray( result ) ) {
+    if ( !result || result.error || _.isEmpty( result ) || !_.isObject( result ) || _.isArray( result ) ) {
         return logback( i18n.t( 'Could not get property description for __quiddityId__ property __property__', {
                 quiddityId: quiddityId,
                 property:   property
@@ -804,7 +729,7 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
-    if ( !result || result.error || _.isEmpty( result ) || _.isArray( result ) ) {
+    if ( !result || result.error || _.isEmpty( result ) || !_.isObject(result) || _.isArray( result ) ) {
         return logback( i18n.t( 'Could not get method description for __quiddityId__ method __method__', {
                 quiddityId: quiddityId,
                 method:     method

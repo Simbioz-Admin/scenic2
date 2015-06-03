@@ -24,7 +24,7 @@ describe( 'RTP Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = new switcherStub.QuiddityManager();
+        switcher           = new switcherStub.Switcher();
         config             = {
             nameComputer: 'computer-name',
             rtp:          {
@@ -41,6 +41,7 @@ describe( 'RTP Manager', function () {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
             '../utils/logback': function ( e, c ) {
+                //if ( e ) { console.error(e);}
                 c( e );
             }
         } );
@@ -97,7 +98,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -124,7 +125,7 @@ describe( 'RTP Manager', function () {
             var host_parsed = 'some.host';
             var port        = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns( quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -150,7 +151,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = '9090';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(JSON.stringify( quiddities.destinations_json() ));
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -176,7 +177,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = null;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ));
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -199,7 +200,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = '';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -222,7 +223,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( {} ) );
+            switcher.get_property_value.returns(  {});
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -248,7 +249,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( {destinations: []} ) );
+            switcher.get_property_value.returns(  {destinations: []});
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -274,7 +275,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( {destinations: null} ) );
+            switcher.get_property_value.returns(  {destinations: null});
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -300,7 +301,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( {destinations: {not: 'an array'}} ) );
+            switcher.get_property_value.returns(  {destinations: {not: 'an array'}});
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
 
@@ -422,7 +423,7 @@ describe( 'RTP Manager', function () {
             var port  = 9090;
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( {error: error} ) );
+            switcher.get_property_value.returns(  {error: error} );
 
             rtpManager.createRTPDestination( name, host, port, cb );
 
@@ -441,7 +442,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns( quiddities.destinations_json() );
 
             rtpManager.createRTPDestination( name, host, port, cb );
 
@@ -461,7 +462,7 @@ describe( 'RTP Manager', function () {
             var port  = 9090;
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.onFirstCall().throws( error );
 
             rtpManager.createRTPDestination( name, host, port, cb );
@@ -482,7 +483,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.onFirstCall().returns( null );
 
             rtpManager.createRTPDestination( name, host, port, cb );
@@ -504,7 +505,7 @@ describe( 'RTP Manager', function () {
             var port  = 9090;
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.throws( error );
 
@@ -528,7 +529,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( null );
 
@@ -553,7 +554,7 @@ describe( 'RTP Manager', function () {
             var port  = 9090;
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
             switcher.invoke.onSecondCall().throws( error );
@@ -579,7 +580,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ));
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
             switcher.invoke.onSecondCall().returns( null );
@@ -606,7 +607,7 @@ describe( 'RTP Manager', function () {
             var port  = 9090;
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
             switcher.invoke.onThirdCall().throws( error );
@@ -633,7 +634,7 @@ describe( 'RTP Manager', function () {
             var host = 'some.host';
             var port = 9090;
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json());
             switcher.invoke.returns( [true] );
             switcher.create.returns( [config.soap.controlClientPrefix + name] );
             switcher.invoke.onThirdCall().returns( null );
@@ -799,7 +800,7 @@ describe( 'RTP Manager', function () {
             var id      = 'some id';
             var port    = 9090;
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.returns( [true] );
             switcher.has_quiddity.returns( true );
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
@@ -828,7 +829,7 @@ describe( 'RTP Manager', function () {
             var id      = 'some id';
             var port    = 9090;
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns( quiddities.shmdata_readers() );
             switcher.invoke.returns( [true] );
             switcher.has_quiddity.returns( true );
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
@@ -856,7 +857,7 @@ describe( 'RTP Manager', function () {
             var id      = 'some id';
             var port    = 9090;
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns( quiddities.shmdata_readers() );
             switcher.invoke.returns( [true] );
             switcher.has_quiddity.returns( false );
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
@@ -1027,7 +1028,7 @@ describe( 'RTP Manager', function () {
             var error   = 'some error';
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.throws( error );
 
             rtpManager.connectRTPDestination( path, id, port, cb );
@@ -1052,7 +1053,7 @@ describe( 'RTP Manager', function () {
             var error   = 'some error';
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.returns( false );
 
             rtpManager.connectRTPDestination( path, id, port, cb );
@@ -1077,7 +1078,7 @@ describe( 'RTP Manager', function () {
             var error   = 'some error';
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.returns( true );
             switcher.invoke.onSecondCall().throws( error );
 
@@ -1104,7 +1105,7 @@ describe( 'RTP Manager', function () {
             var error   = 'some error';
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.returns( true );
             switcher.invoke.onSecondCall().returns( false );
 
@@ -1131,7 +1132,7 @@ describe( 'RTP Manager', function () {
             var error   = 'some error';
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
-            switcher.get_info.returns( JSON.stringify( quiddities.shmdata_readers() ) );
+            switcher.get_info.returns(  quiddities.shmdata_readers() );
             switcher.invoke.returns( true );
             switcher.has_quiddity.throws( error );
 
@@ -1162,7 +1163,7 @@ describe( 'RTP Manager', function () {
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
             switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
             switcher.has_quiddity.returns( true );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
@@ -1190,7 +1191,7 @@ describe( 'RTP Manager', function () {
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
             switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
             switcher.has_quiddity.returns( true );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
@@ -1217,7 +1218,7 @@ describe( 'RTP Manager', function () {
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
             switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns( JSON.stringify( {} ) );
+            switcher.get_property_value.returns(  {} );
             switcher.has_quiddity.returns( true );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
@@ -1245,7 +1246,7 @@ describe( 'RTP Manager', function () {
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
             switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
             switcher.has_quiddity.returns( false );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
@@ -1339,7 +1340,7 @@ describe( 'RTP Manager', function () {
 
             switcher.invoke.returns( [true] );
             switcher.invoke.onSecondCall().throws( error );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
 
@@ -1364,7 +1365,7 @@ describe( 'RTP Manager', function () {
 
             switcher.invoke.returns( [true] );
             switcher.invoke.onSecondCall().returns( false );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
 
@@ -1389,7 +1390,7 @@ describe( 'RTP Manager', function () {
             var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
 
             switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
             switcher.has_quiddity.throws( error );
 
             rtpManager.disconnectRTPDestination( path, id, cb );
@@ -1422,7 +1423,7 @@ describe( 'RTP Manager', function () {
                 port: 9090
             };
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
             remove.yields();
@@ -1466,7 +1467,7 @@ describe( 'RTP Manager', function () {
                 port: 9090
             };
 
-            switcher.get_property_value.returns( JSON.stringify( {} ) );
+            switcher.get_property_value.returns(  {} );
 
             var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
             remove.yields();
@@ -1530,7 +1531,7 @@ describe( 'RTP Manager', function () {
             };
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
             remove.yields( error );
@@ -1562,7 +1563,7 @@ describe( 'RTP Manager', function () {
             };
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
             remove.yields();
@@ -1596,7 +1597,7 @@ describe( 'RTP Manager', function () {
             };
             var error = 'some error';
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ) );
+            switcher.get_property_value.returns(  quiddities.destinations_json() );
 
             var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
             remove.yields();

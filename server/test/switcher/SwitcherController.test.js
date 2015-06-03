@@ -94,7 +94,6 @@ describe( 'Switcher Controller', function () {
 
             switcherController.initialize( function ( error ) {
                 should.not.exist( error );
-                switcher.register_log_callback.should.have.been.calledOnce;
                 switcher.register_prop_callback.should.have.been.calledOnce;
                 switcher.register_signal_callback.should.have.been.calledOnce;
 
@@ -126,7 +125,7 @@ describe( 'Switcher Controller', function () {
             var file        = 'somefile';
             config.loadFile = file;
 
-            switcher.load_history_from_scratch.returns( 'true' ); //Switcher strings
+            switcher.load_history_from_scratch.returns( 'true' );
 
             switcherController.initialize( function ( error ) {
                 should.not.exist( error );
@@ -145,7 +144,7 @@ describe( 'Switcher Controller', function () {
             var file        = 'somefile';
             config.loadFile = file;
 
-            switcher.load_history_from_scratch.returns( 'false' ); //Switcher strings
+            switcher.load_history_from_scratch.returns( false );
 
             switcherController.initialize( function ( error ) {
                 should.not.exist( error );
@@ -287,7 +286,7 @@ describe( 'Switcher Controller', function () {
 
             config.scenicSavePath = 'some/path/';
 
-            switcher.load_history_from_scratch.returns( 'true' ); // Switcher strings
+            switcher.load_history_from_scratch.returns( true );
 
             switcherController.loadSaveFile( file, cb );
 
@@ -317,7 +316,7 @@ describe( 'Switcher Controller', function () {
 
             config.scenicSavePath = 'some/path/';
 
-            switcher.load_history_from_scratch.returns( 'false' );
+            switcher.load_history_from_scratch.returns( false );
 
             switcherController.loadSaveFile( file, cb );
 
@@ -330,7 +329,7 @@ describe( 'Switcher Controller', function () {
 
             config.scenicSavePath = 'some/path/';
 
-            switcher.save_history.returns( 'true' ); // Switcher strings
+            switcher.save_history.returns( 'true' );
 
             switcherController.saveFile( file, cb );
 
@@ -360,7 +359,7 @@ describe( 'Switcher Controller', function () {
 
             config.scenicSavePath = 'some/path/';
 
-            switcher.save_history.returns( 'false' );
+            switcher.save_history.returns( false );
 
             switcherController.saveFile( file, cb );
 

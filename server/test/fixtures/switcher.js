@@ -4,8 +4,7 @@ var sinonChai = require( "sinon-chai" );
 var should    = chai.should();
 chai.use( sinonChai );
 
-QuiddityManager = function () {
-    this.register_log_callback      = sinon.stub();
+Switcher = function () {
     this.register_prop_callback     = sinon.stub();
     this.register_signal_callback   = sinon.stub();
     this.subscribe_to_signal        = sinon.stub();
@@ -29,4 +28,4 @@ QuiddityManager = function () {
     this.has_quiddity               = sinon.stub();
 };
 
-module.exports = { QuiddityManager: QuiddityManager };
+module.exports = { Switcher: Switcher };

@@ -116,7 +116,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
 
     // Load current destinations
     try {
-        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
+        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -331,7 +331,7 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
 
     // Check if the shmdata is still used by another connection
     try {
-        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
+        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
@@ -394,7 +394,7 @@ RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
 
     // Keep a cache of the current destination
     try {
-        var result = JSON.parse( this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' ) );
+        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
     } catch ( e ) {
         return logback( e.toString(), cb );
     }

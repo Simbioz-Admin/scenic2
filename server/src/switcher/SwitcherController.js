@@ -62,7 +62,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
     this.switcher.create( 'rtpsession', this.config.rtp.quiddName );
 
     // Create quiddity systemusage to get information about the CPU usage
-    // System usage is a privcate quiddity so we manually subscribe to it events
+    // System usage is a private quiddity so we manually subscribe to it events
     log.debug( 'Creating System Usage...' );
     this.switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     this.switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );

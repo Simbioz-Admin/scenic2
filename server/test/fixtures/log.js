@@ -6,6 +6,7 @@ chai.use( sinonChai );
 
 module.exports = function () {
     return {
+        verbose:  sinon.stub(),
         switcher: sinon.stub(),
         debug:    sinon.stub(),
         info:     sinon.stub(),

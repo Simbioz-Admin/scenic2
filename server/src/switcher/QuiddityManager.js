@@ -231,7 +231,9 @@ QuiddityManager.prototype._parseMethod = function ( method ) {
  * @param quiddityId
  * @private
  */
-QuiddityManager.prototype._onAdded = function ( quiddityId ) {
+QuiddityManager.prototype._onCreated = function ( quiddityId ) {
+    log.info( 'Quiddity created:', quiddityId );
+
     // Quiddity was created, get information on its type
     try {
         var quiddityClass = this.switcher.get_quiddity_description( quiddityId );
@@ -246,6 +248,8 @@ QuiddityManager.prototype._onAdded = function ( quiddityId ) {
 
     // Parse the class
     this._parseQuiddity( quiddityClass );
+
+    log.debug(quiddityClass);
 
     // Only proceed if it's not on of the 'private' quiddities, they don't matter to the client
     if ( !_.contains( this.privateQuiddities, quiddityClass.class ) ) {
@@ -290,7 +294,7 @@ QuiddityManager.prototype._onAdded = function ( quiddityId ) {
  * @private
  */
 QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
-    log.debug( 'Quiddity ' + quiddityId + ' removed' );
+    log.info( 'Quiddity removed:', quiddityId );
 
     // Remove related stuff
     //TODO: Remove connections?
@@ -360,9 +364,9 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 
     // We exclude system usage and shmdata from debug because it dispatches every second
     if ( quiddityId != this.config.systemUsage.quiddName && parts[0] != 'shmdata' ) {
-        log.info( 'Signal:', quiddityId + '.' + signal + '=' + value );
-    } else {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
+    } else {
+        log.verbose( 'Signal:', quiddityId + '.' + signal + '=' + value );
     }
 
     //  ┌┬┐┬─┐┌─┐┌─┐  ┌─┐┬─┐┌─┐┌─┐┌┬┐┌─┐┌┬┐
@@ -417,7 +421,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 
     if ( signal == 'on-quiddity-created' ) {
         // Forward to quiddity manager
-        this._onAdded( value[0] );
+        this._onCreated( value[0] );
     }
 
     //  ┌─┐ ┬ ┬┬┌┬┐┌┬┐┬┌┬┐┬ ┬  ┬─┐┌─┐┌┬┐┌─┐┬  ┬┌─┐┌┬┐
@@ -489,7 +493,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
  * @param cb
  */
 QuiddityManager.prototype.create = function ( className, quiddityName, socketId, cb ) {
-    log.debug( 'Creating quiddity ' + className + ' named ' + quiddityName );
+    log.info( 'Creating quiddity ' + className + ' named ' + quiddityName );
 
     // Create the quiddity
     try {
@@ -532,7 +536,8 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId,
  * @param cb
  */
 QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
-    log.debug( 'Removing quiddity ' + quiddityId );
+    log.info( 'Removing quiddity ' + quiddityId );
+
     try {
         var result = this.switcher.remove( quiddityId );
     } catch ( e ) {
@@ -551,7 +556,8 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
  * @param cb
  */
 QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
-    log.debug( 'Getting quiddity classes' );
+    log.info( 'Getting quiddity classes' );
+
     try {
         var result = this.switcher.get_classes_doc();
     } catch ( e ) {
@@ -576,7 +582,8 @@ QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
  * @param cb
  */
 QuiddityManager.prototype.getQuiddities = function ( cb ) {
-    log.debug( 'Getting quiddities' );
+    log.info( 'Getting quiddities' );
+
     try {
         var result = this.switcher.get_quiddities_description();
     } catch ( e ) {
@@ -603,7 +610,7 @@ QuiddityManager.prototype.getQuiddities = function ( cb ) {
  * @returns {*}
  */
 QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
-    log.debug( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
+    log.info( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
 
     try {
         var result = this.switcher.get_info( quiddityId, path );
@@ -626,7 +633,8 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
  * @returns {*}
  */
 QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
-    log.debug( 'Getting properties for quiddity: ' + quiddityId );
+    log.info( 'Getting properties for quiddity: ' + quiddityId );
+
     try {
         var result = this.switcher.get_properties_description( quiddityId );
     } catch ( e ) {
@@ -651,7 +659,8 @@ QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
  * @param cb
  */
 QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property, cb ) {
-    console.log('getting', quiddityId, property);
+    log.info('Getting property description for quiddity ' + quiddityId + ' property ' + property);
+
     try {
         var result = this.switcher.get_property_description( quiddityId, property );
     } catch ( e ) {
@@ -680,6 +689,8 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
  * @param cb
  */
 QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, value, cb ) {
+    log.info( 'Setting property ' + property + ' of ' + quiddityId + ' to ' + value );
+
     var self = this;
 
     if ( !quiddityId || !property || value == null ) {
@@ -710,7 +721,7 @@ QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, va
  * @param cb
  */
 QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
-    log.debug( 'Getting methods for quiddity: ' + quiddityId );
+    log.info( 'Getting methods for quiddity ' + quiddityId );
     try {
         var result = this.switcher.get_methods_description( quiddityId );
     } catch ( e ) {
@@ -737,6 +748,7 @@ QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
  * @returns {*}
  */
 QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, cb ) {
+    log.info( 'Getting method description for quiddity ' + quiddityId + ' method ' + method );
     try {
         var result = this.switcher.get_method_description( quiddityId, method );
     } catch ( e ) {
@@ -765,7 +777,7 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
  * @returns {*}
  */
 QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters, cb ) {
-    log.debug( 'Invoking method ' + method + ' of ' + quiddityId + ' with', parameters );
+    log.info( 'Invoking method ' + method + ' of ' + quiddityId + ' with', parameters );
 
     if ( !quiddityId || !method || !_.isArray(parameters) ) {
         return logback( i18n.t( 'Missing arguments to invoke method' ) + ' ' + quiddityId + ' ' + method + ' ' + parameters, cb );

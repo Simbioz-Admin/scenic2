@@ -101,7 +101,7 @@ RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
  * @param cb
  **/
 RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
-    log.debug( 'Creating RTP destination', name, host, port );
+    log.info( 'Creating RTP destination', name, host, port );
 
     // Validate
     if ( !name || !host ) {
@@ -190,7 +190,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
  * @param cb {object} callback
  */
 RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
-    log.debug( 'Removing RTP destination', id );
+    log.info( 'Removing RTP destination', id );
 
     // Remove the destination
     try {
@@ -241,7 +241,7 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
  * @param cb
  */
 RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
-    log.debug( "Connecting quiddity to RTP destination", path, id, port );
+    log.info( "Connecting quiddity to RTP destination", path, id, port );
 
     if ( _.isEmpty( path ) ) {
         return logback( i18n.t( 'Missing path' ), cb );
@@ -319,6 +319,8 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
  * @param cb
  */
 RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
+    log.info('Disconnecting RTP destination', path, id);
+
     // Remove UDP Stream
     try {
         var udpRemoved = this.switcher.invoke( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
@@ -388,7 +390,7 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
  * @param cb
  */
 RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
-    log.debug( 'Updating RTP destination', id, info );
+    log.info( 'Updating RTP destination', id, info );
 
     var self = this;
 

@@ -7,7 +7,7 @@ var log = require('./logger');
 
 module.exports = {
   initialize: function ( callback ) {
-    log.debug( "Initializing translations..." );
+    log.info( "Initializing translations..." );
 
     i18n.init( {
       //lng: "fr",

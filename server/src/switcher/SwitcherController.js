@@ -23,7 +23,6 @@ function SwitcherController( config, io ) {
     this.config   = config;
     this.io       = io;
     this.switcher = new switcher.Switcher( 'scenic', this._onSwitcherLog.bind( this ) );
-    //this.switcherLogger = new switcher.Logger( this._onSwitcherLog.bind( this ) );
 
     this.quiddityManager = new QuiddityManager( config, this.switcher, io );
     this.sipManager      = new SipManager( config, this.switcher, io );
@@ -38,12 +37,11 @@ function SwitcherController( config, io ) {
  */
 SwitcherController.prototype.initialize = function ( callback ) {
 
-    log.debug( "Initializing Switcher..." );
+    log.debug( "Initializing Switcher Controller..." );
 
     var self = this;
 
     // Switcher Callbacks
-    //this.switcher.register_log_callback( this._onSwitcherLog.bind( this ) );
     this.switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
     this.switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
 

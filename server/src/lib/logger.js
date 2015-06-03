@@ -6,20 +6,20 @@ var config = require('../settings/config');
 
 var customLevels = {
   levels: {
-    switcher: 0,
-    debug: 1,
-    info: 2,
-    warn: 3,
-    error: 4,
-    logback: 4 // Error utility for socket callbacks, has to trace one level higher
+    verbose: 0,
+    switcher: 1,
+    debug: 2,
+    info: 3,
+    warn: 4,
+    error: 5
   },
   colors: {
+    verbose: 'gray',
     switcher: 'magenta',
     debug: 'gray',
     info: 'blue',
     warn: 'yellow',
-    error: 'red',
-    logback: 'red'
+    error: 'red'
   }
 };
 
@@ -52,10 +52,12 @@ var log = new(winston.Logger)({
 // Add line numbers to errors
 log.addFilter( function(msg, meta, level) {
   if ( level == 'error' ) {
-    msg = traceCaller( 5 ) + ": " + msg;
-  } else if ( level == 'logback' ) {
-    // Error utility for socket callbacks, has to go one level deeper than normal error for traces
-    msg = traceCaller( 6 ) + ': ' + msg;
+    if ( meta && meta.logback ) {
+      msg = traceCaller( 6 ) + ": " + msg;
+      delete meta.logback;
+    } else {
+      msg = traceCaller( 5 ) + ": " + msg;
+    }
   } else if ( level == 'switcher' ) {
     var prefix = msg.split(':')[0];
     switch( prefix.split('-' ).pop() ) {

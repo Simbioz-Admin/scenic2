@@ -46,7 +46,7 @@ require('./bootstrap' )( function( err ) {
 
         // Server setup
         function( callback ) {
-            log.debug( "Setting up server..." );
+            log.info( "Setting up server..." );
 
             app = require('express')();
             app.use(locale(config.locale.supported));
@@ -59,32 +59,34 @@ require('./bootstrap' )( function( err ) {
 
         // Socket.io
         function( callback ) {
-            log.debug( "Setting up socket.io..." );
+            log.info( "Setting up socket.io..." );
             io = socketIo( server );
             callback();
         },
 
         // Switcher
         function(callback) {
+            log.info( "Initializing Switcher..." );
             switcher = new SwitcherController( config, io );
             switcher.initialize( callback );
         },
 
         // ScenicIo Client
         function(callback) {
+            log.info( "Initializing IO..." );
             scenicIo.initialize(config, io, switcher);
             callback();
         },
 
         // Server startup
         function( callback ) {
-            log.debug( "Starting server..." );
+            log.info( "Starting server..." );
             server.listen( config.scenic.port, callback );
         },
 
         // Routes
         function( callback ) {
-            log.debug( "Setting up routes..." );
+            log.info( "Setting up routes..." );
             routes( app, config, switcher );
             callback();
         }
@@ -119,10 +121,10 @@ require('./bootstrap' )( function( err ) {
 
         // GUI, unless -g is used on the command line, it will launch a chrome instance
         if (!config.standalone) {
-            log.debug("Opening default browser: http://" + config.host + ":" + config.scenic.port);
+            log.info("Opening default browser: http://" + config.host + ":" + config.scenic.port);
             var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
             chrome.stdout.on('data', function(data) {
-                log.debug( 'chromium-browser:', data.toString().trim() );
+                log.verbose( 'chromium-browser:', data.toString().trim() );
             });
             chrome.stderr.on('data', function(data) {
                 log.debug( 'chromium-browser:', 'error:', data.toString().trim() );

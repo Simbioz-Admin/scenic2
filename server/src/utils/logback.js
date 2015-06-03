@@ -8,7 +8,7 @@ var log = require( '../lib/logger' );
  * @param callback
  */
 module.exports = function ( message, callback ) {
-    log.logback( message );
+    log.error( message, { logback: true } );
     if ( callback ) {
         callback( message );
     } else {

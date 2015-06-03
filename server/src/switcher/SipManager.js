@@ -91,7 +91,8 @@ SipManager.prototype._addContact = function ( uri, user, cb ) {
         return cb(i18n.t('Missing information to add contact'));
     }
 
-    log.debug( 'Adding SIP contact', uri, user );
+    log.info( 'Adding SIP contact', uri, user );
+
     try {
         var addedBuddy = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
     } catch ( e ) {
@@ -119,8 +120,10 @@ SipManager.prototype._addContact = function ( uri, user, cb ) {
  * @private
  */
 SipManager.prototype._loadContacts = function ( callback ) {
+    log.info( 'Loading contacts', this.config.contactsPath );
+
     var self = this;
-    log.info( 'Loading contacts', self.config.contactsPath );
+
     fs.exists( self.config.contactsPath, function ( exists ) {
         if ( exists ) {
             fs.readFile( self.config.contactsPath, function ( error, data ) {
@@ -160,8 +163,9 @@ SipManager.prototype._loadContacts = function ( callback ) {
  * @private
  */
 SipManager.prototype._saveContacts = function ( contacts, callback ) {
+    log.info( 'Saving contacts', this.config.contactsPath );
+
     var self = this;
-    log.info( 'Saving contacts', self.config.contactsPath );
     log.debug( contacts );
     fs.writeFile( self.config.contactsPath, JSON.stringify( contacts ), callback );
 };
@@ -175,8 +179,10 @@ SipManager.prototype._saveContacts = function ( contacts, callback ) {
  * @private
  */
 SipManager.prototype._updateContact = function ( uri, name, callback ) {
-    var self = this;
     log.info('Updating contact', uri, name );
+
+    var self = this;
+
     self._loadContacts( function ( error, contacts ) {
         if ( error ) {
             log.warn( error );
@@ -206,8 +212,10 @@ SipManager.prototype._updateContact = function ( uri, name, callback ) {
  * @private
  */
 SipManager.prototype._removeContact = function ( uri, callback ) {
-    var self = this;
     log.info('Removing contact', uri);
+
+    var self = this;
+
     self._loadContacts( function ( error, contacts ) {
         if ( error ) {
             log.warn( error );
@@ -237,7 +245,6 @@ SipManager.prototype._removeContact = function ( uri, callback ) {
  * @private
  */
 SipManager.prototype._reconnect = function ( uri, cb ) {
-
     var self     = this;
     var contacts = null;
 
@@ -441,7 +448,6 @@ SipManager.prototype.login = function ( credentials, cb ) {
                 }
 
                 if ( contacts[credentials.user + '@' + credentials.server] ) {
-                    console.log(contacts);
                     _.each( contacts[credentials.user + '@' + credentials.server], function ( contactName, contactURI ) {
                         // addUser is synchronous, callback is only there to get error information
                         self._addContact( contactURI, contactName, function ( error ) {
@@ -495,7 +501,8 @@ SipManager.prototype.logout = function ( cb ) {
  * @param cb
  */
 SipManager.prototype.getContacts = function ( cb ) {
-    log.debug( 'Getting contacts' );
+    log.info( 'Getting contacts' );
+
     try {
         var hasSipQuiddity = this.switcher.has_quiddity( this.config.sip.quiddName );
     } catch ( e ) {
@@ -528,7 +535,8 @@ SipManager.prototype.getContacts = function ( cb ) {
  * @param cb
  */
 SipManager.prototype.addContact = function ( uri, cb ) {
-    log.debug( 'Adding contact', uri );
+    log.info( 'Adding contact', uri );
+
     var self = this;
     this._addContact( uri, uri, function ( error ) {
         if ( error ) {
@@ -541,7 +549,7 @@ SipManager.prototype.addContact = function ( uri, cb ) {
 };
 
 /**
- * Remove copntact
+ * Remove contact
  *
  * @param uri
  * @param cb
@@ -575,7 +583,8 @@ SipManager.prototype.removeContact = function ( uri, cb ) {
  * @returns {*}
  */
 SipManager.prototype.attachShmdataToContact = function ( path, uri, cb ) {
-    log.debug( 'Attaching shmdata', path, 'to contact', uri );
+    log.info( 'Attaching shmdata', path, 'to contact', uri );
+
     var self = this;
     async.series( [
 
@@ -612,7 +621,8 @@ SipManager.prototype.attachShmdataToContact = function ( path, uri, cb ) {
  * @param cb
  */
 SipManager.prototype.detachShmdataFromContact = function ( path, uri, cb ) {
-    log.debug( 'Detaching shmdata', path, 'from contact', uri );
+    log.info( 'Detaching shmdata', path, 'from contact', uri );
+
     var self = this;
     async.series( [
 
@@ -649,6 +659,8 @@ SipManager.prototype.detachShmdataFromContact = function ( path, uri, cb ) {
  * @returns {*}
  */
 SipManager.prototype.callContact = function ( uri, cb ) {
+    log.info('Calling contact', uri );
+
     try {
         var called = this.switcher.invoke( this.config.sip.quiddName, 'send', [uri] );
     } catch ( e ) {
@@ -668,6 +680,8 @@ SipManager.prototype.callContact = function ( uri, cb ) {
  * @returns {*}
  */
 SipManager.prototype.hangUpContact = function ( uri, cb ) {
+    log.info('Hanging up on contact', uri);
+
     try {
         var hanged = this.switcher.invoke( this.config.sip.quiddName, 'hang-up', [uri] );
     } catch ( e ) {
@@ -688,6 +702,8 @@ SipManager.prototype.hangUpContact = function ( uri, cb ) {
  * @returns {*}
  */
 SipManager.prototype.updateContact = function ( uri, info, cb ) {
+    log.info('Updating contact', uri, info );
+
     var self = this;
     if ( info.name ) {
         log.debug( 'Updating name of the contact ' + uri + ' to ' + info.name );

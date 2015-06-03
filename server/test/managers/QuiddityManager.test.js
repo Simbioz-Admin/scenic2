@@ -162,7 +162,7 @@ describe( 'Quiddity Manager', function () {
             switcher.get_quiddity_description.returns( quiddities.class() );
             switcher.get_properties_description.returns( quiddities.properties() );
 
-            quiddityManager._onAdded( id );
+            quiddityManager._onCreated( id );
 
             switcher.get_quiddity_description.should.have.been.calledOnce;
             switcher.get_quiddity_description.should.have.been.calledWith( id );
@@ -191,7 +191,7 @@ describe( 'Quiddity Manager', function () {
             var id = 'someId';
             switcher.get_quiddity_description.returns( quiddities.quiddity_private() );
 
-            quiddityManager._onAdded( id );
+            quiddityManager._onCreated( id );
 
             switcher.get_quiddity_description.should.have.been.calledOnce;
             switcher.get_quiddity_description.should.have.been.calledWith( id );
@@ -206,7 +206,7 @@ describe( 'Quiddity Manager', function () {
             var error = 'some error';
             switcher.get_quiddity_description.throws( error );
 
-            quiddityManager._onAdded( 0 );
+            quiddityManager._onCreated( 0 );
 
             switcher.get_quiddity_description.should.have.been.calledOnce;
             switcher.get_quiddity_description.should.have.been.calledWith( 0 );
@@ -221,7 +221,7 @@ describe( 'Quiddity Manager', function () {
             var error = 'some error';
             switcher.get_quiddity_description.returns( {error: error} );
 
-            quiddityManager._onAdded( 0 );
+            quiddityManager._onCreated( 0 );
 
             switcher.get_quiddity_description.should.have.been.calledOnce;
             switcher.get_quiddity_description.should.have.been.calledWith( 0 );
@@ -236,7 +236,7 @@ describe( 'Quiddity Manager', function () {
             var error = 'some error';
             switcher.get_quiddity_description.returns( null );
 
-            quiddityManager._onAdded( 0 );
+            quiddityManager._onCreated( 0 );
 
             switcher.get_quiddity_description.should.have.been.calledOnce;
             switcher.get_quiddity_description.should.have.been.calledWith( 0 );
@@ -351,7 +351,7 @@ describe( 'Quiddity Manager', function () {
 
         it( 'should internally add quiddity on quiddity created', function () {
             var id      = 'quiddity';
-            var onAdded = sinon.stub( quiddityManager, '_onAdded' );
+            var onAdded = sinon.stub( quiddityManager, '_onCreated' );
             quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-created', [id] );
             onAdded.should.have.been.calledOnce;
             onAdded.should.have.been.calledWith( id );

@@ -33,8 +33,14 @@ define( [
          */
         initialize: function () {
             ScenicCollection.prototype.initialize.apply( this, arguments );
+        },
 
-            //Handlers
+        /**
+         * Bind to socket
+         * This is done so that temporary models don't register with socket.io
+         * This was causing them to keep being referenced event after being used
+         */
+        bindToSocket: function() {
             this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
         },
 

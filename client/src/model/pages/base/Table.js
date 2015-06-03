@@ -141,8 +141,8 @@ define( [
          */
         createQuiddity: function ( info ) {
             var self     = this;
-            var quiddity = new Quiddity( {'class': info.type, 'name': info.name} );
-            quiddity.save( null, {
+            var quiddity = new Quiddity( );
+            quiddity.save( {'class': info.type, 'name': info.name}, {
                 success: function ( quiddity ) {
                     if ( info.device ) {
                         //TODO: What is this I don't even

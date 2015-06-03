@@ -39,6 +39,8 @@ define( [
 
         /**
          * Parse data from sync
+         * We parse it here as the server doesn't know we asked for shmdata info (yeah, the path suggests it)
+         * but for the moment parse it here instead of the server
          *
          * @param response
          * @returns {Array}
@@ -70,8 +72,14 @@ define( [
          */
         initialize: function() {
             ScenicCollection.prototype.initialize.apply(this,arguments);
+        },
 
-            // Handlers
+        /**
+         * Bind to socket
+         * This is done so that temporary models don't register with socket.io
+         * This was causing them to keep being referenced event after being used
+         */
+        bindToSocket: function() {
             this.onSocket( 'updateShmdata', _.bind( this._onUpdateShmdata, this ) );
         },
 

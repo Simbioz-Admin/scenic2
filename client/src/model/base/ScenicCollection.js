@@ -50,6 +50,15 @@ define( [
         },
 
         /**
+         * Override and use to bind to socket in subclasses
+         * This is done so that temporary models don't register with socket.io
+         * This was causing them to keep being referenced event after being used
+         */
+        bindToSocket: function() {
+            //
+        },
+
+        /**
          * Method map
          * Maps Backbone sync methods to our socket methods
          * Supports either strings of functions returning arrays of arguments

@@ -1156,7 +1156,8 @@ module.exports = {
         return {
             "/tmp/switcher_nodeserver_audiotestsrc0_audio": {
                 "category": "audio",
-                "caps":     "audio/x-raw-int, width=(int)16, endianness=(int)1234, signed=(boolean)true, depth=(int)16, rate=(int)44100, channels=(int)1"
+                "caps":     "audio/x-raw-int, width=(int)16, endianness=(int)1234, signed=(boolean)true, depth=(int)16, rate=(int)44100, channels=(int)1",
+                "byte_rate": "3600"
             }
         }
     },
@@ -1164,7 +1165,16 @@ module.exports = {
     shmdata_writer: function () {
         return {
             "category": "audio",
-            "caps":     "audio/x-raw-int, width=(int)16, endianness=(int)1234, signed=(boolean)true, depth=(int)16, rate=(int)44100, channels=(int)1"
+            "caps":     "audio/x-raw-int, width=(int)16, endianness=(int)1234, signed=(boolean)true, depth=(int)16, rate=(int)44100, channels=(int)1",
+            "byte_rate": "3600"
+        }
+    },
+
+    shmdata_writer_parsed: function () {
+        return {
+            "category": "audio",
+            "caps":     "audio/x-raw-int, width=(int)16, endianness=(int)1234, signed=(boolean)true, depth=(int)16, rate=(int)44100, channels=(int)1",
+            "byte_rate": 3600
         }
     },
 

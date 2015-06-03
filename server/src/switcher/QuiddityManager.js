@@ -103,6 +103,19 @@ QuiddityManager.prototype._parseQuiddity = function ( quiddity ) {
 };
 
 /**
+ * Parse a shmdata into a format more manageable by the front end
+ *
+ * @param shmdata
+ * @returns {*}
+ */
+QuiddityManager.prototype._parseShmdata = function ( shmdata ) {
+    if ( shmdata.byte_rate ) {
+        shmdata.byte_rate = parseInt( shmdata.byte_rate );
+    }
+    return shmdata;
+};
+
+/**
  * Parse a property into a format more manageable by the front end
  *
  * @param property
@@ -303,9 +316,7 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
  */
 QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, value ) {
     // We exclude byte-rate because it dispatches every second
-    if ( property != 'byte-rate' ) {
-        log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
-    }
+    log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
 
     // We have to get the property info in order to parse its value correctly
     // This looks like it isn't necessary but we need the description to handle the value type
@@ -369,10 +380,10 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
                 } catch ( e ) {
                     log.error( e );
                 }
-                console.log( shmdataInfo );
                 if ( !shmdataInfo || !_.isObject(shmdataInfo) || shmdataInfo.error ) {
                     log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
                 } else {
+                    this._parseShmdata(shmdataInfo);
                     shmdataInfo.path = graftedShmdataPath;
                     shmdataInfo.type = graftedShmdataType;
                     this.io.emit( 'updateShmdata', quiddityId, shmdataInfo );

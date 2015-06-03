@@ -111,6 +111,10 @@ describe( 'Quiddity Manager', function () {
             quiddityManager._parseQuiddity( quiddities.quiddity() ).should.eql( quiddities.quiddity_parsed() );
         } );
 
+        it( 'should parse shmdatas', function () {
+            quiddityManager._parseShmdata( quiddities.shmdata_writer() ).should.eql( quiddities.shmdata_writer_parsed() );
+        } );
+
         it( 'should parse boolean property', function () {
             quiddityManager._parseProperty( quiddities.property_bool() ).should.eql( quiddities.property_bool_parsed() );
         } );
@@ -448,7 +452,7 @@ describe( 'Quiddity Manager', function () {
             //Skipped second call, relevant to deprecated vu meters
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_writer(), {
+            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_writer_parsed(), {
                 path: shm,
                 type: type
             } ) );
@@ -531,7 +535,7 @@ describe( 'Quiddity Manager', function () {
             switcher.get_info.should.have.been.calledWith( id, val );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_writer(), {
+            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_reader(), {
                 path: shm,
                 type: type
             } ) );

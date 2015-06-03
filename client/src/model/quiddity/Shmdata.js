@@ -19,11 +19,10 @@ define( [
 
         defaults: {
             path:       null,
-            'byte-rate':0,
+            byte_rate:  0,
             category:   null,
             type:       null,
-            caps:       null,
-            maxReaders: null
+            caps:       null
         },
 
         mutators: {
@@ -42,8 +41,11 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
-            // Handlers
-            this.onSocket( 'removeShmdata', _.bind( this._onRemoved, this ) );
+            // Only bind to socket if we aren't new
+            // We don't want temporary models staying referenced by socket.io
+            if ( !this.isNew() ) {
+                this.onSocket( 'removeShmdata', _.bind( this._onRemoved, this ) );
+            }
         },
 
         /**

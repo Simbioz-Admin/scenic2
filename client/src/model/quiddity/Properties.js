@@ -33,8 +33,14 @@ define( [
          */
         initialize: function () {
             ScenicCollection.prototype.initialize.apply( this, arguments );
+        },
 
-            //Handlers
+        /**
+         * Bind to socket
+         * This is done so that temporary models don't register with socket.io
+         * This was causing them to keep being referenced event after being used
+         */
+        bindToSocket: function() {
             this.onSocket( 'onSignal', _.bind( this._onSignal, this ) );
             this.onSocket( 'propertyChanged', _.bind( this._onPropertyChanged, this ) );
         },
@@ -48,7 +54,7 @@ define( [
          * @param {string} name The name of the property or method
          */
         _onSignal: function ( quiddityId, signal, name ) {
-            if ( !this.quiddity.isNew() && signal == 'on-property-added' && this.quiddity.id == quiddityId ) {
+            if ( signal == 'on-property-added' && this.quiddity.id == quiddityId ) {
                 var property = this.add( {id: name}, {merge: true} );
                 //console.debug( 'Property info', property );
                 // The property is empty at this point, fetch its content
@@ -65,8 +71,7 @@ define( [
          *  @param {string} value The value of the property
          */
         _onPropertyChanged: function ( quiddityId, key, value ) {
-            console.log(this.cid, this.quiddity.toJSON());
-            if ( !this.quiddity.isNew() && this.quiddity.id == quiddityId && this.get(key) == null ) {
+            if ( this.quiddity.id == quiddityId && this.get(key) == null ) {
                 // Somehow the property doesn't exists, create it but stay safe with merge
                 var property = this.add({id: key, value:value}, {merge:true});
                 //console.debug( 'Property value', property );

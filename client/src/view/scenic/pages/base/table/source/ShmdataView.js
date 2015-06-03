@@ -29,7 +29,7 @@ define( [
         childViewContainer: '.connections',
 
         modelEvents: {
-            'change:byte-rate': 'updateByteRate'
+            'change:byte_rate': 'updateByteRate'
         },
 
         ui: {
@@ -81,7 +81,7 @@ define( [
          * Update byte rate
          */
         updateByteRate: function( ) {
-            if ( this.model.get('byteRate') == 0 ) {
+            if ( this.model.get('byte_rate') == 0 ) {
                 this.$el.removeClass('active');
             } else {
                 this.$el.addClass('active');

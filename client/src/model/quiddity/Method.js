@@ -53,8 +53,11 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
-            // Handlers
-            this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
+            // Only bind to socket if we aren't new
+            // We don't want temporary models staying referenced by socket.io
+            if ( !this.isNew() ) {
+                this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
+            }
         },
 
         /**

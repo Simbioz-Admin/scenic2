@@ -22,34 +22,43 @@ define( [
 
         defaults: function () {
             return {
-                "name":             null,
-                "class":            null,
-                "category":         null,
-                "description":      null,
-                "properties":       new Properties(),
-                "methods":          new Methods(),
-                "shmdatas":         new Shmdatas()
+                "name":        null,
+                "class":       null,
+                "category":    null,
+                "description": null,
+                "properties":  new Properties(),
+                "methods":     new Methods(),
+                "shmdatas":    new Shmdatas(),
+                // Dynamic
+                "maxReaders":  null
             }
         },
 
         /**
          *  Initialize
          */
-        initialize: function () {
+        initialize: function ( attributes, options ) {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
             // Setup child collections
             this.get( 'properties' ).quiddity = this;
             this.get( 'methods' ).quiddity    = this;
             this.get( 'shmdatas' ).quiddity   = this;
+
+            // Only fetch the rest when we are not new
+            // This prevents fetches and socket binding being done by temporary quiddities
             if ( !this.isNew() ) {
+                this.get( 'properties' ).bindToSocket();
                 this.get( 'properties' ).fetch();
+                this.get( 'methods' ).bindToSocket();
                 this.get( 'methods' ).fetch();
+                this.get( 'shmdatas' ).bindToSocket();
                 this.get( 'shmdatas' ).fetch();
+
+                // Handlers
+                this.onSocket( "remove", _.bind( this._onRemoved, this ) );
             }
 
-            // Handlers
-            this.onSocket( "remove", _.bind( this._onRemoved, this ) );
         },
 
         /**

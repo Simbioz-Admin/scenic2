@@ -148,9 +148,6 @@ define( [
                         //TODO: What is this I don't even
                         quiddity.setProperty( 'device', info.device );
                     }
-                },
-                error:   function ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );
         },

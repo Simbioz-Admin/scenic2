@@ -118,10 +118,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
     } );
 };
 
-SwitcherController.prototype.release = function() {
-    this.switcher.release();
-};
-
 /**
  * Binds a new client socket
  *

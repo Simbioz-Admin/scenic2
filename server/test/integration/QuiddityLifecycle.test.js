@@ -44,7 +44,7 @@ describe( 'Quiddity Lifecycle', function () {
     } );
 
     afterEach( function () {
-        switcherController.release();
+        switcherController.close();
         config             = null;
         io                 = null;
         switcherController = null;

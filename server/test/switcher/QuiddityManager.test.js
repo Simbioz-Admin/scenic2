@@ -25,7 +25,11 @@ describe( 'Quiddity Manager', function () {
 
     beforeEach( function () {
         switcher                = new switcherStub.Switcher();
-        config                  = {};
+        config                  = {
+            systemUsage: {
+                quiddName: 'systemusage'
+            }
+        };
         io                      = {};
         io.emit                 = sinon.spy();
         var QuiddityManager     = proxyquire( '../../src/switcher/QuiddityManager', {

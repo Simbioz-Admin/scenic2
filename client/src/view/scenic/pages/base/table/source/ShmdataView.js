@@ -29,7 +29,7 @@ define( [
         childViewContainer: '.connections',
 
         modelEvents: {
-            'change:byteRate': 'updateByteRate'
+            'change:byte-rate': 'updateByteRate'
         },
 
         ui: {

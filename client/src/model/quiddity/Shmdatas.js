@@ -72,17 +72,19 @@ define( [
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             // Handlers
-            this.onSocket( 'addShmdata', _.bind( this._onAddShmdata, this ) );
+            this.onSocket( 'updateShmdata', _.bind( this._onUpdateShmdata, this ) );
         },
 
         /**
-         * Add Shmdata Handler
+         * Update Shmdata Handler
+         *
+         * There is no difference between updating and adding a shmdata so just merge-add
          *
          * @param quiddityId
          * @param shmdata
          * @private
          */
-        _onAddShmdata: function ( quiddityId, shmdata ) {
+        _onUpdateShmdata: function ( quiddityId, shmdata ) {
             if ( this.quiddity.id == quiddityId ) {
                 this.add( shmdata, { merge: true } );
             }

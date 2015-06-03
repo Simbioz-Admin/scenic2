@@ -19,7 +19,7 @@ define( [
 
         defaults: {
             path:       null,
-            byteRate:   0,
+            'byte-rate':0,
             category:   null,
             type:       null,
             caps:       null,
@@ -44,7 +44,6 @@ define( [
 
             // Handlers
             this.onSocket( 'removeShmdata', _.bind( this._onRemoved, this ) );
-            this.onSocket( "propertyChanged", _.bind( this._onPropertyChanged, this ) );
         },
 
         /**
@@ -57,23 +56,6 @@ define( [
         _onRemoved: function ( quiddityId, shmdata ) {
             if ( this.collection.quiddity.id == quiddityId && shmdata.path == this.id && shmdata.type == this.get( 'type' ) ) {
                 this.trigger( 'destroy', this, this.collection );
-            }
-        },
-
-        /**
-         *  Signals Property Value Handler
-         *
-         *  @param {string} quiddName The name of the quiddity
-         *  @param {string} prop The name of the property or method
-         *  @param {string} value The value of the property
-         *  @private
-         */
-        _onPropertyChanged: function ( quiddName, prop, value ) {
-            if ( prop == "byte-rate" && quiddName.indexOf( 'vumeter_' ) == 0 ) {
-                var shmdataName = quiddName.replace( "vumeter_", "" );
-                if ( shmdataName == this.id ) {
-                    this.set( 'byteRate', value );
-                }
             }
         }
 

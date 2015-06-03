@@ -347,8 +347,10 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     var parts = value[0].split('.');
     parts.shift();
 
-    // We exclude byte-rate from debug because it dispatches every second
+    // We exclude system usage and shmdata from debug because it dispatches every second
     if ( quiddityId != this.config.systemUsage.quiddName && parts[0] != 'shmdata' ) {
+        log.info( 'Signal:', quiddityId + '.' + signal + '=' + value );
+    } else {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
     }
 
@@ -358,22 +360,22 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 
     if ( quiddityId !=  this.config.systemUsage.quiddName && signal == 'on-tree-grafted' ) {
 
-        // Shmdata Writer
         if ( parts[0] == 'shmdata' && parts.length >= 3 ) {
             var graftedShmdataType = parts[1];
             var graftedShmdataPath = parts[2];
             if ( !_.isEmpty( graftedShmdataPath ) && _.contains(this.shmdataTypes, graftedShmdataType) ) {
                 try {
-                    var shmdataInfo = this.switcher.get_info( quiddityId, value[0] );
+                    var shmdataInfo = this.switcher.get_info( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
                 } catch ( e ) {
                     log.error( e );
                 }
+                console.log( shmdataInfo );
                 if ( !shmdataInfo || !_.isObject(shmdataInfo) || shmdataInfo.error ) {
                     log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
                 } else {
                     shmdataInfo.path = graftedShmdataPath;
                     shmdataInfo.type = graftedShmdataType;
-                    this.io.emit( 'addShmdata', quiddityId, shmdataInfo );
+                    this.io.emit( 'updateShmdata', quiddityId, shmdataInfo );
                 }
             }
         }

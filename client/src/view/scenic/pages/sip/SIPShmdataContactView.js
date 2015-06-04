@@ -41,12 +41,24 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
-            console.log( 'sip shmdata contact', this.collection );
+
         },
 
         onRender: function () {
             // Update Dynamic Attributes
             this.$el.attr( this.attributes() );
+        },
+
+        /**
+         * Only show shmdata for this sip contact
+         *
+         * @param shmdata
+         * @param index
+         * @param collection
+         * @returns {boolean}
+         */
+        filter: function ( shmdata, index, collection ) {
+            return this.model.get( 'uri' ) == shmdata.get( 'uri' );
         }
     } );
 

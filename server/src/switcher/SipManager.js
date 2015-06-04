@@ -84,36 +84,37 @@ SipManager.prototype._parseContact = function ( contact ) {
  */
 SipManager.prototype.addContact = function ( uri, name, cb ) {
     if ( uri == null || name == null ) {
-        cb( i18n.t('Missing information to add contact') );
+        return cb( i18n.t('Missing information to add contact') );
     }
 
     var contactAdded = this.switcher.invoke( this.config.sip.quiddName, 'add_buddy', [uri] );
     if ( !contactAdded ) {
-        cb( i18n.t( 'Could not add contact __contact__', {contact: uri} ) );
+        return cb( i18n.t( 'Could not add contact __contact__', {contact: uri} ) );
     }
 
     var setName = this.switcher.invoke( this.config.sip.quiddName, 'name_buddy', [name, uri] );
     if ( !setName ) {
-        cb( i18n.t( 'Error setting contact name to __name__ for __contact__', {name: name, contact: uri} ) );
+        return cb( i18n.t( 'Error setting contact name to __name__ for __contact__', {name: name, contact: uri} ) );
     }
 
     // Update save file
-    this._updateSavedContact( uri, uri, cb );
+    this._updateSavedContact( uri, name, cb );
 };
 
 /**
  * Remove User from SIP
  *
  * @param uri
+ * @param cb
  */
 SipManager.prototype.removeContact = function ( uri, cb ) {
     if ( uri == null ) {
-        cb( i18n.t('Missing information to remove contact') );
+        return cb( i18n.t('Missing information to remove contact') );
     }
 
     var contactRemoved = this.switcher.invoke( this.config.sip.quiddName, 'del_buddy', [uri] );
     if ( !contactRemoved ) {
-        cb( i18n.t( 'Could not remove contact __contact__', {contact: uri} ) );
+        return cb( i18n.t( 'Could not remove contact __contact__', {contact: uri} ) );
     }
 
     // Update save file
@@ -171,7 +172,6 @@ SipManager.prototype._loadContacts = function ( callback ) {
  */
 SipManager.prototype._saveContacts = function ( contacts, callback ) {
     log.info( 'Saving contacts', this.config.contactsPath );
-
     var self = this;
     log.debug( contacts );
     fs.writeFile( self.config.contactsPath, JSON.stringify( contacts ), callback );
@@ -345,8 +345,6 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
             // Parse contact
             this._parseContact( contact );
-
-            console.log( contact);
 
             this.io.emit( 'contactInfo', contact );
         }

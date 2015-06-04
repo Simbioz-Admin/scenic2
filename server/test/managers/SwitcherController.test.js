@@ -24,7 +24,9 @@ describe( 'Switcher Controller', function () {
     } );
 
     beforeEach( function () {
-        config                 = {};
+        config                 = {
+            systemUsage: {quiddName: 'systemusage'}
+        };
         io                     = {};
         io.emit                = sinon.spy();
         checkPort              = sinon.stub();
@@ -224,6 +226,43 @@ describe( 'Switcher Controller', function () {
             switcherController.sipManager.onSwitcherSignal.should.have.been.calledWith( quiddity, signal, value );
             switcherController.rtpManager.onSwitcherSignal.should.have.been.calledWith( quiddity, signal, value );
         } );
+
+    } );
+
+    describe( 'Signal Events', function () {
+
+
+        it( 'should pass along system usage grafts', function () {
+            var id     = 'systemusage';
+            var signal = 'on-tree-grafted';
+            var val    = 'smtng';
+            var ret    = 'sysinfo';
+
+            switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
+            switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
+            switcherController.sipManager      = sinon.stub( switcherController.sipManager );
+
+            switcher.get_info.returns( ret );
+            switcherController._onSwitcherSignal( id, signal, [val] );
+            switcher.get_info.should.have.been.calledOnce;
+            switcher.get_info.should.have.been.calledWith( id, val );
+            io.emit.should.have.been.calledOnce;
+            io.emit.should.have.been.calledWith( 'systemusage', ret );
+        } );
+
+        it( 'should not pass along system usage prunes', function () {
+            var id     = 'systemusage';
+            var signal = 'on-tree-pruned';
+            var val    = 'smtng';
+
+            switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
+            switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
+            switcherController.sipManager      = sinon.stub( switcherController.sipManager );
+
+            switcherController._onSwitcherSignal( id, signal, [val] );
+            io.emit.should.not.have.been.called;
+        } );
+
 
     } );
 

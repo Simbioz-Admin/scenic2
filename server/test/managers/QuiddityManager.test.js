@@ -415,27 +415,6 @@ describe( 'Quiddity Manager', function () {
             io.emit.should.not.have.been.called;
         } );
 
-        it( 'should pass along system usage grafts', function () {
-            var id     = 'systemusage';
-            var signal = 'on-tree-grafted';
-            var val    = 'smtng';
-            var ret    = 'sysinfo';
-            switcher.get_info.returns( ret );
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWith( id, val );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'systemusage', ret );
-        } );
-
-        it( 'should not pass along system usage prunes', function () {
-            var id     = 'systemusage';
-            var signal = 'on-tree-pruned';
-            var val    = 'smtng';
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );
-
         it( 'should add shmdata writers', function () {
             var id     = 'irrelevant';
             var signal = 'on-tree-grafted';

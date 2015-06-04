@@ -32,7 +32,7 @@ define( [
                 return ['addContact', this.get( 'uri' )];
             },
             'update':function () {
-                return ['updateContact', this.get( 'uri' ), { name: this.get('name') }];
+                return ['updateContact', this.get( 'uri' ), { name: this.get('name'), status: this.get('status' ), status_text: this.get('status_text') }];
             },
             'patch':  null,
             'delete': function() {
@@ -44,9 +44,15 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( attributes, options ) {
             ScenicModel.prototype.initialize.apply(this,arguments);
 
+            if ( options && options.self ) {
+                this.self = options.self;
+            }
+            if ( options && options.sip ) {
+                this.sip = options.sip;
+            }
             // Handlers
             //this.onSocket( 'removeUser', _.bind( this._onRemoved, this ) );
         },

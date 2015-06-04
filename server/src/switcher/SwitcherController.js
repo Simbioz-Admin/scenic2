@@ -175,6 +175,15 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     this.quiddityManager.onSwitcherSignal( quiddityId, signal, value );
     this.rtpManager.onSwitcherSignal( quiddityId, signal, value );
     this.sipManager.onSwitcherSignal( quiddityId, signal, value );
+
+    //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
+    //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
+    //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
+
+    if ( signal == 'on-tree-grafted' && quiddityId == this.config.systemUsage.quiddName ) {
+        var info = this.switcher.get_info( quiddityId, value[0] );
+        this.io.emit( 'systemusage', info );
+    }
 };
 
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗

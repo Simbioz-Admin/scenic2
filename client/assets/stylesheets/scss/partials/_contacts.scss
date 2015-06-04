@@ -146,11 +146,51 @@ $actionsWidth: 125px;
 }
 
 .self .contact {
+  border-top: 1px solid darken($backgroundColorDarker, 5%);
   .contact-info {
-    .contact-name {
-      font-size: 1.5em;
+    padding-top: 0;
+    input {
       background: none;
       margin: 0;
+      padding: 0;
+      &:focus {
+        border: none;
+      }
+    }
+    .contact-name {
+      font-size: 1.5em;
+    }
+    .contact-status-text {
+      height: 2em;
+      font-size: 1em;
+    }
+  }
+  .status-list {
+    position: absolute;
+    background: $backgroundColorDarkish;
+    top: 50px;
+    left: 12px;
+    z-index: 1;
+    @include box-shadow( 0px 0px 6px #000 );
+    li {
+      padding: 1em;
+      &:hover {
+        &.available {
+          background-color: $green;
+          color: $textColorDark;
+        }
+        &.busy {
+          background-color: $orange;
+          color: $textColorDark;
+        }
+        &.away {
+          background-color: $red;
+          color: $textColorDark;
+        }
+        &.offline {
+          background-color: #101010;
+        }
+      }
     }
   }
 }

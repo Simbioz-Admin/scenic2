@@ -30,9 +30,6 @@ define( [
          */
         initialize: function ( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
-            //TODO: Not the best way, will re-render on every contact change
-            this.listenTo( this.model.sip.get( 'contacts' ), 'update', this._checkSelf );
         },
 
         onBeforeShow: function () {

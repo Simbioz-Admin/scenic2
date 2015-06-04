@@ -45,7 +45,6 @@ define( [
 
         checkForEscapeKey: function( event ) {
             var key = event.which || event.keyCode;
-            console.log( key );
             if ( key == 27 ) {
                 event.preventDefault();
                 this.scenicChannel.commands.execute( 'inspector:close' );

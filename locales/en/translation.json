@@ -39,5 +39,8 @@
     "Error while saving file __path__ (__error__)": "Error while saving file __path__ (__error__)",
     "Failed to save file __path__": "Failed to save file __path__",
     "Failed to delete file __path__ (__error__)": "Failed to delete file __path__ (__error__)",
-    "Error while deleting file __path__ (__error__)": "Error while deleting file __path__ (__error__)"
+    "Error while deleting file __path__ (__error__)": "Error while deleting file __path__ (__error__)",
+    "Error while changing contact __contact__ status to __status__ (__error__)": "Error while changing contact __contact__ status to __status__ (__error__)",
+    "Could not change contact __contact__ status text to __text__": "Could not change contact __contact__ status text to __text__",
+    "Error while changing contact __contact__ status text to __text__ (__error__)": "Error while changing contact __contact__ status text to __text__ (__error__)"
 }

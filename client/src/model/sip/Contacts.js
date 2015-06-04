@@ -28,7 +28,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( options ) {
+        initialize: function( models, options ) {
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             this.sip = options.sip;

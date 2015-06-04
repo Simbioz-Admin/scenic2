@@ -366,11 +366,8 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
  */
 QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
-    var parts = value[0].split('.');
-    parts.shift();
-
     // We exclude system usage and shmdata from debug because it dispatches every second
-    if ( quiddityId != this.config.systemUsage.quiddName && parts[0] != 'shmdata' ) {
+    if ( quiddityId != this.config.systemUsage.quiddName && value[0].indexOf('.shmdata') != 0 ) {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
     } else {
         log.verbose( 'Signal:', quiddityId + '.' + signal + '=' + value );
@@ -380,11 +377,13 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   │ ├┬┘├┤ ├┤   │ ┬├┬┘├─┤├┤  │ ├┤  ││
     //   ┴ ┴└─└─┘└─┘  └─┘┴└─┴ ┴└   ┴ └─┘─┴┘
 
-    if ( quiddityId !=  this.config.systemUsage.quiddName && signal == 'on-tree-grafted' ) {
+    if ( signal == 'on-tree-grafted' ) {
+        var graftedPath = value[0].split('.');
+        graftedPath.shift();
 
-        if ( parts[0] == 'shmdata' && parts.length >= 3 ) {
-            var graftedShmdataType = parts[1];
-            var graftedShmdataPath = parts[2];
+        if ( graftedPath[0] == 'shmdata' && graftedPath.length >= 3 ) {
+            var graftedShmdataType = graftedPath[1];
+            var graftedShmdataPath = graftedPath[2];
             if ( !_.isEmpty( graftedShmdataPath ) && _.contains(this.shmdataTypes, graftedShmdataType) ) {
                 try {
                     var shmdataInfo = this.switcher.get_info( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
@@ -407,12 +406,14 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   │ ├┬┘├┤ ├┤   ├─┘├┬┘│ ││││├┤  ││
     //   ┴ ┴└─└─┘└─┘  ┴  ┴└─└─┘┘└┘└─┘─┴┘
 
-    if ( quiddityId !=  this.config.systemUsage.quiddName && signal == 'on-tree-pruned' ) {
+    if ( signal == 'on-tree-pruned' ) {
+        var prunedPath = value[0].split('.');
+        prunedPath.shift();
 
         // Shmdata Writer
-        if ( parts[0] == 'shmdata' && parts.length >= 3 ) {
-            var prunedShmdataType = parts[1];
-            var prunedShmdataPath = parts[2];
+        if ( prunedPath[0] == 'shmdata' && prunedPath.length >= 3 ) {
+            var prunedShmdataType = prunedPath[1];
+            var prunedShmdataPath = prunedPath[2];
             if ( !_.isEmpty( prunedShmdataPath ) && _.contains(this.shmdataTypes, prunedShmdataType) ) {
                 this.io.emit( 'removeShmdata', quiddityId, {
                     type: prunedShmdataType,
@@ -472,15 +473,6 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     if ( signal == 'on-connection-tried' ) {
         //TODO: Do something with that
         log.warn( '>>>', signal, quiddityId, value, '<<<' );
-    }
-
-    //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
-    //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
-    //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
-
-    if ( quiddityId ==  this.config.systemUsage.quiddName && signal == 'on-tree-grafted' ) {
-        var info = this.switcher.get_info( quiddityId, value[0] );
-        this.io.emit( 'systemusage', info );
     }
 };
 

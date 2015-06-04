@@ -1,0 +1,5 @@
+<ul class="status-list">
+<% _.each( statuses, function( status ) { %>
+    <li class="status <%=status.value.toLowerCase()%>" data-status="<%=status.value.toLowerCase()%>"><%=status.name%></li>
+<% } ); %>
+</ul>

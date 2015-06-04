@@ -6,10 +6,11 @@ define( [
     'cocktail',
     'lib/socket',
     'crypto-js',
+    'app',
     'model/mixins/PropertyWatcher',
     'model/sip/Contacts',
     'model/sip/Contact'
-], function ( _, Backbone, Cocktail, socket, CryptoJS, PropertyWatcher, Contacts, Contact ) {
+], function ( _, Backbone, Cocktail, socket, CryptoJS, app, PropertyWatcher, Contacts, Contact ) {
 
     /**
      * SIP Connection

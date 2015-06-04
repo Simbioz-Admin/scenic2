@@ -51,15 +51,14 @@ require( {
     'underscore',
     'app',
     'lib/util',
-    'lib/socket',
-    app = {} //The only global variable I'll tolerate
+    'lib/socket'
 ], function ( _, application, util, socket ) {
+
+    // For debug purposes put app in window
+    window.app = application;
 
     // Global message bus
     var scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
-    // "Facade" the application
-    app = application;
 
     // Announce ourselves and recover config information from the server
     socket.emit( "getConfig", localStorage.getItem( "socketId" ), socket.id, function ( config ) {
@@ -68,6 +67,6 @@ require( {
     } );
 
     // When the server is closed or crashes shutdown the app
-    socket.on( "shutdown", _.bind( app.shutdown, app ) );
-    socket.on( "disconnect", _.bind( app.shutdown, app ) );
+    socket.on( "shutdown", _.bind( application.shutdown, application ) );
+    socket.on( "disconnect", _.bind( application.shutdown, application ) );
 } );

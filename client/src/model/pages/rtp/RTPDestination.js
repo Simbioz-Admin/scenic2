@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'app',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, ScenicModel ) {
+], function ( _, Backbone, socket, app, ScenicModel ) {
 
     /**
      * RTP Destination

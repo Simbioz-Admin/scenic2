@@ -1,4 +1,5 @@
 define( [
+    'exports',
     // Lib
     'underscore',
     'backbone',
@@ -17,7 +18,7 @@ define( [
     // View
     'view/Scenic',
     'view/ShutdownView'
-], function ( _, Backbone, Mutators, Marionette, async, $, i18n,
+], function ( exports, _, Backbone, Mutators, Marionette, async, $, i18n,
               // Internal Libs
               socket,
               // Models
@@ -53,25 +54,25 @@ define( [
             function ( callback ) {
                 i18n.init( {
                     lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
-                    lng: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
+                    lng:          localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en',
                     ns:           'translation',
-                    fallbackLng: false
+                    fallbackLng:  false
                 } ).done( function () {
                     // Replace Marionette's renderer with one that supports i18n
-                    var render = Marionette.Renderer.render;
-                    Marionette.Renderer.render = function (template, data){
-                        data = _.extend(data, {_t: i18n.t});
-                        return render(template, data);
+                    var render                 = Marionette.Renderer.render;
+                    Marionette.Renderer.render = function ( template, data ) {
+                        data = _.extend( data, {_t: i18n.t} );
+                        return render( template, data );
                     };
                     // Replace ItemView's attachElContent to run 19n after attaching
-                    Marionette.ItemView.prototype.attachElContent = function(html) {
-                        this.$el.html(html);
+                    Marionette.ItemView.prototype.attachElContent = function ( html ) {
+                        this.$el.html( html );
                         this.$el.i18n();
                         return this;
                     };
                     // Replace CollectionView's attachElContent to run 19n after attaching
-                    Marionette.CollectionView.prototype.attachElContent = function(html) {
-                        this.$el.html(html);
+                    Marionette.CollectionView.prototype.attachElContent = function ( html ) {
+                        this.$el.html( html );
                         this.$el.i18n();
                         return this;
                     };
@@ -127,7 +128,7 @@ define( [
         this.initialized = true;
     };
 
-    var shutdown = function() {
+    var shutdown = function () {
         this.scenicChannel.vent.trigger( 'shutdown' );
         socket.close();
         this.scenicView.destroy();
@@ -135,15 +136,16 @@ define( [
         this.shutdownView.render();
     };
 
-    return {
-        config:            config,
-        initialize:        initialize,
-        shutdown:          shutdown,
-        saveFiles:         saveFiles,
-        classDescriptions: classDescriptions,
-        quiddities:        quiddities,
-        sip:               sip,
-        tables:            tables
-    };
-} )
-;
+    /**
+     * We use exports as this module will be subject to circular dependency as it is required by many other modules
+     * @see http://requirejs.org/docs/api.html#circular
+     */
+    exports.config            = config;
+    exports.initialize        = initialize;
+    exports.shutdown          = shutdown;
+    exports.saveFiles         = saveFiles;
+    exports.classDescriptions = classDescriptions;
+    exports.quiddities        = quiddities;
+    exports.sip               = sip;
+    exports.tables            = tables
+} );

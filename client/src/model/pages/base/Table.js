@@ -4,9 +4,10 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'app',
     'model/Page',
     'model/Quiddity'
-], function ( _, Backbone, socket, Page, Quiddity ) {
+], function ( _, Backbone, socket, app, Page, Quiddity ) {
 
     /**
      * Table Page

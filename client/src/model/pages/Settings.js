@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'app',
     'model/Page'
-], function ( _, Backbone, socket, Page ) {
+], function ( _, Backbone, socket, app, Page ) {
 
     /**
      * Settings Page

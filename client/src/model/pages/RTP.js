@@ -5,10 +5,11 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'app',
     'model/pages/base/Table',
     'model/pages/rtp/RTPDestinations',
     'model/pages/rtp/RTPDestination'
-], function ( $, _, Backbone, socket, Table, RTPDestinations, RTPDestination ) {
+], function ( $, _, Backbone, socket, app, Table, RTPDestinations, RTPDestination ) {
 
     /**
      * RTP Table

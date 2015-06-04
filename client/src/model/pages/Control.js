@@ -5,9 +5,10 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'app',
     'model/pages/base/Table',
     'model/pages/control/ControlDestinations'
-], function ( $, _, Backbone, socket, Table, ControlDestinations ) {
+], function ( $, _, Backbone, socket, app, Table, ControlDestinations ) {
 
     /**
      * Control Table

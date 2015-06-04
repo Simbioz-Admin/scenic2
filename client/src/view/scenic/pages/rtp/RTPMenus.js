@@ -4,9 +4,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'app',
     'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/rtp/menus.html'
-], function ( _, Backbone, Marionette, TableMenusView, RTPMenusTemplate ) {
+], function ( _, Backbone, Marionette, app, TableMenusView, RTPMenusTemplate ) {
 
     /**
      * @constructor

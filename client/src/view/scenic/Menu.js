@@ -4,10 +4,11 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'app',
     'view/scenic/menu/Files',
     'view/scenic/menu/file/SaveAs',
     'text!template/scenic/menu.html'
-], function ( _, Backbone, Marionette, FilesView,  SaveAsView, MenuTemplate ) {
+], function ( _, Backbone, Marionette, app, FilesView,  SaveAsView, MenuTemplate ) {
 
     /**
      * Menu

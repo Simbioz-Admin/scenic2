@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'app',
     'text!template/scenic/pages/base/menu/subMenu.html'
-], function ( _, Backbone, Marionette, SubMenuTemplate ) {
+], function ( _, Backbone, Marionette, app, SubMenuTemplate ) {
 
     /**
      *  @constructor

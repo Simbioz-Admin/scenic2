@@ -6,6 +6,8 @@ define( [
     'backbone',
     'marionette',
     'lib/spin',
+    // App
+    'app',
     // Model
     'model/Pages',
     'model/pages/Sink',
@@ -28,6 +30,7 @@ define( [
     // Template
     'text!template/scenic.html'
 ], function ( _, Backbone, Marionette, spin,
+              app,
               Pages,
               SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
               SinkView, RTPView, SIPView, ControlView, SettingsView,

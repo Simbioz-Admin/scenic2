@@ -15,38 +15,37 @@ define( [
      * @extends module:Marionette.CompositeView
      */
     var Source = Marionette.CompositeView.extend( {
-        template: _.template( SourceTemplate ),
-        className: 'quiddity source',
-
-        childView: ShmdataView,
-        childViewOptions: function() {
+        template:           _.template( SourceTemplate ),
+        className:          'quiddity source',
+        childView:          ShmdataView,
+        childViewOptions:   function () {
             return {
-                table: this.options.table,
-                collection: this.options.table.getDestinationCollection(),
+                table:          this.options.table,
+                collection:     this.options.table.getDestinationCollection(),
                 connectionView: this.options.connectionView
             }
         },
         childViewContainer: '.shmdatas',
 
         ui: {
-            edit: '.actions .action.edit',
+            edit:   '.actions .action.edit',
             remove: '.actions .action.remove'
         },
 
         events: {
-            'click @ui.edit': 'editSource',
+            'click @ui.edit':   'editSource',
             'click @ui.remove': 'removeSource'
         },
 
         /**
          * Initialize
          */
-        initialize: function( ) {
+        initialize: function () {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.collection = this.model.get('shmdatas');
+            this.collection    = this.model.get( 'shmdatas' );
 
             // Check for started property
-            var startedProperty = this.model.get('properties' ).findWhere({name:'started'});
+            var startedProperty = this.model.get( 'properties' ).findWhere( {name: 'started'} );
             if ( startedProperty ) {
                 this.listenTo( startedProperty, 'change:value', this._onStartedChanged );
             }
@@ -58,7 +57,7 @@ define( [
          * @param shmdata
          * @returns {boolean}
          */
-        filter: function (shmdata) {
+        filter: function ( shmdata ) {
             // Get back up to the table model to filter the displayed connections
             return this.options.table.filterShmdata( shmdata, true );
         },
@@ -67,7 +66,7 @@ define( [
          * Edit Handler
          * @param event
          */
-        editSource: function( event ) {
+        editSource: function ( event ) {
             this.model.edit();
         },
 
@@ -75,20 +74,20 @@ define( [
          * Remove Handler
          * @param event
          */
-        removeSource: function( event ) {
+        removeSource: function ( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', $.t('Are you sure you want to remove the __sourceName__ source?', {sourceName:this.model.get('name')}), function( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', $.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.get( 'name' )} ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
-            });
+            } );
         },
 
-        _onStartedChanged: function( model, value ) {
+        _onStartedChanged: function ( model, value ) {
             if ( value ) {
-                this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', $.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
             } else {
-                this.scenicChannel.vent.trigger('info', $.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', $.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
             }
         }
     } );

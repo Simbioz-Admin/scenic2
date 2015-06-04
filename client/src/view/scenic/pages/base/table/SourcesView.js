@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/SourceView'
-], function ( _, Backbone, Marionette, SourceView ) {
+    'view/scenic/pages/base/table/SourceView',
+    'view/scenic/pages/sip/SIPSourceView'
+], function ( _, Backbone, Marionette, SourceView, SIPSourceView ) {
 
     /**
      * Source Collection
@@ -14,11 +15,18 @@ define( [
      * @augments module:Marionette.CollectionView
      */
     var Sources = Marionette.CollectionView.extend( {
-        className: 'source-list',
-        childView: SourceView,
-        childViewOptions: function() {
+        className:        'source-list',
+        getChildView:     function ( item ) {
+            if ( item.get( 'class' ) == 'sip' ) {
+                return SIPSourceView;
+            }
+            else {
+                return SourceView;
+            }
+        },
+        childViewOptions: function () {
             return {
-                table: this.options.table,
+                table:          this.options.table,
                 connectionView: this.options.connectionView
             }
         },
@@ -26,7 +34,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function(  ) {
+        initialize: function () {
             this.listenTo( this.options.table, 'change:filter', this.render );
         },
 
@@ -37,7 +45,7 @@ define( [
          * @param quiddity
          * @returns {boolean}
          */
-        filter: function (quiddity) {
+        filter: function ( quiddity ) {
             return this.options.table.filterSource( quiddity, true );
         }
     } );

@@ -32,7 +32,7 @@ define( [
          */
         initialize: function () {
             SourceView.prototype.initialize.apply( this, arguments );
-            this.collection = this.options.table.sip.get( 'contacts' );
+            this.collection = app.sip.get( 'contacts' );
             this.listenTo( this.model.get( 'shmdatas' ), 'update', this.render );
         },
 

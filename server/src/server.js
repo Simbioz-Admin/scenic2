@@ -146,4 +146,14 @@ require('./bootstrap' )( function( err ) {
         process.exit(0);
     });
 
+    /**
+     * Uncaught Exception
+     * Try to at least gracefully close switcher
+     */
+    process.on('uncaughtException', function(err) {
+        console.error('Uncaught exception: ' + err);
+        switcher.close();
+        process.exit(1);
+    });
+
 });

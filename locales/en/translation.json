@@ -42,5 +42,9 @@
     "Error while deleting file __path__ (__error__)": "Error while deleting file __path__ (__error__)",
     "Error while changing contact __contact__ status to __status__ (__error__)": "Error while changing contact __contact__ status to __status__ (__error__)",
     "Could not change contact __contact__ status text to __text__": "Could not change contact __contact__ status text to __text__",
-    "Error while changing contact __contact__ status text to __text__ (__error__)": "Error while changing contact __contact__ status text to __text__ (__error__)"
+    "Error while changing contact __contact__ status text to __text__ (__error__)": "Error while changing contact __contact__ status text to __text__ (__error__)",
+    "Could not add contact __contact__": "Could not add contact __contact__",
+    "Error setting contact name to __name__ for __contact__": "Error setting contact name to __name__ for __contact__",
+    "Missing information to remove contact": "Missing information to remove contact",
+    "Could not remove contact __contact__": "Could not remove contact __contact__"
 }

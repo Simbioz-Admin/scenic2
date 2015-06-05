@@ -465,15 +465,6 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     if ( signal == 'on-property-added' || signal == 'on-property-removed' || signal == 'on-method-added' || signal == 'on-method-removed' ) {
         this.io.emit( 'onSignal', quiddityId, signal, value[0] );
     }
-
-    //  ┌─┐┌─┐┌┐┌┌┐┌┌─┐┌─┐┌┬┐┬┌─┐┌┐┌  ┌┬┐┬─┐┬┌─┐┌┬┐
-    //  │  │ │││││││├┤ │   │ ││ ││││   │ ├┬┘│├┤  ││
-    //  └─┘└─┘┘└┘┘└┘└─┘└─┘ ┴ ┴└─┘┘└┘   ┴ ┴└─┴└─┘─┴┘
-
-    if ( signal == 'on-connection-tried' ) {
-        //TODO: Do something with that
-        log.warn( '>>>', signal, quiddityId, value, '<<<' );
-    }
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗

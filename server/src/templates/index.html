@@ -7,12 +7,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="shortcut icon" href="http://sat.qc.ca/sites/default/files/sat_icon.png" type="image/png"/>
     <link href='http://fonts.googleapis.com/css?family=Exo+2:100,300,400,700' rel='stylesheet' type='text/css'>
-    <!--<link rel="stylesheet" href="http://fonts.typotheque.com/WF-015004-001436.css" type="text/css"/>-->
-    <link href="/assets/stylesheets/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css"/>
+    <link href="/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css"/>
 </head>
 <body>
     <div id="scenic" class="scenic"></div>
-    <script data-main="/client/main.js" src="/bower_components/requirejs/require.js"></script>
+    <!-- @if process.env.NODE_ENV='production' -->
+    <script src="scenic.min.js"></script>
+    <!-- @endif -->
+    <!-- @if process.env.NODE_ENV!='production' -->
+    <script data-main="/main.js" src="/bower_components/requirejs/require.js"></script>
+    <!-- @endif -->
 </body>
 </html>
 

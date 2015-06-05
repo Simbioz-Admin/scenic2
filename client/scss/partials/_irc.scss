@@ -76,7 +76,7 @@ $sizeBulle: 12px;
     top: 120px;
   }
   #loading {
-    background: url(../../images/loading2.gif) no-repeat 35px bottom;
+    background: image-url('loading2.gif') no-repeat 35px bottom;
     height: 30px;
     width: 200px;
     margin: 0 auto;
@@ -124,7 +124,7 @@ $sizeBulle: 12px;
     right: 0;
     top: 120px;
     #loading {
-      background: url(../../images/loading2.gif) no-repeat 35px bottom;
+      background: image-url('loading2.gif') no-repeat 35px bottom;
       height: 30px;
       width: 200px;
       margin: 0 auto;
@@ -286,7 +286,7 @@ $sizeBulle: 12px;
           float: left;
           line-height: 31px;
           color: #888;
-          background: url(../../images/icon-connected.png) no-repeat 9px 9px;
+          background: image-url('icon-connected.png') no-repeat 9px 9px;
           position: relative;
           &:hover {
             background-color: #333;

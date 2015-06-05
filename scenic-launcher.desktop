@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=1.0
+Version=2.1.0
 Name=scenic
 Exec=scenic
 Terminal=false
@@ -8,4 +8,4 @@ Type=Application
 Icon=/opt/scenic/assets/images/icons/g_128.png
 Categories=Network;WebBrowser;
 StartupNotify=true
-StartupWMClass=http://localhost:8095
+StartupWMClass=http://localhost:8000

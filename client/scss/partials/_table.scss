@@ -136,17 +136,17 @@ $boxWidth: $sourceWidth;
                       &.active {
                         background: $backgroundColorDarker;
                         &:hover {
-                          background: $red url(../../icons/x.png) no-repeat center;
+                          background: $red url(../../../images/images/icons/images/icons/x.png) no-repeat center;
                         }
                         .icon {
-                          background: url(../../icons/1093-lightning-bolt-2.png) center no-repeat;
+                          background: image-url('icons/1093-lightning-bolt-2.png') center no-repeat;
                         }
                       }
                       &.inactive {
                         background: $backgroundColorDark;
                         &:hover {
                           cursor: pointer;
-                          background: $green url(../../icons/plus.png) center no-repeat;
+                          background: $green image-url('icons/plus.png') center no-repeat;
                         }
                       }
                     }
@@ -252,7 +252,7 @@ $boxWidth: $sourceWidth;
             background: $blue;
           }
           .icon {
-            background: url(../../icons/724-info.png) center center no-repeat;
+            background: image-url('icons/724-info.png') center center no-repeat;
           }
         }
         &.edit {
@@ -260,7 +260,7 @@ $boxWidth: $sourceWidth;
             background: $orange;
           }
           .icon {
-            background: url(../../icons/740-gear.png) center center no-repeat;
+            background: image-url('icons/740-gear.png') center center no-repeat;
           }
         }
         &.remove {
@@ -268,7 +268,7 @@ $boxWidth: $sourceWidth;
             background: $red;
           }
           .icon {
-            background: url(../../icons/711-trash.png) center center no-repeat;
+            background: image-url('icons/711-trash.png') center center no-repeat;
           }
         }
       }
@@ -316,7 +316,7 @@ $boxWidth: $sourceWidth;
             background: $blue;
           }
           .icon {
-            background: url(../../icons/735-phone.png) center center no-repeat;
+            background: image-url('icons/735-phone.png') center center no-repeat;
           }
         }
         &.hangup {
@@ -324,7 +324,7 @@ $boxWidth: $sourceWidth;
             background: $blue;
           }
           .icon {
-            background: url(../../icons/hang-up.png) center center no-repeat;
+            background: image-url('icons/hang-up.png') center center no-repeat;
           }
         }
       }

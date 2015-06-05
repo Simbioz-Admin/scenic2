@@ -38,9 +38,6 @@ RtpManager.prototype.bindClient = function ( socket ) {
     socket.on( "connectRTPDestination", this.connectRTPDestination.bind( this ) );
     socket.on( "disconnectRTPDestination", this.disconnectRTPDestination.bind( this ) );
     socket.on( "updateRTPDestination", this.updateRTPDestination.bind( this ) );
-    //
-    //
-    //
 };
 
 /**
@@ -62,6 +59,16 @@ RtpManager.prototype.onSwitcherProperty = function ( quiddityId, property, value
  * @param value
  */
 RtpManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
+
+    //  ┌─┐┌─┐┌┐┌┌┐┌┌─┐┌─┐┌┬┐┬┌─┐┌┐┌  ┌┬┐┬─┐┬┌─┐┌┬┐
+    //  │  │ │││││││├┤ │   │ ││ ││││   │ ├┬┘│├┤  ││
+    //  └─┘└─┘┘└┘┘└┘└─┘└─┘ ┴ ┴└─┘┘└┘   ┴ ┴└─┴└─┘─┴┘
+
+    if ( signal == 'on-connection-tried' ) {
+        //TODO: Do something with that
+        log.warn( '>>>', signal, quiddityId, value, '<<<' );
+        this.io.emit( 'rtpConnectionTried', quiddityId, signal, value[0] );
+    }
 
 };
 

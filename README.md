@@ -24,6 +24,8 @@ Please refer to the documentation: http://code.sat.qc.ca/redmine/projects/scenic
 
     sudo apt-get install nodejs-legacy chromium-browser npm
     sudo npm install -g bower
+    gem update --system
+    gem install compass
     
 In the project folder:
     

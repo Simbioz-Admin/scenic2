@@ -1,12 +1,12 @@
 "use strict";
 
-require('./bootstrap' )( function( err ) {
+//require('./bootstrap' )( function( err ) {
 
     // Check if bootstrap generated an error
-    if ( err ) {
+    /*if ( err ) {
         console.error( err );
         return process.exit();
-    }
+    }*/
     // Require the minimum to display greeting message
     var config = require('./settings/config');
     var colors = require('colors/safe');
@@ -87,7 +87,7 @@ require('./bootstrap' )( function( err ) {
         // Routes
         function( callback ) {
             log.info( "Setting up routes..." );
-            routes( app, config, switcher );
+            routes( app, config, __dirname );
             callback();
         }
 
@@ -156,4 +156,4 @@ require('./bootstrap' )( function( err ) {
         process.exit(1);
     });
 
-});
+//});

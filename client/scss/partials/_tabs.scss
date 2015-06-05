@@ -28,19 +28,19 @@
       }
     }
     &.transfer .content .icon {
-      background: url(../../icons/732-cloud-upload.png) no-repeat center 10px;
+      background: image-url('icons/732-cloud-upload.png') no-repeat center 10px;
     }
     &.control .content .icon {
-      background: url(../../icons/1060-switches.png) no-repeat center 10px;
+      background: url(../assets/images/icons/1060-switches.png) no-repeat center 10px;
     }
     &.sink .content .icon {
-      background: url(../../icons/725-airplay.png) no-repeat center 10px;
+      background: url(../../assets/images/icons/725-airplay.png) no-repeat center 10px;
     }
     &.sip .content .icon {
-      background: url(../../icons/779-users.png) no-repeat center 10px;
+      background: url(/assets/images/icons/779-users.png) no-repeat center 10px;
     }
     &.settings .content .icon {
-      background: url(../../icons/740-gear.png) no-repeat center 10px;
+      background: image-url('icons/740-gear.png') no-repeat center 10px;
     }
     &:hover {
       cursor: pointer;
@@ -60,19 +60,19 @@
         opacity: 1;
       }
       &.transfer .content .icon {
-        background: url(../../icons/732-cloud-upload-selected.png) no-repeat center 10px;
+        background: image-url('icons/732-cloud-upload-selected.png') no-repeat center 10px;
       }
       &.control .content .icon {
-        background: url(../../icons/1060-switches-selected.png) no-repeat center 10px;
+        background: image-url('icons/1060-switches-selected.png') no-repeat center 10px;
       }
       &.sink .content .icon {
-        background: url(../../icons/725-airplay-selected.png) no-repeat center 10px;
+        background: image-url('icons/725-airplay-selected.png') no-repeat center 10px;
       }
       &.sip .content .icon {
-        background: url(../../icons/779-users-selected.png) no-repeat center 10px;
+        background: image-url('icons/779-users-selected.png') no-repeat center 10px;
       }
       &.settings .content .icon {
-        background: url(../../icons/740-gear-selected.png) no-repeat center 10px;
+        background: image-url('icons/740-gear-selected.png') no-repeat center 10px;
       }
     }
     .name {

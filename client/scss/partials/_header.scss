@@ -48,17 +48,17 @@
         }
         .load {
           &:before {
-            background: url(../../icons/710-folder.png) no-repeat center;
+            background: image-url('icons/710-folder.png') no-repeat center;
           }
         }
         .save {
           &:before {
-            background: url(../../icons/785-floppy-disk.png) no-repeat center;
+            background: image-url('icons/785-floppy-disk.png') no-repeat center;
           }
         }
         .info {
           &:before {
-            background: url(../../icons/724-info.png) no-repeat center;
+            background: image-url('icons/724-info.png') no-repeat center;
           }
         }
         .lang {

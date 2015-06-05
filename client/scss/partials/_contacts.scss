@@ -51,7 +51,7 @@ $actionsWidth: 125px;
                 background: $green;
               }
               .icon {
-                background: url(../../icons/plus.png) center no-repeat;
+                background: image-url('icons/plus.png') center no-repeat;
               }
             }
 
@@ -60,7 +60,7 @@ $actionsWidth: 125px;
                 background: $orange;
               }
               .icon {
-                background: url(../../icons/740-gear.png) center center no-repeat;
+                background: image-url('icons/740-gear.png') center center no-repeat;
               }
             }
           }

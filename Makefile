@@ -1,70 +1,72 @@
 VERSION := $(shell ./scenic -v | cut -d ' ' -f3)
-PROJDIRS := client server templates assets
-EXECFILES := scenic \
-	scenic-installer
-SRCFILES := package.json \
-	server.js \
-	index.html \
-	npm-verify.js
-ALTFILES := COPYING \
-	INSTALL \
-	NEWS \
-	README \
-	Makefile
 
-ALLFILES := $(PROJDIRS) $(SRCFILES)
-TARGETDIR := /share/scenic
+
+PREFIX := /usr
+SCENICDIR := $(PREFIX)/share/scenic
 ARCHIVE := scenic_$(VERSION)
 
-setup:
-	npm install -g bower mocha
-	npm install
-	bower install
+SERVER := server
+SERVER_SOURCE := $(SERVER)/src
+SERVER_FILES := package.json
 
-all:
-	@echo Now run sudo make install
-	@echo Scenic version $(VERSION)
+CLIENT := client
+CLIENT_SOURCE := $(CLIENT)/src
+CLIENT_ASSETS := $(CLIENT)/assets
 
-install: all
+LOCALES := locales
 
-	@echo Making all
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs nodejs $(DESTDIR)$(TARGETDIR)/server.js \$$@" > scenic
-	@echo "#!/bin/bash\nNODE_PATH=$$NODE_PATH:~/.scenic/node_modules nodejs $(DESTDIR)$(TARGETDIR)/npm-verify.js" > scenic-installer
-	@echo building directories for version $(VERSION)
-	mkdir -p $(DESTDIR)$(TARGETDIR)
-	@echo installing files 
-	install $(EXECFILES) $(DESTDIR)$(TARGETDIR)
-	install  -m a+r $(SRCFILES) $(DESTDIR)$(TARGETDIR)
-	@for f in $(PROJDIRS); do \
-		echo " copying $$f"; \
-		cp -r $$f $(DESTDIR)$(TARGETDIR); \
-		done; \
-	install scenic $(DESTDIR)/bin
-	install scenic-installer $(DESTDIR)/bin
-	install -D scenic-launcher.desktop $(DESTDIR)/share/applications
-#	install -d scenic-launcher.desktop $(DESTDIR)$(TARGETDIR)
-#	rm -fr ./tmp
+BUILD_DIR := build
+BUILD_DIR_PUBLIC := $(BUILD_DIR)/public
+
+REQUIREJS := node_modules/.bin/r.js
+COMPASS := compass
+
+.PHONY: setup test build
+
+build:
+	@echo Building Scenic
+	mkdir -p $(BUILD_DIR)
+	@echo Installing server files
+	install $(SERVER_FILES) $(BUILD_DIR)
+	cp -r $(SERVER_SOURCE)/* $(BUILD_DIR)
+	@echo Copying Locales
+	cp -r $(LOCALES) $(BUILD_DIR)
+	@echo Compiling Client Javascript
+	mkdir -p $(BUILD_DIR_PUBLIC)
+	$(REQUIREJS) -o $(CLIENT_SOURCE)/build.js out=$(BUILD_DIR_PUBLIC)/scenic.min.js
+	@echo Compiling Stylesheets
+	mkdir -p $(BUILD_DIR_PUBLIC)/css
+	$(COMPASS) compile $(CLIENT) -c $(CLIENT)/config.rb -e production
+	install $(CLIENT)/css/screen.css $(BUILD_DIR_PUBLIC)/css
+	@echo Copying Assets
+	mkdir -p $(BUILD_DIR_PUBLIC)/assets
+	cp -r $(CLIENT_ASSETS)/* $(BUILD_DIR_PUBLIC)/assets
+	@echo Making Run Script
+	@echo "#!/bin/bash\nNODE_ENV=production NODE_PATH=\$$NODE_PATH:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > $(BUILD_DIR)/scenic
+	chmod +x $(BUILD_DIR)/scenic
+
+install:
+	@echo Installing Scenic
+	mkdir -p $(DESTDIR)$(SCENICDIR)
+	cp -r $(BUILD_DIR)/* $(DESTDIR)$(SCENICDIR)
+	@echo Creating Run Script
+	@echo "#!/bin/bash\nNODE_ENV=production NODE_PATH=\$$NODE_PATH:/usr/local/lib/nodejs:/usr/lib/nodejs node $(DESTDIR)$(SCENICDIR)/server.js \$$@" > $(DESTDIR)$(PREFIX)/bin/scenic
+	chmod +x $(DESTDIR)$(PREFIX)/bin/scenic
+	@echo Installing Launcher
+	install -D scenic-launcher.desktop $(DESTDIR)$(PREFIX)/share/applications/
+	@echo Installing dependencies
+	cd $(DESTDIR)$(SCENICDIR) && npm update
 
 uninstall:
-	rm -rf $(DESTDIR)$(TARGETDIR)
-	@echo removed $(DESTDIR)$(TARGETDIR)
-	rm $(DESTDIR)/bin/scenic
-	rm $(DESTDIR)/bin/scenic-installer
-	rm $(DESTDIR)/share/applications/scenic-launcher.desktop
+	@echo Uninstalling
+	rm -rf $(DESTDIR)$(SCENICDIR)
+	@echo removed $(DESTDIR)$(SCENICDIR)
+	rm $(DESTDIR)$(PREFIX)/bin/scenic
+	rm $(DESTDIR)$(PREFIX)/share/applications/scenic-launcher.desktop
 
 clean:
-	@echo resetting paths in launch scripts
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs node server/src/server.js \$$@" > scenic
-	@echo "NODE_PATH=\$$NODE_PATH:~/.scenic/node_modules node npm-verify.js" > scenic-installer
-#	rm -fr node_modules
-
-tests:
-	NODE_PATH=~/.scenic2/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/**/*.test.js
-#	mocha client/test/**/*.test.js
-#	mocha test/**/*.test.js
-
-test-qm:
-	NODE_PATH=~/.scenic/node_modules:/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/integration/QuiddityLifecycle.test.js
+	@echo Cleaning
+	rm -rf $(BUILD_DIR)
 
 dist:
 	mkdir -p $(ARCHIVE)
@@ -75,8 +77,22 @@ dist:
 	@for f in $(PROJDIRS); do \
 		echo " copying $$f to archive"; \
 		cp -r $$f $(ARCHIVE); \
-		done; 
+		done;
 	@echo building tarball
 	@tar czf $(ARCHIVE).orig.tar.gz $(ARCHIVE)
 	rm -fr $(ARCHIVE)
 	@echo $(ARCHIVE).orig.tar.gz is done!
+
+
+setup:
+	sudo npm update -g bower gulp mocha
+	npm update
+	bower update
+
+test:
+	NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/**/*.test.js
+#	mocha client/test/**/*.test.js
+#	mocha test/**/*.test.js
+
+test-qm:
+	NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/integration/QuiddityLifecycle.test.js

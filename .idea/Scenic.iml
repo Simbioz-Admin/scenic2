@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
   <component name="CompassSettings">
-    <option name="compassConfigPath" value="$MODULE_DIR$/client/assets/stylesheets/config.rb" />
+    <option name="compassConfigPath" value="$MODULE_DIR$/client/config.rb" />
     <option name="compassExecutableFilePath" value="/usr/local/bin/compass" />
     <option name="compassSupportEnabled" value="true" />
     <option name="importPaths">
@@ -22,6 +22,7 @@
       <sourceFolder url="file://$MODULE_DIR$/client/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/client/assets" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/backup" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

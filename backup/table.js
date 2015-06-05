@@ -28,59 +28,6 @@ define(
 
     var TableView = Backbone.View.extend(
 
-      /**
-       *  @lends module: Views/Table~TableView.prototype
-       */
-
-      {
-        tagName: 'div',
-        className: 'table',
-        events: {
-          "click #create-quiddsProperties": "getMenuProperties",
-          "click #create-midi": "getMenuMidiDevice",
-          "click .contextMenu .menuButton": 'getClasses',
-          "click body.scenic": 'leaveSubMenu',
-          "click .box": "toggle_connection",
-          "keypress #port_destination": "set_connection",
-          "blur #port_destination": "removeInputDestination",
-          "change .dropdown_filter": "filter_quiddities"
-        },
-
-        // FIXME: separate the menus views and shmdata/connections table and handle view events properly
-
-        /* 
-         * Called on initialization of the table (control / transfer)
-         */
-
-        initialize: function() {
-
-          this.model.on("trigger:menu", this.getClasses, this);
-          this.model.on("addCategoryFilter", this.addCategoryFilter, this);
-          this.model.on("removeCategoryFilter", this.removeCategoryFilter, this);
-
-          //translation
-          $(this.el).i18n();
-
-        },
-
-
-        toggle_connection: function(e) {
-          var box = $(e.currentTarget),
-            destination = box.data("destination"),
-            path = box.closest('.shmdata').data("path");
-
-          console.log('toggle_connection');
-
-          /* if transferSip we ask to add shmdata to the user */
-          if (this.model.get("id") == "transferSip") {
-            var attach = box.hasClass("active") ? false : true;
-            socket.emit("attachShmdataToUser", destination, path, attach, function(err, msg){
-              if(err) return views.global.notification("error", err);
-              views.global.notification("valid", msg);
-            });
-          }
-
-        },
 
         /* 
          * Called for get the list of device Midi

@@ -81,9 +81,6 @@ define( [
             rtpDestination.save( null, {
                 success: function( rtpDestination ) {
                     self.scenicChannel.vent.trigger( 'rtp:created' );
-                },
-                error: function(error) {
-                    self.scenicChannel.vent.trigger( 'error', error );
                 }
             });
         },

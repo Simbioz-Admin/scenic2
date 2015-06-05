@@ -85,6 +85,7 @@ dist:
 
 
 setup:
+	sudo gem install compass
 	sudo npm update -g bower gulp mocha
 	npm update
 	bower update

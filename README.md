@@ -45,7 +45,14 @@ NPM dependencies will be downloaded automatically.
 
 ##### Updating translation files: 
 
-    i18next -l fr --directoryFilter '!.git, !.idea, !node_modules, !bower_components, !backup, !test, !tools, !assets' --fileFilter '*.js,*.html' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n translation -k :: -s :::
+For the server
+
+    i18next server -l fr --directoryFilter '!test' --fileFilter '*.js,server/*.html' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n server -k :: -s :::
+
+For the client
+
+    i18next client -l fr --directoryFilter '!.sass-cache, !assets, !css, !scss, !test' --fileFilter '*.js,*.html' -f '\$.t,\$.i18n.t,i18n.t,data-i18n' -r -n client -k :: -s :::
+
 
 ##### Updating client side translation 
 

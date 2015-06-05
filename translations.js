@@ -1,10 +1,10 @@
 var _        = require( 'underscore' );
 var async    = require( 'async' );
 var fs    = require( 'fs' );
-var switcher = require( 'switcher' );
+var switcherLib = require( 'switcher' );
 var i18next  = require( 'i18next' );
 
-switcher.register_log_callback(console.log);
+var switcher = new switcherLib.Switcher('translations', console.log );
 
 var namespace = 'switcher';
 
@@ -15,6 +15,8 @@ function add( str ) {
     if ( str ) {
         translations += 'i18n' + '.' + 't(\'' + namespace + ':::' + str + '\');';
     }
+    console.log( '    ' + i18next.t( str ) );
+    console.log( i18next.t('Started'));
 }
 
 async.series( [
@@ -22,11 +24,12 @@ async.series( [
     function ( callback ) {
         i18next.init( {
             lng: "fr",
+            fallbackLng: false,
             saveMissing:   true,
+            saveMissingTo: 'current',
             ns:            'switcher',
             resGetPath:    'locales/__lng__/__ns__.json',
             resSetPath:    'locales/__lng__/__ns__.json',
-            sendMissingTo: 'fr',
             keyseparator:  "::",
             nsseparator:   ':::',
             debug:         true
@@ -36,15 +39,14 @@ async.series( [
     },
 
     function ( callback ) {
-        var classesDoc = JSON.parse( switcher.get_classes_doc() ).classes;
+        var classesDoc = switcher.get_classes_doc().classes;
         _.each( classesDoc, function ( classDoc ) {
             add( classDoc['long name'] );
             add( classDoc['category'] );
             add( classDoc['description'] );
             var className = classDoc['class name'];
             try {
-                var propertiesByClass = JSON.parse( switcher.get_properties_description_by_class( className ) );
-                console.log(propertiesByClass);
+                var propertiesByClass = switcher.get_properties_description_by_class( className );
                 if ( propertiesByClass.properties ) {
                     _.each( propertiesByClass.properties, function ( prop ) {
                         add( prop['long name'] );
@@ -56,13 +58,11 @@ async.series( [
                         }
                     } );
                 }
-
             } catch ( e ) {
                 console.error('PROPERTY ERROR:', className, e);
-                callback( e );
             }
             try {
-                var methodsByClass = JSON.parse( switcher.get_methods_description_by_class( className ) );
+                var methodsByClass = switcher.get_methods_description_by_class( className );
                 if ( methodsByClass.methods ) {
                     _.each( methodsByClass.methods, function ( prop ) {
                         add( prop['long name'] );
@@ -75,13 +75,14 @@ async.series( [
                 }
             } catch ( e ) {
                 console.error('METHOD ERROR:', className, e);
-                callback( e );
             }
         } );
+        callback();
     },
 
     function( callback ) {
         //SAVE TO FILE
+        callback();
     }
 
 ], function ( error ) {
@@ -90,5 +91,6 @@ async.series( [
     } else {
         console.log( 'Finished!' );
     }
-    process.exit();
+    switcher.close();
+    //process.exit();
 } );

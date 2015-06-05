@@ -198,7 +198,7 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
  * Sends a shutdown message to every client
  */
 SwitcherController.prototype.close = function () {
-    log.info( "Server scenic is now closed" );
+    log.info( "Closing Scenic server..." );
     if ( this.io ) {
         this.io.emit( 'shutdown' );
     }

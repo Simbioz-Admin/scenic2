@@ -7,6 +7,7 @@
         console.error( err );
         return process.exit();
     }*/
+
     // Require the minimum to display greeting message
     var config = require('./settings/config');
     var colors = require('colors/safe');
@@ -150,10 +151,10 @@
      * Uncaught Exception
      * Try to at least gracefully close switcher
      */
-    process.on('uncaughtException', function(err) {
+    /*process.on('uncaughtException', function(err) {
         console.error('Uncaught exception: ' + err);
         switcher.close();
         process.exit(1);
-    });
+    });*/
 
 //});

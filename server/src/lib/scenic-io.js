@@ -1,8 +1,8 @@
 "use strict";
 
 var log = require( './logger' );
+var ScenicClient = require('../scenic/ScenicClient');
 
-var masterSocketId;
 
 module.exports = {
 
@@ -17,46 +17,12 @@ module.exports = {
     initialize: function ( config, io, switcherController ) {
         log.debug( "Initializing Scenic Io..." );
 
+        /**
+         * On Connection simply create a scenic client for now
+         * TODO: Manage list of clients somehow
+         */
         io.on( 'connection', function ( socket ) {
-
-            var self = this;
-
-            /**
-             * Bind client to controller
-             */
-            switcherController.bindClient( socket );
-
-            /**
-             * Configuration
-             */
-            socket.on( "getConfig", function ( oldSocketId, newSocketId, callback ) {
-
-                if ( masterSocketId && oldSocketId == masterSocketId ) {
-                    clearTimeout( self.refreshTimeout );
-                    masterSocketId = newSocketId;
-                } else if ( !masterSocketId ) {
-                    log.debug( "Master socket id: ", socket.id );
-                    masterSocketId = socket.id;
-                }
-
-                callback( config );
-            } );
-
-            /**
-             * Disconnected
-             */
-            socket.on( 'disconnect', function () {
-
-                //If the user disconnecting is the "master" user, we set a timeout before exiting the application
-                if ( masterSocketId == socket.id && config.standalone == false ) {
-                    self.refreshTimeout = setTimeout( function () {
-                        log.info( 'Last window closed, exiting...' );
-                        process.exit();
-                    }, 2000 );
-                }
-
-            } );
-
+            var client = new ScenicClient( switcherController, config, socket );
         } );
     }
 };

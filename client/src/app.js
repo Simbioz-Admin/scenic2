@@ -55,7 +55,7 @@ define( [
                 i18n.init( {
                     lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
                     lng:          localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en',
-                    ns:           'translation',
+                    ns:           'client',
                     fallbackLng:  false
                 } ).done( function () {
                     // Replace Marionette's renderer with one that supports i18n

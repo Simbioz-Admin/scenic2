@@ -20,12 +20,15 @@ BUILD_DIR_PUBLIC := $(BUILD_DIR)/public
 
 REQUIREJS := node_modules/.bin/r.js
 COMPASS := compass
+NODE_PATH := NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs
 
-.PHONY: setup test build
+.PHONY: setup test build i18n test 
 
 build:
 	@echo Building Scenic
 	mkdir -p $(BUILD_DIR)
+	@echo Updating Bower Dependencies
+	bower update
 	@echo Installing server files
 	install $(SERVER_FILES) $(BUILD_DIR)
 	cp -r $(SERVER_SOURCE)/* $(BUILD_DIR)
@@ -42,7 +45,7 @@ build:
 	mkdir -p $(BUILD_DIR_PUBLIC)/assets
 	cp -r $(CLIENT_ASSETS)/* $(BUILD_DIR_PUBLIC)/assets
 	@echo Making Run Script
-	@echo "#!/bin/bash\nNODE_ENV=production NODE_PATH=\$$NODE_PATH:/usr/local/lib/nodejs:/usr/lib/nodejs node server.js \$$@" > $(BUILD_DIR)/scenic
+	@echo "#!/bin/bash\nNODE_ENV=production $(NODE_PATH) node server.js \$$@" > $(BUILD_DIR)/scenic
 	chmod +x $(BUILD_DIR)/scenic
 
 install:
@@ -50,7 +53,7 @@ install:
 	mkdir -p $(DESTDIR)$(SCENICDIR)
 	cp -r $(BUILD_DIR)/* $(DESTDIR)$(SCENICDIR)
 	@echo Creating Run Script
-	@echo "#!/bin/bash\nNODE_ENV=production NODE_PATH=\$$NODE_PATH:/usr/local/lib/nodejs:/usr/lib/nodejs node $(DESTDIR)$(SCENICDIR)/server.js \$$@" > $(DESTDIR)$(PREFIX)/bin/scenic
+	@echo "#!/bin/bash\nNODE_ENV=production $(NODE_PATH) node $(DESTDIR)$(SCENICDIR)/server.js \$$@" > $(DESTDIR)$(PREFIX)/bin/scenic
 	chmod +x $(DESTDIR)$(PREFIX)/bin/scenic
 	@echo Installing Launcher
 	install -D scenic-launcher.desktop $(DESTDIR)$(PREFIX)/share/applications/
@@ -85,15 +88,16 @@ dist:
 
 
 setup:
-	sudo gem install compass
-	sudo npm update -g bower gulp mocha
-	npm update
-	bower update
+	gem install compass
+	npm update -g bower gulp mocha
 
 test:
-	NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/**/*.test.js
+	$(NODE_PATH) mocha server/test/**/*.test.js
 #	mocha client/test/**/*.test.js
 #	mocha test/**/*.test.js
 
 test-qm:
-	NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs mocha server/test/integration/QuiddityLifecycle.test.js
+	$(NODE_PATH) mocha server/test/integration/QuiddityLifecycle.test.js
+
+i18n:
+	$(NODE_PATH) node translations.js

@@ -26,14 +26,14 @@ module.exports = function( app, config, serverPath ) {
 
     app.get('/', function(req, res) {
 
-        //Define language for interface
+        /*//Define language for interface
         var lang = req.cookies.lang ;
         //if the language is not define in cookie we take the language of the system
         if(!_.contains(config.locale.supported, lang)) lang = req.locale;
 
         i18next.setLng(lang, function(){
             res.cookie('lang',lang);
-        });
+        });*/
 
         if (!config.passSet) {
             res.send(pp.preprocess(fs.readFileSync(path.join(serverPath, 'templates/index.html'))));

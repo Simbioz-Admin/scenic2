@@ -25,7 +25,6 @@ define( [
          */
         methodMap: {
             'create': function () {
-                console.log( this );
                 return ['createRTPDestination', this.get('info').name, this.get('info').host, this.get('info').port];
             },
             'update': null,

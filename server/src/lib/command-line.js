@@ -14,7 +14,7 @@ exports.parse = function( config ) {
     if ( argv.h || argv.helper ) {
         var message = "Scenic " + config.version + "\n\n";
         message += "Command helper for Scenic\n";
-        message += "----------------------------------------------------------\n"
+        message += "----------------------------------------------------------\n";
         message += rpad( '-v, --version', 25 ) + "Print Scenic version\n";
         message += rpad( '-f, --file', 25 ) + 'Load a Scenic file (ex : -f my_save.scenic)\n';
         message += rpad( '-n, -nogui', 25 ) + "Launch Scenic without app interface\n";

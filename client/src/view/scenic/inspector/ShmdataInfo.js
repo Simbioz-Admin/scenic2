@@ -2,8 +2,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'text!template/scenic/inspector/shmdataInfo.html'
-], function ( _, Backbone, Marionette, ShmdataInfoTemplate ) {
+], function ( _, Backbone, Marionette, i18n, ShmdataInfoTemplate ) {
 
     /**
      * Shmdata Info Panel
@@ -46,7 +47,7 @@ define( [
         },
 
         initialize: function () {
-            this.title = $.t('Shmdata info for __shmdata__', { shmdata: this.model.get('name')});
+            this.title = i18n.t('Shmdata info for __shmdata__', { shmdata: this.model.get('name')});
         },
 
         checkForEscapeKey: function( event ) {

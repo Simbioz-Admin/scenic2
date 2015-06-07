@@ -4,9 +4,10 @@ define( [
     'underscore',
     'backbone',
     'lib/socket',
+    'i18n',
     'app',
     'model/Page'
-], function ( _, Backbone, socket, app, Page ) {
+], function ( _, Backbone, socket, i18n, app, Page ) {
 
     /**
      * Settings Page
@@ -20,9 +21,9 @@ define( [
         defaults: function () {
             return {
                 id:          "settings",
-                name:        $.t( 'Settings' ),
+                name:        i18n.t( 'Settings' ),
                 type:        'settings',
-                description: $.t( "Manage Scenic settings" )
+                description: i18n.t( "Manage Scenic settings" )
             }
         },
 

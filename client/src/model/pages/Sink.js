@@ -1,12 +1,12 @@
 "use strict";
 
 define( [
-    'jquery',
     'underscore',
     'backbone',
     'lib/socket',
+    'i18n',
     'model/pages/base/Table'
-], function ( $, _, Backbone, socket, Table ) {
+], function ( _, Backbone, socket, i18n, Table ) {
 
     /**
      * Sink Table
@@ -20,9 +20,9 @@ define( [
         defaults: function () {
             return {
                 id:          "sink",
-                name:        $.t( 'Sink' ),
+                name:        i18n.t( 'Sink' ),
                 type:        'sink',
-                description: $.t( "Manage audio/video devices and connections" ),
+                description: i18n.t( "Manage audio/video devices and connections" ),
                 source:      {
                     include: [
                         "sip",
@@ -98,7 +98,7 @@ define( [
                         } );
                     } );
                 } else {
-                    self.scenicChannel.vent.trigger( 'error', $.t( 'You have reached the maximum number of connections. The limit is __limit__', {limit: maxReaders} ) );
+                    self.scenicChannel.vent.trigger( 'error', i18n.t( 'You have reached the maximum number of connections. The limit is __limit__', {limit: maxReaders} ) );
                 }
             }
         },

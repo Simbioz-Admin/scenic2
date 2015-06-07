@@ -1,15 +1,15 @@
 "use strict";
 
 define( [
-    'jquery',
     'underscore',
     'backbone',
     'lib/socket',
+    'i18n',
     'app',
     'model/pages/base/Table',
     'model/pages/rtp/RTPDestinations',
     'model/pages/rtp/RTPDestination'
-], function ( $, _, Backbone, socket, app, Table, RTPDestinations, RTPDestination ) {
+], function ( _, Backbone, socket, i18n, app, Table, RTPDestinations, RTPDestination ) {
 
     /**
      * RTP Table
@@ -23,9 +23,9 @@ define( [
         defaults: function () {
             return {
                 id:          "rtp",
-                name:        $.t( 'Transfer' ),
+                name:        i18n.t( 'Transfer' ),
                 type:        "transfer",
-                description: $.t( "Manage connexions with host destination" ),
+                description: i18n.t( "Manage connexions with host destination" ),
                 source:      {
                     include: [
                         "sip",

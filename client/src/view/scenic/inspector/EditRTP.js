@@ -37,7 +37,7 @@ define( [
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title = $.t('Edit an RTP destination');
+            this.title = i18n.t('Edit an RTP destination');
             this.callback = config.callback;
         },
 

@@ -5,6 +5,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'lib/spin',
     // App
     'app',
@@ -29,7 +30,7 @@ define( [
     'view/scenic/modal/Confirmation',
     // Template
     'text!template/scenic.html'
-], function ( _, Backbone, Marionette, spin,
+], function ( _, Backbone, Marionette, i18n, spin,
               app,
               Pages,
               SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
@@ -152,7 +153,7 @@ define( [
         _onConfirm: function ( message, callback ) {
             if ( !callback ) {
                 callback = message;
-                message  = $.t( 'Are you sure?' );
+                message  = i18n.t( 'Are you sure?' );
             }
             this.$el.addClass( 'blur' );
             this.showChildView( 'modal', new ConfirmationView( {
@@ -188,7 +189,7 @@ define( [
          */
         _onQuiddityAdded: function ( quiddity ) {
             if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
-                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ added', {name: quiddity.id} ) );
+                this.scenicChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ added', {name: quiddity.id} ) );
             }
         },
 
@@ -200,7 +201,7 @@ define( [
          */
         _onQuiddityRemoved: function ( quiddity ) {
             if ( quiddity.get( 'name' ).indexOf( 'vumeter_' ) != -0 ) {
-                this.scenicChannel.vent.trigger( 'success', $.t( 'Quiddity __name__ removed', {name: quiddity.id} ) );
+                this.scenicChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ removed', {name: quiddity.id} ) );
             }
         },
 

@@ -1,14 +1,14 @@
 "use strict";
 
 define( [
-    'jquery',
     'underscore',
     'backbone',
     'lib/socket',
+    'i18n',
     'app',
     'model/pages/base/Table',
     'model/pages/control/ControlDestinations'
-], function ( $, _, Backbone, socket, app, Table, ControlDestinations ) {
+], function ( _, Backbone, socket, i18n, app, Table, ControlDestinations ) {
 
     /**
      * Control Table
@@ -22,9 +22,9 @@ define( [
         defaults: function () {
             return {
                 id:          "control",
-                name:        $.t( "Control" ),
+                name:        i18n.t( "Control" ),
                 type:        "control",
-                description: $.t( "Control properties of quiddities with devices" ),
+                description: i18n.t( "Control properties of quiddities with devices" ),
                 source:      {
                     include: ["midisrc"]
                 },

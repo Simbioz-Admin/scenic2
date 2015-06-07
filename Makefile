@@ -89,7 +89,7 @@ dist:
 
 setup:
 	gem install compass
-	npm update -g bower gulp mocha
+	npm install -g bower mocha i18next-parser
 
 test:
 	$(NODE_PATH) mocha server/test/**/*.test.js
@@ -100,4 +100,13 @@ test-qm:
 	$(NODE_PATH) mocha server/test/integration/QuiddityLifecycle.test.js
 
 i18n:
-	$(NODE_PATH) node translations.js
+	@echo Extracting switcher strings
+	$(NODE_PATH) node tools/extract_switcher_i18n.js -o .tmp/switcher_strings.js
+	@echo Parsing switcher strings
+	i18next .tmp -l fr --fileFilter 'switcher_strings.js' -f '$$.t,$$.i18n.t,i18n.t,data-i18n' -r -n switcher -k :: -s :::
+	@echo Removing temporary strings file
+	rm .tmp/switcher_strings.js
+	@echo Parsing server strings
+	i18next server -l fr --directoryFilter '!test' --fileFilter '*.js,*.html' -f '$$.t,$$.i18n.t,i18n.t,data-i18n' -r -n server -k :: -s :::
+	@echo Parsing client strings
+	i18next client -l fr --directoryFilter '!.sass-cache, !assets, !css, !scss, !test' --fileFilter '*.js,*.html' -f '$$.t,$$.i18n.t,i18n.t,data-i18n' -r -n client -k :: -s :::

@@ -36,7 +36,7 @@ define( [
 
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
-            this.title = $.t('Edit __quiddityName__', { quiddityName: this.model.id});
+            this.title = i18n.t('Edit __quiddityName__', { quiddityName: this.model.id});
         },
 
         onBeforeShow: function() {

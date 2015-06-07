@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'text!template/scenic/pages/base/table/destination.html'
-], function ( _, Backbone, Marionette, DestinationTemplate ) {
+], function ( _, Backbone, Marionette, i18n, DestinationTemplate ) {
 
     /**
      * Destination View
@@ -48,7 +49,7 @@ define( [
          */
         removeDestination: function( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', $.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }

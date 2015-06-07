@@ -28,7 +28,7 @@ define( [
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title         = $.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class' )} );
+            this.title         = i18n.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class' )} );
             this.callback      = config.callback;
 
             //TODO: Handle devices stuff

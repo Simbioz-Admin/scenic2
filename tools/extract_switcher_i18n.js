@@ -1,44 +1,54 @@
-var _        = require( 'underscore' );
-var async    = require( 'async' );
-var fs    = require( 'fs' );
+var _           = require( 'underscore' );
+var async       = require( 'async' );
+var path        = require( 'path' );
+var fs          = require( 'fs' );
 var switcherLib = require( 'switcher' );
-var i18next  = require( 'i18next' );
+var i18next     = require( 'i18next' );
+var argv        = require( 'optimist' ).argv;
 
-var switcher = new switcherLib.Switcher('translations', console.log );
+/**
+ * Help
+ */
+if ( argv.h || argv.helper ) {
+    var message = "Switcher i18n Extractor\n";
+    message += "----------------------------------------------------------\n";
+    message += rpad( '-o, --output', 25 ) + "Output file\n";
+    console.log( message );
+    process.exit();
+}
 
-var namespace = 'switcher';
+var output;
+if ( !argv.o && !argv.output ) {
+    console.error( 'Missing output file parameter.' );
+    process.exit(1);
+}
 
-var translations = "";
+output = ( argv.o || argv.output );
+output = path.join(path.dirname(__dirname), output);
+var dir = path.dirname( output );
+try {
+    if ( !fs.existsSync( dir ) ) {
+        fs.mkdirSync( dir );
+    }
+} catch (e) {
+    console.error(e);
+    process.exit(1);
+}
+
+var switcher = new switcherLib.Switcher( 'translations', console.log );
+var strings = "// Extracted Switcher strings\n// You can safely remove that file it is a byproduct of the build process.\n\n";
 
 function add( str ) {
-    console.log( 'Adding', str );
+    console.log( 'Adding string: ', str );
     if ( str ) {
-        translations += 'i18n' + '.' + 't(\'' + namespace + ':::' + str + '\');';
+        strings += 'i18n' + '.' + 't(\'' + str + '\');\n';
     }
-    console.log( '    ' + i18next.t( str ) );
-    console.log( i18next.t('Started'));
 }
 
 async.series( [
 
     function ( callback ) {
-        i18next.init( {
-            lng: "fr",
-            fallbackLng: false,
-            saveMissing:   true,
-            saveMissingTo: 'current',
-            ns:            'switcher',
-            resGetPath:    'locales/__lng__/__ns__.json',
-            resSetPath:    'locales/__lng__/__ns__.json',
-            keyseparator:  "::",
-            nsseparator:   ':::',
-            debug:         true
-        }, function( ) {
-            callback();
-        } );
-    },
-
-    function ( callback ) {
+        console.log( 'Extracting strings');
         var classesDoc = switcher.get_classes_doc().classes;
         _.each( classesDoc, function ( classDoc ) {
             add( classDoc['long name'] );
@@ -59,7 +69,7 @@ async.series( [
                     } );
                 }
             } catch ( e ) {
-                console.error('PROPERTY ERROR:', className, e);
+                console.error( 'PROPERTY ERROR:', className, e );
             }
             try {
                 var methodsByClass = switcher.get_methods_description_by_class( className );
@@ -74,15 +84,15 @@ async.series( [
                     } );
                 }
             } catch ( e ) {
-                console.error('METHOD ERROR:', className, e);
+                console.error( 'METHOD ERROR:', className, e );
             }
         } );
         callback();
     },
 
-    function( callback ) {
-        //SAVE TO FILE
-        callback();
+    function ( callback ) {
+        console.log('Saving file');
+        fs.writeFile( output, strings, callback );
     }
 
 ], function ( error ) {
@@ -92,5 +102,5 @@ async.series( [
         console.log( 'Finished!' );
     }
     switcher.close();
-    //process.exit();
+    process.exit();
 } );

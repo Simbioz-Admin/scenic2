@@ -1,12 +1,12 @@
 "use strict";
 
 define( [
-    'jquery',
     'underscore',
     'backbone',
+    'i18n',
     'lib/socket',
     'model/pages/base/Table'
-], function ( $, _, Backbone, socket, Table ) {
+], function ( _, Backbone, i18n, socket, Table ) {
 
     /**
      * SIP Table
@@ -20,9 +20,9 @@ define( [
         defaults: function () {
             return {
                 id:          "sip",
-                name:        $.t( "SIP" ),
+                name:        i18n.t( "SIP" ),
                 type:        "transfer",
-                description: $.t( "Manage transfer of shmdatas to SIP contacts" ),
+                description: i18n.t( "Manage transfer of shmdatas to SIP contacts" ),
                 source:      {
                     include: [
                         "sip",

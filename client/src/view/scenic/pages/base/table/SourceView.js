@@ -4,9 +4,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'view/scenic/pages/base/table/source/ShmdataView',
     'text!template/scenic/pages/base/table/source.html'
-], function ( _, Backbone, Marionette, ShmdataView, SourceTemplate ) {
+], function ( _, Backbone, Marionette, i18n, ShmdataView, SourceTemplate ) {
 
     /**
      * Source View
@@ -76,7 +77,7 @@ define( [
          */
         removeSource: function ( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', $.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.get( 'name' )} ), function ( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.get( 'name' )} ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
@@ -85,9 +86,9 @@ define( [
 
         _onStartedChanged: function ( model, value ) {
             if ( value ) {
-                this.scenicChannel.vent.trigger( 'info', $.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
             } else {
-                this.scenicChannel.vent.trigger( 'info', $.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
             }
         }
     } );

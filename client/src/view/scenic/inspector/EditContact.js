@@ -35,7 +35,7 @@ define( [
 
         initialize: function ( config ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.title = $.t('Edit Contact');
+            this.title = i18n.t('Edit Contact');
             this.callback = config.callback;
         },
 
@@ -70,7 +70,7 @@ define( [
 
         delete: function() {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', $.t('Are you sure you want to remove __contact__ from your contacts?', {contact:this.model.get('name')}), function( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove __contact__ from your contacts?', {contact:this.model.get('name')}), function( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }

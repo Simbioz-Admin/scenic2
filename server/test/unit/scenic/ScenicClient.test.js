@@ -6,7 +6,7 @@ var should    = chai.should();
 var expect    = chai.expect;
 chai.use( sinonChai );
 
-var ScenicClient = require( '../../../src/scenic/ScenicClient' );
+var ScenicClient = require( '../../../src/net/ScenicClient' );
 
 describe( 'Scenic Client', function () {
 

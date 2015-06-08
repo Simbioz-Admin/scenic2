@@ -6,17 +6,17 @@ var should    = chai.should();
 var expect    = chai.expect;
 chai.use( sinonChai );
 
-var ScenicClient = require( '../../../src/scenic/ScenicClient' );
+var ScenicClient = require( '../../../src/net/ScenicClient' );
 var quiddities   = require( '../../fixtures/quiddities' );
 
-describe.only( 'Qet Quiddity Classes Command', function () {
+describe( 'Qet Quiddity Classes Command', function () {
 
     var client;
     var command;
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/scenic/commands/getQuiddityClasses' );
+        command = require( '../../../src/net/commands/getQuiddityClasses' );
 
         client = {
             switcherController: {

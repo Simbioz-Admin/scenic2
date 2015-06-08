@@ -16,12 +16,6 @@ describe( 'Quiddity Lifecycle', function () {
     var switcherController;
     var checkPort;
     var fs;
-    var cb;
-
-    before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
-        i18n.initialize( done );
-    } );
 
     beforeEach( function () {
         config                 = require( '../fixtures/config' );
@@ -32,15 +26,9 @@ describe( 'Quiddity Lifecycle', function () {
         fs                     = {};
         var SwitcherController = proxyquire( '../../src/switcher/SwitcherController', {
             'fs':                  fs,
-            '../utils/check-port': checkPort,
-            //'../lib/logger':       logStub(),
-            '../utils/logback':    function ( e, c ) {
-                //if ( e ) { console.error( e ); }
-                c( e );
-            }
+            '../utils/check-port': checkPort
         } );
         switcherController     = new SwitcherController( config, io );
-        cb                     = sinon.stub();
     } );
 
     afterEach( function () {
@@ -50,7 +38,6 @@ describe( 'Quiddity Lifecycle', function () {
         switcherController = null;
         checkPort          = null;
         fs                 = null;
-        cb                 = null;
     } );
 
     describe('Creating Quiddities', function() {
@@ -58,55 +45,32 @@ describe( 'Quiddity Lifecycle', function () {
         it('should create a quiddity', function() {
             var quidd = quiddities.quiddity();
             var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
+            var result = switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId');
+            should.exist( result );
+            result.should.eql( quidd_res );
         });
 
-        it.skip('should create a quiddity and start it', function( done ) {
+        it('should create a quiddity and start it', function( ) {
             var quidd = quiddities.quiddity();
             var quidd_res = quiddities.quiddity_parsed();
-
-            async.series( [
-                function( callback ) {
-                    switcherController.quiddityManager.create( 'audiotestsrc', 'audio', 'socketId', callback );
-                },
-
-                function( callback ) {
-                    switcherController.quiddityManager.setPropertyValue( 'audio', 'started', true, callback );
-                }
-            ], function( error ) {
-                if ( error ) {
-                    return done( error )
-                }
-
-                var val = switcherController.switcher.get_property_value('audio', 'started');
-
-                should.exist( val );
-                val.should.equal(true);
-
-                //TODO: Test here
-                done();
-
-            } );
+            var create_result = switcherController.quiddityManager.create( 'audiotestsrc', 'audio', 'socketId' );
+            var set_property_result = switcherController.quiddityManager.setPropertyValue( 'audio', 'started', true );
+            var val = switcherController.switcher.get_property_value('audio', 'started');
+            should.exist( val );
+            val.should.equal(true);
         });
 
         it('should create a fakesink and start it', function( ) {
             var created = switcherController.switcher.create( 'fakesink' );
             should.exist( created );
             created.should.be.equal('fakesink0');
-
             var val = switcherController.switcher.get_quiddity_description('fakesink0');
-
             should.exist( val );
         });
 
         it('should create a sip quiddity', function() {
-            switcherController.quiddityManager.create('sip', 'sip', 'socketId', cb);
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWith( null );
+            var result = switcherController.quiddityManager.create('sip', 'sip', 'socketId');
+            should.exist(result);
         });
 
     });

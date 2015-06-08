@@ -2,16 +2,15 @@ var i18n = require('i18next');
 
 module.exports = {
     /**
-     * Get quiddity classes
+     * Get quiddity classes command
      *
-     * @param cb
+     * @param {Function} cb Callback
      */
     execute: function( cb ) {
-        console.log();
         try {
             var classes = this.switcherController.quiddityManager.getQuiddityClasses();
-        } catch ( e ) {console.log(new Error( 'pouet', e ));
-            return cb( new Error( i18n.t('Could not get quiddity classes. (__error__)') ) );
+        } catch ( e ) {
+            return cb( i18n.t('An error occurred while getting quiddity classes (__error__)', { error: e.toString() } ) );
         }
         cb( null, classes );
     }

@@ -8,19 +8,19 @@ chai.use( sinonChai );
 
 var quiddities   = require( '../../fixtures/quiddities' );
 
-describe( 'Get Quiddity Classes Command', function () {
+describe( 'Get Quiddities Command', function () {
 
     var client;
     var command;
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getQuiddityClasses' );
+        command = require( '../../../src/net/commands/getQuiddities' );
 
         client = {
             switcherController: {
                 quiddityManager: {
-                    getQuiddityClasses: sinon.stub()
+                    getQuiddities: sinon.stub()
                 }
             }
         };
@@ -33,18 +33,18 @@ describe( 'Get Quiddity Classes Command', function () {
     });
 
     it( 'should return exactly what the manager returns', function () {
-        client.switcherController.quiddityManager.getQuiddityClasses.returns([]);
+        client.switcherController.quiddityManager.getQuiddities.returns([]);
         command(cb);
-        client.switcherController.quiddityManager.getQuiddityClasses.should.have.been.calledOnce;
-        client.switcherController.quiddityManager.getQuiddityClasses.should.have.been.calledWithExactly;
+        client.switcherController.quiddityManager.getQuiddities.should.have.been.calledOnce;
+        client.switcherController.quiddityManager.getQuiddities.should.have.been.calledWithExactly;
         cb.should.have.been.calledWithExactly(null, []);
     } );
 
     it( 'should return an error when manager throws', function () {
-        client.switcherController.quiddityManager.getQuiddityClasses.throws();
+        client.switcherController.quiddityManager.getQuiddities.throws();
         command(cb);
-        client.switcherController.quiddityManager.getQuiddityClasses.should.have.been.calledOnce;
-        client.switcherController.quiddityManager.getQuiddityClasses.should.have.been.calledWithExactly;
+        client.switcherController.quiddityManager.getQuiddities.should.have.been.calledOnce;
+        client.switcherController.quiddityManager.getQuiddities.should.have.been.calledWithExactly;
         cb.should.have.been.calledWithMatch(Error);
     } );
 

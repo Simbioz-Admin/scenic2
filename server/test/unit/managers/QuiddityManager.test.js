@@ -4,11 +4,12 @@ var chai       = require( "chai" );
 var sinon      = require( "sinon" );
 var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
+var expect     = chai.expect;
 chai.use( sinonChai );
 
-var logStub      = require( '../fixtures/log' );
-var switcherStub = require( '../fixtures/switcher' );
-var quiddities   = require( '../fixtures/quiddities' );
+var logStub      = require( '../../fixtures/log' );
+var switcherStub = require( '../../fixtures/switcher' );
+var quiddities   = require( '../../fixtures/quiddities' );
 
 describe( 'Quiddity Manager', function () {
 
@@ -19,7 +20,7 @@ describe( 'Quiddity Manager', function () {
     var cb;
 
     before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
+        var i18n = require( '../../../src/lib/i18n' );
         i18n.initialize( done );
     } );
 
@@ -32,7 +33,7 @@ describe( 'Quiddity Manager', function () {
         };
         io                      = {};
         io.emit                 = sinon.spy();
-        var QuiddityManager     = proxyquire( '../../src/switcher/QuiddityManager', {
+        var QuiddityManager     = proxyquire( '../../../src/switcher/QuiddityManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
             '../utils/logback': function ( e, c ) {
@@ -86,10 +87,10 @@ describe( 'Quiddity Manager', function () {
 
             quiddityManager.bindClient( socket );
 
-            socket.on.callCount.should.equal( 11 );
+            socket.on.callCount.should.equal( 10 );
             socket.on.should.have.been.calledWith( 'create' );
             socket.on.should.have.been.calledWith( 'remove' );
-            socket.on.should.have.been.calledWith( 'getQuiddityClasses' );
+            //socket.on.should.have.been.calledWith( 'getQuiddityClasses' );
             socket.on.should.have.been.calledWith( 'getQuiddities' );
             socket.on.should.have.been.calledWith( 'getTreeInfo' );
             socket.on.should.have.been.calledWith( 'getProperties' );
@@ -651,108 +652,79 @@ describe( 'Quiddity Manager', function () {
         describe( 'Quiddity Classes', function () {
 
             it( 'should follow protocol', function () {
-
                 // Make a list of parsed public classes, _parseClass is already tested so trust it
                 var public_classes = _.clone( quiddities.classes_doc_public() ).classes;
                 _.each( public_classes, quiddityManager._parseClass, quiddityManager );
 
                 switcher.get_classes_doc.returns( quiddities.classes_doc() );
 
-                quiddityManager.getQuiddityClasses( cb );
+                var classes = quiddityManager.getQuiddityClasses( );
 
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith( null, public_classes );
+                should.exist( classes );
+                classes.should.eql( public_classes );
             } );
 
             it( 'should follow protocol with empty classes', function () {
-
                 switcher.get_classes_doc.returns( {classes: []}  );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                var classes = quiddityManager.getQuiddityClasses( );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith( null, [] );
+                should.exist( classes );
+                classes.should.eql( [] );
             } );
 
-            it( 'should return error when switcher throws', function () {
+            it( 'should throw error when switcher throws', function () {
                 var error = 'some error';
-
-                switcher.get_classes_doc.throws( error );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                switcher.get_classes_doc.throws(new Error( error) );
+                expect(quiddityManager.getQuiddityClasses.bind(quiddityManager) ).to.throw(error);
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( error );
             } );
 
-            it( 'should return error when switcher returns error', function () {
+            it( 'should throw error when switcher returns error', function () {
                 var error = 'some error';
-
                 switcher.get_classes_doc.returns( {error: error} );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                expect(quiddityManager.getQuiddityClasses.bind(quiddityManager) ).to.throw(error);
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( error );
             } );
 
-            it( 'should return error when switcher returns null', function () {
-
+            it( 'should return empty array when switcher returns null', function () {
                 switcher.get_classes_doc.returns( null );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                var classes = quiddityManager.getQuiddityClasses( cb );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); //Assume a string...
+                should.exist(classes);
+                classes.should.eql([]);
             } );
 
-            it( 'should return error when switcher returns null classes', function () {
-
+            it( 'should return empty array when switcher returns null classes', function () {
                 switcher.get_classes_doc.returns( {classes: null} );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                var classes = quiddityManager.getQuiddityClasses( cb );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); //Assume a string...
+                should.exist(classes);
+                classes.should.eql([]);
             } );
 
-            it( 'should return error when switcher returns garbage classes 1', function () {
-
+            it( 'should return emptu array when switcher returns garbage classes 1', function () {
                 switcher.get_classes_doc.returns(  {classes: 'not an array'} );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                var classes = quiddityManager.getQuiddityClasses( cb );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); //Assume a string...
+                should.exist(classes);
+                classes.should.eql([]);
             } );
 
-            it( 'should return error when switcher returns garbage classes 2', function () {
-
+            it( 'should return empty array when switcher returns garbage classes 2', function () {
                 switcher.get_classes_doc.returns(  {classes: {not: 'an array'}} );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+                var classes = quiddityManager.getQuiddityClasses( cb );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); //Assume a string...
+                should.exist(classes);
+                classes.should.eql([]);
             } );
 
-            it( 'should return error when switcher returns without classes', function () {
-
-                switcher.get_classes_doc.returns(  {} );
-
-                quiddityManager.getQuiddityClasses( cb );
-
+            it( 'should return empty array when switcher returns without classes', function () {
+                switcher.get_classes_doc.returns( {} );
+                var classes = quiddityManager.getQuiddityClasses( cb );
                 switcher.get_classes_doc.should.have.been.calledOnce;
-                cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithMatch( '' ); //Assume a string...
+                should.exist(classes);
+                classes.should.eql([]);
             } );
 
         } );

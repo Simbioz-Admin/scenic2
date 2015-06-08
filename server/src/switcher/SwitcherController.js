@@ -26,7 +26,7 @@ function SwitcherController( config, io ) {
 
     this.quiddityManager = new QuiddityManager( config, this.switcher, io );
     this.sipManager      = new SipManager( config, this.switcher, io );
-    this.rtpManager = new RtpManager( config, this.switcher, io );
+    this.rtpManager      = new RtpManager( config, this.switcher, io );
 }
 
 /**
@@ -230,7 +230,10 @@ SwitcherController.prototype.getSaveFiles = function ( cb ) {
             cb( null, files );
         } );
     } catch ( e ) {
-        return logback( i18n.t('Error while reading save files from __path__ (__error__)', {path: path, error: e.toString()}), cb);
+        return logback( i18n.t( 'Error while reading save files from __path__ (__error__)', {
+            path:  path,
+            error: e.toString()
+        } ), cb );
 
     }
 };
@@ -247,11 +250,14 @@ SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
     try {
         var loaded = this.switcher.load_history_from_scratch( path );
     } catch ( e ) {
-        return logback( i18n.t('Error while loading file __path__ (__error__)', {path: path, error: e.toString()}), cb );
+        return logback( i18n.t( 'Error while loading file __path__ (__error__)', {
+            path:  path,
+            error: e.toString()
+        } ), cb );
 
     }
     if ( !loaded ) {
-        return logback( i18n.t('Failed to load file __path__', {path: path} ), cb );
+        return logback( i18n.t( 'Failed to load file __path__', {path: path} ), cb );
     }
     log.info( "Loaded scenic file: " + path );
     cb();
@@ -269,10 +275,13 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
     try {
         var save = this.switcher.save_history( path );
     } catch ( e ) {
-        return logback( i18n.t('Error while saving file __path__ (__error__)', {path: path, error: e.toString()}), cb );
+        return logback( i18n.t( 'Error while saving file __path__ (__error__)', {
+            path:  path,
+            error: e.toString()
+        } ), cb );
     }
     if ( !save ) {
-        return logback( i18n.t('Failed to save file __path__', {path: path}), cb );
+        return logback( i18n.t( 'Failed to save file __path__', {path: path} ), cb );
     }
     log.info( "Saved scenic file: " + path );
     cb();
@@ -291,12 +300,15 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
     try {
         fs.unlink( path, function ( error ) {
             if ( error ) {
-                return logback( i18n.t('Error while deleting file __path__ (__error__)', {path:path, error: error}), cb);
+                return logback( i18n.t( 'Error while deleting file __path__ (__error__)', {
+                    path:  path,
+                    error: error
+                } ), cb );
             }
             cb();
         } );
     } catch ( e ) {
-        return logback( i18n.t('Failed to delete file __path__ (__error__)', {path: path, error: e.toString()}), cb);
+        return logback( i18n.t( 'Failed to delete file __path__ (__error__)', {path: path, error: e.toString()} ), cb );
     }
 };
 

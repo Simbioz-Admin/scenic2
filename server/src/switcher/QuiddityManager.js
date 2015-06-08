@@ -61,7 +61,7 @@ QuiddityManager.prototype.initialize = function () {
 QuiddityManager.prototype.bindClient = function ( socket ) {
     socket.on( 'create', this.create.bind( this ) );
     socket.on( 'remove', this.remove.bind( this ) );
-    socket.on( 'getQuiddityClasses', this.getQuiddityClasses.bind( this ) );
+    //socket.on( 'getQuiddityClasses', this.getQuiddityClasses.bind( this ) );
     socket.on( 'getQuiddities', this.getQuiddities.bind( this ) );
     socket.on( 'getTreeInfo', this.getTreeInfo.bind( this ) );
     socket.on( 'getProperties', this.getProperties.bind( this ) );
@@ -551,19 +551,26 @@ QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
     try {
         var result = this.switcher.get_classes_doc();
     } catch ( e ) {
-        return logback( e.toString(), cb );
+        console.log(e);
+        throw e;
     }
-    if ( !result || result.error || !result.classes || !_.isArray( result.classes ) ) {
-        return logback( i18n.t( 'Could not get quiddity classes' ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+    if ( result && result.error ) {
+        throw new Error(result.error);
+        //return logback( i18n.t( 'Could not get quiddity classes' ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
-    var classes = _.filter( result.classes, function ( quiddityClass ) {
-        return !_.contains( this.privateQuiddities, quiddityClass['class name'] );
-    }, this );
 
-    // Parse classes
-    _.each( classes, this._parseClass, this );
+    var classes = [];
+    if ( result && result.classes && _.isArray( result.classes ) ) {
+        // Filter out private quiddities
+        classes = _.filter( result.classes, function ( quiddityClass ) {
+            return !_.contains( this.privateQuiddities, quiddityClass['class name'] );
+        }, this );
 
-    cb( null, classes );
+        // Parse classes
+        _.each( classes, this._parseClass, this );
+    }
+
+    return classes;
 };
 
 /**

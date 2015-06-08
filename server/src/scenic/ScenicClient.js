@@ -1,7 +1,11 @@
 "use strict";
 
+var _ = require('underscore');
 var i18n = require( 'i18next' );
 var log  = require( '../lib/logger' );
+
+var requireDir = require('require-dir');
+var commands = requireDir('commands', {recurse: true});
 
 /**
  * Master Socket Id
@@ -17,13 +21,27 @@ var masterSocketId;
  * @constructor
  */
 function ScenicClient( switcherController, config, socket ) {
+    this.switcherController = switcherController;
     this.config = config;
     this.socket = socket;
 
-    switcherController.bindClient( socket );
+    this.switcherController.bindClient( socket );
+
+    // Bind commands to client socket
+    _.each( commands, function( command, key ) {
+        var fn;
+        if ( command.execute && _.isFunction(command.execute)) {
+            fn = command.execute;
+        } else if ( _.isFunction(command)) {
+            fn = command;
+        }
+        if ( fn ) {
+            socket.on( command.name ? command.name : key, fn.bind( this ) );
+        }
+    }, this );
 
     // Connection
-    socket.on( 'getConfig', this._onGetConfig.bind( this ) );
+    //socket.on( 'getConfig', this._onGetConfig.bind( this ) );
     socket.on( 'disconnect', this._onDisconnect.bind( this ) );
 
     // General
@@ -65,16 +83,20 @@ function ScenicClient( switcherController, config, socket ) {
     socket.on( "updateRTPDestination", this._onUpdateRTPDestination.bind( this ) );*/
 }
 
+ScenicClient.prototype.bindCommands = function() {
+
+};
+
 /**
  * Get config handler
- * Called at the very start of the client initialization to retreive the configuration
+ * Called at the very start of the client initialization to retrieve the configuration
  *
  * @param oldSocketId
  * @param newSocketId
  * @param cb
  * @private
  */
-ScenicClient.prototype._onGetConfig = function ( oldSocketId, newSocketId, cb ) {
+/*ScenicClient.prototype._onGetConfig = function ( oldSocketId, newSocketId, cb ) {
     if ( masterSocketId && oldSocketId == masterSocketId ) {
         clearTimeout( this.refreshTimeout );
         masterSocketId = newSocketId;
@@ -84,7 +106,7 @@ ScenicClient.prototype._onGetConfig = function ( oldSocketId, newSocketId, cb ) 
     }
     //TODO: Only return the part actually useful for the client
     cb( this.config)
-};
+};*/
 
 /**
  * Disconnect handler

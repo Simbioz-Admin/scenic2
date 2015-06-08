@@ -6,9 +6,9 @@ var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
 chai.use( sinonChai );
 
-var logStub      = require( '../fixtures/log' );
-var switcherStub = require( '../fixtures/switcher' );
-var quiddities   = require( '../fixtures/quiddities' );
+var logStub      = require( '../../fixtures/log' );
+var switcherStub = require( '../../fixtures/switcher' );
+var quiddities   = require( '../../fixtures/quiddities' );
 
 describe( 'Sip Manager', function () {
 
@@ -19,7 +19,7 @@ describe( 'Sip Manager', function () {
     var cb;
 
     before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
+        var i18n = require( '../../../src/lib/i18n' );
         i18n.initialize( done );
     } );
 
@@ -32,7 +32,7 @@ describe( 'Sip Manager', function () {
         };
         io                 = {};
         io.emit            = sinon.spy();
-        var SipManager     = proxyquire( '../../src/switcher/SipManager', {
+        var SipManager     = proxyquire( '../../../src/switcher/SipManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
             '../utils/logback': function ( e, c ) {

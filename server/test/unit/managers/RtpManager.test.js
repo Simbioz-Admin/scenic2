@@ -6,9 +6,9 @@ var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
 chai.use( sinonChai );
 
-var logStub      = require( '../fixtures/log' );
-var switcherStub = require( '../fixtures/switcher' );
-var quiddities   = require( '../fixtures/quiddities' );
+var logStub      = require( '../../fixtures/log' );
+var switcherStub = require( '../../fixtures/switcher' );
+var quiddities   = require( '../../fixtures/quiddities' );
 
 describe( 'RTP Manager', function () {
 
@@ -19,7 +19,7 @@ describe( 'RTP Manager', function () {
     var cb;
 
     before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
+        var i18n = require( '../../../src/lib/i18n' );
         i18n.initialize( done );
     } );
 
@@ -37,7 +37,7 @@ describe( 'RTP Manager', function () {
 
         io                 = {};
         io.emit            = sinon.spy();
-        var RtpManager     = proxyquire( '../../src/switcher/RtpManager', {
+        var RtpManager     = proxyquire( '../../../src/switcher/RtpManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
             '../utils/logback': function ( e, c ) {

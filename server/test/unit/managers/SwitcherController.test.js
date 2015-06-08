@@ -5,8 +5,9 @@ var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
 chai.use( sinonChai );
 
-var logStub      = require( '../fixtures/log' );
-var switcherStub = require( '../fixtures/switcher' );
+var logStub      = require( '../../fixtures/log' );
+var switcherStub = require( '../../fixtures/switcher' );
+var quiddities   = require( '../../fixtures/quiddities' );
 
 describe( 'Switcher Controller', function () {
 
@@ -19,7 +20,7 @@ describe( 'Switcher Controller', function () {
     var cb;
 
     before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
+        var i18n = require( '../../../src/lib/i18n' );
         i18n.initialize( done );
     } );
 
@@ -32,7 +33,7 @@ describe( 'Switcher Controller', function () {
         checkPort              = sinon.stub();
         checkPort.yields();
         fs                     = {};
-        var SwitcherController = proxyquire( '../../src/switcher/SwitcherController', {
+        var SwitcherController = proxyquire( '../../../src/switcher/SwitcherController', {
             'switcher':            switcherStub,
             'fs':                  fs,
             '../utils/check-port': checkPort,
@@ -82,13 +83,13 @@ describe( 'Switcher Controller', function () {
             switcherController.io.should.equal( io );
 
             should.exist( switcherController.quiddityManager );
-            switcherController.quiddityManager.should.be.an.instanceOf( require( '../../src/switcher/QuiddityManager' ) );
+            switcherController.quiddityManager.should.be.an.instanceOf( require( '../../../src/switcher/QuiddityManager' ) );
 
             should.exist( switcherController.sipManager );
-            switcherController.sipManager.should.be.an.instanceOf( require( '../../src/switcher/SipManager' ) );
+            switcherController.sipManager.should.be.an.instanceOf( require( '../../../src/switcher/SipManager' ) );
 
             should.exist( switcherController.rtpManager );
-            switcherController.rtpManager.should.be.an.instanceOf( require( '../../src/switcher/RtpManager' ) );
+            switcherController.rtpManager.should.be.an.instanceOf( require( '../../../src/switcher/RtpManager' ) );
         } );
 
         it( 'should initialize correctly', function ( done ) {

@@ -48,7 +48,6 @@ var config = {
   sip: {
     port: 5060,
     server: "scenic.sat.qc.ca",
-    //server : "10.10.30.247",
     quiddName: 'SIP'
   },
 

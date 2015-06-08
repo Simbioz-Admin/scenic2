@@ -1,7 +1,7 @@
 "use strict";
 
 var log = require( './logger' );
-var ScenicClient = require('../scenic/ScenicClient');
+var ScenicClient = require('../net/ScenicClient');
 
 
 module.exports = {

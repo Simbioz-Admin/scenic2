@@ -60,7 +60,8 @@ define( [
          */
         filter: function ( shmdata ) {
             // Get back up to the table model to filter the displayed connections
-            return this.options.table.filterShmdata( shmdata, true );
+            //return this.options.table.filterShmdata( shmdata, true );
+            return shmdata.get('type') == 'writer';
         },
 
         /**

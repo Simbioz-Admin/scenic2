@@ -51,9 +51,9 @@ define( [
          * @param shmdata
          * @returns {boolean}
          */
-        _filterShmdata: function ( shmdata ) {
+        /*_filterShmdata: function ( shmdata ) {
             return true;
-        },
+        },*/
 
         /**
          * Get source collection
@@ -97,9 +97,9 @@ define( [
          * @param useFilter
          * @returns {*|boolean}
          */
-        filterShmdata: function( shmdata ) {
+        /*filterShmdata: function( shmdata ) {
             return this._filterShmdata( shmdata );
-        },
+        },*/
 
         /**
          * Get destination collection

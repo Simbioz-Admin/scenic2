@@ -76,7 +76,7 @@ define( [
         connect: function ( shmdata, destination ) {
             var self = this;
             //TODO: Move into destination quiddity?
-            var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} );
+            var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} ).length;
             var maxReaders              = destination.get( 'maxReaders' );
             if ( maxReaders > existingConnectionCount || maxReaders == 0 ) {
                 socket.emit( 'invokeMethod', destination.id, 'connect', [shmdata.id], function ( error, result ) {

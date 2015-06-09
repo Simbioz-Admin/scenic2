@@ -15,7 +15,7 @@ describe( 'Get Property Description Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/setPropertyValue' );
+        command = require( '../../../src/net/commands/quiddity.property.set' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Get Property Description Command', function () {
         command('quidd', 'property', 'value', cb);
         client.switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
         client.switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly('quidd', 'property', 'value');
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when failing to set property', function () {

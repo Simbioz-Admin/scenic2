@@ -34,7 +34,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   function() { return [ 'getTreeInfo', this.quiddity.id, '.shmdata' ] }
+            'read':   function() { return [ 'quiddity.tree.query', this.quiddity.id, '.shmdata' ] }
         },
 
         /**

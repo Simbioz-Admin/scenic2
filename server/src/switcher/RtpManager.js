@@ -9,15 +9,15 @@ var logback = require( '../utils/logback' );
 /**
  * Constructor
  *
- * @param config
- * @param switcher
- * @param io
+ * @param switcherController
  * @constructor
  */
-function RtpManager( config, switcher, io ) {
-    this.config   = config;
-    this.switcher = switcher;
-    this.io       = io;
+function RtpManager( switcherController ) {
+    this.switcherController = switcherController;
+    this.config             = this.switcherController.config;
+    this.switcher           = this.switcherController.switcher;
+    this.io                 = this.switcherController.io;
+
 }
 
 /**
@@ -326,7 +326,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
  * @param cb
  */
 RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
-    log.info('Disconnecting RTP destination', path, id);
+    log.info( 'Disconnecting RTP destination', path, id );
 
     // Remove UDP Stream
     try {

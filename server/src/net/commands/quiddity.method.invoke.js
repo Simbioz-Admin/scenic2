@@ -12,21 +12,32 @@ module.exports = {
      */
     execute: function ( quiddityId, method, args, cb ) {
         if ( _.isEmpty( quiddityId ) ) {
-            return cb( i18n.t( 'Missing quiddity id parameter' ) );
+            return cb( i18n.t( 'Missing quiddity id parameter', {
+                lng: this.lang
+            } ) );
         } else if ( !_.isString( quiddityId ) ) {
-            return cb( i18n.t( 'Invalid quiddity id (__quiddity__)', {quiddity: quiddityId} ) );
+            return cb( i18n.t( 'Invalid quiddity id (__quiddity__)', {
+                lng: this.lang,
+                quiddity: quiddityId
+            } ) );
         }
 
         if ( _.isEmpty( method ) ) {
-            return cb( i18n.t( 'Missing method parameter' ) );
+            return cb( i18n.t( 'Missing method parameter', {
+                lng: this.lang
+            } ) );
         } else if ( !_.isString( method ) ) {
-            return cb( i18n.t( 'Invalid method (__property__)', {property: method} ) );
+            return cb( i18n.t( 'Invalid method (__property__)', {
+                lng: this.lang,
+                property: method
+            } ) );
         }
 
         try {
             var result = this.switcherController.quiddityManager.invokeMethod( quiddityId, method, args );
         } catch ( e ) {
             return cb( i18n.t( 'An error occurred while invoking method __method__ with arguments __args__ on quiddity __quiddity__ (__error__)', {
+                lng: this.lang,
                 quiddity: quiddityId,
                 method:   method,
                 args:     args,
@@ -36,6 +47,7 @@ module.exports = {
 
         if ( result == null ) {
             return cb( i18n.t( 'Could not invoke method __method__ with arguments __args__ on quiddity __quiddity__', {
+                lng: this.lang,
                 quiddity: quiddityId,
                 method:   method,
                 args:     args

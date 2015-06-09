@@ -15,7 +15,7 @@ describe( 'Invoke Method Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/invokeMethod' );
+        command = require( '../../../src/net/commands/quiddity.method.invoke' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Invoke Method Command', function () {
         command('quidd', 'method', ['argument'], cb);
         client.switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
         client.switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly('quidd', 'method', ['argument']);
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when failing to invoke method', function () {

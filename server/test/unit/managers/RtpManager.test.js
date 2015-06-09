@@ -15,6 +15,7 @@ describe( 'RTP Manager', function () {
     var switcher;
     var config;
     var io;
+    var switcherController;
     var rtpManager;
     var cb;
 
@@ -34,9 +35,15 @@ describe( 'RTP Manager', function () {
                 soapControlClientPrefix: 'soap-control-client-prefix'
             }
         };
-
         io                 = {};
         io.emit            = sinon.spy();
+
+        switcherController = {
+            switcher: switcher,
+            config:   config,
+            io:       io
+        };
+
         var RtpManager     = proxyquire( '../../../src/switcher/RtpManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
@@ -45,7 +52,7 @@ describe( 'RTP Manager', function () {
                 c( e );
             }
         } );
-        rtpManager         = new RtpManager( config, switcher, io );
+        rtpManager         = new RtpManager( switcherController );
         rtpManager.logback = sinon.stub();
         rtpManager.logback.yields();
         cb                 = sinon.stub();

@@ -15,7 +15,7 @@ describe( 'Get Tree Information Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getTreeInfo' );
+        command = require( '../../../src/net/commands/quiddity.tree.query' );
 
         client = {
             switcherController: {

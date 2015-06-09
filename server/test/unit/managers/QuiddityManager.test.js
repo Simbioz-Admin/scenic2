@@ -16,6 +16,7 @@ describe( 'Quiddity Manager', function () {
     var switcher;
     var config;
     var io;
+    var switcherController;
     var quiddityManager;
 
     beforeEach( function () {
@@ -27,11 +28,18 @@ describe( 'Quiddity Manager', function () {
         };
         io                      = {};
         io.emit                 = sinon.spy();
+
+        switcherController = {
+            switcher: switcher,
+            config:   config,
+            io:       io
+        };
+
         var QuiddityManager     = proxyquire( '../../../src/switcher/QuiddityManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub()
         } );
-        quiddityManager         = new QuiddityManager( config, switcher, io );
+        quiddityManager         = new QuiddityManager( switcherController );
     } );
 
     afterEach( function () {
@@ -69,24 +77,6 @@ describe( 'Quiddity Manager', function () {
             quiddityManager.shmdataTypes.should.be.an( 'array' );
         } );
 
-        it( 'should bind to clients', function () {
-            var socket = {on: sinon.spy()};
-
-            quiddityManager.bindClient( socket );
-
-            socket.on.callCount.should.equal( 0 );
-            //socket.on.should.have.been.calledWith( 'create' );
-            //socket.on.should.have.been.calledWith( 'remove' );
-            //socket.on.should.have.been.calledWith( 'getQuiddityClasses' );
-            //socket.on.should.have.been.calledWith( 'getQuiddities' );
-            //socket.on.should.have.been.calledWith( 'getTreeInfo' );
-            //socket.on.should.have.been.calledWith( 'getProperties' );
-            //socket.on.should.have.been.calledWith( 'getPropertyDescription' );
-            //socket.on.should.have.been.calledWith( 'setPropertyValue' );
-            //socket.on.should.have.been.calledWith( 'getMethods' );
-            //socket.on.should.have.been.calledWith( 'getMethodDescription' );
-            //socket.on.should.have.been.calledWith( 'invokeMethod' );
-        } );
     } );
 
     describe( 'Parsers', function () {

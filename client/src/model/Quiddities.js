@@ -21,7 +21,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'getQuiddities'
+            'read':   'quiddity.list'
         },
 
         /**

@@ -10,7 +10,10 @@ module.exports = {
         try {
             var quiddities = this.switcherController.quiddityManager.getQuiddities();
         } catch ( e ) {
-            return cb( i18n.t('An error occurred while getting quiddities (__error__)', { error: e.toString() } ) );
+            return cb( i18n.t('An error occurred while getting quiddities (__error__)', {
+                lng: this.lang,
+                error: e.toString()
+            } ) );
         }
         cb( null, quiddities );
     }

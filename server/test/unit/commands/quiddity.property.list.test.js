@@ -15,7 +15,7 @@ describe( 'Get Properties Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getProperties' );
+        command = require( '../../../src/net/commands/quiddity.property.list' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Get Properties Command', function () {
         command('quidd', cb);
         client.switcherController.quiddityManager.getProperties.should.have.been.calledOnce;
         client.switcherController.quiddityManager.getProperties.should.have.been.calledWithExactly('quidd');
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when quiddity parameter is empty', function () {

@@ -3,25 +3,24 @@ var sinon     = require( "sinon" );
 var sinonChai = require( "sinon-chai" );
 var should    = chai.should();
 chai.use( sinonChai );
+var proxyquire = require( 'proxyquire' ).noCallThru();
 
 describe( 'Scenic Io', function () {
 
     var config;
     var io;
     var switcher;
+    var MockScenicClient;
     var scenicIo;
 
     beforeEach( function () {
         config = {};
         io = {};
         switcher = {};
-        scenicIo = require( '../../../src/lib/scenic-io' );
-    } );
-    afterEach( function () {
-        config = null;
-        io = null;
-        switcher = null;
-        scenicIo = null;
+        MockScenicClient = sinon.stub();
+        scenicIo     = proxyquire( '../../../src/lib/scenic-io', {
+            '../net/ScenicClient': MockScenicClient
+        } );
     } );
 
     // Hey, dummy test to get started
@@ -50,12 +49,7 @@ describe( 'Scenic Io', function () {
 
         mockOn.args[0][1]( mockSocket );
 
-        switcher.bindClient.should.have.been.calledOnce;
-        switcher.bindClient.should.have.been.calledWith( mockSocket );
-
-        //TODO: Test client connection creation
-        mockSocket.on.should.have.been.called;
-        mockSocket.on.should.have.been.calledWith( 'getConfig' );
-        mockSocket.on.should.have.been.calledWith( 'disconnect' );
+        MockScenicClient.should.have.been.calledWithNew;
+        MockScenicClient.should.have.been.calledWithExactly( switcher, config, mockSocket );
     });
 });

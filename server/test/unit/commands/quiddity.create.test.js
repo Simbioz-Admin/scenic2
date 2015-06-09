@@ -15,7 +15,7 @@ describe( 'Create Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/create' );
+        command = require( '../../../src/net/commands/quiddity.create' );
 
         client  = {
             switcherController: {
@@ -53,7 +53,7 @@ describe( 'Create Command', function () {
         command( 'quidd', 'quiddid', 'socketid', cb );
         client.switcherController.quiddityManager.create.should.have.been.calledOnce;
         client.switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'quidd', 'quiddid', 'socketid' );
-        cb.should.have.been.calledWithMatch( Error );
+        cb.should.have.been.calledWithMatch( '' );
     } );
 
     it( 'should return an error when failing to invoke method', function () {

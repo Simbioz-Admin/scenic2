@@ -19,12 +19,12 @@ define( [
         idAttribute: 'uri',
         methodMap:   {
             'create': function () {
-                return ['saveFile', this.get( 'name' )];
+                return ['file.save', this.get( 'name' )];
             },
             'update': null,
             'patch':  null,
             'delete': function () {
-                return ['delelteFile', this.get( 'name' )];
+                return ['file.delete', this.get( 'name' )];
             },
             'read':   null
         },
@@ -39,7 +39,7 @@ define( [
         loadFile: function ( callback ) {
             var self = this;
             self.scenicChannel.vent.trigger( 'file:loading', self.get( 'name' ) );
-            socket.emit( 'loadFile', this.get( 'name' ), function ( error ) {
+            socket.emit( 'file.load', this.get( 'name' ), function ( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'file:error error', error );
                     return callback ? callback( error ) : null;

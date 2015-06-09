@@ -15,7 +15,7 @@ describe( 'Get Method Description Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getMethodDescription' );
+        command = require( '../../../src/net/commands/quiddity.method.get' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Get Method Description Command', function () {
         command('quidd', 'method', cb);
         client.switcherController.quiddityManager.getMethodDescription.should.have.been.calledOnce;
         client.switcherController.quiddityManager.getMethodDescription.should.have.been.calledWithExactly('quidd', 'method');
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when quiddity parameter is empty', function () {

@@ -15,7 +15,7 @@ describe( 'Get Quiddities Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getQuiddities' );
+        command = require( '../../../src/net/commands/quiddity.list' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Get Quiddities Command', function () {
         command(cb);
         client.switcherController.quiddityManager.getQuiddities.should.have.been.calledOnce;
         client.switcherController.quiddityManager.getQuiddities.should.have.been.calledWithExactly;
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
 } );

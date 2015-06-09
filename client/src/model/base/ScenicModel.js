@@ -59,12 +59,12 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['create', this.get( 'class' ), this.get( 'name' ), socket.id];
+                return ['quiddity.create', this.get( 'class' ), this.get( 'name' ), socket.id];
             },
             'update': null,
             'patch':  null,
             'delete': function () {
-                return ['remove', this.id];
+                return ['quiddity.remove', this.id];
             },
             'read':   null
         },

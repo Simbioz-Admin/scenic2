@@ -15,7 +15,7 @@ describe( 'Remove Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/remove' );
+        command = require( '../../../src/net/commands/quiddity.remove' );
 
         client  = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Remove Command', function () {
         command( 'quiddid', cb );
         client.switcherController.quiddityManager.remove.should.have.been.calledOnce;
         client.switcherController.quiddityManager.remove.should.have.been.calledWithExactly( 'quiddid' );
-        cb.should.have.been.calledWithMatch( Error );
+        cb.should.have.been.calledWithMatch( '' );
     } );
 
     it( 'should return an error when failing to remove', function () {

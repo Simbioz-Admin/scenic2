@@ -15,7 +15,7 @@ describe( 'Get Methods Command', function () {
     var cb;
 
     beforeEach( function () {
-        command = require( '../../../src/net/commands/getMethods' );
+        command = require( '../../../src/net/commands/quiddity.method.list' );
 
         client = {
             switcherController: {
@@ -45,7 +45,7 @@ describe( 'Get Methods Command', function () {
         command('quidd', cb);
         client.switcherController.quiddityManager.getMethods.should.have.been.calledOnce;
         client.switcherController.quiddityManager.getMethods.should.have.been.calledWithExactly('quidd');
-        cb.should.have.been.calledWithMatch(Error);
+        cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when quiddity parameter is empty', function () {

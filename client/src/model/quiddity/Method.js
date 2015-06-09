@@ -31,7 +31,7 @@ define( [
             'patch':  null,
             'delete': null,
             'read':   function () {
-                return ['getMethodDescription', this.collection.quiddity.id, this.id]
+                return ['quiddity.method.get', this.collection.quiddity.id, this.id]
             }
         },
 
@@ -81,7 +81,7 @@ define( [
         invoke: function ( callback ) {
             var self = this;
             this.get('args' ).pluck('value');
-            socket.emit( 'invokeMethod', this.collection.quiddity.id, this.id, this.get('args' ).pluck('value'), function( error, result ) {
+            socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.get('args' ).pluck('value'), function( error, result ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error );
                 }

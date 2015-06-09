@@ -2,14 +2,12 @@
 
 var fs              = require( 'fs' );
 var _               = require( 'underscore' );
-var i18n            = require( 'i18next' );
 var async           = require( 'async' );
 var switcher        = require( 'switcher' );
 var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
 var RtpManager      = require( './RtpManager' );
 var log             = require( '../lib/logger' );
-var logback         = require( '../utils/logback' );
 var checkPort       = require( '../utils/check-port' );
 
 /**
@@ -24,9 +22,9 @@ function SwitcherController( config, io ) {
     this.io       = io;
     this.switcher = new switcher.Switcher( 'scenic', this._onSwitcherLog.bind( this ) );
 
-    this.quiddityManager = new QuiddityManager( config, this.switcher, io );
-    this.sipManager      = new SipManager( config, this.switcher, io );
-    this.rtpManager      = new RtpManager( config, this.switcher, io );
+    this.quiddityManager = new QuiddityManager( this );
+    this.sipManager      = new SipManager( this );
+    this.rtpManager      = new RtpManager( this );
 }
 
 /**
@@ -122,12 +120,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
  * @param socket
  */
 SwitcherController.prototype.bindClient = function ( socket ) {
-    socket.on( "getFiles", this.getSaveFiles.bind( this ) );
-    socket.on( "loadFile", this.loadSaveFile.bind( this ) );
-    socket.on( "saveFile", this.saveFile.bind( this ) );
-    socket.on( "deleteFile", this.deleteFile.bind( this ) );
-
-    this.quiddityManager.bindClient( socket );
     this.sipManager.bindClient( socket );
     this.rtpManager.bindClient( socket );
 };
@@ -215,100 +207,80 @@ SwitcherController.prototype.close = function () {
 /**
  * Get scenic files list
  *
- * @param cb
+ * TODO: Use promises instead of plain callback
+ *
+ * @param {Function} cb Callback
  */
-SwitcherController.prototype.getSaveFiles = function ( cb ) {
+SwitcherController.prototype.getFileList = function ( cb ) {
     var path = this.config.scenicSavePath;
+    log.info( 'Getting scenic file list', path );
     try {
         fs.readdir( path, function ( error, files ) {
             if ( error ) {
-                return logback( i18n.t( 'Failed to read save files from __path__ (__error__)', {
-                    path:  path,
-                    error: error
-                } ), cb );
+                log.error( error );
+                return cb( error );
             }
             cb( null, files );
         } );
     } catch ( e ) {
-        return logback( i18n.t( 'Error while reading save files from __path__ (__error__)', {
-            path:  path,
-            error: e.toString()
-        } ), cb );
-
+        log.error( e );
+        return cb( e.toString() );
     }
 };
 
 /**
  * Load scenic file
  *
- * @param name
- * @param cb
+ * @param {String} name File name
+ * @returns {Boolean} If the operation was successful
  */
-SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
+SwitcherController.prototype.loadFile = function ( name ) {
     var path = this.config.scenicSavePath + name;
-    log.debug( "Loading scenic file: " + path );
-    try {
-        var loaded = this.switcher.load_history_from_scratch( path );
-    } catch ( e ) {
-        return logback( i18n.t( 'Error while loading file __path__ (__error__)', {
-            path:  path,
-            error: e.toString()
-        } ), cb );
-
-    }
+    log.info( 'Loading scenic file', path );
+    var loaded = this.switcher.load_history_from_scratch( path );
     if ( !loaded ) {
-        return logback( i18n.t( 'Failed to load file __path__', {path: path} ), cb );
+        log.warn('Could not load scenic file', path);
     }
-    log.info( "Loaded scenic file: " + path );
-    cb();
+    return loaded;
 };
 
 /**
  * Save scenic file
  *
- * @param name
- * @param cb
+ * @param {String} name File name
  */
-SwitcherController.prototype.saveFile = function ( name, cb ) {
+SwitcherController.prototype.saveFile = function ( name ) {
     var path = this.config.scenicSavePath + name;
-    log.debug( "Saving scenic file: " + path );
-    try {
-        var save = this.switcher.save_history( path );
-    } catch ( e ) {
-        return logback( i18n.t( 'Error while saving file __path__ (__error__)', {
-            path:  path,
-            error: e.toString()
-        } ), cb );
+    log.info( 'Saving scenic file', path );
+    var saved = this.switcher.save_history( path );
+    if ( !saved ) {
+        log.warn('Could not save scenic file', path);
     }
-    if ( !save ) {
-        return logback( i18n.t( 'Failed to save file __path__', {path: path} ), cb );
-    }
-    log.info( "Saved scenic file: " + path );
-    cb();
+    return saved;
 };
-
 
 /**
  * Remove scenic file
  *
- * @param name
- * @param cb
+ * TODO: Use promises instead of plain callback
+ *
+ * @param {String} name File name to delete
+ * @param {Function} cb Callback
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
     var path = this.config.scenicSavePath + name;
-    log.debug( "Removing scenic file: " + path );
+    log.info( 'Removing scenic file', path );
     try {
         fs.unlink( path, function ( error ) {
             if ( error ) {
-                return logback( i18n.t( 'Error while deleting file __path__ (__error__)', {
-                    path:  path,
-                    error: error
-                } ), cb );
+                log.error( error );
+                return cb( error );
             }
             cb();
         } );
     } catch ( e ) {
-        return logback( i18n.t( 'Failed to delete file __path__ (__error__)', {path: path, error: e.toString()} ), cb );
+        log.error( e );
+        return cb( e.toString() );
     }
 };
 

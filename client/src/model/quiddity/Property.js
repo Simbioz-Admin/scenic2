@@ -31,7 +31,7 @@ define( [
             'patch':  null,
             'delete': null,
             'read':   function () {
-                return ['getPropertyDescription', this.collection.quiddity.id, this.id]
+                return ['quiddity.property.get', this.collection.quiddity.id, this.id]
             }
         },
 
@@ -92,7 +92,7 @@ define( [
         updateValue: function ( value ) {
             var self = this;
             this.set('value', value, { internal: true });
-            socket.emit( "setPropertyValue", this.collection.quiddity.id, this.id, value, function ( error ) {
+            socket.emit( "quiddity.property.set", this.collection.quiddity.id, this.id, value, function ( error ) {
                 if ( error ) {
                     // There was an error setting the value, go back to the last synced value or the default
                     self.set( 'value', self.lastSyncedValue !== undefined ? self.lastSyncedValue : self.get( 'default' ) );

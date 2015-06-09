@@ -24,7 +24,7 @@ define( [
             'patch':  null,
             'delete': null,
             'read':   function () {
-                return ['getMethods', this.quiddity.id]
+                return ['quiddity.method.list', this.quiddity.id]
             }
         },
 

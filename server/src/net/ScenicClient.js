@@ -27,22 +27,11 @@ function ScenicClient( switcherController, config, socket ) {
 
     this.switcherController.bindClient( socket );
 
-    // Bind commands to client socket
-    _.each( commands, function( command, key ) {
-        var fn;
-        if ( command.execute && _.isFunction(command.execute)) {
-            fn = command.execute;
-        } else if ( _.isFunction(command)) {
-            fn = command;
-        }
-        if ( fn ) {
-            socket.on( command.name ? command.name : key, fn.bind( this ) );
-        }
-    }, this );
+    this.bindCommands( commands );
 
     // Connection
     //socket.on( 'getConfig', this._onGetConfig.bind( this ) );
-    socket.on( 'disconnect', this._onDisconnect.bind( this ) );
+    //socket.on( 'disconnect', this._onDisconnect.bind( this ) );
 
     // General
     /*socket.on( "getFiles", this._onGetFiles.bind( this ) );
@@ -83,47 +72,46 @@ function ScenicClient( switcherController, config, socket ) {
     socket.on( "updateRTPDestination", this._onUpdateRTPDestination.bind( this ) );*/
 }
 
-ScenicClient.prototype.bindCommands = function() {
-
+/**
+ * Binds a list of command modules to the socket instance
+ *
+ * @param {Array} commands - List of command modules
+ */
+ScenicClient.prototype.bindCommands = function( commands ) {
+    // Bind commands to client socket
+    _.each( commands, function( command, key ) {
+        var fn;
+        if ( command.execute && _.isFunction(command.execute)) {
+            fn = command.execute;
+        } else if ( _.isFunction(command)) {
+            fn = command;
+        }
+        if ( fn ) {
+            this.socket.on( command.name ? command.name : key, fn.bind( this ) );
+        }
+    }, this );
 };
 
 /**
- * Get config handler
- * Called at the very start of the client initialization to retrieve the configuration
+ * Get the master socket id
  *
- * @param oldSocketId
- * @param newSocketId
- * @param cb
- * @private
+ * @getter
+ * @static ish
+ * @returns {String} - The master socket id, if any
  */
-/*ScenicClient.prototype._onGetConfig = function ( oldSocketId, newSocketId, cb ) {
-    if ( masterSocketId && oldSocketId == masterSocketId ) {
-        clearTimeout( this.refreshTimeout );
-        masterSocketId = newSocketId;
-    } else if ( !masterSocketId ) {
-        log.debug( "Master socket id: ", this.socket.id );
-        masterSocketId = this.socket.id;
-    }
-    //TODO: Only return the part actually useful for the client
-    cb( this.config)
-};*/
+ScenicClient.prototype.getMasterSocketId = function() {
+    return masterSocketId;
+};
 
 /**
- * Disconnect handler
+ * Set the master socket id
  *
- * @private
+ * @setter
+ * @static ish
+ * @param {String} socketId - The master socket id
  */
-ScenicClient.prototype._onDisconnect = function () {
-    //TODO: Unbind client and remove all traces of it
-
-    //If the user disconnecting is the "master" user, we set a timeout before exiting the application
-    if ( masterSocketId == this.socket.id && this.config.standalone == false ) {
-        this.refreshTimeout = setTimeout( function () {
-            //TODO: Maybe don't be that violent about it, we could notify higher up and let the app decide
-            log.info( 'Last window closed, exiting...' );
-            process.exit();
-        }, 2000 );
-    }
+ScenicClient.prototype.setMasterSocketId = function( socketId ) {
+    masterSocketId = socketId;
 };
 
 module.exports = ScenicClient;

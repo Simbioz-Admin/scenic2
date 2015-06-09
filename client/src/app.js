@@ -34,7 +34,7 @@ define( [
 
     var config = null;
 
-    var initialize = function ( config, callback ) {
+    var initialize = function ( lang, config, callback ) {
 
         if ( this.initialized ) {
             return;
@@ -54,7 +54,7 @@ define( [
             function ( callback ) {
                 i18n.init( {
                     lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
-                    lng:          localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en',
+                    lng:          lang,
                     ns:           'client',
                     fallbackLng:  false
                 } ).done( function () {

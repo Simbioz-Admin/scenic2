@@ -13,36 +13,36 @@ var quiddities   = require( '../../fixtures/quiddities' );
 describe( 'Sip Manager', function () {
 
     var switcher;
-    var config;
     var io;
+    var config;
+    var switcherController;
     var sipManager;
-    var cb;
-
-    before( function ( done ) {
-        var i18n = require( '../../../src/lib/i18n' );
-        i18n.initialize( done );
-    } );
 
     beforeEach( function () {
-        switcher           = new switcherStub.Switcher();
-        config             = {
+        switcher = new switcherStub.Switcher();
+        io = {};
+        io.emit = sinon.stub();
+        config = {
             sip: {
-                quiddName: 'sip-quiddity-name'
+                quiddName: 'sip-quiddity-name',
+                port:      null
             }
         };
-        io                 = {};
-        io.emit            = sinon.spy();
+
+        switcherController = {
+            switcher: switcher,
+            config:   config,
+            io:       io
+        };
+
         var SipManager     = proxyquire( '../../../src/switcher/SipManager', {
-            'switcher':         switcher,
-            '../lib/logger':    logStub(),
-            '../utils/logback': function ( e, c ) {
-                c( e );
-            },
-            'crypto-js': {
+            'switcher':      switcher,
+            '../lib/logger': logStub(),
+            'crypto-js':     {
                 AES: {
-                    decrypt: function( string, secret ) {
+                    decrypt: function ( string, secret ) {
                         return {
-                            toString: function( endoding ) {
+                            toString: function ( endoding ) {
                                 return string;
                             }
                         }
@@ -53,10 +53,8 @@ describe( 'Sip Manager', function () {
                 }
             }
         } );
-        sipManager         = new SipManager( config, switcher, io );
-        sipManager.logback = sinon.stub();
-        sipManager.logback.yields();
-        cb                 = sinon.stub();
+
+        sipManager         = new SipManager( switcherController );
     } );
 
     afterEach( function () {
@@ -64,7 +62,6 @@ describe( 'Sip Manager', function () {
         config     = null;
         io         = null;
         sipManager = null;
-        cb         = null;
     } );
 
     // Hey, dummy test to get started
@@ -74,7 +71,7 @@ describe( 'Sip Manager', function () {
 
     describe( 'Initialization', function () {
 
-        it( 'should have been instanciated correctly', function () {
+        it( 'should have been instantiated correctly', function () {
             should.exist( sipManager.config );
             sipManager.config.should.equal( config );
 
@@ -83,25 +80,11 @@ describe( 'Sip Manager', function () {
 
             should.exist( sipManager.io );
             sipManager.io.should.equal( io );
+
+            should.exist( sipManager.contacts );
+            sipManager.contacts.should.be.an( 'object' );
         } );
 
-        it( 'should bind to clients', function () {
-            var socket = {on: sinon.spy()};
-
-            sipManager.bindClient( socket );
-
-            socket.on.callCount.should.equal( 10 );
-            socket.on.should.have.been.calledWith( 'sipLogin' );
-            socket.on.should.have.been.calledWith( 'sipLogout' );
-            socket.on.should.have.been.calledWith( 'getContacts' );
-            socket.on.should.have.been.calledWith( 'addContact' );
-            socket.on.should.have.been.calledWith( 'removeContact' );
-            socket.on.should.have.been.calledWith( 'attachShmdataToContact' );
-            socket.on.should.have.been.calledWith( 'detachShmdataFromContact' );
-            socket.on.should.have.been.calledWith( 'callContact' );
-            socket.on.should.have.been.calledWith( 'hangUpContact' );
-            socket.on.should.have.been.calledWith( 'updateContact' );
-        } );
     } );
 
     describe( 'Parsers', function () {
@@ -116,151 +99,23 @@ describe( 'Sip Manager', function () {
         //TODO
     } );
 
-    describe( 'Methods', function () {
+    describe( 'Private Methods', function () {
 
-        describe( 'Adding contact', function () {
-
-            var uri;
-            var name;
-
-            beforeEach(function() {
-                uri = 'contact@server.com';
-                name = 'Joe Blow';
-                switcher.invoke.returns(true);
-                sinon.stub( sipManager, '_updateSavedContact' );
-                sipManager._updateSavedContact.yields();
-            });
-
-            afterEach(function() {
-                cb.should.have.been.calledOnce;
-            });
-
-            it( 'should follow protocol', function () {
-                sipManager.addContact( uri, name, cb );
-
-                switcher.invoke.should.have.been.calledTwice;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri]);
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri]);
-
-                sipManager._updateSavedContact.should.have.been.calledOnce;
-                sipManager._updateSavedContact.should.have.been.calledWith( uri, name );
-
-                cb.should.have.been.calledWithExactly();
-            } );
-
-            it( 'should return error when missing a uri', function () {
-                uri = null;
-
-                sipManager.addContact( uri, name, cb );
-
-                switcher.invoke.should.not.have.been.called;
-                sipManager._updateSavedContact.should.not.have.been.called;
-
-                cb.should.have.been.calledWithMatch('');
-            } );
-
-            it( 'should return error when missing a name', function () {
-                name = null;
-
-                sipManager.addContact( uri, name, cb );
-
-                switcher.invoke.should.not.have.been.called;
-                sipManager._updateSavedContact.should.not.have.been.called;
-
-                cb.should.have.been.calledWithMatch('');
-            } );
-
-            it( 'should return error when adding contact fails', function () {
-                switcher.invoke.returns(false);
-
-                sipManager.addContact( uri, name, cb );
-
-                switcher.invoke.should.have.been.calledOnce;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri]);
-
-                sipManager._updateSavedContact.should.not.have.been.called;
-
-                cb.should.have.been.calledWithMatch('');
-            } );
-
-            it( 'should return error when naming contact fails', function () {
-                switcher.invoke.onFirstCall().returns(true);
-                switcher.invoke.onSecondCall().returns(false);
-
-                sipManager.addContact( uri, name, cb );
-
-                switcher.invoke.should.have.been.calledTwice;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri]);
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri]);
-
-                sipManager._updateSavedContact.should.not.have.been.called;
-
-                cb.should.have.been.calledWithMatch('');
-            } );
-
+        describe( 'Loading contacts', function () {
+            //TODO
         } );
 
-        describe('Removing contact', function() {
-
-            var uri;
-
-            beforeEach(function() {
-                uri = 'contact@server.com';
-                switcher.invoke.returns(true);
-                sinon.stub( sipManager, '_removeSavedContact' );
-                sipManager._removeSavedContact.yields();
-            });
-
-            afterEach(function() {
-                cb.should.have.been.calledOnce;
-            });
-
-            it('should follow protocol', function() {
-                sipManager.removeContact( uri, cb );
-
-                switcher.invoke.should.have.been.calledOnce;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri]);
-
-                cb.should.have.been.calledWithExactly();
-            });
-
-            it('should return error when uri is missing', function() {
-                uri = null;
-                sipManager.removeContact( uri, cb );
-
-                switcher.invoke.should.not.have.been.called;
-
-                cb.should.have.been.calledWithMatch('');
-            });
-
-            it('should return error when removing contact fails', function() {
-                switcher.invoke.returns(false);
-
-                sipManager.removeContact( uri, cb );
-
-                switcher.invoke.should.have.been.calledOnce;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri]);
-
-                cb.should.have.been.calledWithMatch('');
-            });
-
-        });
-
-        describe('Loading contacts', function() {
+        describe( 'Saving contacts', function () {
             //TODO
-        });
+        } );
 
-        describe('Saving contacts', function() {
+        describe( 'Updating contacts', function () {
             //TODO
-        });
+        } );
 
-        describe('Updating contacts', function() {
+        describe( 'Removing saved contact', function () {
             //TODO
-        });
-
-        describe('Removing saved contact', function() {
-            //TODO
-        });
+        } );
 
     } );
 
@@ -369,72 +224,364 @@ describe( 'Sip Manager', function () {
 
     } );
 
-    describe('Network callbacks', function() {
+    describe( 'Public Methods', function () {
 
-        describe('Login', function() {
+        describe( 'Contacts', function () {
+
+            var me;
+            var uri;
+            var name;
+
+            beforeEach( function () {
+                uri  = 'contact@server.com';
+                name = 'Joe Blow';
+                switcher.invoke.returns( true );
+                me   = sipManager.uri = 'myself@me.com';
+                sinon.stub( sipManager, '_saveContacts' );
+            } );
+
+            describe( 'Adding contact', function () {
+
+                it( 'should follow protocol', function () {
+                    var result = sipManager.addContact( uri, name );
+                    switcher.invoke.should.have.been.calledTwice;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri] );
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri] );
+                    sipManager._saveContacts.should.have.been.calledOnce;
+                    should.exist( result );
+                    result.should.be.true;
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    should.exist( sipManager.contacts[me][uri] );
+                    sipManager.contacts[me][uri].should.equal( name );
+                } );
+
+                it( 'should not save if we tell it not to', function () {
+                    var result = sipManager.addContact( uri, name, true );
+                    switcher.invoke.should.have.been.calledTwice;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri] );
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri] );
+                    sipManager._saveContacts.should.not.have.been.calledOnce;
+                    should.exist( result );
+                    result.should.be.true;
+                } );
+
+                it( 'should return false when adding contact fails', function () {
+                    switcher.invoke.returns( false );
+                    var result = sipManager.addContact( uri, name );
+                    switcher.invoke.should.have.been.calledOnce;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri] );
+                    sipManager._saveContacts.should.not.have.been.called;
+                    should.exist( result );
+                    result.should.be.false;
+                } );
+
+                it( 'should return false when naming contact fails', function () {
+                    switcher.invoke.onFirstCall().returns( true );
+                    switcher.invoke.onSecondCall().returns( false );
+                    var result = sipManager.addContact( uri, name );
+                    switcher.invoke.should.have.been.calledTwice;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri] );
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri] );
+                    sipManager._saveContacts.should.not.have.been.called;
+                    should.exist( result );
+                    result.should.be.false;
+                } );
+
+            } );
+
+            describe( 'Removing contact', function () {
+
+                beforeEach( function () {
+                    sipManager.addContact( uri, name, true );
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    should.exist( sipManager.contacts[me][uri] );
+                    switcher.invoke.reset();
+                } );
+
+                it( 'should follow protocol', function () {
+                    var result = sipManager.removeContact( uri );
+                    switcher.invoke.should.have.been.calledOnce;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri] );
+                    sipManager._saveContacts.should.have.been.calledOnce;
+                    should.exist( result );
+                    result.should.be.true;
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    should.not.exist( sipManager.contacts[me][uri] );
+                } );
+
+                it( 'should not save when told not to', function () {
+                    var result = sipManager.removeContact( uri, true );
+                    switcher.invoke.should.have.been.calledOnce;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri] );
+                    sipManager._saveContacts.should.not.have.been.calledOnce;
+                    should.exist( result );
+                    result.should.be.true;
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    should.not.exist( sipManager.contacts[me][uri] );
+                } );
+
+                it( 'should return error when removing contact fails', function () {
+                    switcher.invoke.returns( false );
+                    var result = sipManager.removeContact( uri );
+                    switcher.invoke.should.have.been.calledOnce;
+                    switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri] );
+                    sipManager._saveContacts.should.have.been.calledOnce;
+                    should.exist( result );
+                    result.should.be.false;
+                } );
+
+            } );
+
+        } );
+
+        describe( 'Login', function () {
 
             var credentials;
             var uri;
 
-            beforeEach(function() {
+            beforeEach( function () {
                 credentials = {
-                    server: 'sip.server.com',
-                    user: 'username',
-                    port: 666,
+                    server:   'sip.server.com',
+                    user:     'username',
+                    port:     666,
                     password: 'some encrypted password'
                 };
-                contacts = {
+                uri         = credentials.user + '@' + credentials.server;
+
+                sipManager.contacts = {
                     'username@sip.server.com': {
-                        'some@other.contact':'some other contact'
+                        'some@other.contact': 'some other contact'
                     }
                 };
-                uri = credentials.user + '@' + credentials.server;
+
+                switcherController.quiddityManager                  = {};
+                switcherController.quiddityManager.create           = sinon.stub();
+                switcherController.quiddityManager.create.returns( true );
+                switcherController.quiddityManager.setPropertyValue = sinon.stub();
+                switcherController.quiddityManager.setPropertyValue.returns( true );
+                switcherController.quiddityManager.invokeMethod = sinon.stub();
+                switcherController.quiddityManager.invokeMethod.returns( true );
+
                 sinon.stub( sipManager, 'addContact' );
-                sipManager.addContact.yields();
-                sinon.stub( sipManager, '_loadContacts' );
-                sipManager._loadContacts.yields(null, contacts);
+                sinon.stub( sipManager, '_saveContacts' );
 
-                switcher.has_quiddity.returns(false);
-                switcher.create.returns(true);
-                switcher.set_property_value.returns(true);
-                switcher.invoke.returns(true);
-            });
+                switcher.has_quiddity.returns( false );
+                switcher.invoke.returns( true );
+            } );
 
-            afterEach(function() {
-                cb.should.have.been.calledOnce;
-            });
-
-            it('should follow protocol without a sip quiddity', function() {
-                sipManager.login( credentials, cb );
+            it( 'should follow protocol without a sip quiddity', function () {
+                var result = sipManager.login( credentials );
 
                 should.exist( sipManager.uri );
                 sipManager.uri.should.equal( uri );
 
                 should.exist( config.sip.port );
-                config.sip.port.should.equal(credentials.port);
+                config.sip.port.should.equal( credentials.port );
 
                 switcher.has_quiddity.should.have.been.calledOnce;
-                switcher.has_quiddity.should.have.been.calledWithExactly(config.sip.quiddName);
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
 
-                switcher.create.should.have.been.calledOnce;
-                switcher.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
+                switcherController.quiddityManager.create.should.have.been.calledOnce;
+                switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
 
-                switcher.set_property_value.should.have.been.calledOnce;
-                switcher.set_property_value.should.have.been.calledWithExactly( config.sip.quiddName, 'port', String(credentials.port) );
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'port', credentials.port );
+
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'register', [uri, credentials.password] );
 
                 sipManager.addContact.should.have.been.calledTwice;
-                sipManager.addContact.should.have.been.calledWith( uri, credentials.user );
-                sipManager.addContact.should.have.been.calledWith( 'some@other.contact', 'some other contact' );
+                sipManager.addContact.should.have.been.calledWithExactly( uri, credentials.user, true );
+                sipManager.addContact.should.have.been.calledWith( 'some@other.contact', 'some other contact', true );
 
+                sipManager._saveContacts.should.have.been.calledOnce;
 
+                should.exist(result);
+                result.should.be.true;
+            } );
+
+            it( 'should follow protocol with a sip quiddity', function () {
+                switcher.has_quiddity.returns( true );
+                var result = sipManager.login( credentials );
+
+                should.exist( sipManager.uri );
+                sipManager.uri.should.equal( uri );
+
+                should.exist( config.sip.port );
+                config.sip.port.should.equal( credentials.port );
+
+                switcher.has_quiddity.should.have.been.calledOnce;
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
+
+                switcherController.quiddityManager.create.should.not.have.been.called;
+
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'port', credentials.port );
+
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'register', [uri, credentials.password] );
+
+                sipManager.addContact.should.have.been.calledTwice;
+                sipManager.addContact.should.have.been.calledWithExactly( uri, credentials.user, true );
+                sipManager.addContact.should.have.been.calledWith( 'some@other.contact', 'some other contact', true );
+
+                sipManager._saveContacts.should.have.been.calledOnce;
+
+                should.exist(result);
+                result.should.be.true;
+            } );
+
+            it( 'should follow protocol without contacts', function () {
+                sipManager.contacts = {};
+                var result = sipManager.login( credentials );
+
+                should.exist( sipManager.uri );
+                sipManager.uri.should.equal( uri );
+
+                should.exist( config.sip.port );
+                config.sip.port.should.equal( credentials.port );
+
+                switcher.has_quiddity.should.have.been.calledOnce;
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
+
+                switcherController.quiddityManager.create.should.have.been.calledOnce;
+                switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
+
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'port', credentials.port );
+
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'register', [uri, credentials.password] );
+
+                sipManager.addContact.should.have.been.calledOnce;
+                sipManager.addContact.should.have.been.calledWithExactly( uri, credentials.user, true );
+
+                sipManager._saveContacts.should.have.been.calledOnce;
+
+                should.exist(result);
+                result.should.be.true;
+            } );
+
+            it( 'should fail if creating quiddity fails', function () {
+                switcherController.quiddityManager.create.returns(null);
+
+                var result = sipManager.login( credentials );
+
+                should.not.exist( sipManager.uri );
+
+                should.exist( config.sip.port );
+                config.sip.port.should.equal( credentials.port );
+
+                switcher.has_quiddity.should.have.been.calledOnce;
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
+
+                switcherController.quiddityManager.create.should.have.been.calledOnce;
+                switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
+
+                switcherController.quiddityManager.setPropertyValue.should.not.have.been.called;
+                switcherController.quiddityManager.invokeMethod.should.not.have.been.called;
+                sipManager.addContact.should.not.have.been.called;
+                sipManager._saveContacts.should.not.have.been.called;
+
+                should.exist(result);
+                result.should.be.false;
+            } );
+
+            it( 'should fail if setting sip port fails', function () {
+                switcherController.quiddityManager.setPropertyValue.returns(false);
+
+                var result = sipManager.login( credentials );
+
+                should.not.exist( sipManager.uri );
+
+                should.exist( config.sip.port );
+                config.sip.port.should.equal( credentials.port );
+
+                switcher.has_quiddity.should.have.been.calledOnce;
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
+
+                switcherController.quiddityManager.create.should.have.been.calledOnce;
+                switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
+
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'port', credentials.port );
+
+                switcherController.quiddityManager.invokeMethod.should.not.have.been.called;
+                sipManager.addContact.should.not.have.been.called;
+                sipManager._saveContacts.should.not.have.been.called;
+
+                should.exist(result);
+                result.should.be.false;
+            } );
+
+            it( 'should fail if registering fails', function () {
+                switcherController.quiddityManager.invokeMethod.returns(false);
+
+                var result = sipManager.login( credentials );
+
+                should.not.exist( sipManager.uri );
+
+                should.exist( config.sip.port );
+                config.sip.port.should.equal( credentials.port );
+
+                switcher.has_quiddity.should.have.been.calledOnce;
+                switcher.has_quiddity.should.have.been.calledWithExactly( config.sip.quiddName );
+
+                switcherController.quiddityManager.create.should.have.been.calledOnce;
+                switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'sip', config.sip.quiddName );
+
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'port', credentials.port );
+
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'register', [uri, credentials.password] );
+
+                sipManager.addContact.should.not.have.been.called;
+                sipManager._saveContacts.should.not.have.been.called;
+
+                should.exist(result);
+                result.should.be.false;
+            } );
+
+        } );
+
+        describe('Logout', function() {
+
+            var uri;
+
+            beforeEach(function() {
+                uri = 'some.user@server.com';
+                sipManager.uri = uri;
+            });
+
+            it('should follow protocol', function() {
+                switcher.invoke.returns(true);
+                var result = sipManager.logout();
                 switcher.invoke.should.have.been.calledOnce;
-                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'register', [uri,credentials.password] );
+                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'unregister', [] );
+                should.exist( result );
+                result.should.be.true;
+                should.not.exist(sipManager.uri);
+            });
 
-                cb.should.have.been.calledWithExactly();
+            it('should return false and not reset uri if unregister fails', function() {
+                switcher.invoke.returns(false);
+                var result = sipManager.logout();
+                switcher.invoke.should.have.been.calledOnce;
+                switcher.invoke.should.have.been.calledWithExactly( config.sip.quiddName, 'unregister', [] );
+                should.exist( result );
+                result.should.be.false;
+                should.exist(sipManager.uri);
+                sipManager.uri.should.equal(uri);
             });
 
         });
 
-    });
+    } );
 
-} );
+} )
+;

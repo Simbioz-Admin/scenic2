@@ -38,8 +38,6 @@ SipManager.prototype.initialize = function () {
  * @param socket
  */
 SipManager.prototype.bindClient = function ( socket ) {
-    //socket.on( 'sipLogin', this.login.bind( this ) );
-    socket.on( 'sipLogout', this.logout.bind( this ) );
     socket.on( 'getContacts', this.getContacts.bind( this ) );
     socket.on( 'addContact', this._onAddContact.bind( this ) );
     socket.on( 'removeContact', this._onRemoveContact.bind( this ) );
@@ -367,7 +365,7 @@ SipManager.prototype.login = function ( credentials ) {
  *
  * @returns {Boolean} Success
  */
-SipManager.prototype.logout = function ( cb ) {
+SipManager.prototype.logout = function ( ) {
     log.info( 'Logging out of SIP' );
 
     var loggedOut = this.switcher.invoke( this.config.sip.quiddName, 'unregister', [] );

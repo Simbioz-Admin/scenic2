@@ -138,6 +138,7 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
             property.minimum = parseFloat( property.minimum );
             property.maximum = parseFloat( property.maximum );
             break;
+        case 'int64':
         case 'int':
         case 'uint':
             property.value   = parseInt( property['default value'] );

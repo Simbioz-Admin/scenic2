@@ -1,4 +1,4 @@
-<select id="<%=id%>" name="<%=id%>" class="property">
+<select id="<%=id%>" name="<%=id%>" class="property select">
 <% _.each(options, function(option) { %>
     <option value="<%=option.value%>"<% if(option.value == value){ %> selected="selected"<% } %>><%=option.name%></option>
 <% }); %>

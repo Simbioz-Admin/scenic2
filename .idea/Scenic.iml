@@ -21,8 +21,10 @@
       <sourceFolder url="file://$MODULE_DIR$/client/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/client/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/client/assets" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/backup" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/plato" />
     </content>
     <orderEntry type="inheritedJdk" />

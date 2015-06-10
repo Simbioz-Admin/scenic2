@@ -32,12 +32,20 @@ describe( 'Get Tree Information Command', function () {
         cb.should.have.been.calledOnce;
     });
 
-    it( 'should return exactly what the manager returns', function () {
+    it( 'should return exactly what the manager returns 1', function () {
         client.switcherController.quiddityManager.getTreeInfo.returns({});
         command('quidd','path', cb);
         client.switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
         client.switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly('quidd', 'path');
         cb.should.have.been.calledWithExactly(null, {});
+    } );
+
+    it( 'should return exactly what the manager returns 2', function () {
+        client.switcherController.quiddityManager.getTreeInfo.returns(null);
+        command('quidd','path', cb);
+        client.switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+        client.switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly('quidd', 'path');
+        cb.should.have.been.calledWithExactly(null, null);
     } );
 
     it( 'should return an error when manager throws', function () {

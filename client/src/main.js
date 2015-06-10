@@ -62,7 +62,7 @@ require( {
 
     // Announce ourselves and recover config information from the server
     var lang = localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en';
-    socket.emit( 'connect', lang, localStorage.getItem( 'socketId' ), function ( config ) {
+    socket.emit( 'config', lang, localStorage.getItem( 'socketId' ), function ( config ) {
         localStorage.setItem( 'socketId', socket.id );
         application.initialize( lang, config );
     } );

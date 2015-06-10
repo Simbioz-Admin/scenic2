@@ -22,7 +22,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'getContacts'
+            'read':   'sip.contact.list'
         },
 
         /**

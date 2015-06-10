@@ -454,6 +454,16 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
 //  ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
 
 /**
+ * Verify if a quiddity exists
+ *
+ * @param {String} quiddityId - Id of the quiddity
+ * @returns {Boolean} If the quiddity exists or not
+ */
+QuiddityManager.prototype.exists = function( quiddityId ) {
+   return this.switcher.has_quiddity( quiddityId );
+};
+
+/**
  * Create Quiddity
  *
  *  @param {string} className The class of the quiddity
@@ -589,7 +599,7 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path ) {
         throw new Error( result.error );
     }
 
-    return ( result && _.isObject( result ) ) ? result : {};
+    return ( result && _.isObject( result ) ) ? result : null;
 };
 
 /**

@@ -27,9 +27,9 @@ module.exports = {
                 lng: this.lang
             } ) );
         } else if ( !_.isString( method ) ) {
-            return cb( i18n.t( 'Invalid method (__property__)', {
+            return cb( i18n.t( 'Invalid method (__method__)', {
                 lng: this.lang,
-                property: method
+                method: method
             } ) );
         }
 

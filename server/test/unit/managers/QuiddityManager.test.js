@@ -896,37 +896,34 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_info.should.have.been.calledWith( id, path );
             } );
 
-            it( 'should return empty object when switcher returns null', function () {
+            it( 'should return null when switcher returns null', function () {
                 var id     = 'someId';
                 var path   = '.some.path';
                 switcher.get_info.returns( null );
                 var result = quiddityManager.getTreeInfo( id, path );
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
-                should.exist( result );
-                result.should.eql( {} );
+                should.not.exist( result );
             } );
 
-            it( 'should return empty object when switcher des not return an object', function () {
+            it( 'should return null when switcher des not return an object', function () {
                 var id     = 'someId';
                 var path   = '.some.path';
                 switcher.get_info.returns( 'null' );
                 var result = quiddityManager.getTreeInfo( id, path );
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
-                should.exist( result );
-                result.should.eql( {} );
+                should.not.exist( result );
             } );
 
-            it( 'should return empty object when switcher returns garbage', function () {
+            it( 'should return null when switcher returns garbage', function () {
                 var id     = 'someId';
                 var path   = '.some.path';
                 switcher.get_info.returns( 'this is not an object' );
                 var result = quiddityManager.getTreeInfo( id, path );
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
-                should.exist( result );
-                result.should.eql( {} );
+                should.not.exist( result );
             } );
 
         } );

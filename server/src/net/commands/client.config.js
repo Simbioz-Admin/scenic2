@@ -3,7 +3,7 @@ var log  = require( '../../lib/logger' );
 var masterSocketId;
 
 module.exports = {
-    name: 'connect',
+    name: 'config',
 
     /**
      * Get config handler

@@ -96,7 +96,7 @@ define( [
                 uri:    user + '@' + server
             } ) );
 
-            socket.emit( 'sipLogin', credentials, function ( error ) {
+            socket.emit( 'sip.login', credentials, function ( error ) {
                 self.set( 'connecting', false );
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'sip:loggedout', error );
@@ -118,7 +118,7 @@ define( [
          */
         logout: function () {
             var self = this;
-            socket.emit( 'sipLogout', function ( error ) {
+            socket.emit( 'sip.logout', function ( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }

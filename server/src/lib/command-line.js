@@ -11,7 +11,7 @@ exports.parse = function( config ) {
     /**
      * Help
      */
-    if ( argv.h || argv.helper ) {
+    if ( argv.h || argv.help ) {
         var message = "Scenic " + config.version + "\n\n";
         message += "Command helper for Scenic\n";
         message += "----------------------------------------------------------\n";

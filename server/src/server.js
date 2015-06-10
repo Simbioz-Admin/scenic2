@@ -12,11 +12,11 @@
     var config = require('./settings/config');
     var colors = require('colors/safe');
 
-    // Greeting message
-    console.log(colors.red.bold("Scenic " + config.version) + "\n");
-
     // Parse command line
     require('./lib/command-line').parse( config );
+
+    // Greeting message
+    console.log(colors.red.bold("Scenic " + config.version) + "\n");
 
     var fs = require('fs');
 

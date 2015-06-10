@@ -27,6 +27,7 @@ define( [
          */
         initialize: function () {
             this.networkUsageTemplate = _.template( NetworkUsageTemplate );
+            this.lastValues = {};
         },
 
         onAttach: function () {
@@ -56,23 +57,33 @@ define( [
             var that = this;
             if ( !this.cpuRender ) {
                 var leftBar    = 0;
+                this.lastValues = {};
                 _.each( info, function ( cpu, name ) {
+                    this.lastValues[name] = cpu.total;
                     $( ".cpu .content", this.el ).prepend( "<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>" );
                     leftBar = leftBar + 6;
                 }, this );
                 that.cpuRender = true;
             } else {
                 _.each( info, function ( cpu, name ) {
-                    if ( (cpu.total * 100) < 95 ) {
-                        $( "[data-cpu='" + name + "']", this.el ).removeClass( "cpu-alert" );
-                    }
-                    $( "[data-cpu='" + name + "']", this.el ).animate( {
-                        "height": cpu.total * 100 + "%"
-                    }, 500, function () {
-                        if ( (cpu.total * 100) > 95 ) {
-                            $( "[data-cpu='" + name + "']", this.el ).addClass( "cpu-alert" );
+                    var lastValue = Math.round(this.lastValues[name]*100);
+                    var cpuPercent = Math.round(cpu.total * 100);
+                    if ( cpuPercent != lastValue ) {
+                        var $cpu       = $( "[data-cpu='" + name + "']", this.el );
+                        if ( cpuPercent < 95 && $cpu.hasClass('cpu-alert') ) {
+                            $cpu.removeClass( "cpu-alert" );
                         }
-                    } );
+                        if ( cpuPercent < 85 && $cpu.hasClass('cpu-warning') ) {
+                            $cpu.removeClass( "cpu-warning" );
+                        }
+                        $cpu.css( 'height', cpuPercent + '%' );
+                        if ( cpuPercent >= 95 && !$cpu.hasClass('cpu-alert') ) {
+                            $cpu.addClass( "cpu-alert" );
+                        } else if ( cpuPercent >= 85 && !$cpu.hasClass('cpu-warning')) {
+                            $cpu.addClass( "cpu-warning" );
+                        }
+                        this.lastValues[name] = cpu.total;
+                    }
                 }, this );
             }
         },

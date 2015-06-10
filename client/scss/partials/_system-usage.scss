@@ -33,12 +33,17 @@
       background: #555;
       position: absolute;
       bottom: 0;
+      @include transform(translate3d(0,0,0)); // HW accelerate by making an identity 3d transform
+      @include transition(0.5s);
     }
     .content {
       height: 22px;
       width: 100%;
       position: relative;
     }
+  }
+  .cpu-warning {
+    background: $orange !important;
   }
   .cpu-alert {
     background: $red !important;

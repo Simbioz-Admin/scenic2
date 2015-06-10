@@ -22,13 +22,13 @@ REQUIREJS := node_modules/.bin/r.js
 COMPASS := compass
 NODE_PATH := NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs
 
-.PHONY: setup test build i18n test 
+.PHONY: setup dev test build i18n
 
 build:
-	@echo Building Scenic
-	mkdir -p $(BUILD_DIR)
 	@echo Updating Bower Dependencies
 	bower update
+	@echo Building Scenic
+	mkdir -p $(BUILD_DIR)
 	@echo Installing server files
 	install $(SERVER_FILES) $(BUILD_DIR)
 	cp -r $(SERVER_SOURCE)/* $(BUILD_DIR)
@@ -88,13 +88,15 @@ dist:
 
 
 setup:
-	gem install compass
+	#gem install compass
 	npm install -g bower mocha i18next-parser
+
+dev:
+	npm update
+	bower update
 
 test:
 	$(NODE_PATH) mocha server/test/**/*.test.js
-#	mocha client/test/**/*.test.js
-#	mocha test/**/*.test.js
 
 test-qm:
 	$(NODE_PATH) mocha server/test/integration/QuiddityLifecycle.test.js

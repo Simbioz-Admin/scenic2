@@ -22,7 +22,6 @@ define( [
         },
 
         templateHelpers: function() {
-
             var capabilities = this.model.get('caps').split(', ');
             capabilities = _.map( capabilities, function( capString ) {
                 var parts = capString.split('=');
@@ -31,7 +30,7 @@ define( [
                 var value = parts.length > 1 ? parts[1] : null;
                 if ( parts.length > 1 ) {
                     var info = /\((.*)\)(.*)/.exec(parts[1]);
-                    if ( info.length == 3 ) {
+                    if ( info && info.length == 3 ) {
                         type = info[1];
                         value = info[2];
                     } else {

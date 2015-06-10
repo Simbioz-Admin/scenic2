@@ -43,7 +43,7 @@ function QuiddityManager( config, switcher, io ) {
      *
      * @type {string[]}
      */
-    this.shmdataTypes = ['reader','writer'];
+    this.shmdataTypes = ['reader', 'writer'];
 }
 
 /**
@@ -161,6 +161,27 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
                 delete option.nick;
             } );
             break;
+        case 'fraction':
+            //TODO: Complete
+            /*{
+             name:                  'Shortest interframe time',
+             writable:              'true',
+             type:                  'fraction',
+             'minimum numerator':   '0',
+             'maximum numerator':   '1',
+             'minimum denominator': '2147483647',
+             'maximum denominator': '1',
+             'default numerator':   '1',
+             'default denominator': '1',
+             value:                 undefined,
+             default:               undefined,
+             id:                    'timebase',
+             description:           'Fraction of one second that is the shortest interframe time - normally left as zero which will default to the framerate',
+             order:                 820
+             }*/
+            property.value = property.default = property['default numerator'] + '/' + property['default denominator'];
+            break;
+
         case 'string':
         default:
             // Try JSON first, switcher doesn't tell us if it's JSON or not
@@ -257,7 +278,7 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
     // Parse the class
     this._parseQuiddity( quiddityClass );
 
-    log.debug(quiddityClass);
+    log.debug( quiddityClass );
 
     // Only proceed if it's not on of the 'private' quiddities, they don't matter to the client
     if ( !_.contains( this.privateQuiddities, quiddityClass.class ) ) {
@@ -337,7 +358,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     } catch ( e ) {
         return log.error( e );
     }
-    if ( !propertyInfo || !_.isObject(propertyInfo) || propertyInfo.error ) {
+    if ( !propertyInfo || !_.isObject( propertyInfo ) || propertyInfo.error ) {
         return log.error( 'Could not get property description for', quiddityId, property, value, propertyInfo ? propertyInfo.error : '' );
     }
 
@@ -346,6 +367,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
 
     // Use the parsed value from now on
     value = propertyInfo.value;
+    console.log( propertyInfo );
     // Send to clients
     this.io.emit( 'propertyChanged', quiddityId, property, value );
 
@@ -368,7 +390,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
 QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
     // We exclude system usage and shmdata from debug because it dispatches every second
-    if ( quiddityId != this.config.systemUsage.quiddName && value[0].indexOf('.shmdata') != 0 ) {
+    if ( quiddityId != this.config.systemUsage.quiddName && value[0].indexOf( '.shmdata' ) != 0 ) {
         log.debug( 'Signal:', quiddityId + '.' + signal + '=' + value );
     } else {
         log.verbose( 'Signal:', quiddityId + '.' + signal + '=' + value );
@@ -379,22 +401,22 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   ┴ ┴└─└─┘└─┘  └─┘┴└─┴ ┴└   ┴ └─┘─┴┘
 
     if ( signal == 'on-tree-grafted' ) {
-        var graftedPath = value[0].split('.');
+        var graftedPath = value[0].split( '.' );
         graftedPath.shift();
 
         if ( graftedPath[0] == 'shmdata' && graftedPath.length >= 3 ) {
             var graftedShmdataType = graftedPath[1];
             var graftedShmdataPath = graftedPath[2];
-            if ( !_.isEmpty( graftedShmdataPath ) && _.contains(this.shmdataTypes, graftedShmdataType) ) {
+            if ( !_.isEmpty( graftedShmdataPath ) && _.contains( this.shmdataTypes, graftedShmdataType ) ) {
                 try {
                     var shmdataInfo = this.switcher.get_info( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
                 } catch ( e ) {
                     log.error( e );
                 }
-                if ( !shmdataInfo || !_.isObject(shmdataInfo) || shmdataInfo.error ) {
+                if ( !shmdataInfo || !_.isObject( shmdataInfo ) || shmdataInfo.error ) {
                     log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
                 } else {
-                    this._parseShmdata(shmdataInfo);
+                    this._parseShmdata( shmdataInfo );
                     shmdataInfo.path = graftedShmdataPath;
                     shmdataInfo.type = graftedShmdataType;
                     this.io.emit( 'updateShmdata', quiddityId, shmdataInfo );
@@ -408,14 +430,14 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   ┴ ┴└─└─┘└─┘  ┴  ┴└─└─┘┘└┘└─┘─┴┘
 
     if ( signal == 'on-tree-pruned' ) {
-        var prunedPath = value[0].split('.');
+        var prunedPath = value[0].split( '.' );
         prunedPath.shift();
 
         // Shmdata Writer
         if ( prunedPath[0] == 'shmdata' && prunedPath.length >= 3 ) {
             var prunedShmdataType = prunedPath[1];
             var prunedShmdataPath = prunedPath[2];
-            if ( !_.isEmpty( prunedShmdataPath ) && _.contains(this.shmdataTypes, prunedShmdataType) ) {
+            if ( !_.isEmpty( prunedShmdataPath ) && _.contains( this.shmdataTypes, prunedShmdataType ) ) {
                 this.io.emit( 'removeShmdata', quiddityId, {
                     type: prunedShmdataType,
                     path: prunedShmdataPath
@@ -510,7 +532,7 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId,
         return logback( e.toString(), cb );
     }
     if ( !quiddInfo || quiddInfo.error || !_.isObject( quiddInfo ) ) {
-        return logback( i18n.t( 'Failed to get information for quiddity __quiddityId__', {quiddityId: quiddityId} ) + ( quiddInfo && quiddInfo ? ' ' + quiddInfo.error : '' ), cb );
+        return logback( i18n.t( 'Failed to get information for quiddity __quiddityId__', { quiddityId: quiddityId } ) + ( quiddInfo && quiddInfo ? ' ' + quiddInfo.error : '' ), cb );
     }
 
     // Parse quiddity
@@ -535,7 +557,7 @@ QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !result ) {
-        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', {quiddityId: quiddityId} ), cb );
+        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', { quiddityId: quiddityId } ), cb );
     }
     log.debug( 'Quiddity ' + quiddityId + ' removed.' );
     cb();
@@ -609,8 +631,8 @@ QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
         return logback( e.toString(), cb );
     }
 
-    if ( result && ( !_.isObject(result) || result.error )  ) {
-        return logback( i18n.t( 'Could not get informations for __quiddityId__', {quiddityId: quiddityId} ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+    if ( result && ( !_.isObject( result ) || result.error ) ) {
+        return logback( i18n.t( 'Could not get informations for __quiddityId__', { quiddityId: quiddityId } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 
     return cb( null, result );
@@ -632,7 +654,7 @@ QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !result || result.error || !result.properties || !_.isArray( result.properties ) ) {
-        return logback( i18n.t( 'Could not get properties for __quiddityId__', {quiddityId: quiddityId} ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+        return logback( i18n.t( 'Could not get properties for __quiddityId__', { quiddityId: quiddityId } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 
     // Parse properties
@@ -650,7 +672,7 @@ QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
  * @param cb
  */
 QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property, cb ) {
-    log.info('Getting property description for quiddity ' + quiddityId + ' property ' + property);
+    log.info( 'Getting property description for quiddity ' + quiddityId + ' property ' + property );
 
     try {
         var result = this.switcher.get_property_description( quiddityId, property );
@@ -659,9 +681,9 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
     }
     if ( !result || result.error || _.isEmpty( result ) || !_.isObject( result ) || _.isArray( result ) ) {
         return logback( i18n.t( 'Could not get property description for __quiddityId__ property __property__', {
-                quiddityId: quiddityId,
-                property:   property
-            } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
+            quiddityId: quiddityId,
+            property:   property
+        } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
     }
 
     // Parse property
@@ -720,8 +742,8 @@ QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
     }
     if ( !result || result.error || !result.methods || !_.isArray( result.methods ) ) {
         return logback( i18n.t( 'Failed to get methods for __quiddityId__', {
-                quiddityId: quiddityId
-            } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+            quiddityId: quiddityId
+        } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
     }
 
     // Parse methods
@@ -745,11 +767,11 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
     } catch ( e ) {
         return logback( e.toString(), cb );
     }
-    if ( !result || result.error || _.isEmpty( result ) || !_.isObject(result) || _.isArray( result ) ) {
+    if ( !result || result.error || _.isEmpty( result ) || !_.isObject( result ) || _.isArray( result ) ) {
         return logback( i18n.t( 'Could not get method description for __quiddityId__ method __method__', {
-                quiddityId: quiddityId,
-                method:     method
-            } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
+            quiddityId: quiddityId,
+            method:     method
+        } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
     }
 
     // Parse method
@@ -770,7 +792,7 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
 QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters, cb ) {
     log.info( 'Invoking method ' + method + ' of ' + quiddityId + ' with', parameters );
 
-    if ( !quiddityId || !method || !_.isArray(parameters) ) {
+    if ( !quiddityId || !method || !_.isArray( parameters ) ) {
         return logback( i18n.t( 'Missing arguments to invoke method' ) + ' ' + quiddityId + ' ' + method + ' ' + parameters, cb );
     }
 

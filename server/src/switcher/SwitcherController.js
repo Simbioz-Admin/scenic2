@@ -218,7 +218,7 @@ SwitcherController.prototype.close = function () {
  * @param cb
  */
 SwitcherController.prototype.getSaveFiles = function ( cb ) {
-    var path = this.config.scenicSavePath;
+    var path = this.config.savePath;
     try {
         fs.readdir( path, function ( error, files ) {
             if ( error ) {
@@ -242,7 +242,7 @@ SwitcherController.prototype.getSaveFiles = function ( cb ) {
  * @param cb
  */
 SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
-    var path = this.config.scenicSavePath + name;
+    var path = this.config.savePath + name;
     log.debug( "Loading scenic file: " + path );
     try {
         var loaded = this.switcher.load_history_from_scratch( path );
@@ -264,7 +264,7 @@ SwitcherController.prototype.loadSaveFile = function ( name, cb ) {
  * @param cb
  */
 SwitcherController.prototype.saveFile = function ( name, cb ) {
-    var path = this.config.scenicSavePath + name;
+    var path = this.config.savePath + name;
     log.debug( "Saving scenic file: " + path );
     try {
         var save = this.switcher.save_history( path );
@@ -286,7 +286,7 @@ SwitcherController.prototype.saveFile = function ( name, cb ) {
  * @param cb
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
-    var path = this.config.scenicSavePath + name;
+    var path = this.config.savePath + name;
     log.debug( "Removing scenic file: " + path );
     try {
         fs.unlink( path, function ( error ) {

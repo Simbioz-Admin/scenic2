@@ -41,17 +41,17 @@ describe( 'Configuration', function () {
         should.exist( config.defaultPanelPage );
         config.defaultPanelPage.should.be.a( 'string' );
 
-        should.exist( config.scenicDependenciesPath );
-        config.scenicDependenciesPath.should.be.a( 'string' );
+        should.exist( config.homePath );
+        config.homePath.should.be.a( 'string' );
 
-        should.exist( config.scenicSavePath );
-        config.scenicSavePath.should.be.a( 'string' );
+        should.exist( config.savePath );
+        config.savePath.should.be.a( 'string' );
 
         should.exist( config.contactsPath );
         config.contactsPath.should.be.a( 'string' );
 
-        should.exist( config.pathLogs );
-        config.pathLogs.should.be.a( 'string' );
+        should.exist( config.logPath );
+        config.logPath.should.be.a( 'string' );
     } );
 
     it( 'should contain scenic configuration', function () {

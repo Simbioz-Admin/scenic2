@@ -4,7 +4,7 @@
 var os = require('os'),
     interfaces = os.networkInterfaces(),
     addresses = [],
-    scenicHomePath = process.env.HOME + "/.scenic";
+    homePath = process.env.HOME + "/.scenic";
 
 for (var k in interfaces) {
     for (var k2 in interfaces[k]) {
@@ -65,10 +65,10 @@ var config = {
     },
 
     nameComputer: os.hostname(),
-    scenicDependenciesPath: scenicHomePath,
-    scenicSavePath: scenicHomePath + "/save_files/",
-    contactsPath: scenicHomePath + "/contacts.json",
-    pathLogs: scenicHomePath + '/logs/'
+    homePath: homePath,
+    savePath: homePath + "/save_files/",
+    contactsPath: homePath + "/contacts.json",
+    logPath: homePath + '/logs/'
 };
 
 module.exports = config;

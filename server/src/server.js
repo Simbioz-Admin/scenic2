@@ -5,7 +5,7 @@
     // Check if bootstrap generated an error
     /*if ( err ) {
         console.error( err );
-        return process.exit();
+        return process.exit(1);
     }*/
 
     // Require the minimum to display greeting message
@@ -17,6 +17,29 @@
 
     // Parse command line
     require('./lib/command-line').parse( config );
+
+    var fs = require('fs');
+
+    // Create scenic home directory
+    if ( !fs.existsSync( config.homePath ) ) {
+        try {
+            fs.mkdirSync( config.homePath );
+        } catch ( err ) {
+            console.error( "Could not create directory: " + config.homePath + " Error: " + err.toString() );
+            return process.exit(1);
+        }
+    }
+
+    // Create save file directory
+    //TODO: Move in switcher controller or something, we are not responsible for save files here
+    if ( !fs.existsSync( config.savePath ) ) {
+        try {
+            fs.mkdirSync( config.savePath );
+        } catch ( err ) {
+            console.error( "Could not create directory: " + config.savePath + " Error: " + err.toString() );
+            return process.exit(1);
+        }
+    }
 
     // Start the application
     var http = require('http');
@@ -100,7 +123,7 @@
 
         var message = "\nConfiguration\n";
         message += colors.gray(repeat('–', 50)) + '\n';
-        message += colors.yellow(rpad(" Home path",        25 )) + config.scenicDependenciesPath + "\n";
+        message += colors.yellow(rpad(" Home path",        25 )) + config.homePath + "\n";
         message += colors.yellow(rpad(" Scenic GUI",       25 )) + "http://" + config.host + ":" + config.scenic.port + "\n";
         message += colors.yellow(rpad(" SOAP port",        25 )) + config.soap.port + "\n";
         message += colors.yellow(rpad(" RTP session name", 25 )) + config.rtp.quiddName + "\n";

@@ -18,7 +18,7 @@ define( [
         template: _.template( DestinationTemplate ),
         templateHelpers: function() {
             return {
-                classDescription: this.model.get('classDescription' ).toJSON()
+                classDescription: this.model.has('classDescription' ) ? this.model.get('classDescription' ).toJSON() : null
             }
         },
         className: 'destination',

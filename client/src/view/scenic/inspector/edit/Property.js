@@ -66,6 +66,7 @@ define( [
             switch ( this.model.get( 'type' ) ) {
                 case 'float':
                 case 'int':
+                case 'int64':
                 case 'double':
                 case 'uint':
                     view = new NumberView( {model: this.model} );
@@ -77,11 +78,9 @@ define( [
                     view = new SelectView( {model: this.model} );
                     break;
                 case 'string':
+                default:
                     view = new StringView( {model: this.model} );
                     break;
-                default:
-                    //console.warn( 'View not found for property ' + this.model.get( 'name' ) + ' type ' + this.model.get( 'type' ) );
-                    break
             }
             if ( view ) {
                 this.showChildView( 'field', view );

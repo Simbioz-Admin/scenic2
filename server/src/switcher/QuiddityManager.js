@@ -117,6 +117,7 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
             property.minimum = parseFloat( property.minimum );
             property.maximum = parseFloat( property.maximum );
             break;
+        case 'int64':
         case 'int':
         case 'uint':
             property.value   = parseInt( property['default value'] );
@@ -139,6 +140,27 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
                 delete option.nick;
             } );
             break;
+        case 'fraction':
+            //TODO: Complete
+            /*{
+             name:                  'Shortest interframe time',
+             writable:              'true',
+             type:                  'fraction',
+             'minimum numerator':   '0',
+             'maximum numerator':   '1',
+             'minimum denominator': '2147483647',
+             'maximum denominator': '1',
+             'default numerator':   '1',
+             'default denominator': '1',
+             value:                 undefined,
+             default:               undefined,
+             id:                    'timebase',
+             description:           'Fraction of one second that is the shortest interframe time - normally left as zero which will default to the framerate',
+             order:                 820
+             }*/
+            property.value = property.default = property['default numerator'] + '/' + property['default denominator'];
+            break;
+
         case 'string':
         default:
             // Try JSON first, switcher doesn't tell us if it's JSON or not

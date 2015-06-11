@@ -26,9 +26,9 @@ var customLevels = {
 /* check if folder logs exist */
 var fs = require('fs');
 
-if (!fs.existsSync(config.pathLogs)) {
+if (!fs.existsSync(config.logPath)) {
   // create folder
-  fs.mkdir(config.pathLogs, function(e) {
+  fs.mkdir(config.logPath, function(e) {
     if (e) return console.log(e);
   })
 }
@@ -42,7 +42,7 @@ var log = new(winston.Logger)({
       level: config.logLevel
     }),
     new(winston.transports.File)({
-      filename: config.pathLogs + 'logging-file.log',
+      filename: config.logPath + 'logging-file.log',
       prettyPrint: true,
       level: 'error'
     })

@@ -1,13 +1,13 @@
 .idea/workspace.xml
 node_modules/
 bower_components/
+plato
 build
+dist
 .tmp
 .sass-cache
 *.css.map
-logs/logging-file.log
-logging-file.log
-save_files/*
+logs
+save_files
 *~
 npm-debug.log
-plato

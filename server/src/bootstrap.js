@@ -10,20 +10,20 @@ var cwd = __dirname;
 
 module.exports = function( callback ) {
     // Create package installation directory
-    if ( !fs.existsSync( config.scenicDependenciesPath ) ) {
+    if ( !fs.existsSync( config.homePath ) ) {
         try {
-            fs.mkdirSync( config.scenicDependenciesPath );
+            fs.mkdirSync( config.homePath );
         } catch ( err ) {
-            return callback( "Could not create directory: " + config.scenicDependenciesPath + " Error: " + err.toString() );
+            return callback( "Could not create directory: " + config.homePath + " Error: " + err.toString() );
         }
     }
 
     // Create save file directory
-    if ( !fs.existsSync( config.scenicSavePath ) ) {
+    if ( !fs.existsSync( config.savePath ) ) {
         try {
-            fs.mkdirSync( config.scenicSavePath );
+            fs.mkdirSync( config.savePath );
         } catch ( err ) {
-            return callback( "Could not create directory: " + config.scenicSavePath + " Error: " + err.toString() );
+            return callback( "Could not create directory: " + config.savePath + " Error: " + err.toString() );
         }
     }
 
@@ -36,7 +36,7 @@ module.exports = function( callback ) {
     }
 
     // Load installed dependencies and install missing
-    npm.load( { prefix: config.scenicDependenciesPath }, function ( err, npm ) {
+    npm.load( { prefix: config.homePath }, function ( err, npm ) {
         if ( err ) return callback( err );
 
         npm.commands.ls( [], true, function ( err, data, lite ) {

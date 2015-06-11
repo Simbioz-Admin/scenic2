@@ -3,7 +3,7 @@ VERSION := $(shell ./scenic -v | cut -d ' ' -f3)
 
 PREFIX := /usr
 SCENICDIR := $(PREFIX)/share/scenic
-ARCHIVE := scenic_$(VERSION)
+ARCHIVE := scenic-$(VERSION)
 
 SERVER := server
 SERVER_SOURCE := $(SERVER)/src
@@ -18,43 +18,47 @@ LOCALES := locales
 BUILD_DIR := build
 BUILD_DIR_PUBLIC := $(BUILD_DIR)/public
 
+DIST_DIR := dist
+
 REQUIREJS := node_modules/.bin/r.js
 COMPASS := compass
 NODE_PATH := NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs
 
-.PHONY: setup test build i18n test 
+.PHONY: setup dev test build dist i18n
 
 build:
-	@echo Building Scenic
-	mkdir -p $(BUILD_DIR)
+	@echo Cleaning previous build
+	@rm -rf $(BUILD_DIR)
 	@echo Updating Bower Dependencies
 	bower update
+	@echo Building Scenic
+	@mkdir -p $(BUILD_DIR)
 	@echo Installing server files
 	install $(SERVER_FILES) $(BUILD_DIR)
-	cp -r $(SERVER_SOURCE)/* $(BUILD_DIR)
+	@cp -r $(SERVER_SOURCE)/* $(BUILD_DIR)
 	@echo Copying Locales
-	cp -r $(LOCALES) $(BUILD_DIR)
+	@cp -r $(LOCALES) $(BUILD_DIR)
 	@echo Compiling Client Javascript
-	mkdir -p $(BUILD_DIR_PUBLIC)
+	@mkdir -p $(BUILD_DIR_PUBLIC)
 	$(REQUIREJS) -o $(CLIENT_SOURCE)/build.js out=$(BUILD_DIR_PUBLIC)/scenic.min.js
 	@echo Compiling Stylesheets
-	mkdir -p $(BUILD_DIR_PUBLIC)/css
+	@mkdir -p $(BUILD_DIR_PUBLIC)/css
 	$(COMPASS) compile $(CLIENT) -c $(CLIENT)/config.rb -e production
 	install $(CLIENT)/css/screen.css $(BUILD_DIR_PUBLIC)/css
 	@echo Copying Assets
-	mkdir -p $(BUILD_DIR_PUBLIC)/assets
-	cp -r $(CLIENT_ASSETS)/* $(BUILD_DIR_PUBLIC)/assets
+	@mkdir -p $(BUILD_DIR_PUBLIC)/assets
+	@cp -r $(CLIENT_ASSETS)/* $(BUILD_DIR_PUBLIC)/assets
 	@echo Making Run Script
 	@echo "#!/bin/bash\nNODE_ENV=production $(NODE_PATH) node server.js \$$@" > $(BUILD_DIR)/scenic
 	chmod +x $(BUILD_DIR)/scenic
 
 install:
 	@echo Installing Scenic
-	mkdir -p $(DESTDIR)$(SCENICDIR)
-	cp -r $(BUILD_DIR)/* $(DESTDIR)$(SCENICDIR)
+	@mkdir -p $(DESTDIR)$(SCENICDIR)
+	@cp -r $(BUILD_DIR)/* $(DESTDIR)$(SCENICDIR)
 	@echo Creating Run Script
 	@echo "#!/bin/bash\nNODE_ENV=production $(NODE_PATH) node $(DESTDIR)$(SCENICDIR)/server.js \$$@" > $(DESTDIR)$(PREFIX)/bin/scenic
-	chmod +x $(DESTDIR)$(PREFIX)/bin/scenic
+	@chmod +x $(DESTDIR)$(PREFIX)/bin/scenic
 	@echo Installing Launcher
 	install -D scenic-launcher.desktop $(DESTDIR)$(PREFIX)/share/applications/
 	@echo Installing dependencies
@@ -62,39 +66,31 @@ install:
 
 uninstall:
 	@echo Uninstalling
-	rm -rf $(DESTDIR)$(SCENICDIR)
+	@rm -rf $(DESTDIR)$(SCENICDIR)
 	@echo removed $(DESTDIR)$(SCENICDIR)
-	rm $(DESTDIR)$(PREFIX)/bin/scenic
-	rm $(DESTDIR)$(PREFIX)/share/applications/scenic-launcher.desktop
+	@rm $(DESTDIR)$(PREFIX)/bin/scenic
+	@rm $(DESTDIR)$(PREFIX)/share/applications/scenic-launcher.desktop
 
 clean:
 	@echo Cleaning
-	rm -rf $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
 
 dist:
-	mkdir -p $(ARCHIVE)
-	install $(EXECFILES) $(ARCHIVE)
-	install -m a+r $(SRCFILES) $(ARCHIVE)
-	install $(ALTFILES) $(ARCHIVE)
-	install scenic-launcher.desktop $(ARCHIVE)
-	@for f in $(PROJDIRS); do \
-		echo " copying $$f to archive"; \
-		cp -r $$f $(ARCHIVE); \
-		done;
-	@echo building tarball
-	@tar czf $(ARCHIVE).orig.tar.gz $(ARCHIVE)
-	rm -fr $(ARCHIVE)
+	@mkdir -p $(DIST_DIR)
+	@cp -r $(BUILD_DIR) $(DIST_DIR)/$(ARCHIVE)
+	cd $(DIST_DIR) && tar czf $(ARCHIVE).tar.gz $(ARCHIVE)
+	@rm -r $(DIST_DIR)/$(ARCHIVE)
 	@echo $(ARCHIVE).orig.tar.gz is done!
 
-
 setup:
-	gem install compass
 	npm install -g bower mocha i18next-parser
+
+dev:
+	npm update
+	bower update
 
 test:
 	$(NODE_PATH) mocha server/test/**/*.test.js
-#	mocha client/test/**/*.test.js
-#	mocha test/**/*.test.js
 
 test-qm:
 	$(NODE_PATH) mocha server/test/integration/QuiddityLifecycle.test.js

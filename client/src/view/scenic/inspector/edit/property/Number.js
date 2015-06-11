@@ -38,7 +38,7 @@ define( [
             var type    = this.model.get( 'type' );
             var minimum = this.model.get( 'minimum' );
             var maximum = this.model.get( 'maximum' );
-            var step    = (type == "int" || type == "uint" ? 1 : (maximum - minimum ) / 200);
+            var step    = type.indexOf('int') != -1 ? 1 : (maximum - minimum ) / 200;
             this.ui.slider.slider( {
                 range: "min",
                 value: self.model.get( "value" ),

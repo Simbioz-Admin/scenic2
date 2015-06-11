@@ -25,20 +25,7 @@ define( [
                 id:          "rtp",
                 name:        i18n.t( 'Transfer' ),
                 type:        "transfer",
-                description: i18n.t( "Manage connexions with host destination" ),
-                source:      {
-                    include: [
-                        "sip",
-                        "src",
-                        "source",
-                        "httpsdpdec",
-                        "pclmergesink",
-                        "pcltomeshsink",
-                        "pcldetectsink",
-                        "texturetomeshsink",
-                        "meshmergesink"
-                    ]
-                }
+                description: i18n.t( "Manage connexions with host destination" )
             }
         },
 
@@ -53,7 +40,7 @@ define( [
          * Get destination collection
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {quiddities|*}
+         * @returns {RTPDestinations}
          */
         getDestinationCollection: function() {
             if ( !this.destinations ) {
@@ -64,6 +51,7 @@ define( [
 
         /**
          * Filter destination for RTP, as we use a special collection, they all pass the test
+         *
          * @inheritdoc
          */
         filterDestination: function( destination, useFilter ) {
@@ -85,15 +73,22 @@ define( [
             });
         },
 
+        /**
+         * Get connections
+         *
+         * @param {Shmdata} source
+         * @param {RTPDestination} destination
+         * @returns {*}
+         */
         getConnection: function( source, destination ) {
             return _.findWhere( destination.get('data_streams'), { path: source.get('path') } );
         },
 
         /**
-         * Check if this destination is connected to a shmdata
-         *
-         * @param source
-         * @return bool
+         * @inheritdoc
+         * @param {Shmdata} source
+         * @param {RTPDestiantion} destination
+         * @return {boolean}
          */
         isConnected: function( source, destination ) {
             return this.getConnection(source, destination) != null;
@@ -101,6 +96,9 @@ define( [
 
         /**
          * @inheritdoc
+         * @param {Shmdata} source
+         * @param {RTPDestination} destination
+         * @param {Function} callback
          */
         canConnect: function( source, destination, callback ) {
             var isRaw = source.get('category') == 'video';
@@ -110,12 +108,11 @@ define( [
         },
 
         /**
-         * Connect a shmdata to a destination
-         *
-         * @param shmdata
-         * @param destination
-         * @param port
-         * @param cb callback
+         * @inheritdoc
+         * @param {Shmdata} shmdata
+         * @param {RTPDestination} destination
+         * @param {int} port
+         * @param {Function} cb callback
          */
         connect: function ( shmdata, destination, port, cb ) {
             var self = this;
@@ -130,11 +127,9 @@ define( [
         },
 
         /**
-         * Disconnect a srouce form its destination
-         * Override in concrete table classes
-         *
-         * @param source
-         * @param destination
+         * @inheritdoc
+         * @param {Shmdata} source
+         * @param {RTPDestination} destination
          */
         disconnect: function( source, destination ) {
             var self = this;

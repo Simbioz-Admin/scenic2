@@ -57,11 +57,10 @@ describe( 'Quiddity Lifecycle', function () {
 
         it('should create a quiddity', function() {
             var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId', cb);
+            switcherController.quiddityManager.create(quidd.class, quidd.id, 'socketId', cb);
 
             cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly( null, quidd_res );
+            cb.should.have.been.calledWithExactly( null, quidd );
         });
 
         it.skip('should create a quiddity and start it', function( done ) {
@@ -92,7 +91,7 @@ describe( 'Quiddity Lifecycle', function () {
             } );
         });
 
-        it('should create a fakesink and start it', function( ) {
+        it.skip('should create a fakesink and start it', function( ) {
             var created = switcherController.switcher.create( 'fakesink' );
             should.exist( created );
             created.should.be.equal('fakesink0');

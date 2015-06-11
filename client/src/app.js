@@ -95,7 +95,7 @@ define( [
 
             // Get Quiddities
             function ( callback ) {
-                self.quiddities = new Quiddities();
+                self.quiddities = new Quiddities( null, { classes: self.classDescriptions } );
                 self.quiddities.fetch( {success: _.partial( callback, null ), error: callback} );
             },
 

@@ -24,14 +24,7 @@ define( [
                 id:          "control",
                 name:        i18n.t( "Control" ),
                 type:        "control",
-                description: i18n.t( "Control properties of quiddities with devices" ),
-                source:      {
-                    include: ["midisrc"]
-                },
-                control:      {
-                    include: ["sip", "src", "source", "httpsdpdec", "pclmergesink", "pcltomeshsink", "pcldetectsink", "texturetomeshsink", "meshmergesink"],
-                    exclude: ["midisrc"]
-                }
+                description: i18n.t( "Control properties of quiddities with devices" )
             }
         },
 
@@ -46,7 +39,7 @@ define( [
          * Get destination collection
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {quiddities|*}
+         * @returns {ControlDestination[]}
          */
         getDestinationCollection: function() {
             if ( !this.destinations ) {

@@ -17,6 +17,11 @@ define( [
      */
     var Source = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
+        templateHelpers: function() {
+            return {
+                classDescription: this.model.get('classDescription' ).toJSON()
+            }
+        },
         className:          'quiddity source',
         childView:          ShmdataView,
         childViewOptions:   function () {

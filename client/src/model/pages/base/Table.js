@@ -28,38 +28,39 @@ define( [
         },
 
         /**
-         * Filter Quiddity for access from this table
+         * Filter class for access in this table
          *
-         * @param type
-         * @param quiddity
-         * @returns {boolean}
+         * @param {ClassDescription} classDescription
+         * @param {String[]} filterTags
+         * @returns {boolean} Is the class allowed by the filter tags
+         * @private
          */
-        _filterQuiddityOrClass: function ( type, quiddity, useFilter ) {
-            var className = quiddity.get( 'class' );
-            var category  = quiddity.get( 'category' );
-            var included  = this.has( type ) && this.get( type ).include ? _.some( this.get( type ).include, function ( include ) {
-                return category.indexOf( include ) != -1 || className.indexOf( include ) != -1;
-            } ) : true;
-            var excluded  = this.has( type ) && this.get( type ).exclude ? _.contains( this.get( type ).exclude, category ) : false;
-            var filtered = useFilter && this.get('filter') ? this.get('filter') != category : false;
-            return included && !excluded && !filtered;
+        _filterClass: function( classDescription, filterTags ) {
+            return _.some( classDescription.get('tags'), function( tag ) {
+                return _.contains( filterTags, tag );
+            });
         },
 
         /**
-         * Filter shmdata for access from this table
+         * Filter Quiddity for access from this table
          *
-         * @param shmdata
-         * @returns {boolean}
+         * @param {Quiddity} quiddity - Quiddity to test
+         * @param {String[]} filterTags - List of allowed tags
+         * @param {boolean} filterCategory - Use category filter
+         * @returns {boolean} Is the quiddity allowed by the filter tags and/or filter category
          */
-        /*_filterShmdata: function ( shmdata ) {
-            return true;
-        },*/
+        _filterQuiddity: function ( quiddity, filterTags, filterCategory ) {
+            var classDescription = quiddity.get('classDescription');
+            var classIncluded = this._filterClass(classDescription, filterTags);
+            var categoryIncluded = classIncluded && filterCategory && this.get('filter') ? this.get('filter') == classDescription.get('category') : true;
+            return classIncluded && categoryIncluded;
+        },
 
         /**
          * Get source collection
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {quiddities|*}
+         * @returns {Quiddities}
          */
         getSourceCollection: function() {
             return app.quiddities;
@@ -69,11 +70,11 @@ define( [
          * Get a list of possible source classes
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {Array.<T>|*|boolean}
+         * @returns {ClassDescription[]}
          */
         getSources : function() {
             return app.classDescriptions.filter( function ( classDescription ) {
-                return this.filterSource( classDescription );
+                return this._filterClass( classDescription, ['writer'] );
             }, this );
         },
 
@@ -81,31 +82,19 @@ define( [
          * Filter source for this table
          * Override in concrete table classes to filter the actual collection
          *
-         * @param source
-         * @param useFilter
-         * @returns {*|boolean}
+         * @param {Shmdata} source
+         * @param {boolean} useFilter
+         * @returns {Quiddity[]}
          */
         filterSource: function( source, useFilter ) {
-            return this._filterQuiddityOrClass( 'source', source, useFilter );
+            return this._filterQuiddity( source, [ 'writer' ], useFilter );
         },
-
-        /**
-         * Filter shmdata
-         * Override in concrete table classes to filter the actual collection
-         *
-         * @param shmdata
-         * @param useFilter
-         * @returns {*|boolean}
-         */
-        /*filterShmdata: function( shmdata ) {
-            return this._filterShmdata( shmdata );
-        },*/
 
         /**
          * Get destination collection
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {quiddities|*}
+         * @returns {Quiddities}
          */
         getDestinationCollection: function() {
             return app.quiddities;
@@ -115,11 +104,11 @@ define( [
          * Get a list of possible destination classes
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {Array.<T>|*|boolean}
+         * @returns {ClassDescription[]}
          */
         getDestinations: function() {
             return app.classDescriptions.filter( function ( classDescription ) {
-                return this.filterDestination( classDescription );
+                return this._filterClass( classDescription, ['reader'] );
             }, this );
         },
 
@@ -127,18 +116,18 @@ define( [
          * Filter destination for this table
          * Override in concrete table classes to filter the actual collection
          *
-         * @param destination
-         * @param useFilter
-         * @returns {*|boolean}
+         * @param {Quiddity|Object} destination
+         * @param {boolean} useFilter
+         * @returns {Quiddity[]}
          */
         filterDestination: function( destination, useFilter ) {
-            return this._filterQuiddityOrClass( 'destination', destination, useFilter );
+            return this._filterQuiddity( destination, ['reader'], useFilter );
         },
 
         /**
          * Create a quiddity
          *
-         * @param info
+         * @param {Object} info
          */
         createQuiddity: function ( info ) {
             var self     = this;
@@ -157,9 +146,9 @@ define( [
          * Check if this quiddity is connected to a shmdata
          * Override in concrete table classes
          *
-         * @param source
-         * @param destination
-         * @return bool
+         * @param {Shmdata} source
+         * @param {Quiddity|Object} destination
+         * @return {boolean}
          */
         isConnected: function( source, destination ) {
             // Check if already connected
@@ -178,9 +167,9 @@ define( [
          * Check if a source can connect to a destination
          * Override in concrete table classes
          *
-         * @param source
-         * @param destination
-         * @param callback
+         * @param {Shmdata} source
+         * @param {Quiddity|Object} destination
+         * @param {Function} callback
          */
         canConnect: function( source, destination, callback ) {
             callback( false );
@@ -191,8 +180,8 @@ define( [
          * Connect a source to a destination
          * Override in concrete table classes
          *
-         * @param source
-         * @param destination
+         * @param {Shmdata} source
+         * @param {Quiddity|*} destination
          */
         connect: function( source, destination ) {
             //
@@ -202,8 +191,8 @@ define( [
          * Disconnect a srouce form its destination
          * Override in concrete table classes
          *
-         * @param source
-         * @param destination
+         * @param {Shmdata} source
+         * @param {Quiddity|*} destination
          */
         disconnect: function( source, destination ) {
             //

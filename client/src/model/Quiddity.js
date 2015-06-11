@@ -18,19 +18,25 @@ define( [
      * @extends ScenicModel
      */
 
-    var QuiddModel = ScenicModel.extend( {
+    var Quiddity = ScenicModel.extend( {
+
 
         defaults: function () {
             return {
-                "name":        null,
+                "id":          null,
                 "class":       null,
-                "category":    null,
-                "description": null,
                 "properties":  new Properties(),
                 "methods":     new Methods(),
                 "shmdatas":    new Shmdatas(),
                 // Dynamic
                 "maxReaders":  null
+            }
+        },
+
+        mutators: {
+            transient: true,
+            classDescription: function() {
+                return this.collection.classes.get( this.get('class') );
             }
         },
 
@@ -92,5 +98,5 @@ define( [
 
     } );
 
-    return QuiddModel;
+    return Quiddity;
 } );

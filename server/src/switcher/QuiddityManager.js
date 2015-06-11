@@ -82,10 +82,11 @@ QuiddityManager.prototype.bindClient = function ( socket ) {
 /**
  * Parse a class description into a format more manageable by the front end
  *
+ * @deprecated
  * @param classDescription
  * @returns {*}
  */
-QuiddityManager.prototype._parseClass = function ( classDescription ) {
+/*QuiddityManager.prototype._parseClass = function ( classDescription ) {
     classDescription.id          = classDescription['class name'];
     classDescription.name        = classDescription['long name'];
     delete classDescription['long name'];
@@ -94,20 +95,21 @@ QuiddityManager.prototype._parseClass = function ( classDescription ) {
     classDescription.description = classDescription['short description'];
     delete classDescription['short description'];
     return classDescription;
-};
+};*/
 
 /**
  * Parse a quiddity into a format more manageable by the front end
  *
+ * @deprecated
  * @param quiddity
  * @returns {*}
  */
-QuiddityManager.prototype._parseQuiddity = function ( quiddity ) {
+/*QuiddityManager.prototype._parseQuiddity = function ( quiddity ) {
     quiddity.id   = quiddity.name;
     quiddity.name = quiddity['long name'];
     delete quiddity['long name'];
     return quiddity;
-};
+};*/
 
 /**
  * Parse a shmdata into a format more manageable by the front end
@@ -275,9 +277,6 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
         return log.error( 'Failed to get information for quiddity', quiddityId, quiddityClass.error );
     }
 
-    // Parse the class
-    this._parseQuiddity( quiddityClass );
-
     log.debug( quiddityClass );
 
     // Only proceed if it's not on of the 'private' quiddities, they don't matter to the client
@@ -367,7 +366,7 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
 
     // Use the parsed value from now on
     value = propertyInfo.value;
-    console.log( propertyInfo );
+
     // Send to clients
     this.io.emit( 'propertyChanged', quiddityId, property, value );
 
@@ -535,9 +534,6 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId,
         return logback( i18n.t( 'Failed to get information for quiddity __quiddityId__', { quiddityId: quiddityId } ) + ( quiddInfo && quiddInfo ? ' ' + quiddInfo.error : '' ), cb );
     }
 
-    // Parse quiddity
-    this._parseQuiddity( quiddInfo );
-
     cb( null, quiddInfo );
 };
 
@@ -583,9 +579,6 @@ QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
         return !_.contains( this.privateQuiddities, quiddityClass['class name'] );
     }, this );
 
-    // Parse classes
-    _.each( classes, this._parseClass, this );
-
     cb( null, classes );
 };
 
@@ -608,9 +601,6 @@ QuiddityManager.prototype.getQuiddities = function ( cb ) {
     var quiddities = _.filter( result.quiddities, function ( quiddity ) {
         return !_.contains( this.privateQuiddities, quiddity.class );
     }, this );
-
-    // Parse quiddities
-    _.each( quiddities, this._parseQuiddity, this );
 
     cb( null, quiddities );
 };

@@ -103,14 +103,6 @@ describe( 'Quiddity Manager', function () {
 
     describe( 'Parsers', function () {
 
-        it( 'should parse classes', function () {
-            quiddityManager._parseClass( quiddities.class() ).should.eql( quiddities.class_parsed() );
-        } );
-
-        it( 'should parse quiddities', function () {
-            quiddityManager._parseQuiddity( quiddities.quiddity() ).should.eql( quiddities.quiddity_parsed() );
-        } );
-
         it( 'should parse shmdatas', function () {
             quiddityManager._parseShmdata( quiddities.shmdata_writer() ).should.eql( quiddities.shmdata_writer_parsed() );
         } );
@@ -157,8 +149,6 @@ describe( 'Quiddity Manager', function () {
         it( 'should register added quiddity correctly', function () {
             var id = 'someId';
 
-            var quiddityClass = quiddityManager._parseQuiddity( quiddities.class() );
-
             switcher.get_quiddity_description.returns( quiddities.class() );
             switcher.get_properties_description.returns( quiddities.properties() );
 
@@ -184,7 +174,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'create', quiddityClass );
+            io.emit.should.have.been.calledWith( 'create', quiddities.class() );
         } );
 
         it( 'should stop when registering added private quiddity', function () {
@@ -652,17 +642,13 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol', function () {
 
-                // Make a list of parsed public classes, _parseClass is already tested so trust it
-                var public_classes = _.clone( quiddities.classes_doc_public() ).classes;
-                _.each( public_classes, quiddityManager._parseClass, quiddityManager );
-
                 switcher.get_classes_doc.returns( quiddities.classes_doc() );
 
                 quiddityManager.getQuiddityClasses( cb );
 
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith( null, public_classes );
+                cb.should.have.been.calledWith( null, quiddities.classes_doc_public().classes  );
             } );
 
             it( 'should follow protocol with empty classes', function () {
@@ -761,17 +747,13 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol', function () {
 
-                // Make a list of parsed public quiddities, _parseQuiddity is already tested so trust it
-                var public_quiddities = _.clone( quiddities.quiddities_public() ).quiddities;
-                _.each( public_quiddities, quiddityManager._parseQuiddity, quiddityManager );
-
                 switcher.get_quiddities_description.returns(  quiddities.quiddities() );
 
                 quiddityManager.getQuiddities( cb );
 
                 switcher.get_quiddities_description.should.have.been.calledOnce;
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith( null, public_quiddities );
+                cb.should.have.been.calledWith( null, quiddities.quiddities_public().quiddities );
             } );
 
             it( 'should follow protocol with empty quiddities', function () {
@@ -1646,7 +1628,7 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity() );
             } );
 
             it( 'should follow protocol without a name', function () {
@@ -1666,7 +1648,7 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity() );
             } );
 
             it( 'should follow protocol with an empty name', function () {
@@ -1686,7 +1668,7 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledWithExactly( name );
 
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+                cb.should.have.been.calledWithExactly( null, quiddities.quiddity() );
             } );
 
             it( 'should return error when switcher throws at create', function () {

@@ -8,7 +8,7 @@ define( [
     'view/scenic/menu/Files',
     'view/scenic/menu/file/SaveAs',
     'text!template/scenic/menu.html'
-], function ( _, Backbone, Marionette, app, FilesView,  SaveAsView, MenuTemplate ) {
+], function ( _, Backbone, Marionette, app, FilesView, SaveAsView, MenuTemplate ) {
 
     /**
      * Menu
@@ -18,19 +18,20 @@ define( [
      */
 
     var MenuView = Marionette.LayoutView.extend( {
-        template: _.template(MenuTemplate),
+        template: _.template( MenuTemplate ),
 
         regions: {
             'panel': '.panel'
         },
 
-        ui : {
-            'load': '.load',
-            'save': '.save',
-            'lang': '.lang'
+        ui: {
+            'panel': '.panel',
+            'load':  '.load',
+            'save':  '.save',
+            'lang':  '.lang'
         },
 
-        events:    {
+        events: {
             'click @ui.load': 'showFileList',
             'click @ui.save': 'saveFileAs',
             'click @ui.lang': 'changeLanguage'
@@ -45,32 +46,42 @@ define( [
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
         },
 
-        onAttach: function() {
+        onAttach: function () {
+            console.log( this.ui );
+            this.ui.panel.hide();
             $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
         },
 
-        showFileList: function() {
-            if ( this.currentPanel == 'open') {
+        showFileList: function () {
+            if ( this.currentPanel == 'open' ) {
                 this.currentPanel = null;
-                this.getRegion('panel' ).empty();
+                var self          = this;
+                this.ui.panel.fadeOut( 250 ).conplete( function () {
+                    self.getRegion( 'panel' ).empty();
+                } );
             } else {
                 this.currentPanel = 'open';
-                this.showChildView( 'panel', new FilesView( {collection: app.saveFiles} ) );
+                this.showChildView( 'panel', new FilesView( { collection: app.saveFiles } ) );
+                this.ui.panel.fadeIn( 250 );
             }
         },
 
-        saveFileAs: function() {
-            if ( this.currentPanel == 'save') {
+        saveFileAs: function () {
+            if ( this.currentPanel == 'save' ) {
                 this.currentPanel = null;
-                this.getRegion('panel' ).empty();
+                var self          = this;
+                this.ui.panel.fadeOut( 250 ).complete( function () {
+                    self.getRegion( 'panel' ).empty();
+                } );
             } else {
                 this.currentPanel = 'save';
                 this.showChildView( 'panel', new SaveAsView() );
+                this.ui.panel.fadeIn( 250 );
             }
         },
 
-        changeLanguage: function(event) {
-            this.scenicChannel.commands.execute('set:language', $(event.currentTarget ).data('lang') );
+        changeLanguage: function ( event ) {
+            this.scenicChannel.commands.execute( 'set:language', $( event.currentTarget ).data( 'lang' ) );
         }
     } );
 

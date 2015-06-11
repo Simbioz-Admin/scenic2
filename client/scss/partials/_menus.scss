@@ -6,35 +6,45 @@
     padding-top: 1em;
     background: $backgroundColorDarker;
     color: $textColor;
+    min-width: 300px;
 
     .title {
       padding: 0.5em;
       font-size: 2em;
       color: $textColorBrighter;
+      margin-bottom: 0.5em;
     }
 
-    .files {
-      max-height: 300px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      .file {
-        padding: 1em;
-        font-size: 1.5em;
-        overflow: hidden;
-        &:hover {
-          background: $satColor;
-          color: $textColorBrighter;
-        }
-        .name {
-          float: left;
-          margin-right: 1em;
-          a {
-            cursor: default;
+    .file-open {
+      .files {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        .file {
+          padding: 1em;
+          font-size: 1.5em;
+          overflow: hidden;
+          &:hover {
+            background: $satColor;
+            color: $textColorBrighter;
+          }
+          .name {
+            float: left;
+            margin-right: 1em;
+            a {
+              cursor: default;
+            }
+          }
+          .remove {
+            float: right;
           }
         }
-        .remove {
-          float: right;
-        }
+      }
+    }
+
+    .file-save-as {
+      .panel-content {
+        padding: 2em;
       }
     }
   }

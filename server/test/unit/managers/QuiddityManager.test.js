@@ -619,14 +619,11 @@ describe( 'Quiddity Manager', function () {
         describe( 'Quiddity Classes', function () {
 
             it( 'should follow protocol', function () {
-                // Make a list of parsed public classes, _parseClass is already tested so trust it
-                var public_classes = _.clone( quiddities.classes_doc_public() ).classes;
-                _.each( public_classes, quiddityManager._parseClass, quiddityManager );
                 switcher.get_classes_doc.returns( quiddities.classes_doc() );
                 var result         = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
-                result.should.eql( public_classes );
+                result.should.eql( quiddities.classes_doc_public().classes );
             } );
 
             it( 'should follow protocol with empty classes', function () {
@@ -776,7 +773,7 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
-                result.should.eql( quiddities.quiddity_parsed() );
+                result.should.eql( quiddities.quiddity() );
             } );
 
             it( 'should return empty object with empty quiddity', function () {

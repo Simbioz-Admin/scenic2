@@ -33,19 +33,19 @@ describe( 'Create Command', function () {
     } );
 
     it( 'should return the quiddity name returned by the manager', function () {
-        client.switcherController.quiddityManager.create.returns( quiddities.quiddity_parsed() );
+        client.switcherController.quiddityManager.create.returns( quiddities.quiddity() );
         command( 'quidd', 'quiddid', 'socketid', cb );
         client.switcherController.quiddityManager.create.should.have.been.calledOnce;
         client.switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'quidd', 'quiddid', 'socketid' );
-        cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+        cb.should.have.been.calledWithExactly( null, quiddities.quiddity() );
     } );
 
     it( 'should work without a quiddity name', function () {
-        client.switcherController.quiddityManager.create.returns( quiddities.quiddity_parsed() );
+        client.switcherController.quiddityManager.create.returns( quiddities.quiddity() );
         command( 'quidd', null, 'socketid', cb );
         client.switcherController.quiddityManager.create.should.have.been.calledOnce;
         client.switcherController.quiddityManager.create.should.have.been.calledWithExactly( 'quidd', null, 'socketid' );
-        cb.should.have.been.calledWithExactly( null, quiddities.quiddity_parsed() );
+        cb.should.have.been.calledWithExactly( null, quiddities.quiddity() );
     } );
 
     it( 'should return an error when manager throws', function () {

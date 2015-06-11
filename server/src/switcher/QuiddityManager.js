@@ -594,7 +594,6 @@ QuiddityManager.prototype.getQuiddityDescription = function ( quiddityId ) {
     var quiddityDescription = {};
     if ( result && !_.isEmpty( result ) && _.isObject( result ) && !_.isArray( result ) ) {
         quiddityDescription = result;
-        this._parseQuiddity( quiddityDescription );
     }
 
     return quiddityDescription;
@@ -662,11 +661,7 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
         this._parseProperty( propertyDescription );
     }
 
-    // Parse property
-    this._parseProperty( result );
-
-    // Return to client
-    cb( null, result );
+    return propertyDescription;
 };
 
 /**

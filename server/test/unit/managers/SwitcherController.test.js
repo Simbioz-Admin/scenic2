@@ -271,12 +271,12 @@ describe( 'Switcher Controller', function () {
 
             it( 'should get save files', function () {
                 var files = ['file-a', 'file-b'];
-                config.scenicSavePath = 'some/path/';
+                config.savePath = 'some/path/';
                 fs.readdir = sinon.stub();
                 fs.readdir.yields( null, files );
                 switcherController.getFileList( cb );
                 fs.readdir.should.have.been.calledOnce;
-                fs.readdir.should.have.been.calledWith( config.scenicSavePath );
+                fs.readdir.should.have.been.calledWith( config.savePath );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWith( null, files );
             } );
@@ -307,14 +307,14 @@ describe( 'Switcher Controller', function () {
 
             beforeEach( function () {
                 file                  = 'file.json';
-                config.scenicSavePath = 'some/path/';
+                config.savePath = 'some/path/';
             } );
 
             it( 'should get a save file', function () {
                 switcher.load_history_from_scratch.returns( true );
                 var result = switcherController.loadFile( file );
                 switcher.load_history_from_scratch.should.have.been.calledOnce;
-                switcher.load_history_from_scratch.should.have.been.calledWith( config.scenicSavePath + file );
+                switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + file );
                 should.exist( result );
                 result.should.be.true;
             } );
@@ -324,7 +324,7 @@ describe( 'Switcher Controller', function () {
                 switcher.load_history_from_scratch.throws( new Error( error ) );
                 expect( switcherController.loadFile.bind( switcherController, file ) ).to.throw( error );
                 switcher.load_history_from_scratch.should.have.been.calledOnce;
-                switcher.load_history_from_scratch.should.have.been.calledWith( config.scenicSavePath + file );
+                switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + file );
             } );
 
             it( 'should return false when loading save file fails', function () {
@@ -342,14 +342,14 @@ describe( 'Switcher Controller', function () {
 
             beforeEach( function () {
                 file                  = 'file.json';
-                config.scenicSavePath = 'some/path/';
+                config.savePath = 'some/path/';
             } );
 
             it( 'should save a save file', function () {
                 switcher.save_history.returns( true );
                 var result = switcherController.saveFile( file );
                 switcher.save_history.should.have.been.calledOnce;
-                switcher.save_history.should.have.been.calledWith( config.scenicSavePath + file );
+                switcher.save_history.should.have.been.calledWith( config.savePath + file );
                 should.exist( result );
                 result.should.be.true;
             } );
@@ -359,7 +359,7 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.throws( new Error( error ) );
                 expect( switcherController.saveFile.bind( switcherController, file ) ).to.throw( error );
                 switcher.save_history.should.have.been.calledOnce;
-                switcher.save_history.should.have.been.calledWith( config.scenicSavePath + file );
+                switcher.save_history.should.have.been.calledWith( config.savePath + file );
             } );
 
             it( 'should return false when saving save file fails', function () {
@@ -378,7 +378,7 @@ describe( 'Switcher Controller', function () {
 
             beforeEach( function () {
                 file                  = 'file.json';
-                config.scenicSavePath = 'some/path/';
+                config.savePath = 'some/path/';
                 cb = sinon.stub();
             } );
 
@@ -387,7 +387,7 @@ describe( 'Switcher Controller', function () {
                 fs.unlink.yields( null );
                 switcherController.deleteFile( file, cb );
                 fs.unlink.should.have.been.calledOnce;
-                fs.unlink.should.have.been.calledWith( config.scenicSavePath + file );
+                fs.unlink.should.have.been.calledWith( config.savePath + file );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithExactly( );
             } );

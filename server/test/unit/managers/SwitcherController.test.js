@@ -334,20 +334,11 @@ describe( 'Switcher Controller', function () {
                 result.should.be.false;
             } );
 
-            switcher.load_history_from_scratch.returns( true );
-
-            switcherController.loadSaveFile( file, cb );
-
-            switcher.load_history_from_scratch.should.have.been.calledOnce;
-            switcher.load_history_from_scratch.should.have.been.calledWith( config.scenicSavePath + file );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
         } );
 
         describe( 'Saving scenic file', function () {
 
-            config.scenicSavePath = 'some/path/';
+            var file;
 
             beforeEach( function () {
                 file                  = 'file.json';
@@ -378,14 +369,6 @@ describe( 'Switcher Controller', function () {
                 result.should.be.false;
             } );
 
-            config.scenicSavePath = 'some/path/';
-
-            switcher.load_history_from_scratch.returns( false );
-
-            switcherController.loadSaveFile( file, cb );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( file ); // Error contains file name...
         } );
 
         describe( 'Deleting scenic file', function () {
@@ -409,8 +392,14 @@ describe( 'Switcher Controller', function () {
                 cb.should.have.been.calledWithExactly( );
             } );
 
-            switcher.save_history.should.have.been.calledOnce;
-            switcher.save_history.should.have.been.calledWith( config.scenicSavePath + file );
+            it( 'should get an error when deleting a save file throws', function () {
+                var error = 'some error';
+                fs.unlink = sinon.stub();
+                fs.unlink.throws( new Error( error ) );
+                switcherController.deleteFile( file, cb );
+                cb.should.have.been.calledOnce;
+                cb.should.have.been.calledWithMatch( error );
+            } );
 
             it( 'should get an error when deleting a save file fails', function () {
                 var error = 'some error';

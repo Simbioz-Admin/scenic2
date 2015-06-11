@@ -271,6 +271,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
     var alreadyHasShmdata = false;
     if ( rtpShmdata && _.contains( _.keys( rtpShmdata ), path ) ) {
         log.debug( 'RTP is already connected to shmdata', path );
+        log.verbose( rtpShmdata );
         alreadyHasShmdata = true;
     }
 

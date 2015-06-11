@@ -46,6 +46,10 @@ define( [
         template: _.template( ScenicTemplate ),
         el:       '#scenic',
 
+        ui : {
+            modal: '#modal'
+        },
+
         regions: {
             tabs:      '#tabs',
             usage:     '#usage',
@@ -156,6 +160,7 @@ define( [
                 message  = i18n.t( 'Are you sure?' );
             }
             this.$el.addClass( 'blur' );
+            this.ui.modal.css('opacity', 1);
             this.showChildView( 'modal', new ConfirmationView( {
                 message:  message,
                 callback: _.bind( this.closeModal, this, callback )
@@ -170,8 +175,12 @@ define( [
          */
         closeModal: function ( callback, result ) {
             this.$el.removeClass( 'blur' );
-            this.getRegion( 'modal' ).empty();
+            this.ui.modal.css('opacity', 0);
             callback( result );
+            var self = this;
+            setTimeout( function() {
+                self.getRegion( 'modal' ).empty();
+            }, 500);
         },
 
         //   ██████╗ ██╗   ██╗██╗██████╗ ██████╗ ██╗████████╗██╗███████╗███████╗

@@ -47,7 +47,6 @@ define( [
         },
 
         onAttach: function () {
-            console.log( this.ui );
             this.ui.panel.hide();
             $( ".lang[data-lang='" + localStorage.getItem( 'lang' ) + "']" ).addClass( "active" );
         },

@@ -22,20 +22,7 @@ define( [
                 id:          "sip",
                 name:        i18n.t( "SIP" ),
                 type:        "transfer",
-                description: i18n.t( "Manage transfer of shmdatas to SIP contacts" ),
-                source:      {
-                    include: [
-                        "sip",
-                        "src",
-                        "source",
-                        "httpsdpdec",
-                        "pclmergesink",
-                        "pcltomeshsink",
-                        "pcldetectsink",
-                        "texturetomeshsink",
-                        "meshmergesink"
-                    ]
-                }
+                description: i18n.t( "Manage transfer of shmdatas to SIP contacts" )
             }
         },
 
@@ -51,7 +38,7 @@ define( [
          * Get destination collection
          * Override in concrete table classes to retrieve the actual collection
          *
-         * @returns {quiddities|*}
+         * @returns {Contacts}
          */
         getDestinationCollection: function() {
             return this.sip.get('contacts');
@@ -62,7 +49,7 @@ define( [
          * Flag the contact to be temporarily show in destinations
          * Normally only contacts with connections appear as a destination
          *
-         * @param contact
+         * @param {Contact} contact
          */
         addDestination: function( contact ) {
             contact.set('showInDestinations', true);

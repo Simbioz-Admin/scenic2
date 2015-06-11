@@ -32,7 +32,7 @@ define( [
             var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
                 return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
             }, this ), function ( quiddity ) {
-                return quiddity.get( 'category' );
+                return quiddity.get( 'classDescription' ).get( 'category' );
             } ) );
             return {
                 categories: categories

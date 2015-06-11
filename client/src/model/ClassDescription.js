@@ -15,7 +15,11 @@ define( [
      */
 
     var ClassDescription = ScenicModel.extend( {
+
+        idAttribute: 'class',
+
         defaults: {
+            'class': null,
             'name': null,
             'description': null,
             'category': null,

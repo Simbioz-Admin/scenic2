@@ -2,286 +2,249 @@ module.exports = {
 
     classes_doc: function () {
         return {
-            "classes": [
+            "classes" : [
                 {
-                    "long name":         "Jack Audio Device2",
-                    "category":          "audio",
-                    "short description": "get audio from jack",
-                    "license":           "LGPL",
-                    "class name":        "2jacksrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "OSCctl",
+                    "name" : "Switcher OSC Controler",
+                    "category" : "control",
+                    "tags" : [
+                    ],
+                    "description" : "OSCcontrolServer allows for managing switcher through OSC",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Switcher OSC Controler",
-                    "category":          "control server",
-                    "short description": "OSCcontrolServer allows for managing switcher through OSC",
-                    "license":           "LGPL",
-                    "class name":        "OSCctl",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "OSCsrc",
+                    "name" : "OSC Receiver",
+                    "category" : "network",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "receives OSC messages and write to shmdata",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "OSC Receiver",
-                    "category":          "network",
-                    "short description": "receives OSC messages and write to shmdata",
-                    "license":           "LGPL",
-                    "class name":        "OSCsrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "SOAPcontrolClient",
+                    "name" : "Switcher Web Client (SOAP)",
+                    "category" : "control",
+                    "tags" : [
+                    ],
+                    "description" : "controling a switcher instance through SOAP webservices",
+                    "license" : "GPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Switcher Web Client (SOAP)",
-                    "category":          "control client",
-                    "short description": "controling a switcher instance through SOAP webservices",
-                    "license":           "GPL",
-                    "class name":        "SOAPcontrolClient",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "SOAPcontrolServer",
+                    "name" : "Switcher Web Controler (SOAP)",
+                    "category" : "control",
+                    "tags" : [
+                    ],
+                    "description" : "getting switcher controled through SOAP webservices",
+                    "license" : "GPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Switcher Web Controler (SOAP)",
-                    "category":          "control server",
-                    "short description": "getting switcher controled through SOAP webservices",
-                    "license":           "GPL",
-                    "class name":        "SOAPcontrolServer",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "audiotestsrc",
+                    "name" : "Sine",
+                    "category" : "audio",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "Creates audio test signals",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Sine",
-                    "category":          "audio",
-                    "short description": "Creates audio test signals",
-                    "license":           "LGPL",
-                    "class name":        "audiotestsrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "create_remove_spy",
+                    "name" : "Quiddity Creation Inspector",
+                    "category" : "utils",
+                    "tags" : [
+                    ],
+                    "description" : "spy manager for quidity creation and removal and convert into signals",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Quiddity Creation Inspector",
-                    "category":          "spy",
-                    "short description": "spy manager for quidity creation and removal and convert into signals",
-                    "license":           "LGPL",
-                    "class name":        "create_remove_spy",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "dico",
+                    "name" : "Dictionary",
+                    "category" : "utils",
+                    "tags" : [
+                    ],
+                    "description" : "Dictionary of string key/values accessible through properties",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Shmdata Decoder",
-                    "category":          "decoder",
-                    "short description": "connect to a shmdata, decode it and write decoded frames to shmdata(s)",
-                    "license":           "LGPL",
-                    "class name":        "decodebin",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "dummy",
+                    "name" : "Dummy Plugin",
+                    "category" : "test",
+                    "tags" : [
+                    ],
+                    "description" : "Dummy plugin for testing/example purpose",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Dictionary",
-                    "category":          "dictionary",
-                    "short description": "Dictionary of string key/values accessible through properties",
-                    "license":           "LGPL",
-                    "class name":        "dico",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "extshmsrc",
+                    "name" : "Raw Shmdata",
+                    "category" : "other",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "import an external shmdata writer",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Raw Shmdata",
-                    "category":          "other",
-                    "short description": "add a shmdata from an other software",
-                    "license":           "LGPL",
-                    "class name":        "fakeshmsrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "gtkwin",
+                    "name" : "Video Display (configurable)",
+                    "category" : "video",
+                    "tags" : [
+                        "reader"
+                    ],
+                    "description" : "Video window with fullscreen",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Shmdata Inspector",
-                    "category":          "monitor",
-                    "short description": "fakesink for testing purpose",
-                    "license":           "LGPL",
-                    "class name":        "fakesink",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "httpsdpdec",
+                    "name" : "HTTP/SDP Player",
+                    "category" : "network",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "decode an sdp-described stream delivered through http and make shmdatas",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "GStreamer Pipeline",
-                    "category":          "other",
-                    "short description": "GStreamer (src) pipeline description to a *single* shmdata",
-                    "license":           "LGPL",
-                    "class name":        "gstsrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "jacksink",
+                    "name" : "Audio Display (Jack)",
+                    "category" : "audio",
+                    "tags" : [
+                        "reader"
+                    ],
+                    "description" : "Audio display",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "GStreamer Video Pipeline",
-                    "category":          "other",
-                    "short description": "GStreamer (src) video pipeline description to a *single* shmdata",
-                    "license":           "LGPL",
-                    "class name":        "gstvideosrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "jacksrc",
+                    "name" : "Jack Audio Device",
+                    "category" : "audio",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "get audio from jack",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Video Display (configurable)",
-                    "category":          "video",
-                    "short description": "Video window with fullscreen",
-                    "license":           "LGPL",
-                    "class name":        "gtkvideosink",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "logger",
+                    "name" : "Switcher Logger",
+                    "category" : "utils",
+                    "tags" : [
+                    ],
+                    "description" : "manage switcher logs and other glib log domains.",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "HTTP/SDP Player",
-                    "category":          "network",
-                    "short description": "decode an sdp-described stream deliver through http and make shmdatas",
-                    "license":           "LGPL",
-                    "class name":        "httpsdpdec",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "property-mapper",
+                    "name" : "Switcher Property Mapper",
+                    "category" : "utils",
+                    "tags" : [
+                    ],
+                    "description" : "map two properties, one being slave of the other",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Audio Display (Jack)",
-                    "category":          "audio",
-                    "short description": "Audio display",
-                    "license":           "LGPL",
-                    "class name":        "jacksink",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "rtpsession",
+                    "name" : "RTP Session",
+                    "category" : "network",
+                    "tags" : [
+                    ],
+                    "description" : "RTP session manager",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Jack Audio Device",
-                    "category":          "audio",
-                    "short description": "get audio from jack",
-                    "license":           "LGPL",
-                    "class name":        "jacksrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "shmOSCsink",
+                    "name" : "OSC sender",
+                    "category" : "network",
+                    "tags" : [
+                        "reader"
+                    ],
+                    "description" : "shmOSCsink reveives OSC messages and updates associated property",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Switcher Logger",
-                    "category":          "log",
-                    "short description": "manage switcher logs and other glib log domains.",
-                    "license":           "LGPL",
-                    "class name":        "logger",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "sip",
+                    "name" : "SIP (Session Initiation Protocol)",
+                    "category" : "network",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "Manages user sessions",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Midi (Port Midi)",
-                    "category":          "midi",
-                    "short description": "shmdata to midi",
-                    "license":           "LGPL",
-                    "class name":        "midisink",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "systemusage",
+                    "name" : "SystemUsage plugin",
+                    "category" : "monitoring",
+                    "tags" : [
+                    ],
+                    "description" : "Gives system load information",
+                    "license" : "LGPL",
+                    "author" : "Emmanuel Durand"
                 },
                 {
-                    "long name":         "Midi (PortMidi)",
-                    "category":          "midi",
-                    "short description": "midi to shmdata and properties",
-                    "license":           "LGPL",
-                    "class name":        "midisrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "urisrc",
+                    "name" : "URI/URL Player",
+                    "category" : "network",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "URI decoding to shmdatas",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "My Plugin",
-                    "category":          "test",
-                    "short description": "Creates a quiddity from a plugin",
-                    "license":           "LGPL",
-                    "class name":        "myplugin",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "v4l2src",
+                    "name" : "v4l2 Video Capture",
+                    "category" : "video",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "Discover and use v4l2 supported capture cards and cameras",
+                    "license" : "GPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Switcher Property Mapper",
-                    "category":          "mapper",
-                    "short description": "map two properties, one being slave of the other",
-                    "license":           "LGPL",
-                    "class name":        "property-mapper",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "videotestsrc",
+                    "name" : "Video Pattern",
+                    "category" : "video",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "Creates a test video stream",
+                    "license" : "LGPL",
+                    "author" : "Nicolas Bouillot"
                 },
                 {
-                    "long name":         "Audio Display (Pulse)",
-                    "category":          "audio",
-                    "short description": "Inspecting Devices And Playing Audio To Outputs",
-                    "license":           "LGPL",
-                    "class name":        "pulsesink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Pulse Audio Device",
-                    "category":          "audio",
-                    "short description": "Inspecting Devices And Getting Audio From Inputs",
-                    "license":           "LGPL",
-                    "class name":        "pulsesrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "RTP Session",
-                    "category":          "network",
-                    "short description": "RTP session manager",
-                    "license":           "LGPL",
-                    "class name":        "rtpsession",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "OSC sender",
-                    "category":          "network",
-                    "short description": "shmOSCsink reveives OSC messages and updates associated property",
-                    "license":           "LGPL",
-                    "class name":        "shmOSCsink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Shmdata File Player",
-                    "category":          "shmdata file player",
-                    "short description": "play file(s) recorded with shmdatatofile",
-                    "license":           "LGPL",
-                    "class name":        "shmfromfilesource",
-                    "author":            "Nicolas Bouillot, Emmanuel Durand"
-                },
-                {
-                    "long name":         "Shmdata Recorder",
-                    "category":          "file recorder",
-                    "short description": "record shmdata(s) to file(s)",
-                    "license":           "LGPL",
-                    "class name":        "shmtofilesink",
-                    "author":            "Nicolas Bouillot, Emmanuel Durand"
-                },
-                {
-                    "long name":         "SIP (Session Initiation Protocol)",
-                    "category":          "network",
-                    "short description": "Manages user sessions",
-                    "license":           "LGPL",
-                    "class name":        "sip",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "SystemUsage plugin",
-                    "category":          "SystemUsage",
-                    "short description": "Gives system load information",
-                    "license":           "LGPL",
-                    "class name":        "systemusage",
-                    "author":            "Emmanuel Durand"
-                },
-                {
-                    "long name":         "UDP Sender",
-                    "category":          "network",
-                    "short description": "send data stream with udp",
-                    "license":           "LGPL",
-                    "class name":        "udpsink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "URI/URL Player",
-                    "category":          "network",
-                    "short description": "decode an URI and writes to shmdata(s)",
-                    "license":           "LGPL",
-                    "class name":        "urisrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "v4l2 Video Capture",
-                    "category":          "video",
-                    "short description": "Discover and use v4l2 supported capture cards and cameras",
-                    "license":           "GPL",
-                    "class name":        "v4l2src",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Video Display (basic)",
-                    "category":          "video",
-                    "short description": "Video window with minimal features",
-                    "license":           "LGPL",
-                    "class name":        "videosink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Video Pattern",
-                    "category":          "video",
-                    "short description": "Creates a test video stream",
-                    "license":           "LGPL",
-                    "class name":        "videotestsrc",
-                    "author":            "Nicolas Bouillot"
+                    "class" : "vncclientsrc",
+                    "name" : "VNC client",
+                    "category" : "video",
+                    "tags" : [
+                        "writer"
+                    ],
+                    "description" : "Connects to a VNC server and outputs the video to a shmdata",
+                    "license" : "LGPL",
+                    "author" : "Emmanuel Durand"
                 }
             ]
         }
@@ -289,316 +252,201 @@ module.exports = {
 
     classes_doc_public: function () {
         return {
-            "classes": [
-                {
-                    "long name":         "Jack Audio Device2",
-                    "category":          "audio",
-                    "short description": "get audio from jack",
-                    "license":           "LGPL",
-                    "class name":        "2jacksrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Switcher OSC Controler",
-                    "category":          "control server",
-                    "short description": "OSCcontrolServer allows for managing switcher through OSC",
-                    "license":           "LGPL",
-                    "class name":        "OSCctl",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "OSC Receiver",
-                    "category":          "network",
-                    "short description": "receives OSC messages and write to shmdata",
-                    "license":           "LGPL",
-                    "class name":        "OSCsrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Switcher Web Client (SOAP)",
-                    "category":          "control client",
-                    "short description": "controling a switcher instance through SOAP webservices",
-                    "license":           "GPL",
-                    "class name":        "SOAPcontrolClient",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Sine",
-                    "category":          "audio",
-                    "short description": "Creates audio test signals",
-                    "license":           "LGPL",
-                    "class name":        "audiotestsrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Shmdata Decoder",
-                    "category":          "decoder",
-                    "short description": "connect to a shmdata, decode it and write decoded frames to shmdata(s)",
-                    "license":           "LGPL",
-                    "class name":        "decodebin",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Raw Shmdata",
-                    "category":          "other",
-                    "short description": "add a shmdata from an other software",
-                    "license":           "LGPL",
-                    "class name":        "fakeshmsrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Shmdata Inspector",
-                    "category":          "monitor",
-                    "short description": "fakesink for testing purpose",
-                    "license":           "LGPL",
-                    "class name":        "fakesink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "GStreamer Pipeline",
-                    "category":          "other",
-                    "short description": "GStreamer (src) pipeline description to a *single* shmdata",
-                    "license":           "LGPL",
-                    "class name":        "gstsrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "GStreamer Video Pipeline",
-                    "category":          "other",
-                    "short description": "GStreamer (src) video pipeline description to a *single* shmdata",
-                    "license":           "LGPL",
-                    "class name":        "gstvideosrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Video Display (configurable)",
-                    "category":          "video",
-                    "short description": "Video window with fullscreen",
-                    "license":           "LGPL",
-                    "class name":        "gtkvideosink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "HTTP/SDP Player",
-                    "category":          "network",
-                    "short description": "decode an sdp-described stream deliver through http and make shmdatas",
-                    "license":           "LGPL",
-                    "class name":        "httpsdpdec",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Audio Display (Jack)",
-                    "category":          "audio",
-                    "short description": "Audio display",
-                    "license":           "LGPL",
-                    "class name":        "jacksink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Jack Audio Device",
-                    "category":          "audio",
-                    "short description": "get audio from jack",
-                    "license":           "LGPL",
-                    "class name":        "jacksrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Midi (Port Midi)",
-                    "category":          "midi",
-                    "short description": "shmdata to midi",
-                    "license":           "LGPL",
-                    "class name":        "midisink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Midi (PortMidi)",
-                    "category":          "midi",
-                    "short description": "midi to shmdata and properties",
-                    "license":           "LGPL",
-                    "class name":        "midisrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "My Plugin",
-                    "category":          "test",
-                    "short description": "Creates a quiddity from a plugin",
-                    "license":           "LGPL",
-                    "class name":        "myplugin",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Switcher Property Mapper",
-                    "category":          "mapper",
-                    "short description": "map two properties, one being slave of the other",
-                    "license":           "LGPL",
-                    "class name":        "property-mapper",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Audio Display (Pulse)",
-                    "category":          "audio",
-                    "short description": "Inspecting Devices And Playing Audio To Outputs",
-                    "license":           "LGPL",
-                    "class name":        "pulsesink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Pulse Audio Device",
-                    "category":          "audio",
-                    "short description": "Inspecting Devices And Getting Audio From Inputs",
-                    "license":           "LGPL",
-                    "class name":        "pulsesrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "RTP Session",
-                    "category":          "network",
-                    "short description": "RTP session manager",
-                    "license":           "LGPL",
-                    "class name":        "rtpsession",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "OSC sender",
-                    "category":          "network",
-                    "short description": "shmOSCsink reveives OSC messages and updates associated property",
-                    "license":           "LGPL",
-                    "class name":        "shmOSCsink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Shmdata File Player",
-                    "category":          "shmdata file player",
-                    "short description": "play file(s) recorded with shmdatatofile",
-                    "license":           "LGPL",
-                    "class name":        "shmfromfilesource",
-                    "author":            "Nicolas Bouillot, Emmanuel Durand"
-                },
-                {
-                    "long name":         "Shmdata Recorder",
-                    "category":          "file recorder",
-                    "short description": "record shmdata(s) to file(s)",
-                    "license":           "LGPL",
-                    "class name":        "shmtofilesink",
-                    "author":            "Nicolas Bouillot, Emmanuel Durand"
-                },
-                {
-                    "long name":         "SIP (Session Initiation Protocol)",
-                    "category":          "network",
-                    "short description": "Manages user sessions",
-                    "license":           "LGPL",
-                    "class name":        "sip",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "UDP Sender",
-                    "category":          "network",
-                    "short description": "send data stream with udp",
-                    "license":           "LGPL",
-                    "class name":        "udpsink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "URI/URL Player",
-                    "category":          "network",
-                    "short description": "decode an URI and writes to shmdata(s)",
-                    "license":           "LGPL",
-                    "class name":        "urisrc",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "v4l2 Video Capture",
-                    "category":          "video",
-                    "short description": "Discover and use v4l2 supported capture cards and cameras",
-                    "license":           "GPL",
-                    "class name":        "v4l2src",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Video Display (basic)",
-                    "category":          "video",
-                    "short description": "Video window with minimal features",
-                    "license":           "LGPL",
-                    "class name":        "videosink",
-                    "author":            "Nicolas Bouillot"
-                },
-                {
-                    "long name":         "Video Pattern",
-                    "category":          "video",
-                    "short description": "Creates a test video stream",
-                    "license":           "LGPL",
-                    "class name":        "videotestsrc",
-                    "author":            "Nicolas Bouillot"
-                }
-            ]
+            "classes" : [ { class: 'OSCctl',
+                name: 'Switcher OSC Controler',
+                category: 'control',
+                tags: [],
+                description: 'OSCcontrolServer allows for managing switcher through OSC',
+                license: 'LGPL',
+                author: 'Nicolas Bouillot' },
+                          { class: 'OSCsrc',
+                              name: 'OSC Receiver',
+                              category: 'network',
+                              tags: [ 'writer' ],
+                              description: 'receives OSC messages and write to shmdata',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'SOAPcontrolClient',
+                              name: 'Switcher Web Client (SOAP)',
+                              category: 'control',
+                              tags: [],
+                              description: 'controling a switcher instance through SOAP webservices',
+                              license: 'GPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'SOAPcontrolServer',
+                              name: 'Switcher Web Controler (SOAP)',
+                              category: 'control',
+                              tags: [],
+                              description: 'getting switcher controled through SOAP webservices',
+                              license: 'GPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'audiotestsrc',
+                              name: 'Sine',
+                              category: 'audio',
+                              tags: [ 'writer' ],
+                              description: 'Creates audio test signals',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'create_remove_spy',
+                              name: 'Quiddity Creation Inspector',
+                              category: 'utils',
+                              tags: [],
+                              description: 'spy manager for quidity creation and removal and convert into signals',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'dico',
+                              name: 'Dictionary',
+                              category: 'utils',
+                              tags: [],
+                              description: 'Dictionary of string key/values accessible through properties',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'dummy',
+                              name: 'Dummy Plugin',
+                              category: 'test',
+                              tags: [],
+                              description: 'Dummy plugin for testing/example purpose',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'extshmsrc',
+                              name: 'Raw Shmdata',
+                              category: 'other',
+                              tags: [ 'writer' ],
+                              description: 'import an external shmdata writer',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'gtkwin',
+                              name: 'Video Display (configurable)',
+                              category: 'video',
+                              tags: [ 'reader' ],
+                              description: 'Video window with fullscreen',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'httpsdpdec',
+                              name: 'HTTP/SDP Player',
+                              category: 'network',
+                              tags: [ 'writer' ],
+                              description: 'decode an sdp-described stream delivered through http and make shmdatas',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'jacksink',
+                              name: 'Audio Display (Jack)',
+                              category: 'audio',
+                              tags: [ 'reader' ],
+                              description: 'Audio display',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'jacksrc',
+                              name: 'Jack Audio Device',
+                              category: 'audio',
+                              tags: [ 'writer' ],
+                              description: 'get audio from jack',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'logger',
+                              name: 'Switcher Logger',
+                              category: 'utils',
+                              tags: [],
+                              description: 'manage switcher logs and other glib log domains.',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'property-mapper',
+                              name: 'Switcher Property Mapper',
+                              category: 'utils',
+                              tags: [],
+                              description: 'map two properties, one being slave of the other',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'rtpsession',
+                              name: 'RTP Session',
+                              category: 'network',
+                              tags: [],
+                              description: 'RTP session manager',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'shmOSCsink',
+                              name: 'OSC sender',
+                              category: 'network',
+                              tags: [ 'reader' ],
+                              description: 'shmOSCsink reveives OSC messages and updates associated property',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'sip',
+                              name: 'SIP (Session Initiation Protocol)',
+                              category: 'network',
+                              tags: [ 'writer' ],
+                              description: 'Manages user sessions',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'systemusage',
+                              name: 'SystemUsage plugin',
+                              category: 'monitoring',
+                              tags: [],
+                              description: 'Gives system load information',
+                              license: 'LGPL',
+                              author: 'Emmanuel Durand' },
+                          { class: 'urisrc',
+                              name: 'URI/URL Player',
+                              category: 'network',
+                              tags: [ 'writer' ],
+                              description: 'URI decoding to shmdatas',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'v4l2src',
+                              name: 'v4l2 Video Capture',
+                              category: 'video',
+                              tags: [ 'writer' ],
+                              description: 'Discover and use v4l2 supported capture cards and cameras',
+                              license: 'GPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'videotestsrc',
+                              name: 'Video Pattern',
+                              category: 'video',
+                              tags: [ 'writer' ],
+                              description: 'Creates a test video stream',
+                              license: 'LGPL',
+                              author: 'Nicolas Bouillot' },
+                          { class: 'vncclientsrc',
+                              name: 'VNC client',
+                              category: 'video',
+                              tags: [ 'writer' ],
+                              description: 'Connects to a VNC server and outputs the video to a shmdata',
+                              license: 'LGPL',
+                              author: 'Emmanuel Durand' } ]
         }
+
     },
 
     quiddities: function () {
         return {
             "quiddities": [
                 {
-                    "name":        "pulsesink1",
-                    "class":       "pulsesink",
-                    "category":    "audio",
-                    "long name":   "Audio Display (Pulse)",
-                    "description": "Inspecting Devices And Playing Audio To Outputs",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "pulsesink1",
+                    "class":       "pulsesink"
                 },
                 {
-                    "name":        "audiotestsrc0",
-                    "class":       "audiotestsrc",
-                    "category":    "audio",
-                    "long name":   "Sine",
-                    "description": "Creates audio test signals",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "audiotestsrc0",
+                    "class":       "audiotestsrc"
                 },
                 {
-                    "name":        "systemusage",
-                    "class":       "systemusage",
-                    "category":    "SystemUsage",
-                    "long name":   "SystemUsage plugin",
-                    "description": "Gives system load information",
-                    "license":     "LGPL",
-                    "author":      "Emmanuel Durand"
+                    "id":        "systemusage",
+                    "class":       "systemusage"
                 },
                 {
-                    "name":        "defaultrtp",
-                    "class":       "rtpsession",
-                    "category":    "network",
-                    "long name":   "RTP Session",
-                    "description": "RTP session manager",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "defaultrtp",
+                    "class":       "rtpsession"
                 },
                 {
-                    "name":        "soap",
-                    "class":       "SOAPcontrolServer",
-                    "category":    "control server",
-                    "long name":   "Switcher Web Controler (SOAP)",
-                    "description": "getting switcher controled through SOAP webservices",
-                    "license":     "GPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "soap",
+                    "class":       "SOAPcontrolServer"
                 },
                 {
-                    "name":        "create_remove_spy",
-                    "class":       "create_remove_spy",
-                    "category":    "spy",
-                    "long name":   "Quiddity Creation Inspector",
-                    "description": "spy manager for quidity creation and removal and convert into signals",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "create_remove_spy",
+                    "class":       "create_remove_spy"
                 },
                 {
-                    "name":        "internal_logger",
-                    "class":       "logger",
-                    "category":    "log",
-                    "long name":   "Switcher Logger",
-                    "description": "manage switcher logs and other glib log domains.",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "internal_logger",
+                    "class":       "logger"
                 }
             ]
         }
@@ -608,31 +456,16 @@ module.exports = {
         return {
             "quiddities": [
                 {
-                    "name":        "pulsesink1",
-                    "class":       "pulsesink",
-                    "category":    "audio",
-                    "long name":   "Audio Display (Pulse)",
-                    "description": "Inspecting Devices And Playing Audio To Outputs",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "pulsesink1",
+                    "class":       "pulsesink"
                 },
                 {
-                    "name":        "audiotestsrc0",
-                    "class":       "audiotestsrc",
-                    "category":    "audio",
-                    "long name":   "Sine",
-                    "description": "Creates audio test signals",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "audiotestsrc0",
+                    "class":       "audiotestsrc"
                 },
                 {
-                    "name":        "defaultrtp",
-                    "class":       "rtpsession",
-                    "category":    "network",
-                    "long name":   "RTP Session",
-                    "description": "RTP session manager",
-                    "license":     "LGPL",
-                    "author":      "Nicolas Bouillot"
+                    "id":        "defaultrtp",
+                    "class":       "rtpsession"
                 }
             ]
         }
@@ -663,51 +496,17 @@ module.exports = {
         }
     },
 
-    class_parsed: function () {
-        return {
-            "name":        "Sine",
-            "category":    "audio",
-            "description": "Creates audio test signals",
-            "license":     "LGPL",
-            "class":       "audiotestsrc",
-            "id":          "audiotestsrc",
-            "author":      "Nicolas Bouillot"
-        }
-    },
-
     quiddity: function () {
         return {
-            "name":        "audiotestsrc3",
-            "class":       "audiotestsrc",
-            "category":    "audio",
-            "long name":   "Sine",
-            "description": "Creates audio test signals",
-            "license":     "LGPL",
-            "author":      "Nicolas Bouillot"
-        }
-    },
-
-    quiddity_parsed: function () {
-        return {
-            "id":          "audiotestsrc3",
-            "class":       "audiotestsrc",
-            "category":    "audio",
-            "name":        "Sine",
-            "description": "Creates audio test signals",
-            "license":     "LGPL",
-            "author":      "Nicolas Bouillot"
+            "id":        "audiotestsrc3",
+            "class":       "audiotestsrc"
         }
     },
 
     quiddity_private: function () {
         return {
-            "name" : "systemusage",
-            "class" : "systemusage",
-            "category" : "SystemUsage",
-            "long name" : "SystemUsage plugin",
-            "description" : "Gives system load information",
-            "license" : "LGPL",
-            "author" : "Emmanuel Durand"
+            "id" : "systemusage",
+            "class" : "systemusage"
         }
     },
 

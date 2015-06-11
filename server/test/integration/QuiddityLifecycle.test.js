@@ -44,15 +44,12 @@ describe( 'Quiddity Lifecycle', function () {
 
         it('should create a quiddity', function() {
             var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
-            var result = switcherController.quiddityManager.create(quidd.class, quidd.name, 'socketId');
+            var result = switcherController.quiddityManager.create(quidd.class, quidd.id, 'socketId');
             should.exist( result );
-            result.should.eql( quidd_res );
+            result.should.eql( quidd );
         });
 
         it('should create a quiddity and start it', function( ) {
-            var quidd = quiddities.quiddity();
-            var quidd_res = quiddities.quiddity_parsed();
             var create_result = switcherController.quiddityManager.create( 'audiotestsrc', 'audio', 'socketId' );
             var set_property_result = switcherController.quiddityManager.setPropertyValue( 'audio', 'started', true );
             var val = switcherController.switcher.get_property_value('audio', 'started');
@@ -60,7 +57,7 @@ describe( 'Quiddity Lifecycle', function () {
             val.should.equal(true);
         });
 
-        it('should create a fakesink and start it', function( ) {
+        it.skip('should create a fakesink and start it', function( ) {
             var created = switcherController.switcher.create( 'fakesink' );
             should.exist( created );
             created.should.be.equal('fakesink0');

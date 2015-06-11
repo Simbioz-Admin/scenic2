@@ -22,24 +22,7 @@ define( [
                 id:          "sink",
                 name:        i18n.t( 'Sink' ),
                 type:        'sink',
-                description: i18n.t( "Manage audio/video devices and connections" ),
-                source:      {
-                    include: [
-                        "sip",
-                        "src",
-                        "source",
-                        "httpsdpdec",
-                        "pclmergesink",
-                        "pcltomeshsink",
-                        "texturetomeshsink",
-                        "pcldetectsink",
-                        "meshmergesink"
-                    ]
-                },
-                destination: {
-                    include: ["sink"],
-                    exclude: ["monitor"]
-                }
+                description: i18n.t( "Manage audio/video devices and connections" )
             }
         },
 
@@ -51,11 +34,7 @@ define( [
         },
 
         /**
-         * Check if a shmdata can connect to a destination
-         *
-         * @param shmdata
-         * @param destination
-         * @param callback
+         * @inheritdoc
          */
         canConnect: function ( shmdata, destination, callback ) {
             socket.emit( 'quiddity.method.invoke', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {

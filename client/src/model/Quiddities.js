@@ -27,8 +27,11 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( models, options ) {
             ScenicCollection.prototype.initialize.apply( this, arguments );
+
+            // Passed quiddity class descriptions
+            this.classes = options.classes;
 
             // Handlers
             this.onSocket( "create", _.bind( this._onCreate, this ) );

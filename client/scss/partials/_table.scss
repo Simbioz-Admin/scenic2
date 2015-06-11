@@ -136,7 +136,7 @@ $boxWidth: $sourceWidth;
                       &.active {
                         background: $backgroundColorDarker;
                         &:hover {
-                          background: $red url(../../../images/images/icons/images/icons/x.png) no-repeat center;
+                          background: $red image-url('icons/x.png') no-repeat center;
                         }
                         .icon {
                           background: image-url('icons/1093-lightning-bolt-2.png') center no-repeat;

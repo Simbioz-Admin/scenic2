@@ -16,6 +16,11 @@ define( [
      */
     var Destination = Marionette.ItemView.extend( {
         template: _.template( DestinationTemplate ),
+        templateHelpers: function() {
+            return {
+                classDescription: this.model.get('classDescription' ).toJSON()
+            }
+        },
         className: 'destination',
 
         ui: {

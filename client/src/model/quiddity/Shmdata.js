@@ -61,33 +61,6 @@ define( [
             }
         }
 
-
-
-
-
-        //  ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗
-        //  ██║     ██╔════╝██╔════╝ ██╔══██╗██╔════╝╚██╗ ██╔╝
-        //  ██║     █████╗  ██║  ███╗███████║██║      ╚████╔╝
-        //  ██║     ██╔══╝  ██║   ██║██╔══██║██║       ╚██╔╝
-        //  ███████╗███████╗╚██████╔╝██║  ██║╚██████╗   ██║
-        //  ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝
-        //
-
-        /**
-         * If this is a shmdata for a sipquidd, this will provide the sip user parsed from the shmdata name
-         */
-        /*getSipUser: function () {
-         var sipUser = null;
-         if ( this.get( 'quidd' ) == config.sip.quiddName ) {
-         var parts     = this.get( 'path' ).replace( 'vumeter_', '' ).split( '_' );
-         var name      = parts[parts.length - 2];
-         var sipPrefix = config.sip.quiddName + '-';
-         if ( name.indexOf( sipPrefix ) == 0 ) {
-         sipUser = name.substr( sipPrefix.length );
-         }
-         }
-         return sipUser;
-         }*/
     } );
     return Shmdata;
 } );

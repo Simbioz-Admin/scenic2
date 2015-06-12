@@ -83,7 +83,7 @@ define( [
          */
         removeSource: function ( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.get( 'name' )} ), function ( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.id} ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
@@ -92,9 +92,9 @@ define( [
 
         _onStartedChanged: function ( model, value ) {
             if ( value ) {
-                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was started', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was started', {name: this.model.id} ) );
             } else {
-                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was stopped', {name: this.model.get( 'name' )} ) );
+                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was stopped', {name: this.model.id} ) );
             }
         }
     } );

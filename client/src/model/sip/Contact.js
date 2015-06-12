@@ -121,5 +121,6 @@ define( [
             } );
         }
     } );
+
     return Contact;
 } );

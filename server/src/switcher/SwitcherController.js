@@ -233,6 +233,9 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 log.error( error );
                 return cb( error );
             }
+            files = _.map( files, function( file ) {
+                return file.replace( path.extname(file), '' );
+            });
             cb( null, files );
         } );
     } catch ( e ) {
@@ -263,11 +266,14 @@ SwitcherController.prototype.loadFile = function ( name ) {
  * @param {String} name File name
  */
 SwitcherController.prototype.saveFile = function ( name ) {
-    var filePath = this.config.savePath + cleanFileName(name) + '.json';
+    var fileName = cleanFileName(name);
+    var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Saving scenic file', filePath );
     var saved = this.switcher.save_history( filePath );
     if ( !saved ) {
         log.warn('Could not save scenic file', filePath);
+    } else {
+        this.io.emit('file.saved', fileName );
     }
     return saved;
 };
@@ -281,7 +287,9 @@ SwitcherController.prototype.saveFile = function ( name ) {
  * @param {Function} cb Callback
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
-    var filePath = this.config.savePath + cleanFileName(name) + '.json';
+    var self = this;
+    var fileName = cleanFileName(name);
+    var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Removing scenic file', filePath );
     try {
         fs.unlink( filePath, function ( error ) {
@@ -289,6 +297,7 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
                 log.error( error );
                 return cb( error );
             }
+            self.io.emit('file.deleted', fileName );
             cb();
         } );
     } catch ( e ) {

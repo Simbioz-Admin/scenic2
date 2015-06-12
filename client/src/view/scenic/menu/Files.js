@@ -22,13 +22,14 @@ define( [
         childViewContainer: '.files',
 
         childEvents: {
-            'closeList': 'destroy'
+            'closeList': 'close'
         },
 
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( options ) {
+            this.close = options.close;
             this.render();
         }
     } );

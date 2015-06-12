@@ -4,8 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
+    'i18n',
     'text!template/scenic/menu/file.html'
-], function ( _, Backbone, Marionette, FileTemplate ) {
+], function ( _, Backbone, Marionette, i18n, FileTemplate ) {
 
     /**
      * File
@@ -25,20 +26,31 @@ define( [
         },
 
         events:    {
-            'click': 'loadFile'
+            'click': 'loadFile',
+            'click @ui.remove': 'removeFile'
         },
 
         /**
          * Initialize
          */
         initialize: function () {
-
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
         },
 
         loadFile: function() {
             var self = this;
             this.triggerMethod('closeList', self.model);
             this.model.loadFile();
+        },
+
+        removeFile: function(event) {
+            event.stopImmediatePropagation();
+            var self = this;
+            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to delete __file__?', {file:this.model.get('name')}), function( confirmed ) {
+                if ( confirmed ) {
+                    self.model.destroy();
+                }
+            });
         }
     } );
 

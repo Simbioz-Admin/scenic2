@@ -108,6 +108,7 @@ define( [
          * @returns {*}
          */
         sync: function ( method, model, options ) {
+            console.debug( method, model, options );
             var self    = this;
             var command = this.methodMap[method];
             if ( command ) {

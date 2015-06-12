@@ -55,7 +55,7 @@ define( [
             if ( this.currentPanel == 'open' ) {
                 this.closePanel();
             } else {
-                this.openPanel('open', new FilesView( { collection: app.saveFiles } ));
+                this.openPanel('open', new FilesView( { collection: app.saveFiles, close: _.bind( this.closePanel, this ) } ));
             }
         },
 

@@ -16,7 +16,7 @@ define( [
      */
 
     var SaveFile = ScenicModel.extend( {
-        idAttribute: 'uri',
+        idAttribute: 'name',
         methodMap:   {
             'create': function () {
                 return ['file.save', this.get( 'name' )];
@@ -34,6 +34,11 @@ define( [
          */
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
+
+            if ( !this.isNew() ) {
+                // Handlers
+                this.onSocket( 'file.deleted', _.bind( this._onDeleted, this ) );
+            }
         },
 
         loadFile: function ( callback ) {
@@ -69,6 +74,23 @@ define( [
                 self.scenicChannel.vent.trigger( 'file:saved', self.get( 'name' ) );
                 callback ? callback() : null;
             } );
+        },
+
+        /**
+         * Delete Handler
+         * Destroy this file and its child collections if our id matches the one being removed
+         *
+         * @param {String} file - File name
+         * @private
+         */
+        _onDeleted: function ( file ) {
+            if ( this.id == file ) {
+                // Broadcast first so that everyone has a change to identify
+                this.scenicChannel.vent.trigger( 'file:removed', this );
+
+                // Destroy ourselves
+                this.trigger( 'destroy', this, this.collection );
+            }
         }
     } );
     return SaveFile;

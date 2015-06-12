@@ -270,7 +270,7 @@ describe( 'Switcher Controller', function () {
             config.savePath = 'some/path/';
         });
 
-        describe( 'Save file list', function () {
+        describe( 'File list', function () {
 
             var cb;
 
@@ -279,15 +279,16 @@ describe( 'Switcher Controller', function () {
             } );
 
             it( 'should get save files', function () {
-                var files       = ['file-a', 'file-b'];
+                var files_fs       = ['file-a.json', 'file-b.json'];
+                var files_ui       = ['file-a', 'file-b'];
                 config.savePath = 'some/path/';
                 fs.readdir      = sinon.stub();
-                fs.readdir.yields( null, files );
+                fs.readdir.yields( null, files_fs );
                 switcherController.getFileList( cb );
                 fs.readdir.should.have.been.calledOnce;
                 fs.readdir.should.have.been.calledWith( config.savePath );
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWith( null, files );
+                cb.should.have.been.calledWith( null, files_ui );
             } );
 
             it( 'should get an error when save files loading throws', function () {
@@ -356,6 +357,8 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.should.have.been.calledWith( config.savePath + file + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.saved', file );
             } );
 
             it( 'should get an error when saving save file throws', function () {
@@ -364,6 +367,7 @@ describe( 'Switcher Controller', function () {
                 expect( switcherController.saveFile.bind( switcherController, file ) ).to.throw( error );
                 switcher.save_history.should.have.been.calledOnce;
                 switcher.save_history.should.have.been.calledWith( config.savePath + file + ext );
+                io.emit.should.not.have.been.called;
             } );
 
             it( 'should return false when saving save file fails', function () {
@@ -371,6 +375,7 @@ describe( 'Switcher Controller', function () {
                 var result = switcherController.saveFile( file + ext );
                 should.exist( result );
                 result.should.be.false;
+                io.emit.should.not.have.been.called;
             } );
 
             it( 'should remove two dots from name', function () {
@@ -380,6 +385,8 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.saved', 'test' );
             } );
 
             it( 'should remove slashes from name', function () {
@@ -389,6 +396,8 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.saved', 'test' );
             } );
 
             it( 'should remove backslashes from name', function () {
@@ -398,6 +407,8 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.saved', 'test' );
             } );
 
             it( 'should make a really clean path name from junk from name', function () {
@@ -407,6 +418,8 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.should.have.been.calledWith( config.savePath + 'mytestblahpouet' + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.saved', 'mytestblahpouet' );
             } );
 
         } );
@@ -427,6 +440,8 @@ describe( 'Switcher Controller', function () {
                 fs.unlink.should.have.been.calledWith( config.savePath + file + ext );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithExactly();
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.deleted', file );
             } );
 
             it( 'should get an error when deleting a save file throws', function () {
@@ -436,6 +451,7 @@ describe( 'Switcher Controller', function () {
                 switcherController.deleteFile( file, cb );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
+                io.emit.should.not.have.been.called;
             } );
 
             it( 'should get an error when deleting a save file fails', function () {
@@ -445,6 +461,7 @@ describe( 'Switcher Controller', function () {
                 switcherController.deleteFile( file, cb );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithMatch( error );
+                io.emit.should.not.have.been.called;
             } );
 
             it( 'should clean dirty file names before deleting a save file', function () {
@@ -455,6 +472,8 @@ describe( 'Switcher Controller', function () {
                 fs.unlink.should.have.been.calledWith( config.savePath + 'mydirtyfile' + ext );
                 cb.should.have.been.calledOnce;
                 cb.should.have.been.calledWithExactly();
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWithExactly( 'file.deleted', 'mydirtyfile' );
             } );
 
         } );

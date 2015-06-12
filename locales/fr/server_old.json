@@ -1,1 +1,24 @@
-{}
+{
+  "Could not get informations for __quiddityId__": "Impossible d'obtenir les informations de la quiddité __quiddityId__",
+  "Could not get method description for __quiddityId__ method __method__": "Impossible d'obtenir la description de la méthode __method__ pour la quiddité __quiddityId__",
+  "Could not get properties for __quiddityId__": "Impossible d'obtenir les propriétés de la quiddité __quiddityId__",
+  "Could not get property description for __quiddityId__ property __property__": "Impossible d'obtenir la description de la propriété __property__ de la quiddité __quiddityId__",
+  "Could not get quiddities": "Impossible d'obtenir les quiddités",
+  "Could not get quiddity classes": "Impossible d'obtenir les classes de quiddités",
+  "Could not set property __property__ value __value__ on __quiddity__": "Impossible de changer la propriété __property__ de la quiddité __quiddity__ pour __value__",
+  "Error while deleting file __path__ (__error__)": "",
+  "Error while loading file __path__ (__error__)": "",
+  "Error while reading save files from __path__ (__error__)": "",
+  "Error while saving file __path__ (__error__)": "",
+  "Failed to create __className__ __quiddityName__": "Impossible de créer la quiddité __quiddityName__ de type __className__",
+  "Failed to delete file __path__ (__error__)": "IMpossible d'effacer le fichier __path__",
+  "Failed to get information for quiddity __quiddityId__": "Impossible d'obtenir les informations de la quiddité __quiddityId__",
+  "Failed to get methods for __quiddityId__": "Impossible d'obtenir les méthodes de __quiddityId__",
+  "Failed to invoke __method__ on __quiddity__": "Impossible d'exécuter la méthose __method__ de __quiddity__",
+  "Failed to load file __path__": "Impossible de charger le fichier __path__",
+  "Failed to read save files from __path__ (__error__)": "Impossible de lire les fichiers de sauvegarde de __path__ (__error__)",
+  "Failed to remove quiddity __quiddityId__": "Impossible de retirer la quiddité __quiddityId__",
+  "Failed to save file __path__": "Impossible de sauvegarder le fichier __path__",
+  "Missing arguments to invoke method": "",
+  "Missing arguments to set property value": "Arguments manquant pour changer la valeur de la propriété"
+}

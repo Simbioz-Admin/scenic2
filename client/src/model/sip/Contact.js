@@ -29,14 +29,14 @@ define( [
 
         methodMap:   {
             'create': function () {
-                return ['addContact', this.get( 'uri' )];
+                return ['sip.contact.add', this.get( 'uri' )];
             },
             'update':function () {
-                return ['updateContact', this.get( 'uri' ), { name: this.get('name'), status: this.get('status' ), status_text: this.get('status_text') }];
+                return ['sip.contact.update', this.get( 'uri' ), { name: this.get('name'), status: this.get('status' ), status_text: this.get('status_text') }];
             },
             'patch':  null,
             'delete': function() {
-                return ['removeContact', this.get('uri')];
+                return ['sip.contact.remove', this.get('uri')];
             },
             'read':   null
         },
@@ -111,7 +111,8 @@ define( [
         edit: function () {
             var self = this;
             this.scenicChannel.commands.execute( 'contact:edit', this, function( info ) {
-                socket.emit( 'updateContact', self.id, info, function( error ) {
+                //TODO: Use the contact's internal update method
+                socket.emit( 'sip.contact.update', self.id, info, function( error ) {
                     if ( error ) {
                         self.scenicChannel.vent.trigger( 'error', error );
                         return;

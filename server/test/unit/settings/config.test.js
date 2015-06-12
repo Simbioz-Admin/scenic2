@@ -9,7 +9,7 @@ describe( 'Configuration', function () {
     var config;
 
     beforeEach( function () {
-        config = require( '../../src/settings/config' );
+        config = require( '../../../src/settings/config' );
     } );
     afterEach( function () {
         config = null;

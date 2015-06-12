@@ -24,7 +24,7 @@ define( [
             'patch':  null,
             'delete': null,
             'read':   function () {
-                return ['getProperties', this.quiddity.id]
+                return ['quiddity.property.list', this.quiddity.id]
             }
         },
 

@@ -1,22 +1,20 @@
 'use strict';
 
-var _       = require( 'underscore' );
-var i18n    = require( 'i18next' );
-var log     = require( '../lib/logger' );
-var logback = require( '../utils/logback' );
+var _   = require( 'underscore' );
+var log = require( '../lib/logger' );
 
 /**
  * Constructor
  *
- * @param config
- * @param switcher
- * @param io
+ * @param switcherController
  * @constructor
  */
-function QuiddityManager( config, switcher, io ) {
-    this.config   = config;
-    this.switcher = switcher;
-    this.io       = io;
+function QuiddityManager( switcherController) {
+    this.switcherController = switcherController;
+    this.config             = this.switcherController.config;
+    this.switcher           = this.switcherController.switcher;
+    this.io                 = this.switcherController.io;
+
 
     /**
      * Map of quiddities and their creator's socket id
@@ -51,25 +49,6 @@ function QuiddityManager( config, switcher, io ) {
  */
 QuiddityManager.prototype.initialize = function () {
 
-};
-
-/**
- * Binds a new client socket
- *
- * @param socket
- */
-QuiddityManager.prototype.bindClient = function ( socket ) {
-    socket.on( 'create', this.create.bind( this ) );
-    socket.on( 'remove', this.remove.bind( this ) );
-    socket.on( 'getQuiddityClasses', this.getQuiddityClasses.bind( this ) );
-    socket.on( 'getQuiddities', this.getQuiddities.bind( this ) );
-    socket.on( 'getTreeInfo', this.getTreeInfo.bind( this ) );
-    socket.on( 'getProperties', this.getProperties.bind( this ) );
-    socket.on( 'getPropertyDescription', this.getPropertyDescription.bind( this ) );
-    socket.on( 'setPropertyValue', this.setPropertyValue.bind( this ) );
-    socket.on( 'getMethods', this.getMethods.bind( this ) );
-    socket.on( 'getMethodDescription', this.getMethodDescription.bind( this ) );
-    socket.on( 'invokeMethod', this.invokeMethod.bind( this ) );
 };
 
 //  ██████╗  █████╗ ██████╗ ███████╗███████╗██████╗ ███████╗
@@ -489,12 +468,22 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     }
 };
 
-//   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
-//  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
-//  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
-//  ██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
-//  ╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
-//   ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
+//  ███╗   ███╗███████╗████████╗██╗  ██╗ ██████╗ ██████╗ ███████╗
+//  ████╗ ████║██╔════╝╚══██╔══╝██║  ██║██╔═══██╗██╔══██╗██╔════╝
+//  ██╔████╔██║█████╗     ██║   ███████║██║   ██║██║  ██║███████╗
+//  ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
+//  ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
+//  ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
+
+/**
+ * Verify if a quiddity exists
+ *
+ * @param {String} quiddityId - Id of the quiddity
+ * @returns {Boolean} If the quiddity exists or not
+ */
+QuiddityManager.prototype.exists = function( quiddityId ) {
+   return this.switcher.has_quiddity( quiddityId );
+};
 
 /**
  * Create Quiddity
@@ -502,272 +491,247 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
  *  @param {string} className The class of the quiddity
  *  @param {string} quiddityName The name (id) of the quiddity
  *  @param {string} socketId Id Socket (socket.io) of the user ask to create the quiddity
- * @param cb
  */
-QuiddityManager.prototype.create = function ( className, quiddityName, socketId, cb ) {
+QuiddityManager.prototype.create = function ( className, quiddityName, socketId ) {
     log.info( 'Creating quiddity ' + className + ' named ' + quiddityName );
 
     // Create the quiddity
-    try {
-        var result = quiddityName ? this.switcher.create( className, quiddityName ) : this.switcher.create( className );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result ) {
-        return logback( i18n.t( 'Failed to create __className__ __quiddityName__', {
-            className:    className,
-            quiddityName: quiddityName
-        } ), cb );
+    var result = _.isEmpty( quiddityName ) ? this.switcher.create( className ) : this.switcher.create( className, quiddityName );
+
+    var quiddityDescription = null;
+    if ( result ) {
+        var quiddityId = result;
+        // Keep a history of who created what
+        //TODO Move that into the client
+        this.quidditySocketMap[quiddityId] = socketId;
+        quiddityDescription                = this.getQuiddityDescription( quiddityId );
     }
 
-    var quiddityId = result;
-    // Keep a history of who created what
-    this.quidditySocketMap[quiddityId] = socketId;
-
-    // Get new quiddity information
-    try {
-        var quiddInfo = this.switcher.get_quiddity_description( quiddityId );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !quiddInfo || quiddInfo.error || !_.isObject( quiddInfo ) ) {
-        return logback( i18n.t( 'Failed to get information for quiddity __quiddityId__', { quiddityId: quiddityId } ) + ( quiddInfo && quiddInfo ? ' ' + quiddInfo.error : '' ), cb );
-    }
-
-    cb( null, quiddInfo );
+    return quiddityDescription;
 };
 
 /**
  * Remove quiddity
- * Removes the quiddity and all those associated with it (eg ViewMeter, preview, etc. ..)
+ * Removes the quiddity
  *
  * @param {string} quiddityId The name (id) of the quiddity
- * @param cb
+ * @returns {Boolean} Success
  */
-QuiddityManager.prototype.remove = function ( quiddityId, cb ) {
+QuiddityManager.prototype.remove = function ( quiddityId ) {
     log.info( 'Removing quiddity ' + quiddityId );
 
-    try {
-        var result = this.switcher.remove( quiddityId );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    var result = this.switcher.remove( quiddityId );
+    if ( result ) {
+        log.debug( 'Quiddity ' + quiddityId + ' removed.' );
+    } else {
+        log.warn( 'Failed to remove quiddity ' + quiddityId );
     }
-    if ( !result ) {
-        return logback( i18n.t( 'Failed to remove quiddity __quiddityId__', { quiddityId: quiddityId } ), cb );
-    }
-    log.debug( 'Quiddity ' + quiddityId + ' removed.' );
-    cb();
+
+    return result;
 };
 
 /**
  * Get quiddity classes
  *
- * @param cb
+ * @returns {Array} List of classes and their descriptions
  */
-QuiddityManager.prototype.getQuiddityClasses = function ( cb ) {
+QuiddityManager.prototype.getQuiddityClasses = function () {
     log.info( 'Getting quiddity classes' );
 
-    try {
-        var result = this.switcher.get_classes_doc();
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    var result = this.switcher.get_classes_doc();
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
-    if ( !result || result.error || !result.classes || !_.isArray( result.classes ) ) {
-        return logback( i18n.t( 'Could not get quiddity classes' ) + ( result && result.error ? ' ' + result.error : '' ), cb );
-    }
-    var classes = _.filter( result.classes, function ( quiddityClass ) {
-        return !_.contains( this.privateQuiddities, quiddityClass['class name'] );
-    }, this );
 
-    cb( null, classes );
+    var classes = [];
+    if ( result && result.classes && _.isArray( result.classes ) ) {
+        // Filter out private quiddities
+        classes = _.filter( result.classes, function ( quiddityClass ) {
+            return !_.contains( this.privateQuiddities, quiddityClass['class name'] );
+        }, this );
+    }
+
+    return classes;
 };
 
 /**
  * Get Quiddities
  *
- * @param cb
+ * @returns {Array} List of quiddities
  */
-QuiddityManager.prototype.getQuiddities = function ( cb ) {
+QuiddityManager.prototype.getQuiddities = function () {
     log.info( 'Getting quiddities' );
 
-    try {
-        var result = this.switcher.get_quiddities_description();
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    var result = this.switcher.get_quiddities_description();
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
-    if ( !result || result.error || !result.quiddities || !_.isArray( result.quiddities ) ) {
-        return logback( result && result.error ? result.error : i18n.t( 'Could not get quiddities' ), cb );
-    }
-    var quiddities = _.filter( result.quiddities, function ( quiddity ) {
-        return !_.contains( this.privateQuiddities, quiddity.class );
-    }, this );
 
-    cb( null, quiddities );
+    var quiddities = [];
+    if ( result && result.quiddities && _.isArray( result.quiddities ) ) {
+        quiddities = _.filter( result.quiddities, function ( quiddity ) {
+            return !_.contains( this.privateQuiddities, quiddity.class );
+        }, this );
+    }
+
+    return quiddities;
+};
+
+/**
+ * Get quiddity description
+ *
+ * @param {String} quiddityId Quiddity for which we want to retrieve the description
+ * @returns {Object} Object describing the quiddity
+ */
+QuiddityManager.prototype.getQuiddityDescription = function ( quiddityId ) {
+    log.info( 'Getting quiddity description for quiddity ' + quiddityId );
+
+    var result = this.switcher.get_quiddity_description( quiddityId );
+    if ( result && result.error ) {
+        throw new Error( result.error );
+    }
+
+    var quiddityDescription = {};
+    if ( result && !_.isEmpty( result ) && _.isObject( result ) && !_.isArray( result ) ) {
+        quiddityDescription = result;
+    }
+
+    return quiddityDescription;
 };
 
 /**
  * Get quiddity tree information
- * @param quiddityId
- * @param path
- * @param cb
- * @returns {*}
+ *
+ * @param {String} quiddityId Quiddity for which we want to retrieve the tree information
+ * @param {String} path Branch/leaf path to query inside the tree
+ * @returns {Object} Information contained in the tree or an empty object if nothing was found
  */
-QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path, cb ) {
+QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path ) {
     log.info( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
 
-    try {
-        var result = this.switcher.get_info( quiddityId, path );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    var result = this.switcher.get_info( quiddityId, path );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
 
-    if ( result && ( !_.isObject( result ) || result.error ) ) {
-        return logback( i18n.t( 'Could not get informations for __quiddityId__', { quiddityId: quiddityId } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
-    }
-
-    return cb( null, result );
+    return ( result && _.isObject( result ) ) ? result : null;
 };
 
 /**
  * Get properties
  *
- * @param quiddityId
- * @param cb
- * @returns {*}
+ * @param {String} quiddityId Quiddity for which we want to retrieve the properties
+ * @returns {Array} Array of properties for the passed quiddity
  */
-QuiddityManager.prototype.getProperties = function ( quiddityId, cb ) {
+QuiddityManager.prototype.getProperties = function ( quiddityId ) {
     log.info( 'Getting properties for quiddity: ' + quiddityId );
 
-    try {
-        var result = this.switcher.get_properties_description( quiddityId );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    var result = this.switcher.get_properties_description( quiddityId );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
-    if ( !result || result.error || !result.properties || !_.isArray( result.properties ) ) {
-        return logback( i18n.t( 'Could not get properties for __quiddityId__', { quiddityId: quiddityId } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+    var properties = [];
+    if ( result && result.properties && _.isArray( result.properties ) ) {
+        properties = result.properties;
+        // Parse properties
+        _.each( result.properties, this._parseProperty, this );
     }
 
-    // Parse properties
-    _.each( result.properties, this._parseProperty, this );
-
-    //Return to client
-    cb( null, result.properties );
+    return properties;
 };
 
 /**
  * Get property description
  *
- * @param quiddityId
- * @param property
- * @param cb
+ * @param {String} quiddityId Quiddity for which we want to retrieve the property description
+ * @param {String} property Property for which we want the description
+ * @returns {Object} Object describing the property
  */
-QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property, cb ) {
+QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, property ) {
     log.info( 'Getting property description for quiddity ' + quiddityId + ' property ' + property );
 
-    try {
-        var result = this.switcher.get_property_description( quiddityId, property );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result || result.error || _.isEmpty( result ) || !_.isObject( result ) || _.isArray( result ) ) {
-        return logback( i18n.t( 'Could not get property description for __quiddityId__ property __property__', {
-            quiddityId: quiddityId,
-            property:   property
-        } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
+    var result = this.switcher.get_property_description( quiddityId, property );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
 
-    // Parse property
-    this._parseProperty( result );
+    var propertyDescription = {};
+    if ( result && !_.isEmpty( result ) && _.isObject( result ) && !_.isArray( result ) ) {
+        propertyDescription = result;
+        this._parseProperty( propertyDescription );
+    }
 
-    // Return to client
-    cb( null, result );
+    return propertyDescription;
 };
 
 /**
- * Set Property Value
+ * Set property value
  *
- * @param quiddityId
- * @param property
- * @param value
- * @param cb
+ * @param {String} quiddityId Quiddity for which we want to retrieve the property description
+ * @param {String} property Property for which we want the description
+ * @param {*} value Value to set the property to
+ * @returns {Boolean} Returns true if the operation was successful
  */
-QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, value, cb ) {
+QuiddityManager.prototype.setPropertyValue = function ( quiddityId, property, value ) {
     log.info( 'Setting property ' + property + ' of ' + quiddityId + ' to ' + value );
 
-    var self = this;
-
-    if ( !quiddityId || !property || value == null ) {
-        return logback( i18n.t( 'Missing arguments to set property value' ) + ' ' + quiddityId + ' ' + property + ' ' + value, cb );
+    var result = this.switcher.set_property_value( quiddityId, property, String( value ) );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
 
-    try {
-        var result = this.switcher.set_property_value( quiddityId, property, String( value ) );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result ) {
-        return logback( i18n.t( 'Could not set property __property__ value __value__ on __quiddity__', {
-            property: property,
-            value:    value,
-            quiddity: quiddityId
-        } ), cb );
-    }
-
-    log.debug( 'The property ' + property + ' of ' + quiddityId + ' was set to ' + value );
-    cb();
+    return result;
 };
 
 /**
  * Get Methods
  *
- * @param quiddityId
- * @param cb
+ * @param {String} quiddityId Quiddity for which we want to retrieve the methods
+ * @returns {Array} Methods for the quiddity
  */
-QuiddityManager.prototype.getMethods = function ( quiddityId, cb ) {
+QuiddityManager.prototype.getMethods = function ( quiddityId ) {
     log.info( 'Getting methods for quiddity ' + quiddityId );
-    try {
-        var result = this.switcher.get_methods_description( quiddityId );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result || result.error || !result.methods || !_.isArray( result.methods ) ) {
-        return logback( i18n.t( 'Failed to get methods for __quiddityId__', {
-            quiddityId: quiddityId
-        } ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+
+    var result = this.switcher.get_methods_description( quiddityId );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
 
-    // Parse methods
-    _.each( result.methods, this._parseMethod, this );
+    var methods = [];
+    if ( result && result.methods && _.isArray( result.methods ) ) {
+        methods = result.methods;
 
-    cb( null, result.methods );
+        // Parse methods
+        _.each( methods, this._parseMethod, this );
+    }
+
+    return methods;
 };
 
 /**
  * Get method description
  *
- * @param quiddityId
- * @param method
- * @param cb
+ * @param {String} quiddityId Quiddity for which we want to retrieve the method description
+ * @param {String} method Method for which we want the description
  * @returns {*}
  */
-QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, cb ) {
+QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method ) {
     log.info( 'Getting method description for quiddity ' + quiddityId + ' method ' + method );
-    try {
-        var result = this.switcher.get_method_description( quiddityId, method );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result || result.error || _.isEmpty( result ) || !_.isObject( result ) || _.isArray( result ) ) {
-        return logback( i18n.t( 'Could not get method description for __quiddityId__ method __method__', {
-            quiddityId: quiddityId,
-            method:     method
-        } ) + ( result && result.error ? ' ' + result.error : '' ), cb )
+
+    var result = this.switcher.get_method_description( quiddityId, method );
+    if ( result && result.error ) {
+        throw new Error( result.error );
     }
 
-    // Parse method
-    this._parseMethod( result );
+    var methodDescription = {};
+    if ( result && !_.isEmpty( result ) && _.isObject( result ) && !_.isArray( result ) ) {
+        methodDescription = result;
 
-    cb( null, result );
+        // Parse method
+        this._parseMethod( result );
+    }
+
+    return methodDescription;
 };
 
 /**
@@ -776,34 +740,21 @@ QuiddityManager.prototype.getMethodDescription = function ( quiddityId, method, 
  * @param quiddityId
  * @param method
  * @param parameters
- * @param cb
  * @returns {*}
  */
-QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters, cb ) {
+QuiddityManager.prototype.invokeMethod = function ( quiddityId, method, parameters ) {
     log.info( 'Invoking method ' + method + ' of ' + quiddityId + ' with', parameters );
 
-    if ( !quiddityId || !method || !_.isArray( parameters ) ) {
-        return logback( i18n.t( 'Missing arguments to invoke method' ) + ' ' + quiddityId + ' ' + method + ' ' + parameters, cb );
-    }
-
-    //TODO: Returned strings might cause errors when parsed
-
-    try {
-        var result = this.switcher.invoke( quiddityId, method, parameters );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
+    if ( _.isEmpty( parameters ) ) {
+        parameters = [];
+    } else if ( !_.isArray( parameters ) ) {
+        parameters = [parameters];
     }
 
     //TODO: Return values are unclear, does an empty string means an error occurred?
+    var result = this.switcher.invoke( quiddityId, method, parameters );
 
-    if ( result == null ) {
-        return logback( i18n.t( 'Failed to invoke __method__ on __quiddity__', {
-            quiddity: quiddityId,
-            method:   method
-        } ), cb );
-    }
-
-    cb( null, result );
+    return result;
 };
 
 module.exports = QuiddityManager;

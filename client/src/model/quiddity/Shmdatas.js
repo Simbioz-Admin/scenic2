@@ -17,24 +17,13 @@ define( [
     var Shmdatas = ScenicCollection.extend( {
         model:      Shmdata,
         quiddity:   null,
-        /*comparator: function ( a, b ) {
-            var aSip = a.getSipUser();
-            var bSip = b.getSipUser();
-            if ( aSip != bSip ) {
-                return aSip != null ? aSip.localeCompare( bSip ) : bSip.localeCompare( aSip ) * -1;
-            } else {
-                var aPath = a.get( 'path' );
-                var bPath = b.get( 'path' );
-                return aPath != null ? aPath.localeCompare( bPath ) : ( bPath != null ? bPath.localeCompare( aPath ) * -1 : 0 );
-            }
-        },*/
 
         methodMap:  {
             'create': null,
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   function() { return [ 'getTreeInfo', this.quiddity.id, '.shmdata' ] }
+            'read':   function() { return [ 'quiddity.tree.query', this.quiddity.id, '.shmdata' ] }
         },
 
         /**

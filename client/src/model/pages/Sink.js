@@ -37,7 +37,7 @@ define( [
          * @inheritdoc
          */
         canConnect: function ( shmdata, destination, callback ) {
-            socket.emit( 'invokeMethod', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
+            socket.emit( 'quiddity.method.invoke', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
                 if ( error ) {
                     console.error( error );
                     callback( false );
@@ -58,7 +58,7 @@ define( [
             var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} ).length;
             var maxReaders              = destination.get( 'maxReaders' );
             if ( maxReaders > existingConnectionCount || maxReaders == 0 ) {
-                socket.emit( 'invokeMethod', destination.id, 'connect', [shmdata.id], function ( error, result ) {
+                socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.id], function ( error, result ) {
                     if ( error ) {
                         console.error( error );
                         self.scenicChannel.vent.trigger( 'error', error );
@@ -66,11 +66,11 @@ define( [
                 } );
             } else {
                 if ( maxReaders == 1 ) {
-                    socket.emit( 'invokeMethod', destination.id, 'disconnect-all', [], function ( error, result ) {
+                    socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect-all', [], function ( error, result ) {
                         if ( error ) {
                             console.error( error );
                         }
-                        socket.emit( 'invokeMethod', destination.id, 'connect', [shmdata.id], function ( error, result ) {
+                        socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.id], function ( error, result ) {
                             if ( error ) {
                                 console.error( error );
                             }
@@ -90,7 +90,7 @@ define( [
          */
         disconnect: function ( shmdata, destination ) {
             //TODO: Move into destination quiddity
-            socket.emit( 'invokeMethod', destination.id, 'disconnect', [shmdata.id], function ( error, data ) {
+            socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect', [shmdata.id], function ( error, data ) {
                 if ( error ) {
                     log.error( error );
                 }

@@ -6,20 +6,21 @@ var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
 chai.use( sinonChai );
 
-var logStub      = require( '../fixtures/log' );
-var switcherStub = require( '../fixtures/switcher' );
-var quiddities   = require( '../fixtures/quiddities' );
+var logStub      = require( '../../fixtures/log' );
+var switcherStub = require( '../../fixtures/switcher' );
+var quiddities   = require( '../../fixtures/quiddities' );
 
 describe( 'RTP Manager', function () {
 
     var switcher;
     var config;
     var io;
+    var switcherController;
     var rtpManager;
     var cb;
 
     before( function ( done ) {
-        var i18n = require( '../../src/lib/i18n' );
+        var i18n = require( '../../../src/lib/i18n' );
         i18n.initialize( done );
     } );
 
@@ -34,10 +35,16 @@ describe( 'RTP Manager', function () {
                 soapControlClientPrefix: 'soap-control-client-prefix'
             }
         };
-
         io                 = {};
         io.emit            = sinon.spy();
-        var RtpManager     = proxyquire( '../../src/switcher/RtpManager', {
+
+        switcherController = {
+            switcher: switcher,
+            config:   config,
+            io:       io
+        };
+
+        var RtpManager     = proxyquire( '../../../src/switcher/RtpManager', {
             'switcher':         switcher,
             '../lib/logger':    logStub(),
             '../utils/logback': function ( e, c ) {
@@ -45,7 +52,7 @@ describe( 'RTP Manager', function () {
                 c( e );
             }
         } );
-        rtpManager         = new RtpManager( config, switcher, io );
+        rtpManager         = new RtpManager( switcherController );
         rtpManager.logback = sinon.stub();
         rtpManager.logback.yields();
         cb                 = sinon.stub();

@@ -61,12 +61,13 @@ require( {
     var scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
     // Announce ourselves and recover config information from the server
-    socket.emit( "getConfig", localStorage.getItem( "socketId" ), socket.id, function ( config ) {
+    var lang = localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en';
+    socket.emit( 'config', lang, localStorage.getItem( 'socketId' ), function ( config ) {
         localStorage.setItem( 'socketId', socket.id );
-        application.initialize( config );
+        application.initialize( lang, config );
     } );
 
     // When the server is closed or crashes shutdown the app
-    socket.on( "shutdown", _.bind( application.shutdown, application ) );
-    socket.on( "disconnect", _.bind( application.shutdown, application ) );
+    socket.on( 'shutdown', _.bind( application.shutdown, application ) );
+    socket.on( 'disconnect', _.bind( application.shutdown, application ) );
 } );

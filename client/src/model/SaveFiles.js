@@ -22,7 +22,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': null,
-            'read':   'getFiles'
+            'read':   'file.list'
         },
 
         parse: function( result ) {

@@ -397,7 +397,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
                     this._parseShmdata( shmdataInfo );
                     shmdataInfo.path = graftedShmdataPath;
                     shmdataInfo.type = graftedShmdataType;
-                    this.io.emit( 'updateShmdata', quiddityId, shmdataInfo );
+                    this.io.emit( 'shmdata.update', quiddityId, shmdataInfo );
                 }
             }
         }

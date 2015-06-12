@@ -15,8 +15,6 @@ define( [
      */
     var Shmdata = ScenicModel.extend( {
 
-        idAttribute: "path",
-
         defaults: {
             path:       null,
             byte_rate:  0,
@@ -56,7 +54,7 @@ define( [
          * @private
          */
         _onRemoved: function ( quiddityId, shmdata ) {
-            if ( this.collection.quiddity.id == quiddityId && shmdata.path == this.id && shmdata.type == this.get( 'type' ) ) {
+            if ( this.collection.quiddity.id == quiddityId && shmdata.path == this.get('path') && shmdata.type == this.get( 'type' ) ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         }

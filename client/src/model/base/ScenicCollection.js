@@ -53,6 +53,8 @@ define( [
          * Override and use to bind to socket in subclasses
          * This is done so that temporary models don't register with socket.io
          * This was causing them to keep being referenced event after being used
+         *
+         * This should be called manually by the collection owner!
          */
         bindToSocket: function() {
             //

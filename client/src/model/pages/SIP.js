@@ -96,7 +96,7 @@ define( [
          */
         connect: function( source, destination ) {
             var self = this;
-            socket.emit( 'attachShmdataToContact', source.id, destination.id, function( error ) {
+            socket.emit( 'attachShmdataToContact', source.get('path'), destination.id, function( error ) {
                 if (error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
@@ -108,7 +108,7 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            socket.emit( 'detachShmdataFromContact', source.id, destination.id, function( error ) {
+            socket.emit( 'detachShmdataFromContact', source.get('path'), destination.id, function( error ) {
                 if (error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }

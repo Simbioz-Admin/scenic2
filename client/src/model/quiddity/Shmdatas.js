@@ -40,6 +40,7 @@ define( [
                 this.quiddity.set( 'maxReaders', response.max_reader );
                 if ( response.reader && typeof response.reader == 'object' ) {
                     _.each( response.reader, function ( shmdata, path ) {
+                        shmdata.id = path + '.reader';
                         shmdata.path = path;
                         shmdata.type = 'reader';
                         shmdatas.push( shmdata );
@@ -47,6 +48,7 @@ define( [
                 }
                 if ( response.writer && typeof response.writer == 'object' ) {
                     _.each( response.writer, function ( shmdata, path ) {
+                        shmdata.id = path + '.writer';
                         shmdata.path = path;
                         shmdata.type = 'writer';
                         shmdatas.push( shmdata );
@@ -69,7 +71,7 @@ define( [
          * This was causing them to keep being referenced event after being used
          */
         bindToSocket: function() {
-            this.onSocket( 'updateShmdata', _.bind( this._onUpdateShmdata, this ) );
+            this.onSocket( 'shmdata.update', _.bind( this._onUpdateShmdata, this ) );
         },
 
         /**
@@ -83,6 +85,9 @@ define( [
          */
         _onUpdateShmdata: function ( quiddityId, shmdata ) {
             if ( this.quiddity.id == quiddityId ) {
+                // The id generation is done here but could as well be done on the server,
+                // but since this id is only used in backbone's context I left it here.
+                shmdata.id = shmdata.path + '.' + shmdata.type;
                 this.add( shmdata, { merge: true } );
             }
         }

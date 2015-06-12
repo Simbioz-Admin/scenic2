@@ -58,7 +58,7 @@ define( [
             var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} ).length;
             var maxReaders              = destination.get( 'maxReaders' );
             if ( maxReaders > existingConnectionCount || maxReaders == 0 ) {
-                socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.id], function ( error, result ) {
+                socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                     if ( error ) {
                         console.error( error );
                         self.scenicChannel.vent.trigger( 'error', error );
@@ -70,7 +70,7 @@ define( [
                         if ( error ) {
                             console.error( error );
                         }
-                        socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.id], function ( error, result ) {
+                        socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                             if ( error ) {
                                 console.error( error );
                             }
@@ -90,7 +90,7 @@ define( [
          */
         disconnect: function ( shmdata, destination ) {
             //TODO: Move into destination quiddity
-            socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect', [shmdata.id], function ( error, data ) {
+            socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect', [shmdata.get('path')], function ( error, data ) {
                 if ( error ) {
                     log.error( error );
                 }

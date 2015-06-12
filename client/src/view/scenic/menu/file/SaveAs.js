@@ -56,6 +56,9 @@ define( [
             if ( key == 27 ) {
                 event.preventDefault();
                 this.close();
+            } else if ( key == 13 ) {
+                event.preventDefault();
+                this.saveFile();
             }
         }
     } );

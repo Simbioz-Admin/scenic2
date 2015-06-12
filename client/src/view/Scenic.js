@@ -82,6 +82,8 @@ define( [
             //TODO: Put in notification manager
             this.scenicChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
             this.scenicChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
+            this.scenicChannel.vent.on( 'file:added', this._onFileAdded, this );
+            this.scenicChannel.vent.on( 'file:removed', this._onFileRemoved, this );
             this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
             this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
             this.scenicChannel.vent.on( 'file:error', this._onFileError, this );
@@ -218,12 +220,33 @@ define( [
         //  ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝
 
         /**
+         * File Added Handler
+         *
+         * @param file
+         * @private
+         */
+        _onFileAdded: function ( file ) {
+            this.scenicChannel.vent.trigger( 'info', i18n.t( 'File __name__ added', {name: file.id} ) );
+        },
+
+        /**
+         * File Removed Handler
+         *
+         * @param file
+         * @private
+         */
+        _onFileRemoved: function ( file ) {
+            this.scenicChannel.vent.trigger( 'info', i18n.t( 'File __name__ removed', {name: file.id} ) );
+        },
+        
+        /**
          * File Loading Handler
          *
          * @param fileName
          * @private
          */
         _onFileLoading: function ( fileName ) {
+            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: fileName} ) );
             this.stopSpinner = spin();
         },
 
@@ -233,6 +256,7 @@ define( [
          * @private
          */
         _onFileLoaded: function ( fileName ) {
+            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: fileName} ) );
             this.stopSpinner();
         },
 

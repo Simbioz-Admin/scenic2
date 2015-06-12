@@ -3,15 +3,16 @@
 define( [
     'underscore',
     'backbone',
+    'i18n',
     'toastr'
-], function ( _, Backbone, toastr ) {
+], function ( _, Backbone, i18n, toastr ) {
 
     /**
      *  @constructor
      *  @augments module:Backbone.View
      */
     var NotificationsView = Backbone.View.extend( {
-        el:       '#scenic',
+        el: '#scenic',
 
         initialize: function ( app ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
@@ -22,21 +23,21 @@ define( [
             this.scenicChannel.vent.on( 'error', this._onError, this );
 
             toastr.options = {
-                'closeButton': true,
-                'debug': false,
-                'newestOnTop': false,
-                'progressBar': false,
-                'positionClass': 'toast-bottom-right',
+                'closeButton':       true,
+                'debug':             false,
+                'newestOnTop':       false,
+                'progressBar':       false,
+                'positionClass':     'toast-bottom-right',
                 'preventDuplicates': false,
-                'onclick': null,
-                'showDuration': '250',
-                'hideDuration': '500',
-                'timeOut': '3000',
-                'extendedTimeOut': '1000',
-                'showEasing': 'linear',
-                'hideEasing': 'linear',
-                'showMethod': 'fadeIn',
-                'hideMethod': 'fadeOut'
+                'onclick':           null,
+                'showDuration':      '250',
+                'hideDuration':      '500',
+                'timeOut':           '3000',
+                'extendedTimeOut':   '1000',
+                'showEasing':        'linear',
+                'hideEasing':        'linear',
+                'showMethod':        'fadeIn',
+                'hideMethod':        'fadeOut'
             }
         },
 
@@ -48,7 +49,7 @@ define( [
          * @private
          */
         _onInfo: function ( message ) {
-            toastr.info(message);
+            toastr.info( message );
         },
 
         /**
@@ -59,7 +60,7 @@ define( [
          * @private
          */
         _onSuccess: function ( message ) {
-            toastr.success(message);
+            toastr.success( message );
         },
 
         /**
@@ -70,7 +71,7 @@ define( [
          * @private
          */
         _onError: function ( message ) {
-            toastr.error(message);
+            toastr.error( message, i18n.t( 'Error' ), { timeOut: 5000 } );
         }
     } );
 

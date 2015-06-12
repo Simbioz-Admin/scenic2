@@ -670,7 +670,7 @@ describe( 'RTP Manager', function () {
         it( 'should follow protocol', function () {
             var id = 'someId';
 
-            switcher.invoke.returns( [true] );
+            switcher.invoke.returns( true );
             switcher.remove.returns( true );
 
             rtpManager.removeRTPDestination( id, cb );
@@ -683,7 +683,7 @@ describe( 'RTP Manager', function () {
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
             cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            cb.should.have.been.calledWithExactly(null);
         } );
 
         it( 'should return error when removing destination throws', function () {
@@ -703,17 +703,19 @@ describe( 'RTP Manager', function () {
             cb.should.have.been.calledWithMatch( error );
         } );
 
-        it( 'should return error when removing destination returns false', function () {
+        it( 'should return error but continue removing when removing destination returns false', function () {
             var id = 'someId';
 
             switcher.invoke.onFirstCall().returns( false );
 
             rtpManager.removeRTPDestination( id, cb );
 
-            switcher.invoke.should.have.been.calledOnce;
+            switcher.invoke.should.have.been.calledTwice;
             switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
+            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
 
-            switcher.remove.should.not.have.been.called;
+            switcher.remove.should.have.been.calledOnce;
+            switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
             cb.should.have.been.calledOnce;
             cb.should.have.been.calledWithMatch( '' );
@@ -756,7 +758,7 @@ describe( 'RTP Manager', function () {
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
             cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            cb.should.have.been.calledWithMatch('');
         } );
 
         it( 'should return error when removing soap control client throws', function () {
@@ -795,7 +797,7 @@ describe( 'RTP Manager', function () {
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
             cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            cb.should.have.been.calledWithMatch('');
         } );
 
     } );

@@ -31,5 +31,3 @@ requirejs.config( {
         i18n:       '../../bower_components/i18next/i18next.min'
     }
 } );
-
-console.log( 'allo' );

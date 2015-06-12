@@ -207,8 +207,7 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !removed ) {
-        //TODO: Probably continue removing when it fails
-        return logback( i18n.t( 'Failed to remove RTP destination __destination__', {destination: id} ), cb );
+        log.warn( 'Failed to remove RTP destination', id );
     }
 
     // Remove Remote httpsdpdec
@@ -219,7 +218,7 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !soapClientRemoved ) {
-        log.warn( 'SOAP client removal failed for __client__', {client: id} );
+        log.warn( 'SOAP client removal failed for client', id );
     }
 
     // Remove SOAP Control Client
@@ -230,12 +229,13 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !soapControlClientRemoved ) {
-        log.warn( 'SOAP control client removal failed for __client__', {client: id} );
+        log.warn( 'SOAP control client removal failed for client', id );
     }
 
     //TODO: As in remove connection, remove any orphan shmdata from rtp quiddity (TEST THIS)
 
-    cb();
+    //TODO: Give more details about this error
+    cb( ( !removed || !soapClientRemoved || !soapControlClientRemoved ) ? i18n.t('An error occurred while removing RTP destination') : null );
 };
 
 /**
@@ -283,7 +283,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
             return logback( e.toString(), cb );
         }
         if ( !dataStreamAdded ) {
-            return logback( i18n.t( 'Error adding data stream to destination __path__', {path: path} ), cb );
+            return logback( i18n.t( 'Error adding data stream __path__ to destination', {path: path} ), cb );
         }
     }
 

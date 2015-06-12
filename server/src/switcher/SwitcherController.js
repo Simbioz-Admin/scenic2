@@ -206,6 +206,18 @@ SwitcherController.prototype.close = function () {
 //  ╚═════╝  ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝
 
 /**
+ * Clean file name in order to remove the risk of reading/writing
+ * where not allowed on the file system
+ *
+ * @param {string} name - File name to clean
+ * @returns {string} - Cleaned file name
+ */
+function cleanFileName( name ) {
+    // Just clean up dots, slashes, backslashes and messy filename stuff
+    return name.replace(/(\.|\/|\\|:|;)/g, '' );
+}
+
+/**
  * Get scenic files list
  *
  * TODO: Use promises instead of plain callback
@@ -236,7 +248,7 @@ SwitcherController.prototype.getFileList = function ( cb ) {
  * @returns {Boolean} If the operation was successful
  */
 SwitcherController.prototype.loadFile = function ( name ) {
-    var filePath = this.config.savePath + name;
+    var filePath = this.config.savePath + cleanFileName(name) + '.json';
     log.info( 'Loading scenic file', filePath );
     var loaded = this.switcher.load_history_from_scratch( filePath );
     if ( !loaded ) {
@@ -251,9 +263,7 @@ SwitcherController.prototype.loadFile = function ( name ) {
  * @param {String} name File name
  */
 SwitcherController.prototype.saveFile = function ( name ) {
-    // Just clean up dots, slashes, backslashes and messy filename stuff
-    name = name.replace(/(\.|\/|\\|:|;)/g, '' );
-    var filePath = this.config.savePath + name + '.json';
+    var filePath = this.config.savePath + cleanFileName(name) + '.json';
     log.info( 'Saving scenic file', filePath );
     var saved = this.switcher.save_history( filePath );
     if ( !saved ) {
@@ -271,7 +281,7 @@ SwitcherController.prototype.saveFile = function ( name ) {
  * @param {Function} cb Callback
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
-    var filePath = this.config.savePath + name;
+    var filePath = this.config.savePath + cleanFileName(name) + '.json';
     log.info( 'Removing scenic file', filePath );
     try {
         fs.unlink( filePath, function ( error ) {

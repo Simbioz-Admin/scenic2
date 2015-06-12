@@ -21,7 +21,7 @@ describe( 'Switcher Controller', function () {
 
     beforeEach( function () {
         config                 = {
-            systemUsage: {quiddName: 'systemusage'}
+            systemUsage: { quiddName: 'systemusage' }
         };
         io                     = {};
         io.emit                = sinon.spy();
@@ -48,9 +48,9 @@ describe( 'Switcher Controller', function () {
     } );
 
     function setupForInit() {
-        config.soap        = {quiddName: 'soap', port: 123};
-        config.rtp         = {quiddName: 'rtp'};
-        config.systemUsage = {quiddName: 'usage', period: 1.0};
+        config.soap        = { quiddName: 'soap', port: 123 };
+        config.rtp         = { quiddName: 'rtp' };
+        config.systemUsage = { quiddName: 'usage', period: 1.0 };
         config.loadFile    = false;
 
         switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
@@ -155,7 +155,7 @@ describe( 'Switcher Controller', function () {
     describe( 'Manager delegation', function () {
 
         it( 'should bind client to managers', function () {
-            var socket = {on: sinon.spy()};
+            var socket = { on: sinon.spy() };
 
             switcherController.rtpManager = sinon.stub( switcherController.rtpManager );
             switcherController.sipManager = sinon.stub( switcherController.sipManager );
@@ -270,9 +270,9 @@ describe( 'Switcher Controller', function () {
             } );
 
             it( 'should get save files', function () {
-                var files = ['file-a', 'file-b'];
+                var files       = ['file-a', 'file-b'];
                 config.savePath = 'some/path/';
-                fs.readdir = sinon.stub();
+                fs.readdir      = sinon.stub();
                 fs.readdir.yields( null, files );
                 switcherController.getFileList( cb );
                 fs.readdir.should.have.been.calledOnce;
@@ -282,7 +282,7 @@ describe( 'Switcher Controller', function () {
             } );
 
             it( 'should get an error when save files loading throws', function () {
-                var error = 'some error';
+                var error  = 'some error';
                 fs.readdir = sinon.stub();
                 fs.readdir.throws( new Error( error ) );
                 switcherController.getFileList( cb );
@@ -291,7 +291,7 @@ describe( 'Switcher Controller', function () {
             } );
 
             it( 'should get an error when save files loading fails', function () {
-                var error = 'some error';
+                var error  = 'some error';
                 fs.readdir = sinon.stub();
                 fs.readdir.yields( error, null );
                 switcherController.getFileList( cb );
@@ -306,7 +306,7 @@ describe( 'Switcher Controller', function () {
             var file;
 
             beforeEach( function () {
-                file                  = 'file.json';
+                file            = 'file.json';
                 config.savePath = 'some/path/';
             } );
 
@@ -339,9 +339,11 @@ describe( 'Switcher Controller', function () {
         describe( 'Saving scenic file', function () {
 
             var file;
+            var ext;
 
             beforeEach( function () {
-                file                  = 'file.json';
+                file            = 'file';
+                ext             = '.json';
                 config.savePath = 'some/path/';
             } );
 
@@ -349,7 +351,7 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.returns( true );
                 var result = switcherController.saveFile( file );
                 switcher.save_history.should.have.been.calledOnce;
-                switcher.save_history.should.have.been.calledWith( config.savePath + file );
+                switcher.save_history.should.have.been.calledWith( config.savePath + file + ext );
                 should.exist( result );
                 result.should.be.true;
             } );
@@ -359,14 +361,50 @@ describe( 'Switcher Controller', function () {
                 switcher.save_history.throws( new Error( error ) );
                 expect( switcherController.saveFile.bind( switcherController, file ) ).to.throw( error );
                 switcher.save_history.should.have.been.calledOnce;
-                switcher.save_history.should.have.been.calledWith( config.savePath + file );
+                switcher.save_history.should.have.been.calledWith( config.savePath + file + ext );
             } );
 
             it( 'should return false when saving save file fails', function () {
                 switcher.save_history.returns( false );
-                var result = switcherController.saveFile( file );
+                var result = switcherController.saveFile( file + ext );
                 should.exist( result );
                 result.should.be.false;
+            } );
+
+            it( 'should remove two dots from name', function () {
+                switcher.save_history.returns( true );
+                var result = switcherController.saveFile( '..test' );
+                switcher.save_history.should.have.been.calledOnce;
+                switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
+                should.exist( result );
+                result.should.be.true;
+            } );
+
+            it( 'should remove slashes from name', function () {
+                switcher.save_history.returns( true );
+                var result = switcherController.saveFile( '/test' );
+                switcher.save_history.should.have.been.calledOnce;
+                switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
+                should.exist( result );
+                result.should.be.true;
+            } );
+
+            it( 'should remove backslashes from name', function () {
+                switcher.save_history.returns( true );
+                var result = switcherController.saveFile( '\\test' );
+                switcher.save_history.should.have.been.calledOnce;
+                switcher.save_history.should.have.been.calledWith( config.savePath + 'test' + ext );
+                should.exist( result );
+                result.should.be.true;
+            } );
+
+            it( 'should make a really clean path name from junk from name', function () {
+                switcher.save_history.returns( true );
+                var result = switcherController.saveFile( '../../my:test.blah/../pouet' );
+                switcher.save_history.should.have.been.calledOnce;
+                switcher.save_history.should.have.been.calledWith( config.savePath + 'mytestblahpouet' + ext );
+                should.exist( result );
+                result.should.be.true;
             } );
 
         } );
@@ -377,19 +415,19 @@ describe( 'Switcher Controller', function () {
             var cb;
 
             beforeEach( function () {
-                file                  = 'file.json';
+                file            = 'file.json';
                 config.savePath = 'some/path/';
-                cb = sinon.stub();
+                cb              = sinon.stub();
             } );
 
             it( 'should delete a save file', function () {
-                fs.unlink  = sinon.stub();
+                fs.unlink = sinon.stub();
                 fs.unlink.yields( null );
                 switcherController.deleteFile( file, cb );
                 fs.unlink.should.have.been.calledOnce;
                 fs.unlink.should.have.been.calledWith( config.savePath + file );
                 cb.should.have.been.calledOnce;
-                cb.should.have.been.calledWithExactly( );
+                cb.should.have.been.calledWithExactly();
             } );
 
             it( 'should get an error when deleting a save file throws', function () {

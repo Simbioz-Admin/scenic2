@@ -70,7 +70,7 @@
   "Invalid quiddity id (__quiddity__)": "",
   "Missing credentials": "Informations d'identification manquantes",
   "Missing destination": "Destination manquante",
-  "Missing file name parameter": "",
+  "Missing file name parameter": "Nom de fichier manquant",
   "Missing information to add contact": "",
   "Missing information to create an RTP destination": "Information manquante à la création de la destination RTP",
   "Missing information to remove contact": "",

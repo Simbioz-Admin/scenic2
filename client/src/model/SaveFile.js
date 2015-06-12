@@ -61,7 +61,7 @@ define( [
 
         saveFile: function ( callback ) {
             var self = this;
-            socket.emit( 'saveFile', this.get( 'name' ), function ( error ) {
+            socket.emit( 'file.save', this.get( 'name' ), function ( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'file:error error', error );
                     return callback ? callback( error ) : null;

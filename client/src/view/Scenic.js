@@ -86,7 +86,7 @@ define( [
             this.scenicChannel.vent.on( 'file:removed', this._onFileRemoved, this );
             this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
             this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
-            this.scenicChannel.vent.on( 'file:error', this._onFileError, this );
+            this.scenicChannel.vent.on( 'file:load:error', this._onFileLoadError, this );
 
             // TODO: Legacy
             $( document ).tooltip();
@@ -242,31 +242,32 @@ define( [
         /**
          * File Loading Handler
          *
-         * @param fileName
+         * @param {SaveFile} file
          * @private
          */
-        _onFileLoading: function ( fileName ) {
-            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: fileName} ) );
+        _onFileLoading: function ( file ) {
+            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: file.get('name')} ) );
             this.stopSpinner = spin();
         },
 
         /**
          * File Loaded Handler
-         * @param fileName
+         * @param {SaveFile} file
          * @private
          */
-        _onFileLoaded: function ( fileName ) {
-            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: fileName} ) );
+        _onFileLoaded: function ( file ) {
+            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: file.get('name')} ) );
             this.stopSpinner();
         },
 
         /**
          * File Error Handler
          *
-         * @param fileName
+         * @param {SaveFile} file
          * @private
          */
-        _onFileError: function ( fileName ) {
+        _onFileLoadError: function ( file ) {
+            this.scenicChannel.vent.trigger( 'error', i18n.t( 'Could not load file __name__', {name: file.get('name')} ) );
             if ( this.stopSpinner ) {
                 this.stopSpinner();
             }

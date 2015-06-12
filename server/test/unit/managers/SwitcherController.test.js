@@ -24,7 +24,7 @@ describe( 'Switcher Controller', function () {
             systemUsage: { quiddName: 'systemusage' }
         };
         io                     = {};
-        io.emit                = sinon.spy();
+        io.emit                = sinon.stub();
         checkPort              = sinon.stub();
         checkPort.yields();
         fs                     = {};
@@ -320,6 +320,10 @@ describe( 'Switcher Controller', function () {
                 switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + file + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledTwice;
+                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledWithExactly( 'file.loading', file );
+                io.emit.should.have.been.calledWithExactly( 'file.loaded', file );
             } );
 
             it( 'should throw an error when loading save file throws', function () {
@@ -328,6 +332,9 @@ describe( 'Switcher Controller', function () {
                 expect( switcherController.loadFile.bind( switcherController, file ) ).to.throw( error );
                 switcher.load_history_from_scratch.should.have.been.calledOnce;
                 switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + file + ext );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledWithExactly( 'file.loading', file );
             } );
 
             it( 'should return false when loading save file fails', function () {
@@ -335,6 +342,10 @@ describe( 'Switcher Controller', function () {
                 var result = switcherController.loadFile( file );
                 should.exist( result );
                 result.should.be.false;
+                io.emit.should.have.been.calledTwice;
+                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledWithExactly( 'file.loading', file );
+                io.emit.should.have.been.calledWithExactly( 'file.load.error', file );
             } );
 
             it( 'should clean save file name from junk', function () {
@@ -344,6 +355,10 @@ describe( 'Switcher Controller', function () {
                 switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + 'mydirtyfile' + ext );
                 should.exist( result );
                 result.should.be.true;
+                io.emit.should.have.been.calledTwice;
+                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledWithExactly( 'file.loading', 'mydirtyfile' );
+                io.emit.should.have.been.calledWithExactly( 'file.loaded', 'mydirtyfile' );
             } );
 
         } );

@@ -251,11 +251,17 @@ SwitcherController.prototype.getFileList = function ( cb ) {
  * @returns {Boolean} If the operation was successful
  */
 SwitcherController.prototype.loadFile = function ( name ) {
-    var filePath = this.config.savePath + cleanFileName(name) + '.json';
+    var fileName = cleanFileName(name);
+    var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Loading scenic file', filePath );
+    this.io.emit('file.loading', fileName);
     var loaded = this.switcher.load_history_from_scratch( filePath );
     if ( !loaded ) {
         log.warn('Could not load scenic file', filePath);
+        this.io.emit('file.load.error', fileName);
+    } else {
+        log.info('Scenic file loaded', filePath);
+        this.io.emit('file.loaded', fileName);
     }
     return loaded;
 };
@@ -273,6 +279,7 @@ SwitcherController.prototype.saveFile = function ( name ) {
     if ( !saved ) {
         log.warn('Could not save scenic file', filePath);
     } else {
+        log.info('Scenic file saved', filePath);
         this.io.emit('file.saved', fileName );
     }
     return saved;
@@ -297,6 +304,7 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
                 log.error( error );
                 return cb( error );
             }
+            log.info('Scenic file deleted', filePath);
             self.io.emit('file.deleted', fileName );
             cb();
         } );

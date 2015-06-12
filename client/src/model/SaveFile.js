@@ -37,30 +37,19 @@ define( [
 
             if ( !this.isNew() ) {
                 // Handlers
+                this.onSocket( 'file.loading', _.bind( this._onLoading, this ) );
+                this.onSocket( 'file.loaded', _.bind( this._onLoaded, this ) );
+                this.onSocket( 'file.load.error', _.bind( this._onLoadError, this ) );
                 this.onSocket( 'file.deleted', _.bind( this._onDeleted, this ) );
             }
         },
 
         loadFile: function ( callback ) {
             var self = this;
-            self.scenicChannel.vent.trigger( 'file:loading', self.get( 'name' ) );
             socket.emit( 'file.load', this.get( 'name' ), function ( error ) {
-                if ( error ) {
-                    self.scenicChannel.vent.trigger( 'file:error error', error );
-                    return callback ? callback( error ) : null;
+                if ( callback ) {
+                    callback( error );
                 }
-                // Refresh the quiddities after a reload
-                app.quiddities.reset();
-                app.quiddities.fetch( {
-                    success: function () {
-                        self.scenicChannel.vent.trigger( 'file:loaded', self.get( 'name' ) );
-                        callback ? callback() : null;
-                    },
-                    error:   function ( error ) {
-                        self.scenicChannel.vent.trigger( 'file:error error', error );
-                        callback ? callback( error ) : null;
-                    }
-                } );
             } );
         },
 
@@ -68,12 +57,39 @@ define( [
             var self = this;
             socket.emit( 'file.save', this.get( 'name' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'file:error error', error );
+                    self.scenicChannel.vent.trigger( 'error', error );
                     return callback ? callback( error ) : null;
                 }
-                self.scenicChannel.vent.trigger( 'file:saved', self.get( 'name' ) );
                 callback ? callback() : null;
             } );
+        },
+
+        _onLoading: function(file) {
+            if ( this.id == file ) {
+                this.scenicChannel.vent.trigger( 'file:loading', this );
+            }
+        },
+
+        _onLoaded: function(file) {
+            if ( this.id == file ) {
+                // Refresh the quiddities after a reload
+                var self = this;
+                app.quiddities.reset();
+                app.quiddities.fetch( {
+                    success: function () {
+                        self.scenicChannel.vent.trigger( 'file:loaded', self );
+                    },
+                    error:   function ( error ) {
+                        self.scenicChannel.vent.trigger( 'error', error );
+                    }
+                } );
+            }
+        },
+
+        _onLoadError: function(file) {
+            if ( this.id == file ) {
+                this.scenicChannel.vent.trigger( 'file:load:error', this );
+            }
         },
 
         /**

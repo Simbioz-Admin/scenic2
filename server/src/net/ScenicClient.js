@@ -13,6 +13,11 @@ var commands = requireDir('commands', {recurse: true});
 var masterSocketId;
 
 /**
+ * Refresh timeout
+ */
+var refreshTimeout;
+
+/**
  * Constructor
  *
  * @param switcherController
@@ -68,6 +73,24 @@ ScenicClient.prototype.getMasterSocketId = function() {
  */
 ScenicClient.prototype.setMasterSocketId = function( socketId ) {
     masterSocketId = socketId;
+};
+
+/**
+ * Set the static refresh timeout
+ *
+ * @param timeout
+ */
+ScenicClient.prototype.setRefreshTimeout = function( timeout ) {
+    refreshTimeout = timeout;
+};
+
+/**
+ * Get the static refresh timeout
+ *
+ * @return timeout
+ */
+ScenicClient.prototype.getRefreshTimeout = function() {
+    return refreshTimeout;
 };
 
 module.exports = ScenicClient;

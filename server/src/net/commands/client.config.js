@@ -1,7 +1,5 @@
 var log  = require( '../../lib/logger' );
 
-var masterSocketId;
-
 module.exports = {
     name: 'config',
 
@@ -20,7 +18,7 @@ module.exports = {
 
         // Figure out if we are/should be the master client
         if ( this.getMasterSocketId() && oldSocketId == this.getMasterSocketId() ) {
-            clearTimeout( this.refreshTimeout );
+            clearTimeout(this.getRefreshTimeout());
             this.setMasterSocketId( this.socket.id );
         } else if ( !this.getMasterSocketId() ) {
             log.debug( "Master socket id: ", this.socket.id );

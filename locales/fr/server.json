@@ -49,7 +49,7 @@
   "Failed to delete file __path__ (__error__)": "IMpossible d'effacer le fichier __path__",
   "Failed to get information for quiddity __quiddityId__": "Impossible d'obtenir les informations de la quiddité __quiddityId__",
   "Failed to get methods for __quiddityId__": "Impossible d'obtenir les méthodes de __quiddityId__",
-  "Failed to invoke __method__ on __quiddity__": "Impossible d'exécuter la méthose __method__ de __quiddity__",
+  "Failed to invoke __method__ on __quiddity__": "Impossible d'exécuter la méthode __method__ de __quiddity__",
   "Failed to load file __path__": "Impossible de charger le fichier __path__",
   "Failed to read save files from __path__ (__error__)": "Impossible de lire les fichiers de sauvegarde de __path__ (__error__)",
   "Failed to remove RTP destination __destination__": "Impossible de retirer la destination RTP __destination__",

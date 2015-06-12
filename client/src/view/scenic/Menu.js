@@ -53,30 +53,32 @@ define( [
 
         showFileList: function () {
             if ( this.currentPanel == 'open' ) {
-                this.currentPanel = null;
-                var self          = this;
-                this.ui.panel.fadeOut( 250 ).conplete( function () {
-                    self.getRegion( 'panel' ).empty();
-                } );
+                this.closePanel();
             } else {
-                this.currentPanel = 'open';
-                this.showChildView( 'panel', new FilesView( { collection: app.saveFiles } ) );
-                this.ui.panel.fadeIn( 250 );
+                this.openPanel('open', new FilesView( { collection: app.saveFiles } ));
             }
         },
 
         saveFileAs: function () {
             if ( this.currentPanel == 'save' ) {
-                this.currentPanel = null;
-                var self          = this;
-                this.ui.panel.fadeOut( 250 ).complete( function () {
-                    self.getRegion( 'panel' ).empty();
-                } );
+                this.closePanel();
             } else {
-                this.currentPanel = 'save';
-                this.showChildView( 'panel', new SaveAsView() );
-                this.ui.panel.fadeIn( 250 );
+                this.openPanel( 'save', new SaveAsView( { close: _.bind( this.closePanel, this ) }) );
             }
+        },
+
+        openPanel: function(name, view) {
+            this.currentPanel = name;
+            this.showChildView( 'panel', view );
+            this.ui.panel.fadeIn( 250 );
+        },
+
+        closePanel: function() {
+            this.currentPanel = null;
+            var self          = this;
+            $(this.ui.panel).fadeOut( 250, function () {
+                self.getRegion( 'panel' ).empty();
+            } );
         },
 
         changeLanguage: function ( event ) {

@@ -243,7 +243,9 @@ define( [
          * @private
          */
         _onFileError: function ( fileName ) {
-            this.stopSpinner();
+            if ( this.stopSpinner ) {
+                this.stopSpinner();
+            }
         }
     } );
     return ScenicView;

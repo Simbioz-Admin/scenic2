@@ -25,13 +25,15 @@ define( [
         },
 
         events: {
+            'keydown': 'checkKey',
             'click @ui.save':  'saveFile'
         },
 
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( options ) {
+            this.close = options.close;
             this.model = new SaveFile();
         },
 
@@ -44,9 +46,17 @@ define( [
             this.model.set( 'name', this.ui.name.val() );
             this.model.saveFile( function( error ) {
                 if ( !error ) {
-                    self.destroy();
+                    self.close();
                 }
             });
+        },
+
+        checkKey: function( event ) {
+            var key = event.which || event.keyCode;
+            if ( key == 27 ) {
+                event.preventDefault();
+                this.close();
+            }
         }
     } );
 

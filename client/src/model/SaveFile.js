@@ -24,7 +24,7 @@ define( [
             'update': null,
             'patch':  null,
             'delete': function () {
-                return ['delelteFile', this.get( 'name' )];
+                return ['deleteFile', this.get( 'name' )];
             },
             'read':   null
         },

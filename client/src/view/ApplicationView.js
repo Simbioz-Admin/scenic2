@@ -5,10 +5,11 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/SessionsView',
+    'view/application/SessionsView',
     'view/ScenicView',
+    'view/scenic/modal/Confirmation',
     'text!template/application.html'
-], function ( _, Backbone, Marionette, SessionsView, ScenicView, ApplicationTemplate ) {
+], function ( _, Backbone, Marionette, SessionsView, ScenicView, ConfirmationView, ApplicationTemplate ) {
 
     /**
      * @constructor
@@ -24,13 +25,17 @@ define( [
 
         regions: {
             sessions: '#sessions',
-            session:   '#session'
+            session:   '#session',
+            modal:     '#modal'
         },
 
         initialize: function ( options ) {
             this.sessions = options.sessions;
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.sessions.on( 'change:current', _.bind( this.showSession, this ) );
+
+            // Wreqr Handlers
+            this.scenicChannel.commands.setHandler( 'confirm', this._onConfirm, this );
         },
 
         /**
@@ -64,7 +69,51 @@ define( [
             if ( this.currentSession ) {
                 this.$el.addClass( this.currentSession.id );
             }
-        }
+        },
+
+        //  ███╗   ███╗ ██████╗ ██████╗  █████╗ ██╗
+        //  ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║
+        //  ██╔████╔██║██║   ██║██║  ██║███████║██║
+        //  ██║╚██╔╝██║██║   ██║██║  ██║██╔══██║██║
+        //  ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║  ██║███████╗
+        //  ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
+        /**
+         * Confirmation Handler
+         * Shows a modal to confirm an action
+         *
+         * @param message
+         * @param callback
+         * @private
+         */
+        _onConfirm: function ( message, callback ) {
+            if ( !callback ) {
+                callback = message;
+                message  = i18n.t( 'Are you sure?' );
+            }
+            this.$el.addClass( 'blur' );
+            this.ui.modal.css( 'opacity', 1 );
+            this.showChildView( 'modal', new ConfirmationView( {
+                message:  message,
+                callback: _.bind( this.closeModal, this, callback )
+            } ) );
+        },
+
+        /**
+         * Close Modal
+         *
+         * @param callback
+         * @param result
+         */
+        closeModal: function ( callback, result ) {
+            this.$el.removeClass( 'blur' );
+            this.ui.modal.css( 'opacity', 0 );
+            callback( result );
+            var self = this;
+            setTimeout( function () {
+                self.getRegion( 'modal' ).empty();
+            }, 500 );
+        },
 
     } );
 

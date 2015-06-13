@@ -27,7 +27,6 @@ define( [
     'view/scenic/SystemUsage',
     'view/scenic/Notifications',
     'view/scenic/Inspector',
-    'view/scenic/modal/Confirmation',
     // Template
     'text!template/scenic.html'
 ], function ( _, Backbone, Marionette, i18n, spin,
@@ -35,7 +34,7 @@ define( [
               Pages,
               SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
               SinkView, RTPView, SIPView, ControlView, SettingsView,
-              MenuView, TabsView, SystemUsageView, NotificationsView, InspectorView, ConfirmationView,
+              MenuView, TabsView, SystemUsageView, NotificationsView, InspectorView,
               ScenicTemplate ) {
 
     /**
@@ -45,17 +44,12 @@ define( [
     var ScenicView = Marionette.LayoutView.extend( {
         template: _.template( ScenicTemplate ),
 
-        ui: {
-            modal: '#modal'
-        },
-
         regions: {
             tabs:      '#tabs',
             usage:     '#usage',
             menu:      '#header .menu',
             page:      '#page',
-            inspector: '#inspector',
-            modal:     '#modal'
+            inspector: '#inspector'
         },
 
         initialize: function ( scenic ) {
@@ -75,7 +69,6 @@ define( [
             this.pages.on( 'change:current', _.bind( this.showPage, this ) );
 
             // Wreqr Handlers
-            this.scenicChannel.commands.setHandler( 'confirm', this._onConfirm, this );
             this.scenicChannel.commands.setHandler( 'set:language', this.setLanguage, this );
 
             //TODO: Put in notification manager
@@ -99,8 +92,6 @@ define( [
             this.showChildView( 'inspector', new InspectorView() );
 
             this.showPage( this.pages.getCurrentPage() );
-
-            //this.$el.fadeIn( 500 );
         },
 
         /**
@@ -135,50 +126,6 @@ define( [
                 localStorage.setItem( 'lang', language );
                 location.reload();
             }
-        },
-
-        //  ███╗   ███╗ ██████╗ ██████╗  █████╗ ██╗
-        //  ████╗ ████║██╔═══██╗██╔══██╗██╔══██╗██║
-        //  ██╔████╔██║██║   ██║██║  ██║███████║██║
-        //  ██║╚██╔╝██║██║   ██║██║  ██║██╔══██║██║
-        //  ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║  ██║███████╗
-        //  ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
-
-        /**
-         * Confirmation Handler
-         * Shows a modal to confirm an action
-         *
-         * @param message
-         * @param callback
-         * @private
-         */
-        _onConfirm: function ( message, callback ) {
-            if ( !callback ) {
-                callback = message;
-                message  = i18n.t( 'Are you sure?' );
-            }
-            this.$el.addClass( 'blur' );
-            this.ui.modal.css( 'opacity', 1 );
-            this.showChildView( 'modal', new ConfirmationView( {
-                message:  message,
-                callback: _.bind( this.closeModal, this, callback )
-            } ) );
-        },
-
-        /**
-         * Close Modal
-         *
-         * @param callback
-         * @param result
-         */
-        closeModal: function ( callback, result ) {
-            this.$el.removeClass( 'blur' );
-            this.ui.modal.css( 'opacity', 0 );
-            callback( result );
-            var self = this;
-            setTimeout( function () {
-                self.getRegion( 'modal' ).empty();
-            }, 500 );
         },
 
         //   ██████╗ ██╗   ██╗██╗██████╗ ██████╗ ██╗████████╗██╗███████╗███████╗

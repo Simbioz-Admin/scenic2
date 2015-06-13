@@ -29,27 +29,31 @@ define( [
     /**
      * Scenic Application
      *
-     * @param {string} lang
      * @param {string} [host]
+     * @param {string} [lang]
      * @constructor
      */
-    function Scenic( lang, host ) {
-        this.localConfig       = null;
+    function Scenic( host, lang ) {
+        //this.localConfig       = null;
         this.config            = null;
         this.saveFiles         = null;
         this.classes           = null;
         this.quiddities        = null;
         this.sip               = null;
 
+        /*if (!lang) {
+            lang = localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en';
+        }*/
+
         // Global message bus
-        this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+        //this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
         // Configuration
-        this.hostName    = host ? host : 'default';
-        this.localConfig = this.readLocalConfig();
+        //this.hostName    = host ? host : 'default';
+        //this.localConfig = this.readLocalConfig();
 
         // Socket.io
-        this.socket = io.connect( host );
+        //this.socket = io.connect( host );
 
         // Announce ourselves and recover config information from the server
         var self = this;

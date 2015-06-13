@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/SessionView'
+    'view/application/SessionView'
 ], function ( _, Backbone, Marionette, SessionView ) {
 
     /**

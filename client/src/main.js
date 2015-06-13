@@ -66,15 +66,13 @@ require( {
      }
      } );*/
 
-    var lang = localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en';
-
     async.series( [
 
         function( callback ) {
             // I18N INITIALIZATION
             i18n.init( {
                 lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
-                lng:          lang,
+                lng:          localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en',
                 ns:           'client',
                 fallbackLng:  false
             } ).done( function () {
@@ -111,7 +109,8 @@ require( {
         } else {
             window.sessions = this.sessions = new Sessions();
 
-            this.defaultSession = new Session({lang: lang});
+            // Create the default session
+            this.defaultSession = new Session();
             window.scenic = this.defaultSession.scenic;
 
             this.sessions.add( this.defaultSession ); // Default session

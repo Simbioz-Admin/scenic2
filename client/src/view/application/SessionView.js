@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'text!template/session.html'
+    'text!template/application/session.html'
 ], function ( _, Backbone, Marionette, SessionTemplate ) {
 
     /**

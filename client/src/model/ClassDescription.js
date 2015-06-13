@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * Class Description Collection
@@ -63,7 +62,7 @@ define( [
             if ( !this.autoDetectDevices ) {
                 return callback ? callback() : null;
             }
-            socket.emit( 'get_property_by_class', this.id, 'device', function ( error, property ) {
+            this.scenic.socket.emit( 'get_property_by_class', this.id, 'device', function ( error, property ) {
                 if ( error ) {
                     console.error( error );
                     return callback ? callback( error ) : null;

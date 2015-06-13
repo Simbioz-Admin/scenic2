@@ -48,10 +48,10 @@ define( [
          */
         initialize: function () {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.collection    = this.model.get( 'shmdatas' );
+            this.collection    = this.model.shmdatas;
 
             // Check for started property
-            var startedProperty = this.model.get( 'properties' ).findWhere( {name: 'started'} );
+            var startedProperty = this.model.properties.findWhere( {name: 'started'} );
             if ( startedProperty ) {
                 this.listenTo( startedProperty, 'change:value', this._onStartedChanged );
             }

@@ -1,17 +1,18 @@
 #page {
   position: absolute;
   left: $tabsWidth;
-  top: $headerHeight;
+  top: $sessionsHeight + $headerHeight;
   bottom: 0;
   right: 0;
   overflow: auto;
+  @include box-shadow( inset 6px 6px 6px -6px rgba(black, 0.5));
 
   .menus {
     border-bottom-color: black;
     position: fixed;
     z-index: 30;
     left: $tabsWidth;
-    top: 0px;
+    top: $sessionsHeight;
     height: 40px;
     margin: 12px 12px 8px 24px;
     background: #333;

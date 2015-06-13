@@ -33,7 +33,7 @@ define( [
             this.table       = options.table;
 
             // Re-render when destination shmdatas change, it might mean we connected/disconnected
-            this.listenTo( this.destination.get( 'shmdatas' ), 'update', this.render );
+            this.listenTo( this.destination.shmdatas, 'update', this.render );
 
             // Check if we can connect, this only need to happen once
             this.options.table.canConnect( this.shmdata, this.destination, function ( canConnect ) {

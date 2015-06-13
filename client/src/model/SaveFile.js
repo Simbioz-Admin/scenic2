@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'app',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, app, ScenicModel ) {
+], function ( _, Backbone, app, ScenicModel ) {
 
     /**
      * SaveFile
@@ -21,8 +20,12 @@ define( [
             'create': function () {
                 return ['file.save', this.get( 'name' )];
             },
-            'update': null,
-            'patch':  null,
+            'update': function () {
+                return ['file.save', this.get( 'name' )];
+            },
+            'patch':  function () {
+                return ['file.save', this.get( 'name' )];
+            },
             'delete': function () {
                 return ['file.delete', this.get( 'name' )];
             },
@@ -46,23 +49,23 @@ define( [
 
         loadFile: function ( callback ) {
             var self = this;
-            socket.emit( 'file.load', this.get( 'name' ), function ( error ) {
+            this.scenic.socket.emit( 'file.load', this.get( 'name' ), function ( error ) {
                 if ( callback ) {
                     callback( error );
                 }
             } );
         },
 
-        saveFile: function ( callback ) {
+        /*saveFile: function ( callback ) {
             var self = this;
-            socket.emit( 'file.save', this.get( 'name' ), function ( error ) {
+            this.scenic.socket.emit( 'file.save', this.get( 'name' ), function ( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                     return callback ? callback( error ) : null;
                 }
                 callback ? callback() : null;
             } );
-        },
+        },*/
 
         _onLoading: function(file) {
             if ( this.id == file ) {
@@ -74,8 +77,8 @@ define( [
             if ( this.id == file ) {
                 // Refresh the quiddities after a reload
                 var self = this;
-                app.quiddities.reset();
-                app.quiddities.fetch( {
+                this.scenic.quiddities.reset();
+                this.scenic.quiddities.fetch( {
                     success: function () {
                         self.scenicChannel.vent.trigger( 'file:loaded', self );
                     },

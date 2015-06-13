@@ -4,9 +4,8 @@ define( [
     'underscore',
     'backbone',
     'i18n',
-    'lib/socket',
     'model/base/BaseModel'
-], function ( _, Backbone, i18n, socket, BaseModel ) {
+], function ( _, Backbone, i18n, BaseModel ) {
 
     /**
      * Scenic Model
@@ -20,7 +19,10 @@ define( [
         /**
          * @constructor
          */
-        constructor: function() {
+        constructor: function(attributes, options ) {
+            if ( options && options.scenic) {
+                this.scenic = options.scenic;
+            }
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
@@ -39,7 +41,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (attributes, options) {
             BaseModel.prototype.initialize.apply( this, arguments );
 
             // Model Error Handler, goes directly into the vent
@@ -59,7 +61,7 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['quiddity.create', this.get( 'class' ), this.get( 'name' ), socket.id];
+                return ['quiddity.create', this.get( 'class' ), this.get( 'name' ), this.scenic.socket.id];
             },
             'update': null,
             'patch':  null,
@@ -80,7 +82,7 @@ define( [
          */
         onSocket: function ( message, callback ) {
             this.socketListeners.push( {message: message, callback: callback} );
-            socket.on( message, callback );
+            this.scenic.socket.on( message, callback );
         },
 
         /**
@@ -93,8 +95,8 @@ define( [
          */
         _onDestroy: function() {
             _.each( this.socketListeners, function( listener ) {
-                socket.off( listener.message, listener.callback );
-            });
+                this.scenic.socket.off( listener.message, listener.callback );
+            }, this);
             this.socketListeners = [];
         },
 
@@ -108,7 +110,6 @@ define( [
          * @returns {*}
          */
         sync: function ( method, model, options ) {
-            console.debug( method, model, options );
             var self    = this;
             var command = this.methodMap[method];
             if ( command ) {
@@ -118,8 +119,8 @@ define( [
                     }
                     options.success( result );
                 };
-                socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
-                model.trigger( 'request', model, socket, options );
+                this.scenic.socket.emit.apply( this.scenic.socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
+                model.trigger( 'request', model, this.scenic.socket, options );
             } else {
                 return options.error( i18n.t('Invalid request __method__', {method: method} ) );
             }

@@ -1,11 +1,10 @@
 #header {
   width: 100%;
   height: $headerHeight;
-  background: #333;
+  background: $backgroundColorDark;
   position: fixed;
-  top: 0;
+  top: $sessionsHeight;
   z-index: 20;
-  @include box-shadow(0px 0px 6px 0px rgba(0,0,0,0.5));
 
   .logo {
     position: absolute;

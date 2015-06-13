@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/BaseCollection',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, BaseCollection, ScenicModel ) {
+], function ( _, Backbone, BaseCollection, ScenicModel ) {
 
     /**
      * Scenic Collection
@@ -21,7 +20,11 @@ define( [
         /**
          * @constructor
          */
-        constructor: function () {
+        constructor: function ( models, options ) {
+            if ( options && options.scenic ) {
+                this.scenic = options.scenic;
+            }
+
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
@@ -43,6 +46,11 @@ define( [
         initialize: function () {
             BaseCollection.prototype.initialize.apply( this, arguments );
 
+            // Propagate scenic instance
+            /*this.on('add', function(model) {
+             model.scenic = this.scenic;
+             });*/
+
             // Collection Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
                 this.scenicChannel.vent.trigger( 'error', error );
@@ -56,7 +64,7 @@ define( [
          *
          * This should be called manually by the collection owner!
          */
-        bindToSocket: function() {
+        bindToSocket: function () {
             //
         },
 
@@ -85,7 +93,7 @@ define( [
          */
         onSocket: function ( message, callback ) {
             this.socketListeners.push( {message: message, callback: callback} );
-            socket.on( message, callback );
+            this.scenic.socket.on( message, callback );
         },
 
         /**
@@ -94,10 +102,35 @@ define( [
         destroy: function () {
             // Romove socket listeners
             _.each( this.socketListeners, function ( listener ) {
-                socket.off( listener.message, listener.callback );
-            } );
+                this.scenic.socket.off( listener.message, listener.callback );
+            }, this );
             this.socketListeners = [];
-            BaseCollection.prototype.destroy.apply(this,arguments);
+            BaseCollection.prototype.destroy.apply( this, arguments );
+        },
+
+        /**
+         * Overridden add method
+         * Adds scenic to the options, so that the added models already know about the scenic
+         * instance they are linked to.
+         *
+         * @param attributes
+         * @param options
+         * @returns {*}
+         */
+        add: function ( attributes, options ) {
+            return Backbone.Collection.prototype.add.call( this, attributes, _.extend( {scenic: this.scenic}, options ) );
+        },
+
+        /**
+         * Overridden fetch method
+         * Adds scenic to the options, so that the fetched models already know about the scenic
+         * instance they are linked to.
+         *
+         * @param options
+         * @returns {*}
+         */
+        fetch: function ( options ) {
+            return Backbone.Collection.prototype.fetch.call( this, _.extend( {scenic: this.scenic}, options ) );
         },
 
         /**
@@ -118,8 +151,8 @@ define( [
                     }
                     options.success( result );
                 };
-                socket.emit.apply( socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
-                collection.trigger( 'request', collection, socket, options );
+                this.scenic.socket.emit.apply( this.scenic.socket, ( typeof command == 'function' ? command.apply( this ) : [command] ).concat( callback ) );
+                collection.trigger( 'request', collection, this.scenic.socket, options );
             } else {
                 return options.error( 'Invalid request' );
             }

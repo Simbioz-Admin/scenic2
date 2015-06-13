@@ -53,11 +53,15 @@ define( [
          */
         initialize: function () {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.firstRender = true;
         },
 
         onRender: function() {
             $('*', this.$el).prop('disabled', false);
-            this.$el.fadeTo( 250, 1.0 );
+            if ( !this.firstRender ) {
+                this.$el.fadeTo( 250, 1.0 );
+            }
+            this.firstRender = false;
         },
 
         checkForEnterKey: function( event ) {

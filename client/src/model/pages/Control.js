@@ -3,12 +3,11 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'i18n',
     'app',
     'model/pages/base/Table',
     'model/pages/control/ControlDestinations'
-], function ( _, Backbone, socket, i18n, app, Table, ControlDestinations ) {
+], function ( _, Backbone, i18n, app, Table, ControlDestinations ) {
 
     /**
      * Control Table
@@ -31,7 +30,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( attributes, options ) {
             Table.prototype.initialize.apply( this, arguments );
         },
 
@@ -43,7 +42,7 @@ define( [
          */
         getDestinationCollection: function() {
             if ( !this.destinations ) {
-                this.destinations = new ControlDestinations( null, {quiddities: app.quiddities} );
+                this.destinations = new ControlDestinations( null, {quiddities: this.scenic.quiddities} );
             }
             return this.destinations;
         },
@@ -54,12 +53,12 @@ define( [
         getControlProperties: function() {
             //TODO: Remove already assigned
             // Get source quiddity classes
-            var quiddities = app.quiddities.filter( function ( quiddity ) {
+            var quiddities = this.scenic.quiddities.filter( function ( quiddity ) {
                 return this._filterQuiddityOrClass( 'control', quiddity );
             }, this );
             var controllables = [];
             _.each( quiddities , function( quiddity ) {
-                var properties = quiddity.get('properties' ).filter( function( property ) {
+                var properties = quiddity.properties.filter( function( property ) {
                     return property.get('writable') == 'true' && property.get('name') != 'started';
                 }, this );
                 controllables = controllables.concat( properties );

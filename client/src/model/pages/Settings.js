@@ -3,11 +3,10 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'i18n',
     'app',
     'model/Page'
-], function ( _, Backbone, socket, i18n, app, Page ) {
+], function ( _, Backbone, i18n, app, Page ) {
 
     /**
      * Settings Page
@@ -31,13 +30,13 @@ define( [
             config: {
                 transient: true,
                 get: function() {
-                    return app.config;
+                    return this.scenic.config;
                 }
             },
             sip: {
                 transient: true,
                 get: function() {
-                    return app.quiddities.get(app.config.sip.quiddName);
+                    return this.scenic.quiddities.get(this.scenic.config.sip.quiddName);
                 }
             }
         },
@@ -45,9 +44,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (attributes, options) {
             Page.prototype.initialize.apply( this, arguments );
-
         }
     } );
 

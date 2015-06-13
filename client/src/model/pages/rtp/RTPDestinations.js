@@ -27,10 +27,11 @@ define( [
          * @param options
          */
         initialize: function ( models, options ) {
-            this.quiddityId = app.config.rtp.quiddName;
+            this.scenic = options.scenic;
+            this.quiddityId = this.scenic.config.rtp.quiddName;
             this.propertyName = 'destinations-json';
             this.key = 'destinations';
-
+            this.modelOptions = { scenic: this.scenic };
             PropertyWatcherCollection.prototype.initialize.apply(this,arguments);
         }
     } );

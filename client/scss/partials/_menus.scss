@@ -2,7 +2,7 @@
   .panel {
     position: fixed;
     right: 0;
-    top: $headerHeight;
+    top: $sessionsHeight + $headerHeight;
     padding-top: 1em;
     background: $backgroundColorDarker;
     color: $textColor;

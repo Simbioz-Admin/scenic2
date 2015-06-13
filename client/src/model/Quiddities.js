@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/Quiddity'
-], function ( _, Backbone, socket, ScenicCollection, Quiddity ) {
+], function ( _, Backbone, ScenicCollection, Quiddity ) {
 
     /**
      * Quiddities Collection
@@ -30,8 +29,8 @@ define( [
         initialize: function ( models, options ) {
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
-            // Passed quiddity class descriptions
-            this.classes = options.classes;
+            this.scenic = options.scenic;
+            this.classes = this.scenic.classes;
 
             // Handlers
             this.onSocket( "create", _.bind( this._onCreate, this ) );
@@ -49,7 +48,7 @@ define( [
             var quiddity = this.add( quiddityData, {merge: true} );
             this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
             // If we created it, start editing it
-            if ( socket.id == socketId ) {
+            if ( this.scenic.socket.id == socketId ) {
                 //TODO: Send quiddity:created with local flag instead
                 quiddity.edit();
             }

@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'i18n',
     'model/pages/base/Table'
-], function ( _, Backbone, socket, i18n, Table ) {
+], function ( _, Backbone, i18n, Table ) {
 
     /**
      * Sink Table
@@ -29,7 +28,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (attributes, options) {
             Table.prototype.initialize.apply( this, arguments );
         },
 
@@ -37,7 +36,7 @@ define( [
          * @inheritdoc
          */
         canConnect: function ( shmdata, destination, callback ) {
-            socket.emit( 'quiddity.method.invoke', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
+            this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
                 if ( error ) {
                     console.error( error );
                     callback( false );
@@ -55,10 +54,10 @@ define( [
         connect: function ( shmdata, destination ) {
             var self = this;
             //TODO: Move into destination quiddity?
-            var existingConnectionCount = destination.get( 'shmdatas' ).where( {type: 'reader'} ).length;
+            var existingConnectionCount = destination.shmdatas.where( {type: 'reader'} ).length;
             var maxReaders              = destination.get( 'maxReaders' );
             if ( maxReaders > existingConnectionCount || maxReaders == 0 ) {
-                socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
+                this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                     if ( error ) {
                         console.error( error );
                         self.scenicChannel.vent.trigger( 'error', error );
@@ -66,11 +65,11 @@ define( [
                 } );
             } else {
                 if ( maxReaders == 1 ) {
-                    socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect-all', [], function ( error, result ) {
+                    this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect-all', [], function ( error, result ) {
                         if ( error ) {
                             console.error( error );
                         }
-                        socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
+                        this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                             if ( error ) {
                                 console.error( error );
                             }
@@ -90,7 +89,7 @@ define( [
          */
         disconnect: function ( shmdata, destination ) {
             //TODO: Move into destination quiddity
-            socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect', [shmdata.get('path')], function ( error, data ) {
+            this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'disconnect', [shmdata.get('path')], function ( error, data ) {
                 if ( error ) {
                     log.error( error );
                 }

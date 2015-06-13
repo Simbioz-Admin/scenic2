@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * SIP Contact
@@ -74,7 +73,7 @@ define( [
          */
         call: function(cb) {
             var self = this;
-            socket.emit('callContact', this.id, function( error ) {
+            this.scenic.socket.emit('callContact', this.id, function( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error);
                     if ( cb ) {
@@ -92,7 +91,7 @@ define( [
          */
         hangUp: function(cb) {
             var self = this;
-            socket.emit('hangUpContact', this.id, function( error ) {
+            this.scenic.socket.emit('hangUpContact', this.id, function( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error);
                     if ( cb ) {
@@ -112,7 +111,7 @@ define( [
             var self = this;
             this.scenicChannel.commands.execute( 'contact:edit', this, function( info ) {
                 //TODO: Use the contact's internal update method
-                socket.emit( 'sip.contact.update', self.id, info, function( error ) {
+                self.scenic.socket.emit( 'sip.contact.update', self.id, info, function( error ) {
                     if ( error ) {
                         self.scenicChannel.vent.trigger( 'error', error );
                         return;

@@ -14,7 +14,7 @@ define( [
      * @constructor
      * @augments module:Marionette.CollectionView
      */
-    var Sources = Marionette.CollectionView.extend( {
+    var SourcesView = Marionette.CollectionView.extend( {
         className:        'source-list',
         getChildView:     function ( item ) {
             if ( item.get( 'class' ) == 'sip' ) {
@@ -50,5 +50,5 @@ define( [
         }
     } );
 
-    return Sources;
+    return SourcesView;
 } );

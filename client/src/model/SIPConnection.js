@@ -4,13 +4,12 @@ define( [
     'underscore',
     'backbone',
     'cocktail',
-    'lib/socket',
     'crypto-js',
     'app',
     'model/mixins/PropertyWatcher',
     'model/sip/Contacts',
     'model/sip/Contact'
-], function ( _, Backbone, Cocktail, socket, CryptoJS, app, PropertyWatcher, Contacts, Contact ) {
+], function ( _, Backbone, Cocktail, CryptoJS, app, PropertyWatcher, Contacts, Contact ) {
 
     /**
      * SIP Connection
@@ -29,32 +28,35 @@ define( [
                 connecting: false,
                 server:     null,
                 user:       null,
-                port:       null,
-                self:       new Contact( null, { self: true, sip: this } ),
-                contacts:   new Contacts( null, { sip: this } )
+                port:       null
             }
         },
 
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (attributes, options) {
+            this.scenic = options.scenic;
+
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
             var sip = JSON.parse( localStorage.getItem( 'sip' ) );
-            this.set( 'server', sip && sip.server ? sip.server : app.config.sip.server );
-            this.set( 'port', sip && sip.port ? sip.port : app.config.sip.port );
+            this.set( 'server', sip && sip.server ? sip.server : this.scenic.config.sip.server );
+            this.set( 'port', sip && sip.port ? sip.port : this.scenic.config.sip.port );
             this.set( 'user', sip && sip.user ? sip.user : null );
             this.set( 'uri', sip && sip.uri ? sip.uri : null );
 
-            this.quiddityId   = app.config.sip.quiddName;
+            this.quiddityId   = this.scenic.config.sip.quiddName;
             this.propertyName = 'sip-registration';
 
+            this.self = new Contact( null, {self: true, sip: this, scenic: this.scenic });
+            this.contacts = new Contacts( null, {sip: this, scenic: this.scenic});
+
             // Fetch contacts
-            this.listenTo( this.get('contacts'), 'update', this._checkForSelf );
-            this.get( 'contacts' ).fetch();
+            this.listenTo( this.contacts, 'update', this._checkForSelf );
+            this.contacts.fetch();
         },
 
         propertyChanged: function ( value ) {
@@ -96,7 +98,7 @@ define( [
                 uri:    user + '@' + server
             } ) );
 
-            socket.emit( 'sip.login', credentials, function ( error ) {
+            this.scenic.socket.emit( 'sip.login', credentials, function ( error ) {
                 self.set( 'connecting', false );
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'sip:loggedout', error );
@@ -118,7 +120,7 @@ define( [
          */
         logout: function () {
             var self = this;
-            socket.emit( 'sip.logout', function ( error ) {
+            this.scenic.socket.emit( 'sip.logout', function ( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
@@ -145,9 +147,9 @@ define( [
         },
 
         _checkForSelf: function() {
-            var self = this.get( 'contacts' ).findWhere( { self: true } );
+            var self = this.contacts.findWhere( { self: true } );
             if ( self ) {
-                this.get('self').set( self.attributes );
+                this.self.set( self.attributes );
             }
 
         }

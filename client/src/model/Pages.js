@@ -2,10 +2,9 @@
 
 define( [
     'underscore',
-    'jquery',
     'backbone',
     'model/Page'
-], function ( _, $, Backbone, Page ) {
+], function ( _, Backbone, Page ) {
 
     /**
      *  @constructor
@@ -16,7 +15,7 @@ define( [
         currentPage: null,
 
         initialize: function ( models, options ) {
-            this.config = options.config;
+            this.scenic = options.scenic;
         },
 
         /**
@@ -30,7 +29,7 @@ define( [
             } else if ( localStorage.getItem( 'currentPage' ) ) {
                 return this.get( localStorage.getItem( 'currentPage' ) );
             } else {
-                return this.get( this.config.defaultPanelPage );
+                return this.get( this.scenic.config.defaultPanelPage );
             }
         },
 

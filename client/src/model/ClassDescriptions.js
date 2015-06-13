@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/ClassDescription'
-], function ( _, Backbone, socket, ScenicCollection, ClassDescription ) {
+], function ( _, Backbone, ScenicCollection, ClassDescription ) {
 
     /**
      * Class Description Collection

@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/SaveFile'
-], function ( _, Backbone, socket, ScenicCollection, SaveFile ) {
+], function ( _, Backbone, ScenicCollection, SaveFile ) {
 
     /**
      * SaveFile Collection
@@ -32,7 +31,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function() {
+        initialize: function( models, options ) {
             ScenicCollection.prototype.initialize.apply(this,arguments);
 
             // Handlers

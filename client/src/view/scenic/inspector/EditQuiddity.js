@@ -40,8 +40,8 @@ define( [
         },
 
         onBeforeShow: function() {
-            this.showChildView('properties', new PropertiesView({collection: this.model.get('properties')}));
-            this.showChildView('methods', new MethodsView({collection: this.model.get('methods')}));
+            this.showChildView('properties', new PropertiesView({collection: this.model.properties}));
+            this.showChildView('methods', new MethodsView({collection: this.model.methods}));
         },
 
         checkForEscapeKey: function( event ) {

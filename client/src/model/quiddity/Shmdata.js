@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * Shmdata

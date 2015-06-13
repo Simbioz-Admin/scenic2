@@ -3,13 +3,12 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'i18n',
     'app',
     'model/pages/base/Table',
     'model/pages/rtp/RTPDestinations',
     'model/pages/rtp/RTPDestination'
-], function ( _, Backbone, socket, i18n, app, Table, RTPDestinations, RTPDestination ) {
+], function ( _, Backbone, i18n, app, Table, RTPDestinations, RTPDestination ) {
 
     /**
      * RTP Table
@@ -32,7 +31,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (attributes, options) {
             Table.prototype.initialize.apply( this, arguments );
         },
 
@@ -44,7 +43,7 @@ define( [
          */
         getDestinationCollection: function() {
             if ( !this.destinations ) {
-                this.destinations = new RTPDestinations( null, {quiddity: app.quiddities.get( app.config.rtp.quiddName )} );
+                this.destinations = new RTPDestinations( null, {scenic: this.scenic, quiddity: this.scenic.quiddities.get( this.scenic.config.rtp.quiddName )} );
             }
             return this.destinations;
         },
@@ -65,7 +64,7 @@ define( [
          */
         createRTPDestination: function ( info ) {
             var self = this;
-            var rtpDestination = new RTPDestination({info: info});
+            var rtpDestination = new RTPDestination({info: info}, {scenic: this.scenic});
             rtpDestination.save( null, {
                 success: function( rtpDestination ) {
                     self.scenicChannel.vent.trigger( 'rtp:created' );
@@ -116,7 +115,7 @@ define( [
          */
         connect: function ( shmdata, destination, port, cb ) {
             var self = this;
-            socket.emit( 'connectRTPDestination', shmdata.get('path'), destination.id, port, function( error ) {
+            this.scenic.socket.emit( 'connectRTPDestination', shmdata.get('path'), destination.id, port, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
@@ -133,7 +132,7 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            socket.emit( 'disconnectRTPDestination', source.get('path'), destination.id, function( error ) {
+            this.scenic.socket.emit( 'disconnectRTPDestination', source.get('path'), destination.id, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );

@@ -36,7 +36,7 @@ define( [
          * @returns {boolean}
          */
         filter: function (contact) {
-            return !contact.get('self');
+            return !contact.self;
         }
     } );
 

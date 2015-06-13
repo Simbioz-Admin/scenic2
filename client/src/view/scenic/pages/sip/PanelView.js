@@ -33,11 +33,11 @@ define( [
         },
 
         onBeforeShow: function () {
-            this.showChildView( 'self', new SelfView( {model: this.model.sip.get( 'self' )} ) );
+            this.showChildView( 'self', new SelfView( {model: this.model.sip.self} ) );
             this.showChildView( 'control', new ControlView( {model: this.model.sip} ) );
             this.showChildView( 'contacts', new ContactsView( {
                 table:      this.model,
-                collection: this.model.sip.get( 'contacts' )
+                collection: this.model.sip.contacts
             } ) );
         }
     } );

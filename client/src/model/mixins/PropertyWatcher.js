@@ -16,13 +16,15 @@ define( [
         propertyName: null,
         key: null,
 
-        initialize: function() {
+        initialize: function(models, options) {
+            this.scenic = options.scenic;
+
             // Setup listeners for quiddity additions/removals
-            this.listenTo( app.quiddities, 'add', this._onQuiddityAdded );
-            this.listenTo( app.quiddities, 'remove', this._onQuiddityRemoved );
+            this.listenTo( this.scenic.quiddities, 'add', this._onQuiddityAdded );
+            this.listenTo( this.scenic.quiddities, 'remove', this._onQuiddityRemoved );
 
             // Setup the sip quiddity (if it exists)
-            this.quiddity = app.quiddities.get( this.quiddityId );
+            this.quiddity = this.scenic.quiddities.get( this.quiddityId );
             this._registerQuiddity();
         },
 
@@ -61,10 +63,10 @@ define( [
          */
         _registerQuiddity: function () {
             if ( this.quiddity ) {
-                this.listenTo( this.quiddity.get( 'properties' ), 'add', this._quiddityPropertyAdded );
-                this.listenTo( this.quiddity.get( 'properties' ), 'remove', this._quiddityPropertyRemoved );
+                this.listenTo( this.quiddity.properties, 'add', this._quiddityPropertyAdded );
+                this.listenTo( this.quiddity.properties, 'remove', this._quiddityPropertyRemoved );
 
-                var property = this.quiddity.get( 'properties' ).get( this.propertyName );
+                var property = this.quiddity.properties.get( this.propertyName );
                 if ( property ) {
                     this.listenTo( property, 'change:value', this._checkProperty );
                 }
@@ -81,10 +83,10 @@ define( [
          */
         _unregisterQuiddity: function () {
             if ( this.quiddity ) {
-                this.stopListening( this.quiddity.get( 'properties' ), 'add', this._quiddityPropertyAdded );
-                this.stopListening( this.quiddity.get( 'properties' ), 'remove', this._quiddityPropertyRemoved );
+                this.stopListening( this.quiddity.properties, 'add', this._quiddityPropertyAdded );
+                this.stopListening( this.quiddity.properties, 'remove', this._quiddityPropertyRemoved );
 
-                var property = this.quiddity.get( 'properties' ).get( this.propertyName );
+                var property = this.quiddity.properties.get( this.propertyName );
                 if ( property ) {
                     this.stopListening( property, 'change:value', this._checkProperty );
                 }
@@ -106,7 +108,7 @@ define( [
          */
         _quiddityPropertyAdded: function ( property, properties, options ) {
             if ( property.id == this.propertyName ) {
-                this.listenTo( this.quiddity.get( 'properties' ).get( this.propertyName ), 'change:value', this._checkProperty );
+                this.listenTo( this.quiddity.properties.get( this.propertyName ), 'change:value', this._checkProperty );
                 this._checkProperty();
             }
         },
@@ -122,7 +124,7 @@ define( [
          */
         _quiddityPropertyRemoved: function ( property, properties, options ) {
             if ( property.id == this.propertyName ) {
-                this.stopListening( this.quiddity.get( 'properties' ).get( this.propertyName ), 'change:value', this._checkProperty );
+                this.stopListening( this.quiddity.properties.get( this.propertyName ), 'change:value', this._checkProperty );
                 this._checkProperty();
             }
         },
@@ -133,7 +135,7 @@ define( [
          */
         _checkProperty: function () {
             if ( this.quiddity ) {
-                var property = this.quiddity.get( 'properties' ).get( this.propertyName );
+                var property = this.quiddity.properties.get( this.propertyName );
                 if ( property && property.get('value') !== null ) {
                     this.propertyChanged( this.key ? property.get( 'value' )[this.key] : property.get('value') );
                     return;

@@ -40,7 +40,7 @@ define( [
 
         templateHelpers: function() {
             return {
-                statuses: this.model.sip.quiddity.get('properties' ).get('status' ).get('options')
+                statuses: this.model.sip.quiddity.properties.get('status' ).get('options')
             }
         },
 
@@ -81,7 +81,7 @@ define( [
 
         showStatusList: function( event ) {
             event.stopImmediatePropagation();
-            this.$el.append( _.template( StatusTemplate )( { statuses: this.model.sip.quiddity.get('properties' ).get('status' ).get('options') } ) );
+            this.$el.append( _.template( StatusTemplate )( { statuses: this.model.sip.quiddity.properties.get('status' ).get('options') } ) );
             $('body' ).on('click', _.bind( this.closeStatusList, this ) );
         },
 

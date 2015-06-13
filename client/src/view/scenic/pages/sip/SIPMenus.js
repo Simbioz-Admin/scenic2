@@ -13,7 +13,7 @@ define( [
      * @constructor
      * @extends MenusView
      */
-    var SIPMenus = TableMenusView.extend( {
+    var SIPMenusView = TableMenusView.extend( {
         template: _.template( SIPMenusTemplate ),
         ui: {
             'source': '.menu.source',
@@ -29,7 +29,7 @@ define( [
         },
 
         templateHelpers: function () {
-            var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
+            var categories = _.uniq( _.map( this.quiddities.filter( function ( quiddity ) {
                 return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
             }, this ), function ( quiddity ) {
                 return quiddity.get( 'classDescription' ).get( 'category' );
@@ -38,9 +38,10 @@ define( [
                 categories: categories
             }
         },
-        initialize: function () {
+        initialize: function (options) {
             TableMenusView.prototype.initialize.apply( this, arguments );
-            this.listenTo( app.quiddities, 'update', this.render );
+            this.quiddities = this.model.scenic.quiddities;
+            this.listenTo( this.quiddities, 'update', this.render );
         },
 
         /**
@@ -71,5 +72,5 @@ define( [
         }
     } );
 
-    return SIPMenus;
+    return SIPMenusView;
 });

@@ -1,7 +1,7 @@
 "use strict";
 
 define( [
-    '../../../bower_components/underscore/underscore',
+    'underscore',
     'backbone'
 ], function ( _, Backbone ) {
 
@@ -25,7 +25,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function ( options ) {
+        initialize: function ( attributes, options ) {
+            this.scenic = options.scenic;
+
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );

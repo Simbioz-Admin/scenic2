@@ -4,12 +4,11 @@ define( [
     'underscore',
     'backbone',
     'async',
-    'lib/socket',
     'model/base/ScenicModel',
     'model/quiddity/Properties',
     'model/quiddity/Methods',
     'model/quiddity/Shmdatas'
-], function ( _, Backbone, async, socket, ScenicModel, Properties, Methods, Shmdatas ) {
+], function ( _, Backbone, async, ScenicModel, Properties, Methods, Shmdatas ) {
 
     /**
      * Quiddity
@@ -23,20 +22,17 @@ define( [
 
         defaults: function () {
             return {
-                "id":          null,
-                "class":       null,
-                "properties":  new Properties(),
-                "methods":     new Methods(),
-                "shmdatas":    new Shmdatas(),
+                "id":         null,
+                "class":      null,
                 // Dynamic
-                "maxReaders":  null
+                "maxReaders": null
             }
         },
 
         mutators: {
-            transient: true,
-            classDescription: function() {
-                return this.collection.classes.get( this.get('class') );
+            transient:        true,
+            classDescription: function () {
+                return this.scenic.classes.get( this.get( 'class' ) );
             }
         },
 
@@ -47,19 +43,20 @@ define( [
             ScenicModel.prototype.initialize.apply( this, arguments );
 
             // Setup child collections
-            this.get( 'properties' ).quiddity = this;
-            this.get( 'methods' ).quiddity    = this;
-            this.get( 'shmdatas' ).quiddity   = this;
+
+            this.properties                   = new Properties( null, {scenic: this.scenic, quiddity: this} );
+            this.methods                      = new Methods( null, {scenic: this.scenic, quiddity: this} );
+            this.shmdatas                     = new Shmdatas( null, {scenic: this.scenic, quiddity: this} );
 
             // Only fetch the rest when we are not new
             // This prevents fetches and socket binding being done by temporary quiddities
             if ( !this.isNew() ) {
-                this.get( 'properties' ).bindToSocket();
-                this.get( 'properties' ).fetch();
-                this.get( 'methods' ).bindToSocket();
-                this.get( 'methods' ).fetch();
-                this.get( 'shmdatas' ).bindToSocket();
-                this.get( 'shmdatas' ).fetch();
+                this.properties.bindToSocket();
+                this.properties.fetch();
+                this.methods.bindToSocket();
+                this.methods.fetch();
+                this.shmdatas.bindToSocket();
+                this.shmdatas.fetch();
 
                 // Handlers
                 this.onSocket( "remove", _.bind( this._onRemoved, this ) );
@@ -80,9 +77,9 @@ define( [
                 this.scenicChannel.vent.trigger( 'quiddity:removed', this );
 
                 // Destroy child collections
-                this.get( 'properties' ).destroy();
-                this.get( 'methods' ).destroy();
-                this.get( 'shmdatas' ).destroy();
+                this.properties.destroy();
+                this.methods.destroy();
+                this.shmdatas.destroy();
 
                 // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );

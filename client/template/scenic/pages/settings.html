@@ -38,8 +38,8 @@
         </div>
         <div class="input-group">
             <label>SIP Port</label>
-            <% if ( sip && sip.get('properties').get('port') ) { %>
-            <input type="text" readonly value="<%=sip.get('properties').get('port').get('value')%>">
+            <% if ( sip && sip.properties.get('port') ) { %>
+            <input type="text" readonly value="<%=sip.properties.get('port').get('value')%>">
             <% } else { %>
             <input type="text" readonly value="No current SIP session" data-i18n="[value]No current SIP session">
             <% } %>

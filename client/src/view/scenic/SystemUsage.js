@@ -4,10 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'lib/socket',
     'text!template/scenic/system-usage.html',
     'text!template/scenic/system-usage/network.html'
-], function ( _, Backbone, Marionette, socket, SystemUsageTemplate, NetworkUsageTemplate ) {
+], function ( _, Backbone, Marionette, SystemUsageTemplate, NetworkUsageTemplate ) {
 
     /**
      * SystemUsageView
@@ -25,7 +24,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
+            this.scenic = options.scenic;
             this.networkUsageTemplate = _.template( NetworkUsageTemplate );
             this.lastValues = {};
         },
@@ -33,7 +33,7 @@ define( [
         onAttach: function () {
             $( this.el ).i18n();
             this.$net = $( '.network .content' );
-            socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
+            this.scenic.socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
         },
 
         /**

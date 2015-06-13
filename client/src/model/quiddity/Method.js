@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicModel',
     'model/quiddity/method/Arguments'
-], function ( _, Backbone, socket, ScenicModel, Arguments ) {
+], function ( _, Backbone, ScenicModel, Arguments ) {
 
     /**
      * Quiddity Method
@@ -21,8 +20,7 @@ define( [
                 'description':       null,
                 'returnDescription': null,
                 'returnType':        null,
-                'order':             0,
-                'args':              new Arguments()
+                'order':             0
             }
         },
         methodMap: {
@@ -53,6 +51,8 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
+            this.args = new Arguments(null, {scenic: this.scenic});
+
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io
             if ( !this.isNew() ) {
@@ -70,7 +70,7 @@ define( [
          */
         _onSignal: function ( quiddityId, signal, name ) {
             if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
-                this.get( 'args' ).destroy();
+                this.args.destroy();
                 this.trigger( 'destroy', this, this.collection );
             }
         },
@@ -80,8 +80,8 @@ define( [
          */
         invoke: function ( callback ) {
             var self = this;
-            this.get('args' ).pluck('value');
-            socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.get('args' ).pluck('value'), function( error, result ) {
+            this.args.pluck('value');
+            this.scenic.socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.args.pluck('value'), function( error, result ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error );
                 }

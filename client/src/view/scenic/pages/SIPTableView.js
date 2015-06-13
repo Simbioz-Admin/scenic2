@@ -62,14 +62,14 @@ define( [
         },
 
         showSIPView: function() {
-            if ( this.model.sip.get('connected') ) {
+            if ( this.model.scenic.sip.get('connected') ) {
                 this.showChildView('sip', new PanelView({
                     model: this.model
                 }));
             } else {
                 this.showChildView('sip', new LoginView({
                     table: this.model,
-                    model: this.model.sip
+                    model: this.model.scenic.sip
                 }));
             }
         },

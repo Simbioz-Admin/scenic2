@@ -44,9 +44,8 @@ define( [
      */
     var ScenicView = Marionette.LayoutView.extend( {
         template: _.template( ScenicTemplate ),
-        el:       '#scenic',
 
-        ui : {
+        ui: {
             modal: '#modal'
         },
 
@@ -59,19 +58,19 @@ define( [
             modal:     '#modal'
         },
 
-        initialize: function ( app ) {
+        initialize: function ( scenic ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
 
-            this.app = app;
+            this.scenic = scenic;
 
             this.notifications = new NotificationsView();
 
-            this.pages = new Pages( null, {config: this.app.config} );
-            this.pages.add( new SinkPage( {viewClass: SinkView} ) );
-            this.pages.add( new RTPPage( {viewClass: RTPView} ) );
-            this.pages.add( new SIPPage( {sip: app.sip, viewClass: SIPView} ) );
-            this.pages.add( new ControlPage( {viewClass: ControlView} ) );
-            this.pages.add( new SettingsPage( {viewClass: SettingsView} ) );
+            this.pages = new Pages( null, {scenic: scenic} );
+            this.pages.add( new SinkPage( null, {scenic: scenic, viewClass: SinkView} ) );
+            this.pages.add( new RTPPage( null, {scenic: scenic, viewClass: RTPView} ) );
+            this.pages.add( new SIPPage( null, {scenic: scenic, viewClass: SIPView} ) );
+            this.pages.add( new ControlPage( null, {scenic: scenic, viewClass: ControlView} ) );
+            this.pages.add( new SettingsPage( null, {scenic: scenic, viewClass: SettingsView} ) );
 
             this.pages.on( 'change:current', _.bind( this.showPage, this ) );
 
@@ -87,9 +86,6 @@ define( [
             this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
             this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
             this.scenicChannel.vent.on( 'file:load:error', this._onFileLoadError, this );
-
-            // TODO: Legacy
-            $( document ).tooltip();
         },
 
         /**
@@ -97,14 +93,14 @@ define( [
          * Special case for the moment as we don't use a master application view to render us
          */
         onRender: function () {
-            this.showChildView( 'menu', new MenuView() );
+            this.showChildView( 'menu', new MenuView( {scenic: this.scenic} ) );
             this.showChildView( 'tabs', new TabsView( {collection: this.pages} ) );
-            this.showChildView( 'usage', new SystemUsageView() );
+            this.showChildView( 'usage', new SystemUsageView( {scenic: this.scenic} ) );
             this.showChildView( 'inspector', new InspectorView() );
 
             this.showPage( this.pages.getCurrentPage() );
 
-            this.$el.fadeIn( 500 );
+            //this.$el.fadeIn( 500 );
         },
 
         /**
@@ -130,13 +126,13 @@ define( [
             }
         },
 
-        setLanguage: function( language ) {
-            if ( !_.contains(this.app.config.locale.supported, language)) {
-                console.warn('Invalid language', language);
+        setLanguage: function ( language ) {
+            if ( !_.contains( this.scenic.config.locale.supported, language ) ) {
+                console.warn( 'Invalid language', language );
             }
-            var currentLanguage = localStorage.getItem('lang');
+            var currentLanguage = localStorage.getItem( 'lang' );
             if ( currentLanguage != language ) {
-                localStorage.setItem('lang', language);
+                localStorage.setItem( 'lang', language );
                 location.reload();
             }
         },
@@ -162,7 +158,7 @@ define( [
                 message  = i18n.t( 'Are you sure?' );
             }
             this.$el.addClass( 'blur' );
-            this.ui.modal.css('opacity', 1);
+            this.ui.modal.css( 'opacity', 1 );
             this.showChildView( 'modal', new ConfirmationView( {
                 message:  message,
                 callback: _.bind( this.closeModal, this, callback )
@@ -177,12 +173,12 @@ define( [
          */
         closeModal: function ( callback, result ) {
             this.$el.removeClass( 'blur' );
-            this.ui.modal.css('opacity', 0);
+            this.ui.modal.css( 'opacity', 0 );
             callback( result );
             var self = this;
-            setTimeout( function() {
+            setTimeout( function () {
                 self.getRegion( 'modal' ).empty();
-            }, 500);
+            }, 500 );
         },
 
         //   ██████╗ ██╗   ██╗██╗██████╗ ██████╗ ██╗████████╗██╗███████╗███████╗
@@ -238,7 +234,7 @@ define( [
         _onFileRemoved: function ( file ) {
             this.scenicChannel.vent.trigger( 'info', i18n.t( 'File __name__ removed', {name: file.id} ) );
         },
-        
+
         /**
          * File Loading Handler
          *
@@ -246,7 +242,7 @@ define( [
          * @private
          */
         _onFileLoading: function ( file ) {
-            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: file.get('name')} ) );
+            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: file.get( 'name' )} ) );
             this.stopSpinner = spin();
         },
 
@@ -256,7 +252,7 @@ define( [
          * @private
          */
         _onFileLoaded: function ( file ) {
-            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: file.get('name')} ) );
+            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: file.get( 'name' )} ) );
             this.stopSpinner();
         },
 
@@ -267,7 +263,7 @@ define( [
          * @private
          */
         _onFileLoadError: function ( file ) {
-            this.scenicChannel.vent.trigger( 'error', i18n.t( 'Could not load file __name__', {name: file.get('name')} ) );
+            this.scenicChannel.vent.trigger( 'error', i18n.t( 'Could not load file __name__', {name: file.get( 'name' )} ) );
             if ( this.stopSpinner ) {
                 this.stopSpinner();
             }

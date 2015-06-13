@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * Property
@@ -92,7 +91,7 @@ define( [
         updateValue: function ( value ) {
             var self = this;
             this.set('value', value, { internal: true });
-            socket.emit( "quiddity.property.set", this.collection.quiddity.id, this.id, value, function ( error ) {
+            this.scenic.socket.emit( "quiddity.property.set", this.collection.quiddity.id, this.id, value, function ( error ) {
                 if ( error ) {
                     // There was an error setting the value, go back to the last synced value or the default
                     self.set( 'value', self.lastSyncedValue !== undefined ? self.lastSyncedValue : self.get( 'default' ) );

@@ -17,6 +17,8 @@ define( [
      */
     var PropertyWatcherCollection = Backbone.Collection.extend( {
 
+        modelOptions: {},
+
         /**
          * Initialization
          *
@@ -33,7 +35,7 @@ define( [
          */
         propertyChanged: function ( value ) {
             if ( value ) {
-                this.set( value );
+                this.set( value, this.modelOptions );
             } else {
                 this.reset();
             }

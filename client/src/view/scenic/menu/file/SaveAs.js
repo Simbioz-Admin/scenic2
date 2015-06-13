@@ -33,8 +33,9 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
+            this.scenic = options.scenic;
             this.close = options.close;
-            this.model = new SaveFile();
+            this.model = new SaveFile(null, {scenic: this.scenic});
         },
 
         onAttach: function() {
@@ -44,8 +45,8 @@ define( [
         saveFile: function () {
             var self = this;
             this.model.set( 'name', this.ui.name.val() );
-            this.model.saveFile( function( error ) {
-                if ( !error ) {
+            this.model.save( null, {
+                success: function(  ) {
                     self.close();
                 }
             });

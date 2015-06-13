@@ -40,7 +40,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
+            this.scenic = options.scenic;
+
             // Main communication channel
             // We cheat the system a little bit here, but we want our errors to bubble back to the UI
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
@@ -55,7 +57,7 @@ define( [
             if ( this.currentPanel == 'open' ) {
                 this.closePanel();
             } else {
-                this.openPanel('open', new FilesView( { collection: app.saveFiles, close: _.bind( this.closePanel, this ) } ));
+                this.openPanel('open', new FilesView( { collection: this.scenic.saveFiles, close: _.bind( this.closePanel, this ), scenic: this.scenic } ));
             }
         },
 
@@ -63,7 +65,7 @@ define( [
             if ( this.currentPanel == 'save' ) {
                 this.closePanel();
             } else {
-                this.openPanel( 'save', new SaveAsView( { close: _.bind( this.closePanel, this ) }) );
+                this.openPanel( 'save', new SaveAsView( { close: _.bind( this.closePanel, this ), scenic: this.scenic }) );
             }
         },
 

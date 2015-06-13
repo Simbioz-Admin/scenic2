@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/quiddity/Property'
-], function ( _, Backbone, socket, ScenicCollection, Property ) {
+], function ( _, Backbone, ScenicCollection, Property ) {
 
     /**
      * Property Collection
@@ -31,8 +30,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (models, options) {
             ScenicCollection.prototype.initialize.apply( this, arguments );
+            this.quiddity = options.quiddity;
         },
 
         /**

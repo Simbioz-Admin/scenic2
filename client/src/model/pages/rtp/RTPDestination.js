@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'app',
     'model/base/ScenicModel'
-], function ( _, Backbone, socket, app, ScenicModel ) {
+], function ( _, Backbone, app, ScenicModel ) {
 
     /**
      * RTP Destination
@@ -25,7 +24,7 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['createRTPDestination', this.get('info').name, this.get('info').host, this.get('info').port];
+                return ['createRTPDestination', this.get( 'info' ).name, this.get( 'info' ).host, this.get( 'info' ).port];
             },
             'update': null,
             'patch':  null,
@@ -38,16 +37,16 @@ define( [
         mutators: {
             port: {
                 transient: true,
-                get: function() {
-                    var ctrlClient = app.quiddities.get(app.config.soap.controlClientPrefix + this.id );
+                get:       function () {
+                    var ctrlClient = this.scenic.quiddities.get( this.scenic.config.soap.controlClientPrefix + this.id );
                     if ( !ctrlClient ) {
                         return null;
                     }
-                    var url = ctrlClient.get('properties' ).get('url' ).get('value');
+                    var url = ctrlClient.properties.get( 'url' ) ? ctrlClient.properties.get( 'url' ).get( 'value' ) : null;
                     if ( !url ) {
                         return null;
                     }
-                    return url.substr( url.lastIndexOf(':') + 1 );
+                    return url.substr( url.lastIndexOf( ':' ) + 1 );
                 }
             }
         },
@@ -59,8 +58,8 @@ define( [
          */
         edit: function () {
             var self = this;
-            this.scenicChannel.commands.execute( 'rtp:edit', this, function( info ) {
-                socket.emit( 'updateRTPDestination', self.id, info, function( error ) {
+            this.scenicChannel.commands.execute( 'rtp:edit', this, function ( info ) {
+                self.scenic.socket.emit( 'updateRTPDestination', self.id, info, function ( error ) {
                     if ( error ) {
                         self.scenicChannel.vent.trigger( 'error', error );
                         return;

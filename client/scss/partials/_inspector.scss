@@ -4,7 +4,7 @@
 
 .info-panel {
   display: none;
-  top: $headerHeight + 20px;
+  top: $sessionsHeight + $headerHeight + 20px;
   right: 20px;
   width: 300px;
   background: $backgroundColorDarker;

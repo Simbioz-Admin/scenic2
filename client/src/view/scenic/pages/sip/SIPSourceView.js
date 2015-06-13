@@ -22,7 +22,7 @@ define( [
         childViewOptions:   function () {
             return {
                 table:          this.options.table,
-                collection:     this.model.get( 'shmdatas' ),
+                collection:     this.model.shmdatas,
                 connectionView: this.options.connectionView
             }
         },
@@ -33,8 +33,8 @@ define( [
          */
         initialize: function () {
             SourceView.prototype.initialize.apply( this, arguments );
-            this.collection = app.sip.get( 'contacts' );
-            this.listenTo( this.model.get( 'shmdatas' ), 'update', this.render );
+            this.collection = this.options.table.scenic.sip.contacts;
+            this.listenTo( this.model.shmdatas, 'update', this.render );
         },
 
         /**
@@ -46,7 +46,7 @@ define( [
          * @returns {boolean}
          */
         filter: function ( contact, index, collection ) {
-            return this.model.get( 'shmdatas' ).findWhere( {uri: contact.get( 'uri' )} ) != null;
+            return this.model.shmdatas.findWhere( {uri: contact.get( 'uri' )} ) != null;
         }
     } );
 

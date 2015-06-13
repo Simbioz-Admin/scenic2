@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/sip/Contact'
-], function ( _, Backbone, socket, ScenicCollection, Contact ) {
+], function ( _, Backbone, ScenicCollection, Contact ) {
 
     /**
      * SIP Contact Collection

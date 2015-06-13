@@ -13,7 +13,7 @@ define( [
      *  @augments module:Marionette.LayoutView
      */
     var Menus = Marionette.ItemView.extend( {
-        initialize: function () {
+        initialize: function (options) {
             this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
             this.subMenuTemplate = _.template( SubMenuTemplate );
         },
@@ -86,7 +86,7 @@ define( [
             this.closeMenu();
             this.scenicChannel.commands.execute(
                 'quiddity:create',
-                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         },
@@ -100,7 +100,7 @@ define( [
             this.closeMenu();
             this.scenicChannel.commands.execute(
                 'quiddity:create',
-                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         }

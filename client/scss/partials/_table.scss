@@ -282,7 +282,7 @@ $boxWidth: $sourceWidth;
     .sip-panel {
       position: fixed;
       width: $contactsWidth;
-      top: $headerHeight;
+      top: $sessionsHeight + $headerHeight;
       bottom: 0;
       right: 0;
       background: $backgroundColorDarker;

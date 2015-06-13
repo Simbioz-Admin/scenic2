@@ -4,9 +4,8 @@ define( [
     'underscore',
     'backbone',
     'i18n',
-    'lib/socket',
     'model/pages/base/Table'
-], function ( _, Backbone, i18n, socket, Table ) {
+], function ( _, Backbone, i18n, Table ) {
 
     /**
      * SIP Table
@@ -29,9 +28,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function ( options) {
+        initialize: function ( attributes, options) {
             Table.prototype.initialize.apply( this, arguments );
-            this.sip = options.sip;
         },
 
         /**
@@ -41,7 +39,7 @@ define( [
          * @returns {Contacts}
          */
         getDestinationCollection: function() {
-            return this.sip.get('contacts');
+            return this.scenic.sip.contacts;
         },
 
         /**
@@ -96,7 +94,7 @@ define( [
          */
         connect: function( source, destination ) {
             var self = this;
-            socket.emit( 'attachShmdataToContact', source.get('path'), destination.id, function( error ) {
+            this.scenic.socket.emit( 'attachShmdataToContact', source.get('path'), destination.id, function( error ) {
                 if (error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
@@ -108,7 +106,7 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            socket.emit( 'detachShmdataFromContact', source.get('path'), destination.id, function( error ) {
+            this.scenic.socket.emit( 'detachShmdataFromContact', source.get('path'), destination.id, function( error ) {
                 if (error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }

@@ -38,7 +38,7 @@ define( [
          * Initialize
          */
         initialize: function( ) {
-            this.collection = this.model.get('args');
+            this.collection = this.model.args;
         },
 
         renderOnChange: function() {

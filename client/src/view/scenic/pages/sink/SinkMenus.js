@@ -29,7 +29,7 @@ define( [
         },
 
         templateHelpers: function () {
-            var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
+            var categories = _.uniq( _.map( this.model.scenic.quiddities.filter( function ( quiddity ) {
                 return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
             }, this ), function ( quiddity ) {
                 return quiddity.get( 'classDescription' ).get( 'category' );
@@ -41,7 +41,7 @@ define( [
 
         initialize: function () {
             TableMenusView.prototype.initialize.apply( this, arguments );
-            this.listenTo( app.quiddities, 'update', this.render );
+            this.listenTo( this.model.scenic.quiddities, 'update', this.render );
         },
 
         /**

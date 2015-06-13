@@ -1,0 +1,76 @@
+.sessions {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: $sessionsHeight;
+  background-color: $backgroundColorDarker;
+  padding-left: $tabsWidth;
+
+  .session {
+    float: left;
+    position: relative;
+    background-color: $backgroundColorDarkish;
+    height: 100%;
+    padding: 6px 12px;
+    color: $textColor;
+    margin-right: 1px;
+    border-bottom: 1px solid $backgroundColorDarker;
+    cursor: default;
+
+    &.active {
+      background-color: $backgroundColorDark;
+      color: $textColorBrighter;
+      border-bottom: none;
+    }
+
+    &:not(.active) {
+      &:hover {
+        background-color: $backgroundColorDark;
+      }
+      &:active {
+        background-color: $backgroundColor;
+      }
+    }
+
+    .name {
+      float: left;
+    }
+
+    &:not(.default) {
+      .name {
+        margin-right: 24px;
+      }
+    }
+
+    .close {
+      position: absolute;
+      height: 100%;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 24px;
+      padding: 5px 9px;
+      &:hover {
+        background-color: $red;
+        color: $textColorDark;
+      }
+      &:active {
+        background-color: lighten($red, 15%);
+      }
+    }
+
+    &.new {
+      &:hover {
+        background-color: $green;
+        color: $textColorDark;
+      }
+      &:active {
+        background-color: lighten($green, 15%);
+      }
+      .new-session {
+        font-size: 25px;
+        font-weight: 300;
+      }
+    }
+  }
+}

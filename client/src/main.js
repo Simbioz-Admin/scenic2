@@ -48,26 +48,81 @@ require( {
         'punch'
     ]
 }, [
-    'underscore',
-    'app',
-    'lib/util',
-    'lib/socket'
-], function ( _, application, util, socket ) {
+    'async',
+    'marionette',
+    'model/Sessions',
+    'model/Session',
+    'view/ApplicationView'
+], function ( async, Marionette, Sessions, Session, ApplicationView ) {
 
-    // For debug purposes put app in window
-    window.app = application;
+    // TODO: Legacy
+    $( document ).tooltip();
+    /*$( document ).tooltip( {
+     track:   true,
+     content: function () {
+     var element = $( this );
+     return element.attr( "title" );
 
-    // Global message bus
-    var scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+     }
+     } );*/
 
-    // Announce ourselves and recover config information from the server
     var lang = localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en';
-    socket.emit( 'config', lang, localStorage.getItem( 'socketId' ), function ( config ) {
-        localStorage.setItem( 'socketId', socket.id );
-        application.initialize( lang, config );
-    } );
 
-    // When the server is closed or crashes shutdown the app
-    socket.on( 'shutdown', _.bind( application.shutdown, application ) );
-    socket.on( 'disconnect', _.bind( application.shutdown, application ) );
+    async.series( [
+
+        function( callback ) {
+            // I18N INITIALIZATION
+            i18n.init( {
+                lngWhitelist: ['en', 'en-US', 'en-CA', 'fr', 'fr-FR', 'fr-CA'],
+                lng:          lang,
+                ns:           'client',
+                fallbackLng:  false
+            } ).done( function () {
+                // Replace Marionette's renderer with one that supports i18n
+                var render                 = Marionette.Renderer.render;
+                Marionette.Renderer.render = function ( template, data ) {
+                    data = _.extend( data, {_t: i18n.t} );
+                    return render( template, data );
+                };
+                // Replace ItemView's attachElContent to run i18n after attaching
+                Marionette.ItemView.prototype.attachElContent = function ( html ) {
+                    this.$el.html( html );
+                    this.$el.i18n();
+                    return this;
+                };
+                // Replace CollectionView's attachElContent to run i18n after attaching
+                Marionette.CollectionView.prototype.attachElContent = function ( html ) {
+                    this.$el.html( html );
+                    this.$el.i18n();
+                    return this;
+                };
+
+                // Run i18n on what's already there
+                $( document ).i18n();
+                callback();
+            } );
+        }
+
+    ], function( error ) {
+        if ( error ) {
+            //TODO: Startup errors
+            alert(error);
+            console.error(error);
+        } else {
+            window.sessions = this.sessions = new Sessions();
+
+            this.defaultSession = new Session({lang: lang});
+            window.scenic = this.defaultSession.scenic;
+
+            this.sessions.add( this.defaultSession ); // Default session
+
+            this.applicationView = new ApplicationView({sessions: this.sessions});
+            this.applicationView.render();
+        }
+    });
+
+
+
+
+
 } );

@@ -3,11 +3,10 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'app',
     'model/Page',
     'model/Quiddity'
-], function ( _, Backbone, socket, app, Page, Quiddity ) {
+], function ( _, Backbone, app, Page, Quiddity ) {
 
     /**
      * Table Page
@@ -21,10 +20,10 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function ( attributes, options ) {
             Page.prototype.initialize.apply( this, arguments );
-            this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.set('filter', null);
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.set( 'filter', null );
         },
 
         /**
@@ -35,10 +34,10 @@ define( [
          * @returns {boolean} Is the class allowed by the filter tags
          * @private
          */
-        _filterClass: function( classDescription, filterTags ) {
-            return _.some( classDescription.get('tags'), function( tag ) {
+        _filterClass: function ( classDescription, filterTags ) {
+            return _.some( classDescription.get( 'tags' ), function ( tag ) {
                 return _.contains( filterTags, tag );
-            });
+            } );
         },
 
         /**
@@ -50,9 +49,9 @@ define( [
          * @returns {boolean} Is the quiddity allowed by the filter tags and/or filter category
          */
         _filterQuiddity: function ( quiddity, filterTags, filterCategory ) {
-            var classDescription = quiddity.get('classDescription');
-            var classIncluded = this._filterClass(classDescription, filterTags);
-            var categoryIncluded = classIncluded && filterCategory && this.get('filter') ? this.get('filter') == classDescription.get('category') : true;
+            var classDescription = quiddity.get( 'classDescription' );
+            var classIncluded    = this._filterClass( classDescription, filterTags );
+            var categoryIncluded = classIncluded && filterCategory && this.get( 'filter' ) ? this.get( 'filter' ) == classDescription.get( 'category' ) : true;
             return classIncluded && categoryIncluded;
         },
 
@@ -62,8 +61,8 @@ define( [
          *
          * @returns {Quiddities}
          */
-        getSourceCollection: function() {
-            return app.quiddities;
+        getSourceCollection: function () {
+            return this.scenic.quiddities;
         },
 
         /**
@@ -72,8 +71,8 @@ define( [
          *
          * @returns {ClassDescription[]}
          */
-        getSources : function() {
-            return app.classDescriptions.filter( function ( classDescription ) {
+        getSources: function () {
+            return this.scenic.classes.filter( function ( classDescription ) {
                 return this._filterClass( classDescription, ['writer'] );
             }, this );
         },
@@ -86,8 +85,8 @@ define( [
          * @param {boolean} useFilter
          * @returns {Quiddity[]}
          */
-        filterSource: function( source, useFilter ) {
-            return this._filterQuiddity( source, [ 'writer' ], useFilter );
+        filterSource: function ( source, useFilter ) {
+            return this._filterQuiddity( source, ['writer'], useFilter );
         },
 
         /**
@@ -96,8 +95,8 @@ define( [
          *
          * @returns {Quiddities}
          */
-        getDestinationCollection: function() {
-            return app.quiddities;
+        getDestinationCollection: function () {
+            return this.scenic.quiddities;
         },
 
         /**
@@ -106,8 +105,8 @@ define( [
          *
          * @returns {ClassDescription[]}
          */
-        getDestinations: function() {
-            return app.classDescriptions.filter( function ( classDescription ) {
+        getDestinations: function () {
+            return this.scenic.classes.filter( function ( classDescription ) {
                 return this._filterClass( classDescription, ['reader'] );
             }, this );
         },
@@ -120,7 +119,7 @@ define( [
          * @param {boolean} useFilter
          * @returns {Quiddity[]}
          */
-        filterDestination: function( destination, useFilter ) {
+        filterDestination: function ( destination, useFilter ) {
             return this._filterQuiddity( destination, ['reader'], useFilter );
         },
 
@@ -131,7 +130,7 @@ define( [
          */
         createQuiddity: function ( info ) {
             var self     = this;
-            var quiddity = new Quiddity( );
+            var quiddity = new Quiddity(null, {scenic: this.scenic});
             quiddity.save( {'class': info.type, 'name': info.name}, {
                 success: function ( quiddity ) {
                     if ( info.device ) {
@@ -150,9 +149,9 @@ define( [
          * @param {Quiddity|Object} destination
          * @return {boolean}
          */
-        isConnected: function( source, destination ) {
+        isConnected: function ( source, destination ) {
             // Check if already connected
-            var shmdataReaders = destination.get( "shmdatas" ).where( {
+            var shmdataReaders = destination.shmdatas.where( {
                 type: 'reader'
             } );
             if ( !shmdataReaders || shmdataReaders.length == 0 ) {
@@ -171,7 +170,7 @@ define( [
          * @param {Quiddity|Object} destination
          * @param {Function} callback
          */
-        canConnect: function( source, destination, callback ) {
+        canConnect: function ( source, destination, callback ) {
             callback( false );
             return false;
         },
@@ -183,7 +182,7 @@ define( [
          * @param {Shmdata} source
          * @param {Quiddity|*} destination
          */
-        connect: function( source, destination ) {
+        connect: function ( source, destination ) {
             //
         },
 
@@ -194,7 +193,7 @@ define( [
          * @param {Shmdata} source
          * @param {Quiddity|*} destination
          */
-        disconnect: function( source, destination ) {
+        disconnect: function ( source, destination ) {
             //
         }
     } );

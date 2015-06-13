@@ -29,6 +29,7 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
+            this.scenic = options.scenic;
             this.close = options.close;
             this.render();
         }

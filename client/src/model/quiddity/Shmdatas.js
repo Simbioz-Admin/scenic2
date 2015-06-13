@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'lib/socket',
     'model/base/ScenicCollection',
     'model/quiddity/Shmdata'
-], function ( _, Backbone, socket, ScenicCollection, Shmdata ) {
+], function ( _, Backbone, ScenicCollection, Shmdata ) {
 
     /**
      * Shmdatas
@@ -61,8 +60,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function() {
+        initialize: function(models, options) {
             ScenicCollection.prototype.initialize.apply(this,arguments);
+            this.quiddity = options.quiddity;
         },
 
         /**

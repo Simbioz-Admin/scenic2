@@ -1,6 +1,25 @@
 Scenic release notes
 ===================
 
+Scenic 2.2.0 (2015-06-15)
+-------------------------
+This release is a major release in the stable 2.0 series.
+
+New Features
+
+* Shmdata1 (gstreamer1.0) support
+* Rewritten core node add-on
+* Rewritten network protocol
+* Improved localization system
+* Visual feedback and notifications (on every connected client) when loading a save file
+
+Fixes & enhancements:
+
+* SIP destinations stay in the destination table across sessions
+* Fixed CPU hogging from the CPU meter redraw routine (!)
+* Better unit testing
+* New make tasks for future packaging
+
 Scenic 2.1.0 (2015-05-12)
 ------------------------
 This release is a major release in the stable 2.0 series.

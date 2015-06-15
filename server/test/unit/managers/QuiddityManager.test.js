@@ -399,7 +399,7 @@ describe( 'Quiddity Manager', function () {
             //Skipped second call, relevant to deprecated vu meters
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_writer_parsed(), {
+            io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_writer_parsed(), {
                 path: shm,
                 type: type
             } ) );
@@ -482,7 +482,7 @@ describe( 'Quiddity Manager', function () {
             switcher.get_info.should.have.been.calledWith( id, val );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'updateShmdata', id, _.extend( quiddities.shmdata_reader(), {
+            io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_reader(), {
                 path: shm,
                 type: type
             } ) );

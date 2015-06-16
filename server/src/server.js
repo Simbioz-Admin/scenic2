@@ -146,7 +146,10 @@
         // GUI, unless -g is used on the command line, it will launch a chrome instance
         if (!config.standalone) {
             log.info("Opening default browser: http://" + config.host + ":" + config.scenic.port);
-            var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port, "--no-borders", "--no-tabs"] );
+            var chrome = require('child_process').spawn("chromium-browser", ["--app=http://" + config.host + ":" + config.scenic.port], {
+                detached: true
+            } );
+            chrome.unref();
             chrome.stdout.on('data', function(data) {
                 log.verbose( 'chromium-browser:', data.toString().trim() );
             });

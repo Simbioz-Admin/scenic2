@@ -121,7 +121,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
  * @param socket
  */
 SwitcherController.prototype.bindClient = function ( socket ) {
-    this.sipManager.bindClient( socket );
     this.rtpManager.bindClient( socket );
 };
 

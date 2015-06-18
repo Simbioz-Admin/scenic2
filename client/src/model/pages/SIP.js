@@ -29,7 +29,7 @@ define( [
         /**
          * Initialize
          */
-        initialize: function ( options) {
+        initialize: function ( options ) {
             Table.prototype.initialize.apply( this, arguments );
             this.sip = options.sip;
         },
@@ -40,8 +40,8 @@ define( [
          *
          * @returns {Contacts}
          */
-        getDestinationCollection: function() {
-            return this.sip.get('contacts');
+        getDestinationCollection: function () {
+            return this.sip.get( 'contacts' );
         },
 
         /**
@@ -51,10 +51,10 @@ define( [
          *
          * @param {Contact} contact
          */
-        addDestination: function( contact ) {
-            contact.set('showInDestinations', true);
+        addDestination: function ( contact ) {
+            contact.set( 'showInDestinations', true );
             // A little hack here to trigger marionette's rendering of the collectionview
-            contact.collection.trigger('reset');
+            contact.collection.trigger( 'reset' );
         },
 
         /**
@@ -63,30 +63,30 @@ define( [
          *
          * @inheritdoc
          */
-        filterDestination: function( destination, useFilter ) {
-            return destination.has('connection') || destination.get('showInDestinations');
+        filterDestination: function ( destination, useFilter ) {
+            return destination.has( 'connection' ) || destination.get( 'showInDestinations' );
         },
 
         /**
          * Retrieve the connection between a source and destination
          */
-        getConnection: function( source, destination ) {
-            return destination.get('connection') ? destination.get('connection')[source.get('path')] : null;
+        getConnection: function ( source, destination ) {
+            return destination.get( 'connection' ) ? destination.get( 'connection' )[source.get( 'path' )] : null;
         },
 
         /**
          * @inheritdoc
          */
-        isConnected: function( source, destination ) {
-            return this.getConnection(source, destination) != null;
+        isConnected: function ( source, destination ) {
+            return this.getConnection( source, destination ) != null;
         },
 
         /**
          * @inheritdoc
          */
-        canConnect: function( source, destination, callback ) {
-            var isRaw = source.get('category') == 'video';
-            var can = !isRaw;
+        canConnect: function ( source, destination, callback ) {
+            var isRaw = source.get( 'category' ) == 'video';
+            var can   = !isRaw;
             callback( can );
             return can;
         },
@@ -94,10 +94,10 @@ define( [
         /**
          * @inheritdoc
          */
-        connect: function( source, destination ) {
+        connect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'attachShmdataToContact', source.get('path'), destination.id, function( error ) {
-                if (error ) {
+            socket.emit( 'sip.contact.attach', destination.id, source.get( 'path' ), function ( error ) {
+                if ( error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );
@@ -106,10 +106,10 @@ define( [
         /**
          * @inheritdoc
          */
-        disconnect: function( source, destination ) {
+        disconnect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'detachShmdataFromContact', source.get('path'), destination.id, function( error ) {
-                if (error ) {
+            socket.emit( 'sip.contact.detach', source.get( 'path' ), destination.id, function ( error ) {
+                if ( error ) {
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );

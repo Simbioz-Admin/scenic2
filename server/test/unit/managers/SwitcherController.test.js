@@ -156,16 +156,10 @@ describe( 'Switcher Controller', function () {
 
         it( 'should bind client to managers', function () {
             var socket = { on: sinon.spy() };
-
             switcherController.rtpManager = sinon.stub( switcherController.rtpManager );
             switcherController.sipManager = sinon.stub( switcherController.sipManager );
-
             switcherController.bindClient( socket );
-
-            switcherController.sipManager.bindClient.should.have.been.calledOnce;
             switcherController.rtpManager.bindClient.should.have.been.calledOnce;
-
-            switcherController.sipManager.bindClient.should.have.been.calledWith( socket );
             switcherController.rtpManager.bindClient.should.have.been.calledWith( socket );
         } );
 

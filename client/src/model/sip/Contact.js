@@ -74,7 +74,7 @@ define( [
          */
         call: function(cb) {
             var self = this;
-            socket.emit('callContact', this.id, function( error ) {
+            socket.emit('sip.contact.call', this.id, function( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error);
                     if ( cb ) {
@@ -92,7 +92,7 @@ define( [
          */
         hangUp: function(cb) {
             var self = this;
-            socket.emit('hangUpContact', this.id, function( error ) {
+            socket.emit('sip.contact.hangup', this.id, function( error ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error);
                     if ( cb ) {

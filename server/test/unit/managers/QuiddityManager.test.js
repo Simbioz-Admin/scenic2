@@ -551,67 +551,93 @@ describe( 'Quiddity Manager', function () {
         } );
         //TODO: Error cases
 
-        it( 'should remove shmdata writers', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'removeShmdata', id, {path: shm, type: type} );
-        } );
+        describe('Removing shmdatas', function() {
 
-        it( 'should not remove when no shmdata writers 1', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'writer';
-            var shm    = '';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );
+            var id;
+            var signal;
+            var type;
+            var shm;
+            var val;
 
-        it( 'should not remove when no shmdata writers 2', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'something';
-            var shm    = 'else';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );
+            beforeEach(function() {
+                id     = 'irrelevant';
+                signal = 'on-tree-pruned';
+            });
 
-        it( 'should remove shmdata readers', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'removeShmdata', id, {path: shm, type: type} );
-        } );
+            describe('Writers', function() {
 
-        it( 'should not remove when no shmdata readers 1', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'reader';
-            var shm    = '';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );
+                beforeEach(function() {
+                    type   = 'writer';
+                    shm    = 'something';
+                    val    = '.shmdata.' + type + '.' + shm;
+                });
 
-        it( 'should not remove when no shmdata readers 2', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-pruned';
-            var type   = 'something';
-            var shm    = 'else';
-            var val    = '.shmdata.' + type + '.' + shm;
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );
+                it( 'should remove shmdata writers individually', function () {
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
+                } );
+
+                it( 'should remove all shmdata writers when empty path present', function () {
+                    shm = '';
+                    val = '.shmdata.' + type + '.' + shm;
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                } );
+
+                it( 'should remove all shmdata writers when no path present', function () {
+                    val = '.shmdata.' + type;
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                } );
+
+            });
+
+            describe('Readers', function() {
+
+                beforeEach(function() {
+                    type   = 'reader';
+                    shm    = 'something';
+                    val    = '.shmdata.' + type + '.' + shm;
+                });
+
+                it( 'should remove shmdata readers', function () {
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
+                } );
+
+                it( 'should remove all shmdata readers when empty path present', function () {
+                    shm = '';
+                    val = '.shmdata.' + type + '.' + shm;
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                } );
+
+                it( 'should remove all shmdata readers when no path present', function () {
+                    val = '.shmdata.' + type;
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.have.been.calledOnce;
+                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                } );
+            });
+
+            describe('Misc', function() {
+
+                it( 'should not remove when shmdata type is unknown', function () {
+                    type   = 'something';
+                    shm    = 'else';
+                    val    = '.shmdata.' + type + '.' + shm;
+                    quiddityManager.onSwitcherSignal( id, signal, [val] );
+                    io.emit.should.not.have.been.called;
+                } );
+
+            });
+
+        });
     } );
 
     describe( 'Methods', function () {

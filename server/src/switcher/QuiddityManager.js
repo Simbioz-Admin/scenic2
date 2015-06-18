@@ -407,19 +407,29 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     //   │ ├┬┘├┤ ├┤   ├─┘├┬┘│ ││││├┤  ││
     //   ┴ ┴└─└─┘└─┘  ┴  ┴└─└─┘┘└┘└─┘─┴┘
 
+    //TODO: Call private method in order to be able to return early
+
     if ( signal == 'on-tree-pruned' ) {
         var prunedPath = value[0].split( '.' );
         prunedPath.shift();
 
         // Shmdata Writer
-        if ( prunedPath[0] == 'shmdata' && prunedPath.length >= 3 ) {
+        if ( prunedPath[0] == 'shmdata' && prunedPath.length >= 2 ) {
             var prunedShmdataType = prunedPath[1];
-            var prunedShmdataPath = prunedPath[2];
-            if ( !_.isEmpty( prunedShmdataPath ) && _.contains( this.shmdataTypes, prunedShmdataType ) ) {
-                this.io.emit( 'removeShmdata', quiddityId, {
-                    type: prunedShmdataType,
-                    path: prunedShmdataPath
-                } );
+            if ( _.contains( this.shmdataTypes, prunedShmdataType ) ) {
+                var prunedShmdataPath = ( prunedPath.length >= 3 ) ? prunedPath[2] : null;
+                if ( prunedShmdataPath ) {
+                    // A path was provided, remove only that shmdata
+                    this.io.emit( 'shmdata.remove', quiddityId, {
+                        type: prunedShmdataType,
+                        path: prunedShmdataPath
+                    } );
+                } else {
+                    // No path was provided, remove all shmdata of the specified type
+                    this.io.emit( 'shmdata.remove', quiddityId, {
+                        type: prunedShmdataType
+                    } );
+                }
             }
         }
     }

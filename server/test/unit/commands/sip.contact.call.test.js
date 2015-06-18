@@ -56,4 +56,28 @@ describe( 'SIP Contact Call Command', function () {
         client.switcherController.sipManager.callContact.should.have.been.calledWithExactly( uri );
         cb.should.have.been.calledWithMatch( '' ); // Any message is good
     } );
+
+    it( 'should return an error when uri parameter is empty', function () {
+        command('', cb);
+        client.switcherController.sipManager.callContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is null', function () {
+        command(null, cb);
+        client.switcherController.sipManager.callContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is a number', function () {
+        command(666, cb);
+        client.switcherController.sipManager.callContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is not a string', function () {
+        command(['not a string'], cb);
+        client.switcherController.sipManager.callContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
 } );

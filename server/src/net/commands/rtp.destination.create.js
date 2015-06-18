@@ -1,27 +1,17 @@
-var _ = require('underscore');
 var i18n = require( 'i18next' );
 
 module.exports = {
     /**
-     * Hang up on a contact
+     * Create an RTP Destination
      *
-     * @param {string} uri - Contact URI
+     * @param {string} name - Destination name
+     * @param {string} host - Hostname or ip address
+     * @param {int} port - SOAP port of the destination
      * @param {Function} cb - Callback
      */
-    execute: function ( uri, cb ) {
-        if ( _.isEmpty( uri ) ) {
-            return cb( i18n.t( 'Missing uri parameter', {
-                lng: this.lang
-            } ) );
-        } else if ( !_.isString( uri ) ) {
-            return cb( i18n.t( 'Invalid uri (__uri__)', {
-                lng:  this.lang,
-                uri: uri
-            } ) );
-        }
-
+    execute: function ( name, host, port, cb ) {
         try {
-            var hungUp = this.switcherController.sipManager.hangUpContact( uri );
+            var hungUp = this.switcherController.rtpManager.createRTPDestination( name, host, port );
         } catch ( e ) {
             return cb( i18n.t( 'An error occurred while hanging up on contact __contact__ (__error__)', {
                 lng:     this.lang,

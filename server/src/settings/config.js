@@ -55,6 +55,10 @@ var config = {
     quiddName: 'defaultrtp'
   },
 
+  httpSdpDec: {
+    refreshTimeout: 2000
+  },
+
   // System Usage
   systemUsage: {
     period: 1.0, // In seconds

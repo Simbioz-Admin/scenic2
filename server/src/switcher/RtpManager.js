@@ -76,18 +76,20 @@ RtpManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
  * Refresh httpSdpDec of the remote receiver
  *
  * @param id {string} Id of receiver
- * @param cb {object} return an error if exist
+ * @param cb {object} return an error if that's the case
  */
 RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
     var self = this;
     setTimeout( function () {
         var url       = 'http://' + self.config.host + ':' + self.config.soap.port + '/sdp?rtpsession=' + self.config.rtp.quiddName + '&destination=' + id;
         log.debug( 'Refreshing httpSdpDec', url );
-        var refreshed = self.switcher.invoke( self.config.soap.controlClientPrefix + id, 'invoke1', [self.config.nameComputer, 'to_shmdata', url] );
+        var refreshed = self.switcherController.quiddityManager.invokeMethod( self.config.soap.controlClientPrefix + id, 'invoke1', [self.config.nameComputer, 'to_shmdata', url] );
         if ( !refreshed ) {
             return cb( 'Error refreshing httpSdpDec' );
+        } else {
+            return cb();
         }
-    }, 2000 );
+    }, self.config.httpSdpDec.refreshTimeout );
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
@@ -102,19 +104,18 @@ RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
  * Adds the destination in rtpsession and if a soap port was
  * defined we create a SOAPControlClient quiddity to create an httpsdpdec on the remote server
  *
- * @param name
- * @param host
- * @param port
- * @param cb
+ * @param {string} name - Destination name
+ * @param {string} host - Hostname or ip address
+ * @param {int} port - SOAP port of the destination
  **/
-RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
+RtpManager.prototype.createRTPDestination = function ( name, host, port ) {
     log.info( 'Creating RTP destination', name, host, port );
 
     // Validate
     if ( !name || !host ) {
         return logback( i18n.t( 'Missing information to create an RTP destination' ), cb );
     } else if ( port && isNaN( parseInt( port ) ) ) {
-        return logback( i18n.t( 'Invalid port __port__', {port: port} ), cb );
+        return logback( i18n.t( 'Invalid port __port__', { port: port } ), cb );
     }
 
     // Sanity check
@@ -135,9 +136,9 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         var destinations = result.destinations;
 
         // Check if the name is already taken
-        var nameExists = _.findWhere( destinations, {name: name} );
+        var nameExists = _.findWhere( destinations, { name: name } );
         if ( nameExists ) {
-            return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', {rtpDestinationName: name} ), cb );
+            return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', { rtpDestinationName: name } ), cb );
         }
     }
 
@@ -148,7 +149,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         return logback( e.toString(), cb );
     }
     if ( !added ) {
-        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', {rtpDestinationName: name} ), cb );
+        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', { rtpDestinationName: name } ), cb );
     }
 
     // If we have a port, we create the SOAP quiddity
@@ -162,7 +163,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
             return logback( e.toString(), cb );
         }
         if ( !createdSOAPClient ) {
-            return logback( i18n.t( 'Could not create SOAP client __soapClient__', {soapClient: name} ), cb );
+            return logback( i18n.t( 'Could not create SOAP client __soapClient__', { soapClient: name } ), cb );
         }
 
         // Assign the URL
@@ -173,7 +174,7 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port, cb ) {
         }
         if ( !urlSet ) {
             //TODO: Should probably remove the quiddity at this point
-            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', {soapClient: name} ), cb );
+            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', { soapClient: name } ), cb );
         }
 
         // Attempt to create httpsdpdec on remote machine
@@ -235,7 +236,7 @@ RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
     //TODO: As in remove connection, remove any orphan shmdata from rtp quiddity (TEST THIS)
 
     //TODO: Give more details about this error
-    cb( ( !removed || !soapClientRemoved || !soapControlClientRemoved ) ? i18n.t('An error occurred while removing RTP destination') : null );
+    cb( ( !removed || !soapClientRemoved || !soapControlClientRemoved ) ? i18n.t( 'An error occurred while removing RTP destination' ) : null );
 };
 
 /**
@@ -283,7 +284,7 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
             return logback( e.toString(), cb );
         }
         if ( !dataStreamAdded ) {
-            return logback( i18n.t( 'Error adding data stream __path__ to destination', {path: path} ), cb );
+            return logback( i18n.t( 'Error adding data stream __path__ to destination', { path: path } ), cb );
         }
     }
 
@@ -364,7 +365,7 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
             return logback( e.toString(), cb );
         }
         if ( !removed ) {
-            return logback( i18n.t( 'Failed to remove data stream __path__', {path: path} ), cb );
+            return logback( i18n.t( 'Failed to remove data stream __path__', { path: path } ), cb );
         }
     } else {
         log.debug( 'Not removing shmdata', path, 'it is still being used' );
@@ -410,7 +411,7 @@ RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
     }
     var destination = null;
     if ( result && result.destinations && _.isArray( result.destinations ) ) {
-        destination = _.findWhere( result.destinations, {name: id} );
+        destination = _.findWhere( result.destinations, { name: id } );
     }
 
     async.series( [

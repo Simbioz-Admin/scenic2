@@ -13,11 +13,10 @@ var quiddities   = require( '../../fixtures/quiddities' );
 describe( 'RTP Manager', function () {
 
     var switcher;
-    var config;
     var io;
+    var config;
     var switcherController;
     var rtpManager;
-    var cb;
 
     before( function ( done ) {
         var i18n = require( '../../../src/lib/i18n' );
@@ -25,37 +24,35 @@ describe( 'RTP Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = new switcherStub.Switcher();
+        io                 = {};
+        io.emit            = sinon.spy();
         config             = {
             nameComputer: 'computer-name',
+            host: 'myhost.local',
             rtp:          {
                 quiddName: 'rtp-quiddity-name'
             },
             soap:         {
-                soapControlClientPrefix: 'soap-control-client-prefix'
+                soapControlClientPrefix: 'soap-control-client-prefix',
+                port: '1234'
+            },
+            httpSdpDec: {
+                refreshTimeout: 250 //Lower for the sake of the tests
             }
         };
-        io                 = {};
-        io.emit            = sinon.spy();
 
-        switcherController = {
-            switcher: switcher,
-            config:   config,
-            io:       io
-        };
-
-        var RtpManager     = proxyquire( '../../../src/switcher/RtpManager', {
-            'switcher':         switcher,
-            '../lib/logger':    logStub(),
-            '../utils/logback': function ( e, c ) {
-                //if ( e ) { console.error(e);}
-                c( e );
-            }
+        var RtpManager = proxyquire( '../../../src/switcher/RtpManager', {
+            '../lib/logger': logStub()
         } );
-        rtpManager         = new RtpManager( switcherController );
-        rtpManager.logback = sinon.stub();
-        rtpManager.logback.yields();
-        cb                 = sinon.stub();
+
+        var SwitcherController = proxyquire( '../../../src/switcher/SwitcherController', {
+            './RtpManager': RtpManager,
+            'switcher':     switcherStub
+        } );
+
+        switcherController = new SwitcherController( config, io );
+        switcher           = switcherController.switcher;
+        rtpManager         = switcherController.rtpManager;
     } );
 
     afterEach( function () {
@@ -63,7 +60,6 @@ describe( 'RTP Manager', function () {
         config     = null;
         io         = null;
         rtpManager = null;
-        cb         = null;
     } );
 
     // Hey, dummy test to get started
@@ -73,7 +69,7 @@ describe( 'RTP Manager', function () {
 
     describe( 'Initialization', function () {
 
-        it( 'should have been instanciated correctly', function () {
+        it( 'should have been instantiated correctly', function () {
             should.exist( rtpManager.config );
             rtpManager.config.should.equal( config );
 
@@ -84,19 +80,52 @@ describe( 'RTP Manager', function () {
             rtpManager.io.should.equal( io );
         } );
 
-        it( 'should bind to clients', function () {
-            var socket = {on: sinon.spy()};
-
-            rtpManager.bindClient( socket );
-
-            socket.on.callCount.should.equal( 5 );
-            socket.on.should.have.been.calledWith( 'createRTPDestination' );
-            socket.on.should.have.been.calledWith( 'removeRTPDestination' );
-            socket.on.should.have.been.calledWith( 'connectRTPDestination' );
-            socket.on.should.have.been.calledWith( 'disconnectRTPDestination' );
-            socket.on.should.have.been.calledWith( 'updateRTPDestination' );
-        } );
     } );
+
+    describe( 'Internals', function() {
+
+        describe('HTTP SDP Dec. refresh', function() {
+
+            var id;
+            var url;
+
+            beforeEach(function() {
+                id = 'someId';
+                url = 'http://' + config.host + ':' + config.soap.port + '/sdp?rtpsession=' + config.rtp.quiddName + '&destination=' + id;
+                sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
+            });
+
+            it('should follow protocol', function(done) {
+                switcherController.quiddityManager.invokeMethod.returns(true);
+                rtpManager._refreshHttpSdpDec(id, function(error) {
+                    should.not.exist(error);
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly(
+                        config.soap.controlClientPrefix + id,
+                        'invoke1',
+                        [config.nameComputer, 'to_shmdata', url]
+                    );
+                    done();
+                });
+            });
+
+            it('should callback an error when refresh fails', function(done) {
+                switcherController.quiddityManager.invokeMethod.returns(false);
+                rtpManager._refreshHttpSdpDec(id, function(error) {
+                    should.exist(error);
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly(
+                        config.soap.controlClientPrefix + id,
+                        'invoke1',
+                        [config.nameComputer, 'to_shmdata', url]
+                    );
+                    done();
+                });
+            });
+
+        });
+
+    });
 
     describe( 'Creating RTP destination', function () {
 

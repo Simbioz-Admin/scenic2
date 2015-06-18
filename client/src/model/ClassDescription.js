@@ -25,6 +25,7 @@ define( [
             'category': null,
             'author': null,
             'license': null,
+            'tags': [],
             // Dynamic
             'devices': []
         },

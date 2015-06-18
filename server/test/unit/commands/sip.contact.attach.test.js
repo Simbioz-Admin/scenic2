@@ -57,4 +57,52 @@ describe( 'SIP Contact Attach Command', function () {
         client.switcherController.sipManager.attachShmdataToContact.should.have.been.calledWithExactly( uri, path );
         cb.should.have.been.calledWithMatch( '' ); // Any message is good
     } );
+
+    it( 'should return an error when uri parameter is empty', function () {
+        command('', path, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is null', function () {
+        command(null, path, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is a number', function () {
+        command(666, path, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when uri parameter is not a string', function () {
+        command(['not a string'], path, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when path parameter is empty', function () {
+        command(uri, '', cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when path parameter is null', function () {
+        command(uri, null, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when path parameter is a number', function () {
+        command(uri, 666, cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
+
+    it( 'should return an error when path parameter is not a string', function () {
+        command(uri, ['not a string'], cb);
+        client.switcherController.sipManager.attachShmdataToContact.should.not.have.been.called;
+        cb.should.have.been.calledWithMatch('');
+    } );
 } );

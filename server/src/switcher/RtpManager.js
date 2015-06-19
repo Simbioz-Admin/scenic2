@@ -337,54 +337,45 @@ RtpManager.prototype.disconnectRTPDestination = function ( id, path, cb ) {
  *
  * TODO: This could benefit for being more granular and react according to what has changed (name, host, port)
  *
- * @param id
- * @param info
- * @param cb
+ * @param {string} id - Destination Id
+ * @param {Object} info - Attributes to change
+ * @returns {boolean} Success
  */
-RtpManager.prototype.updateRTPDestination = function ( id, info, cb ) {
+RtpManager.prototype.updateRTPDestination = function ( id, info ) {
     log.info( 'Updating RTP destination', id, info );
 
-    var self = this;
-
     // Keep a cache of the current destination
-    try {
-        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var result = this.switcherController.quiddityManager.getPropertyValue( this.config.rtp.quiddName, 'destinations-json' );
     var destination = null;
     if ( result && result.destinations && _.isArray( result.destinations ) ) {
         destination = _.findWhere( result.destinations, { name: id } );
     }
 
-    async.series( [
-        function ( callback ) {
-            self.removeRTPDestination( id, callback );
-        },
-        function ( callback ) {
-            self.createRTPDestination( info.name, info.host, info.port, callback );
-        },
-        function ( callback ) {
-            if ( destination ) {
-                // According to the old code a setTimeout of 200ms could be necessary here
-                async.each( destination.data_streams, function ( stream, callback ) {
-                    self.connectRTPDestination( stream.path, info.name, stream.port, callback )
-                }, function ( error ) {
-                    if ( error ) {
-                        return callback( error );
-                    }
-                    callback();
-                } );
-            } else {
-                callback();
+    var removed = this.removeRTPDestination( id );
+    if ( !removed ) {
+        log.warn('Could not remove RTP destination', id);
+        return false;
+    }
+
+    var created = this.createRTPDestination( info.name, info.host, info.port );
+    if ( !created ) {
+        log.warn('Could not recreate RTP destination', info);
+        return false;
+    }
+
+    if ( destination ) {
+        var connectedAll = true;
+        _.each( destination.data_streams, function ( stream ) {
+            var connected = this.connectRTPDestination( stream.path, info.name, stream.port );
+            if ( !connected ) {
+                log.warn('Could not reconnect shmdata to new RTP destination');
+                connectedAll = false;
             }
-        }
-    ], function ( error ) {
-        if ( error ) {
-            return logback( error, cb );
-        }
-        cb();
-    } );
+        }, this );
+        return connectedAll;
+    } else {
+        return true;
+    }
 };
 
 module.exports = RtpManager;

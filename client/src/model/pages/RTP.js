@@ -116,7 +116,7 @@ define( [
          */
         connect: function ( shmdata, destination, port, cb ) {
             var self = this;
-            socket.emit( 'connectRTPDestination', shmdata.get('path'), destination.id, port, function( error ) {
+            socket.emit( 'rtp.destination.connect',  destination.id, shmdata.get('path'), port, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
@@ -133,7 +133,7 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            socket.emit( 'disconnectRTPDestination', source.get('path'), destination.id, function( error ) {
+            socket.emit( 'rtp.destination.disconnect', source.get('path'), destination.id, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );

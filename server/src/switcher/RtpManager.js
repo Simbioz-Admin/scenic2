@@ -1,10 +1,14 @@
 "use strict";
 
-var _       = require( 'underscore' );
-var i18n    = require( 'i18next' );
-var async   = require( 'async' );
-var log     = require( '../lib/logger' );
-var logback = require( '../utils/logback' );
+var _     = require( 'underscore' );
+var i18n  = require( 'i18next' );
+var async = require( 'async' );
+var url   = require( 'url' );
+var log   = require( '../lib/logger' );
+
+var NameExistsError  = require( '../exceptions/NameExistsError' );
+var InvalidHostError = require( '../exceptions/InvalidHostError' );
+var InvalidPortError = require( '../exceptions/InvalidPortError' );
 
 /**
  * Constructor
@@ -17,7 +21,6 @@ function RtpManager( switcherController ) {
     this.config             = this.switcherController.config;
     this.switcher           = this.switcherController.switcher;
     this.io                 = this.switcherController.io;
-
 }
 
 /**
@@ -25,19 +28,6 @@ function RtpManager( switcherController ) {
  */
 RtpManager.prototype.initialize = function () {
 
-};
-
-/**
- * Binds a new client socket
- *
- * @param socket
- */
-RtpManager.prototype.bindClient = function ( socket ) {
-    socket.on( "createRTPDestination", this.createRTPDestination.bind( this ) );
-    socket.on( "removeRTPDestination", this.removeRTPDestination.bind( this ) );
-    socket.on( "connectRTPDestination", this.connectRTPDestination.bind( this ) );
-    socket.on( "disconnectRTPDestination", this.disconnectRTPDestination.bind( this ) );
-    socket.on( "updateRTPDestination", this.updateRTPDestination.bind( this ) );
 };
 
 /**
@@ -75,8 +65,8 @@ RtpManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 /**
  * Refresh httpSdpDec of the remote receiver
  *
- * @param id {string} Id of receiver
- * @param cb {object} return an error if that's the case
+ * @param {string} id Id of the RTP destination
+ * @param {function} [cb] Callback
  */
 RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
     var self = this;
@@ -85,8 +75,12 @@ RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
         log.debug( 'Refreshing httpSdpDec', url );
         var refreshed = self.switcherController.quiddityManager.invokeMethod( self.config.soap.controlClientPrefix + id, 'invoke1', [self.config.nameComputer, 'to_shmdata', url] );
         if ( !refreshed ) {
-            return cb( 'Error refreshing httpSdpDec' );
-        } else {
+            var error = 'Error refreshing httpSdpDec';
+            log.warn( error );
+            if ( cb ) {
+                return cb( error );
+            }
+        } else if ( cb ) {
             return cb();
         }
     }, self.config.httpSdpDec.refreshTimeout );
@@ -106,50 +100,56 @@ RtpManager.prototype._refreshHttpSdpDec = function ( id, cb ) {
  *
  * @param {string} name - Destination name
  * @param {string} host - Hostname or ip address
- * @param {int} port - SOAP port of the destination
+ * @param {int} [port] - SOAP port of the destination
+ * @throws InvalidHostError
+ * @throws InvalidPortError
+ * @throws NameExistsError
+ * @returns {boolean} Success
  **/
 RtpManager.prototype.createRTPDestination = function ( name, host, port ) {
     log.info( 'Creating RTP destination', name, host, port );
 
-    // Validate
-    if ( !name || !host ) {
-        return logback( i18n.t( 'Missing information to create an RTP destination' ), cb );
-    } else if ( port && isNaN( parseInt( port ) ) ) {
-        return logback( i18n.t( 'Invalid port __port__', { port: port } ), cb );
+    if ( _.isEmpty( name ) || !_.isString( name ) ) {
+        throw new Error( 'Missing or invalid name argument' );
     }
 
-    // Sanity check
-    //TODO: Parse URL for real
-    host = host.replace( 'http://', '' );
-
-    // Load current destinations
-    try {
-        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
-    if ( !result || result.error ) {
-        return logback( i18n.t( 'Could not load RTP destinations.' ) + ( result && result.error ? ' ' + result.error : '' ), cb );
+    if ( _.isEmpty( host ) || !_.isString( host ) ) {
+        throw new Error( 'Missing or invalid host argument' );
     }
 
-    if ( result.destinations && _.isArray( result.destinations ) ) {
+    // Adding double slashes at the beginning so that url.parse understands it
+    var tmpHost = host;
+    if ( tmpHost.indexOf( '//' ) == -1 ) {
+        tmpHost = '//' + tmpHost;
+    }
+    var destination = url.parse( tmpHost, false, true );
+    if ( !destination.hostname ) {
+        log.warn( 'Invalid host', host );
+        throw new InvalidHostError();
+    }
+
+    if ( port && isNaN( parseInt( port ) ) ) {
+        log.warn( 'Invalid port', port );
+        throw new InvalidPortError();
+    }
+
+    port = parseInt( port );
+
+    var result = this.switcherController.quiddityManager.getPropertyValue( this.config.rtp.quiddName, 'destinations-json' );
+    if ( result && result.destinations && _.isArray( result.destinations ) ) {
         var destinations = result.destinations;
-
         // Check if the name is already taken
         var nameExists = _.findWhere( destinations, { name: name } );
         if ( nameExists ) {
-            return logback( i18n.t( 'RTP destination name (__rtpDestinationName__) already exists', { rtpDestinationName: name } ), cb );
+            log.warn( 'RTP destination name already exists', name );
+            throw new NameExistsError();
         }
     }
 
-    // Add to the default RTP quiddity
-    try {
-        var added = this.switcher.invoke( this.config.rtp.quiddName, 'add_destination', [name, host] );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var added = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'add_destination', [name, destination.hostname] );
     if ( !added ) {
-        return logback( i18n.t( 'Failed to add destination (__rtpDestinationName__) to the RTP session quiddity', { rtpDestinationName: name } ), cb );
+        log.warn( 'Could not add RTP destination', name, destination.hostname );
+        return false;
     }
 
     // If we have a port, we create the SOAP quiddity
@@ -157,118 +157,91 @@ RtpManager.prototype.createRTPDestination = function ( name, host, port ) {
         log.debug( 'SOAP port ' + port + ' provided, creating quiddity...' );
 
         // Create the quiddity
-        try {
-            var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', this.config.soap.controlClientPrefix + name );
-        } catch ( e ) {
-            return logback( e.toString(), cb );
-        }
+        var createdSOAPClient = this.switcher.create( 'SOAPcontrolClient', this.config.soap.controlClientPrefix + name );
         if ( !createdSOAPClient ) {
-            return logback( i18n.t( 'Could not create SOAP client __soapClient__', { soapClient: name } ), cb );
+            log.warn( 'Could not create SOAP control client', this.config.soap.controlClientPrefix + name );
+            return false;
         }
 
         // Assign the URL
-        try {
-            var urlSet = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-        } catch ( e ) {
-            return logback( e.toString(), cb );
-        }
+        var soapURL = 'http://' + destination.hostname + ':' + port.toString();
+        var urlSet  = this.switcherController.quiddityManager.invokeMethod( createdSOAPClient, 'set_remote_url_retry', [soapURL] );
         if ( !urlSet ) {
             //TODO: Should probably remove the quiddity at this point
-            return logback( i18n.t( 'Failed to set the remote URL on SOAP client __soapClient__', { soapClient: name } ), cb );
+            log.warn( 'Failed to set the remote URL on SOAP control client', soapURL );
+            return false;
         }
 
         // Attempt to create httpsdpdec on remote machine
-        try {
-            var httpSdpDecCreated = this.switcher.invoke( this.config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', this.config.nameComputer] );
-        } catch ( e ) {
-            return logback( e.toString(), cb );
-        }
+        var httpSdpDecCreated = this.switcherController.quiddityManager.invokeMethod( createdSOAPClient, 'create', ['httpsdpdec', this.config.nameComputer] );
         if ( !httpSdpDecCreated ) {
-            return logback( i18n.t( 'Could not create httpSdpDec' ), cb );
+            log.warn( 'Could not create HTTP SDP Dec. on the remote client' );
+            return false;
         }
     }
 
-    cb();
+    return true;
 };
 
 /**
  * Remove an RTP destination
  *
  * @param id {string} rtp destination quiddity id
- * @param cb {object} callback
+ * @returns {boolean} Success
  */
-RtpManager.prototype.removeRTPDestination = function ( id, cb ) {
+RtpManager.prototype.removeRTPDestination = function ( id ) {
     log.info( 'Removing RTP destination', id );
 
     // Remove the destination
-    try {
-        var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_destination', [id] );
-    } catch ( e ) {
-        //TODO: Probably continue removing when it fails
-        return logback( e.toString(), cb );
-    }
+    var removed = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'remove_destination', [id] );
     if ( !removed ) {
         log.warn( 'Failed to remove RTP destination', id );
     }
 
     // Remove Remote httpsdpdec
-    try {
-        var soapClientRemoved = this.switcher.invoke( this.config.soap.controlClientPrefix + id, 'remove', [this.config.nameComputer] );
-    } catch ( e ) {
-        //TODO: Probably continue removing when it fails
-        return logback( e.toString(), cb );
-    }
+    var soapClientRemoved = this.switcherController.quiddityManager.invokeMethod( this.config.soap.controlClientPrefix + id, 'remove', [this.config.nameComputer] );
     if ( !soapClientRemoved ) {
         log.warn( 'SOAP client removal failed for client', id );
     }
 
     // Remove SOAP Control Client
-    try {
-        var soapControlClientRemoved = this.switcher.remove( this.config.soap.controlClientPrefix + id );
-    } catch ( e ) {
-        //TODO: Probably continue removing when it fails
-        return logback( e.toString(), cb );
-    }
+    var soapControlClientRemoved = this.switcher.remove( this.config.soap.controlClientPrefix + id );
     if ( !soapControlClientRemoved ) {
         log.warn( 'SOAP control client removal failed for client', id );
     }
 
     //TODO: As in remove connection, remove any orphan shmdata from rtp quiddity (TEST THIS)
 
-    //TODO: Give more details about this error
-    cb( ( !removed || !soapClientRemoved || !soapControlClientRemoved ) ? i18n.t( 'An error occurred while removing RTP destination' ) : null );
+    return removed;
 };
 
 /**
- *  Action to send a shmdata to a specific receiver. Checking presence of shmdata
- * in data_stream that will be added if missing. Update the shmdata associate with a receiver in the dico Destinations
+ * Connect an RTP destination
  *
- * @param path {String} path of shmdata
- * @param id {String} id of receiver
- * @param port {int} Port which is sent shmata
- * @param cb
+ * @param {String} id - id of the receiver
+ * @param {string} path - Path of the shmdata
+ * @param {int} port - Port to use
+ * @returns {boolean} Success
  */
-RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
-    log.info( "Connecting quiddity to RTP destination", path, id, port );
+RtpManager.prototype.connectRTPDestination = function ( id, path, port ) {
+    log.info( "Connecting quiddity to RTP destination", id, path, port );
 
-    if ( _.isEmpty( path ) ) {
-        return logback( i18n.t( 'Missing path' ), cb );
+    if ( _.isEmpty( id ) || !_.isString( id ) ) {
+        throw new Error( 'Missing or invalid id argument' );
     }
 
-    if ( _.isEmpty( id ) ) {
-        return logback( i18n.t( 'Missing destination' ), cb );
+    if ( _.isEmpty( path ) || !_.isString( path ) ) {
+        throw new Error( 'Missing or invalid path argument' );
     }
 
-    if ( isNaN( parseInt( port ) ) ) {
-        return logback( i18n.t( 'Missing or invalid port' ), cb );
+    if ( !port || isNaN( parseInt( port ) ) ) {
+        throw new Error( 'Missing or invalid port argument' );
     }
+
+    port = parseInt( port );
 
     // Check if the connection has already been made
-    try {
-        var rtpShmdata = this.switcher.get_info( this.config.rtp.quiddName, '.shmdata.reader' );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var rtpShmdata        = this.switcherController.quiddityManager.getTreeInfo( this.config.rtp.quiddName, '.shmdata.reader' );
     var alreadyHasShmdata = false;
     if ( rtpShmdata && _.contains( _.keys( rtpShmdata ), path ) ) {
         log.debug( 'RTP is already connected to shmdata', path );
@@ -278,74 +251,56 @@ RtpManager.prototype.connectRTPDestination = function ( path, id, port, cb ) {
 
     if ( !alreadyHasShmdata ) {
         // Make the connection
-        try {
-            var dataStreamAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_data_stream', [path] );
-        } catch ( e ) {
-            return logback( e.toString(), cb );
-        }
+        var dataStreamAdded = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'add_data_stream', [path] );
         if ( !dataStreamAdded ) {
-            return logback( i18n.t( 'Error adding data stream __path__ to destination', { path: path } ), cb );
+            log.warn( 'Error adding data stream to destination', id, path );
+            return false;
         }
     }
 
     // Associate the stream with a destination on rtp
-    try {
-        var udpAdded = this.switcher.invoke( this.config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var udpAdded = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, String( port )] );
     if ( !udpAdded ) {
-        //TODO: Cancel connection
-        return logback( i18n.t( 'Error adding udp stream to destination __path__ __id__ __port__', {
-            path: path,
-            id:   id,
-            port: port
-        } ), cb );
+        log.warn( 'Error adding UDP stream to destination', id, path, port );
+        this.disconnectRTPDestination( id, path );
+        return false;
     }
 
     // If a soap port was defined we set the shmdata to the httpsdpdec
-    try {
-        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var hasSoapControlClient = this.switcherController.quiddityManager.exists( this.config.soap.controlClientPrefix + id );
     if ( hasSoapControlClient ) {
-        this._refreshHttpSdpDec( id, function ( error ) {
-            if ( error ) {
-                log.warn( error );
-            }
-        } );
+        this._refreshHttpSdpDec( id );
     }
 
-    return cb();
+    return true;
 };
 
 /**
  * Disconnect an RTP destination
  *
- * @param path {String} path of shmdata
- * @param id {String} id of receiver
+ * @param {String} id - id of the destination
+ * @param {String} path - path of the shmdata
  * @param cb
  */
-RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
-    log.info( 'Disconnecting RTP destination', path, id );
+RtpManager.prototype.disconnectRTPDestination = function ( id, path, cb ) {
+    log.info( 'Disconnecting RTP destination', id, path );
+
+    if ( _.isEmpty( id ) || !_.isString( id ) ) {
+        throw new Error( 'Missing or invalid id argument' );
+    }
+
+    if ( _.isEmpty( path ) || !_.isString( path ) ) {
+        throw new Error( 'Missing or invalid path argument' );
+    }
 
     // Remove UDP Stream
-    try {
-        var udpRemoved = this.switcher.invoke( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var udpRemoved = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
     if ( !udpRemoved ) {
-        return logback( i18n.t( 'Error removing UDP stream from destination' ), cb );
+        log.warn( 'Error removing UDP stream from destination' );
     }
 
     // Check if the shmdata is still used by another connection
-    try {
-        var result = this.switcher.get_property_value( this.config.rtp.quiddName, 'destinations-json' );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var result    = this.switcherController.quiddityManager.getPropertyValue( this.config.rtp.quiddName, 'destinations-json' );
     var stillUsed = false;
     if ( result && result.destinations && _.isArray( result.destinations ) ) {
         var destinations = result.destinations;
@@ -359,33 +314,21 @@ RtpManager.prototype.disconnectRTPDestination = function ( path, id, cb ) {
     // If not, then remove the shmdata from the destination
     if ( !stillUsed ) {
         log.debug( 'Last one using shmdata', path );
-        try {
-            var removed = this.switcher.invoke( this.config.rtp.quiddName, 'remove_data_stream', [path] );
-        } catch ( e ) {
-            return logback( e.toString(), cb );
-        }
-        if ( !removed ) {
-            return logback( i18n.t( 'Failed to remove data stream __path__', { path: path } ), cb );
+        var dataStreamRemoved = this.switcherController.quiddityManager.invokeMethod( this.config.rtp.quiddName, 'remove_data_stream', [path] );
+        if ( !dataStreamRemoved ) {
+            log.warn( 'Failed to remove data stream', path );
         }
     } else {
         log.debug( 'Not removing shmdata', path, 'it is still being used' );
     }
 
     // If a soap port was defined refresh the httpsdpdec
-    try {
-        var hasSoapControlClient = this.switcher.has_quiddity( this.config.soap.controlClientPrefix + id );
-    } catch ( e ) {
-        return logback( e.toString(), cb );
-    }
+    var hasSoapControlClient = this.switcherController.quiddityManager.exists( this.config.soap.controlClientPrefix + id );
     if ( hasSoapControlClient ) {
-        this._refreshHttpSdpDec( id, function ( error ) {
-            if ( error ) {
-                log.warn( error );
-            }
-        } );
+        this._refreshHttpSdpDec( id );
     }
 
-    cb();
+    return udpRemoved;
 };
 
 /**

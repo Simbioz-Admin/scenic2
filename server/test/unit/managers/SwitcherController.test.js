@@ -158,9 +158,6 @@ describe( 'Switcher Controller', function () {
             var socket = { on: sinon.spy() };
             switcherController.rtpManager = sinon.stub( switcherController.rtpManager );
             switcherController.sipManager = sinon.stub( switcherController.sipManager );
-            switcherController.bindClient( socket );
-            switcherController.rtpManager.bindClient.should.have.been.calledOnce;
-            switcherController.rtpManager.bindClient.should.have.been.calledWith( socket );
         } );
 
         it( 'should forward property changes to managers', function () {

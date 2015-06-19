@@ -1112,6 +1112,51 @@ describe( 'Quiddity Manager', function () {
 
         } );
 
+        describe( 'Getting Property', function() {
+
+            var id;
+            var prop;
+            var val;
+
+            beforeEach(function(){
+                id = 'someId';
+                prop = 'someProperty';
+                val = 'someVal';
+            });
+
+            it('should follow protocol', function() {
+                switcher.get_property_value.returns(val);
+                var result = quiddityManager.getPropertyValue( id, prop);
+                switcher.get_property_value.should.have.been.calledOnce;
+                switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
+                should.exist(result);
+                result.should.equal(val);
+            });
+
+            it('should follow protocol even when value is null', function() {
+                switcher.get_property_value.returns(null);
+                var result = quiddityManager.getPropertyValue( id, prop);
+                switcher.get_property_value.should.have.been.calledOnce;
+                switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
+                should.not.exist(result);
+            });
+
+            it('should throw error if switcher returns an error', function() {
+                switcher.get_property_value.returns({error:'some error'});
+                expect(quiddityManager.getPropertyValue.bind( quiddityManager, id, prop )).to.throw('some error');
+                switcher.get_property_value.should.have.been.calledOnce;
+                switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
+            });
+
+            it('should throw error if switcher throws', function() {
+                switcher.get_property_value.throws(new Error('some error'));
+                expect(quiddityManager.getPropertyValue.bind( quiddityManager, id, prop )).to.throw('some error');
+                switcher.get_property_value.should.have.been.calledOnce;
+                switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
+            });
+
+        } );
+
         describe( 'Setting Property', function () {
 
             it( 'should follow protocol', function () {

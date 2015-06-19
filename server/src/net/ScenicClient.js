@@ -29,7 +29,6 @@ function ScenicClient( switcherController, config, socket ) {
     this.switcherController = switcherController;
     this.config = config;
     this.socket = socket;
-    this.switcherController.bindClient( socket );
     this.bindCommands( commands );
 }
 

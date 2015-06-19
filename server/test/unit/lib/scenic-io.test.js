@@ -40,8 +40,6 @@ describe( 'Scenic Io', function () {
         var mockOn = sinon.spy();
         io.on = mockOn;
 
-        switcher.bindClient = sinon.spy();
-
         scenicIo.initialize( config, io, switcher );
 
         var mockSocket = sinon.spy();

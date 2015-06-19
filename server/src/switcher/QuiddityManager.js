@@ -675,6 +675,23 @@ QuiddityManager.prototype.getPropertyDescription = function ( quiddityId, proper
 };
 
 /**
+ * Get property value
+ *
+ * @param {String} quiddityId Quiddity for which we want to retrieve the property value
+ * @param {String} property Property for which we want the value
+ * @returns {*} Property value
+ */
+QuiddityManager.prototype.getPropertyValue = function ( quiddityId, property ) {
+    log.info( 'Getting property value for quiddity ' + quiddityId + ' property ' + property );
+
+    var result = this.switcher.get_property_value( quiddityId, property );
+    if ( result && result.error ) {
+        throw new Error( result.error );
+    }
+    return result;
+};
+
+/**
  * Set property value
  *
  * @param {String} quiddityId Quiddity for which we want to retrieve the property description

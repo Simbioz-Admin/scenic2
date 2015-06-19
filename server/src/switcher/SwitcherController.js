@@ -115,15 +115,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
     } );
 };
 
-/**
- * Binds a new client socket
- *
- * @param socket
- */
-SwitcherController.prototype.bindClient = function ( socket ) {
-    this.rtpManager.bindClient( socket );
-};
-
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
 //  ██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
 //  ██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗

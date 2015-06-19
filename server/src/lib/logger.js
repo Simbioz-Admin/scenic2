@@ -61,7 +61,8 @@ log.addFilter( function(msg, meta, level) {
   } else if ( level == 'switcher' ) {
     var prefix = msg.split(':')[0];
     switch( prefix.split('-' ).pop() ) {
-      case 'erorr':
+      case 'error':
+      case 'critical':
         msg = colors.red( msg );
         break;
       case 'warn':

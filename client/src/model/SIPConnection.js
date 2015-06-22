@@ -52,13 +52,22 @@ define( [
             this.quiddityId   = app.config.sip.quiddName;
             this.propertyName = 'sip-registration';
 
-            // Fetch contacts
             this.listenTo( this.get('contacts'), 'update', this._checkForSelf );
-            this.get( 'contacts' ).fetch();
         },
 
+        /**
+         * Handler for when the watched property 'sip-registration' changes.
+         * Fetch the contact list when we get a positive connection.
+         *
+         * @inheritdoc
+         * @param value
+         */
         propertyChanged: function ( value ) {
-            this.set( 'connected', !!value );
+            var connected = !!value;
+            this.set( 'connected', connected );
+            if ( connected ) {
+                this.get('contacts' ).fetch();
+            }
         },
 
         /**

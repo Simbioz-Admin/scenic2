@@ -33,7 +33,7 @@ module.exports = {
         }
 
         try {
-            var detached = this.switcherController.sipManager.detachShmdataToContact( uri, path );
+            var detached = this.switcherController.sipManager.detachShmdataFromContact( uri, path );
         } catch ( e ) {
             return cb( i18n.t( 'An error occurred while detaching shmdata __shmdata__ from contact __contact__ (__error__)', {
                 lng:     this.lang,

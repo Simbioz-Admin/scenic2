@@ -20,7 +20,7 @@ describe( 'SIP Contact Detach Command', function () {
         client  = {
             switcherController: {
                 sipManager: {
-                    detachShmdataToContact: sinon.stub()
+                    detachShmdataFromContact: sinon.stub()
                 }
             }
         };
@@ -35,75 +35,75 @@ describe( 'SIP Contact Detach Command', function () {
     } );
 
     it( 'should return true when successful', function () {
-        client.switcherController.sipManager.detachShmdataToContact.returns( true );
+        client.switcherController.sipManager.detachShmdataFromContact.returns( true );
         command( uri, path, cb );
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledWithExactly( uri, path );
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledOnce;
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
         cb.should.have.been.calledWithExactly( null, true );
     } );
 
     it( 'should return an error when manager throws', function () {
-        client.switcherController.sipManager.detachShmdataToContact.throws();
+        client.switcherController.sipManager.detachShmdataFromContact.throws();
         command( uri, path, cb );
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledWithExactly( uri, path );
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledOnce;
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
         cb.should.have.been.calledWithMatch( '' );
     } );
 
     it( 'should return an error when failing to detach shmdata from contact', function () {
-        client.switcherController.sipManager.detachShmdataToContact.returns( false );
+        client.switcherController.sipManager.detachShmdataFromContact.returns( false );
         command( uri, path, cb );
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.detachShmdataToContact.should.have.been.calledWithExactly( uri, path );
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledOnce;
+        client.switcherController.sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
         cb.should.have.been.calledWithMatch( '' ); // Any message is good
     } );
 
 
     it( 'should return an error when uri parameter is empty', function () {
         command('', path, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when uri parameter is null', function () {
         command(null, path, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when uri parameter is a number', function () {
         command(666, path, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when uri parameter is not a string', function () {
         command(['not a string'], path, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when path parameter is empty', function () {
         command(uri, '', cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when path parameter is null', function () {
         command(uri, null, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when path parameter is a number', function () {
         command(uri, 666, cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 
     it( 'should return an error when path parameter is not a string', function () {
         command(uri, ['not a string'], cb);
-        client.switcherController.sipManager.detachShmdataToContact.should.not.have.been.called;
+        client.switcherController.sipManager.detachShmdataFromContact.should.not.have.been.called;
         cb.should.have.been.calledWithMatch('');
     } );
 } );

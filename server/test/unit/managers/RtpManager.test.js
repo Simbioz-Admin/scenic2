@@ -904,216 +904,131 @@ describe( 'RTP Manager', function () {
 
     describe( 'Updating RTP destination', function () {
 
-        it( 'should follow protocol', function () {
-            var id   = 'destination 1 name';
-            var info = {
-                name: 'new destiantion name',
+        var id;
+        var info;
+
+        beforeEach(function() {
+            id = 'destination 1 name';
+            info = {
+                name: 'new destination name',
                 host: 'some host',
                 port: 9090
             };
+            sinon.stub( switcherController.quiddityManager, 'getPropertyValue' );
+            sinon.stub( rtpManager, 'removeRTPDestination' );
+            sinon.stub( rtpManager, 'createRTPDestination' );
+            sinon.stub( rtpManager, 'connectRTPDestination' );
+        });
 
-            switcher.get_property_value.returns( quiddities.destinations_json() );
+        it( 'should follow protocol', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(true);
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
-            connect.should.have.been.calledWith(
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[0].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[0].port
             );
-
-            connect.should.have.been.calledWith(
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[1].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[1].port
             );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
         it( 'should follow protocol without existing destination', function () {
-            var id   = 'destination 1 name';
-            var info = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
+            switcherController.quiddityManager.getPropertyValue.returns({} );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(true);
 
-            switcher.get_property_value.returns( {} );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.should.not.have.been.called;
+            should.exist(result);
+            result.should.be.true;
         } );
 
-        it( 'should return error when getting destinations throws', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when removing fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(false);
 
-            switcher.get_property_value.throws( error );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.not.have.been.called;
-            create.should.not.have.been.called;
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.not.have.been.called;
+            rtpManager.connectRTPDestination.should.not.have.been.called
+            should.exist(result);
+            result.should.be.false;
         } );
 
-        it( 'should return error when removing returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when creating fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(false);
 
-            switcher.get_property_value.returns( quiddities.destinations_json() );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields( error );
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.not.have.been.called;
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.should.not.have.been.called;
+            should.exist(result);
+            result.should.be.false;
         } );
 
-        it( 'should return error when creating returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when connecting fails (but still stry to connect all)', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(false);
 
-            switcher.get_property_value.returns( quiddities.destinations_json() );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields( error );
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when connecting returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
-
-            switcher.get_property_value.returns( quiddities.destinations_json() );
-
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields( error );
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
-            connect.should.have.been.calledWith(
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[0].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[0].port
             );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
+                quiddities.destinations_json().destinations[0].data_streams[1].path,
+                info.name,
+                quiddities.destinations_json().destinations[0].data_streams[1].port
+            );
+            should.exist(result);
+            result.should.be.false;
         } );
 
     } );

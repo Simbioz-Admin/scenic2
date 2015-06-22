@@ -15,32 +15,47 @@ define( [
      * @extends module:Marionette.ItemVIew
      */
     var SelfView = Marionette.ItemView.extend( {
-        template: _.template( SelfTemplate ),
+
+        /**
+         * Get Template Method
+         * Dynamically chooses which template to render
+         * As the "self" user can be null we don't want to render a template in that case
+         *
+         * @returns {*}
+         */
+        getTemplate: function () {
+            if ( this.model ) {
+                return _.template( SelfTemplate );
+            } else {
+                return null;
+            }
+        },
+
         className: 'contact self',
 
         ui: {
-            'alias': '#alias',
+            'alias':      '#alias',
             'selfStatus': '.contact-status',
-            'status': '.status',
+            'status':     '.status',
             'statusText': '.contact-status-text'
         },
 
         events: {
-            'keypress @ui.alias': 'checkForEnterKey',
-            'blur @ui.alias': 'update',
+            'keypress @ui.alias':      'checkForEnterKey',
+            'blur @ui.alias':          'update',
             'keypress @ui.statusText': 'checkForEnterKey',
-            'blur @ui.statusText': 'update',
-            'click @ui.selfStatus': 'showStatusList',
-            'click @ui.status': 'changeStatus'
+            'blur @ui.statusText':     'update',
+            'click @ui.selfStatus':    'showStatusList',
+            'click @ui.status':        'changeStatus'
         },
 
         modelEvents: {
             'change': 'render'
         },
 
-        templateHelpers: function() {
+        templateHelpers: function () {
             return {
-                statuses: this.model.sip.quiddity.get('properties' ).get('status' ).get('options')
+                statuses: this.model.collection.sip.quiddity.get( 'properties' ).get( 'status' ).get( 'options' )
             }
         },
 
@@ -62,7 +77,7 @@ define( [
             this.$el.attr( this.attributes() );
         },
 
-        checkForEnterKey: function( event ) {
+        checkForEnterKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 13 ) {
                 event.preventDefault();
@@ -70,36 +85,35 @@ define( [
             }
         },
 
-        update: function() {
+        update: function () {
             var self = this;
-            this.model.save({name: this.ui.alias.val(), status_text: this.ui.statusText.val()}, {
+            this.model.save( { name: this.ui.alias.val(), status_text: this.ui.statusText.val() }, {
                 error: function ( error ) {
-                    self.scenicChannel.vent.trigger('error', error);
+                    self.scenicChannel.vent.trigger( 'error', error );
                 }
-            });
+            } );
         },
 
-        showStatusList: function( event ) {
+        showStatusList: function ( event ) {
             event.stopImmediatePropagation();
-            this.$el.append( _.template( StatusTemplate )( { statuses: this.model.sip.quiddity.get('properties' ).get('status' ).get('options') } ) );
-            $('body' ).on('click', _.bind( this.closeStatusList, this ) );
+            this.$el.append( _.template( StatusTemplate )( { statuses: this.model.sip.quiddity.get( 'properties' ).get( 'status' ).get( 'options' ) } ) );
+            $( 'body' ).on( 'click', _.bind( this.closeStatusList, this ) );
         },
 
-        changeStatus: function( event ) {
-            var self = this;
-            var status = $( event.currentTarget ).data('status');
-            this.model.save({status: status}, {
+        changeStatus: function ( event ) {
+            var self   = this;
+            var status = $( event.currentTarget ).data( 'status' );
+            this.model.save( { status: status }, {
                 error: function ( error ) {
-                    self.scenicChannel.vent.trigger('error', error);
+                    self.scenicChannel.vent.trigger( 'error', error );
                 }
-            });
+            } );
             this.closeStatusList();
         },
 
-        closeStatusList: function() {
-            console.log('casdad');
-            $('body' ).off('click', _.bind( this.closeStatusList, this ) );
-            $('.status-list', this.$el ).remove();
+        closeStatusList: function () {
+            $( 'body' ).off( 'click', _.bind( this.closeStatusList, this ) );
+            $( '.status-list', this.$el ).remove();
         }
 
     } );

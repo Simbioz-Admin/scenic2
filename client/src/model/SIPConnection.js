@@ -30,7 +30,7 @@ define( [
                 server:     null,
                 user:       null,
                 port:       null,
-                self:       new Contact( null, { self: true, sip: this } ),
+                self:       null,
                 contacts:   new Contacts( null, { sip: this } )
             }
         },
@@ -143,7 +143,7 @@ define( [
         addContact: function ( uri ) {
             var self    = this;
             var contact = new Contact();
-            contact.save( {uri: uri}, {
+            contact.save( { uri: uri }, {
                 success: function () {
                     //no-op
                 },
@@ -154,11 +154,7 @@ define( [
         },
 
         _checkForSelf: function() {
-            var self = this.get( 'contacts' ).findWhere( { self: true } );
-            if ( self ) {
-                this.get('self').set( self.attributes );
-            }
-
+            this.set('self', this.get( 'contacts' ).findWhere( { self: true } ) );
         }
     } );
 

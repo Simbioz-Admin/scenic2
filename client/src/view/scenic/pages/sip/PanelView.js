@@ -30,15 +30,19 @@ define( [
          */
         initialize: function ( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.listenTo(this.model.sip, 'change:self', this.onSelfChanged);
         },
 
         onBeforeShow: function () {
-            this.showChildView( 'self', new SelfView( {model: this.model.sip.get( 'self' )} ) );
             this.showChildView( 'control', new ControlView( {model: this.model.sip} ) );
             this.showChildView( 'contacts', new ContactsView( {
                 table:      this.model,
                 collection: this.model.sip.get( 'contacts' )
             } ) );
+        },
+
+        onSelfChanged: function() {
+            this.showChildView( 'self', new SelfView( {model: this.model.sip.get( 'self' )} ) );
         }
     } );
 

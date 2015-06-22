@@ -20,7 +20,7 @@ for (var k in interfaces) {
 }
 
 var config = {
-  version: "2.2.4",
+  version: "2.2.5",
   lang : 'en',
   host: addresses[0],
 

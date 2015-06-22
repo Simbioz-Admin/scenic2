@@ -1,7 +1,7 @@
 "use strict";
 
 var fs              = require( 'fs' );
-var path            = require('path');
+var path            = require( 'path' );
 var _               = require( 'underscore' );
 var async           = require( 'async' );
 var switcher        = require( 'switcher' );
@@ -21,7 +21,7 @@ var checkPort       = require( '../utils/check-port' );
 function SwitcherController( config, io ) {
     this.config   = config;
     this.io       = io;
-    this.switcher = new switcher.Switcher( 'scenic', this._onSwitcherLog.bind( this ) );
+    this.switcher = new switcher.Switcher( 'scenic' + config.scenic.port, this._onSwitcherLog.bind( this ) );
 
     this.quiddityManager = new QuiddityManager( this );
     this.sipManager      = new SipManager( this );
@@ -204,7 +204,7 @@ SwitcherController.prototype.close = function () {
  */
 function cleanFileName( name ) {
     // Just clean up dots, slashes, backslashes and messy filename stuff
-    return name.replace(/(\.|\/|\\|:|;)/g, '' );
+    return name.replace( /(\.|\/|\\|:|;)/g, '' );
 }
 
 /**
@@ -223,9 +223,9 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 log.error( error );
                 return cb( error );
             }
-            files = _.map( files, function( file ) {
-                return file.replace( path.extname(file), '' );
-            });
+            files = _.map( files, function ( file ) {
+                return file.replace( path.extname( file ), '' );
+            } );
             cb( null, files );
         } );
     } catch ( e ) {
@@ -241,17 +241,17 @@ SwitcherController.prototype.getFileList = function ( cb ) {
  * @returns {Boolean} If the operation was successful
  */
 SwitcherController.prototype.loadFile = function ( name ) {
-    var fileName = cleanFileName(name);
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Loading scenic file', filePath );
-    this.io.emit('file.loading', fileName);
-    var loaded = this.switcher.load_history_from_scratch( filePath );
+    this.io.emit( 'file.loading', fileName );
+    var loaded   = this.switcher.load_history_from_scratch( filePath );
     if ( !loaded ) {
-        log.warn('Could not load scenic file', filePath);
-        this.io.emit('file.load.error', fileName);
+        log.warn( 'Could not load scenic file', filePath );
+        this.io.emit( 'file.load.error', fileName );
     } else {
-        log.info('Scenic file loaded', filePath);
-        this.io.emit('file.loaded', fileName);
+        log.info( 'Scenic file loaded', filePath );
+        this.io.emit( 'file.loaded', fileName );
     }
     return loaded;
 };
@@ -262,15 +262,15 @@ SwitcherController.prototype.loadFile = function ( name ) {
  * @param {String} name File name
  */
 SwitcherController.prototype.saveFile = function ( name ) {
-    var fileName = cleanFileName(name);
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Saving scenic file', filePath );
-    var saved = this.switcher.save_history( filePath );
+    var saved    = this.switcher.save_history( filePath );
     if ( !saved ) {
-        log.warn('Could not save scenic file', filePath);
+        log.warn( 'Could not save scenic file', filePath );
     } else {
-        log.info('Scenic file saved', filePath);
-        this.io.emit('file.saved', fileName );
+        log.info( 'Scenic file saved', filePath );
+        this.io.emit( 'file.saved', fileName );
     }
     return saved;
 };
@@ -284,8 +284,8 @@ SwitcherController.prototype.saveFile = function ( name ) {
  * @param {Function} cb Callback
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
-    var self = this;
-    var fileName = cleanFileName(name);
+    var self     = this;
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Removing scenic file', filePath );
     try {
@@ -294,8 +294,8 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
                 log.error( error );
                 return cb( error );
             }
-            log.info('Scenic file deleted', filePath);
-            self.io.emit('file.deleted', fileName );
+            log.info( 'Scenic file deleted', filePath );
+            self.io.emit( 'file.deleted', fileName );
             cb();
         } );
     } catch ( e ) {

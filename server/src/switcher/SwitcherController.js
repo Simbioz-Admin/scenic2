@@ -21,7 +21,10 @@ var checkPort       = require( '../utils/check-port' );
 function SwitcherController( config, io ) {
     this.config   = config;
     this.io       = io;
-    this.switcher = new switcher.Switcher( 'scenic' + config.scenic.port, this._onSwitcherLog.bind( this ) );
+
+    // Namespace switcher with the scenic port from the config (if any, we silently ignore it otherwise) so that
+    // multiple instances running on the same machine don't create shmdatas with conflicting names
+    this.switcher = new switcher.Switcher( 'scenic' + ( ( config.scenic && config.scenic.port ) ? config.scenic.port : '' ), this._onSwitcherLog.bind( this ) );
 
     this.quiddityManager = new QuiddityManager( this );
     this.sipManager      = new SipManager( this );

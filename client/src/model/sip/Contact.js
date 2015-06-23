@@ -25,6 +25,7 @@ define( [
             recv_status:        null,
             name:               null,
             self:               false,
+            connections:        [],
             // Dynamic
             showInDestinations: false
         },

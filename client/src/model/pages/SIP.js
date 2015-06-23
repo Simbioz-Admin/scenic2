@@ -71,7 +71,7 @@ define( [
          * Retrieve the connection between a source and destination
          */
         getConnection: function ( source, destination ) {
-            return destination.get( 'connections' ) ? destination.get( 'connections' )[source.get( 'path' )] : null;
+            return destination.get( 'connections' ) && _.isArray(destination.get( 'connections' )) ? destination.get( 'connections' ).indexOf(source.get( 'path' )) != -1 : null;
         },
 
         /**

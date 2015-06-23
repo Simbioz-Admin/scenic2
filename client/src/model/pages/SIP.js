@@ -64,14 +64,14 @@ define( [
          * @inheritdoc
          */
         filterDestination: function ( destination, useFilter ) {
-            return ( destination.has( 'connections' ) && destination.get('connections' ).length > 0 ) || destination.get( 'showInDestinations' );
+            return ( destination.has( 'connections' ) && destination.get( 'connections' ).length > 0 ) || destination.get( 'showInDestinations' );
         },
 
         /**
          * Retrieve the connection between a source and destination
          */
         getConnection: function ( source, destination ) {
-            return destination.get( 'connections' ) && _.isArray(destination.get( 'connections' )) ? destination.get( 'connections' ).indexOf(source.get( 'path' )) != -1 : null;
+            return destination.get( 'connections' ) && _.isArray( destination.get( 'connections' ) ) && destination.get( 'connections' ).indexOf( source.get( 'path' ) ) != -1 ? source.get( 'path' ) : null;
         },
 
         /**

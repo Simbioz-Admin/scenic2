@@ -36,8 +36,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( ) {
+        initialize: function( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.table = options.table;
         },
 
         /**

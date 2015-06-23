@@ -166,11 +166,11 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
         var path = value[0].split( '.' );
         path.shift();
 
-        if ( path[0] == 'buddy' ) {
+        if ( path[0] == 'buddies' ) {
             var buddyId = path[1];
 
             try {
-                var contact = this.switcher.get_info( quiddityId, '.buddy.' + buddyId );
+                var contact = this.switcher.get_info( quiddityId, '.buddies.' + buddyId );
             } catch ( e ) {
                 return log.error( e );
             }
@@ -363,7 +363,7 @@ SipManager.prototype.getContacts = function () {
         return null;
     }
 
-    var contacts = this.switcherController.quiddityManager.getTreeInfo( this.config.sip.quiddName, '.buddy' );
+    var contacts = this.switcherController.quiddityManager.getTreeInfo( this.config.sip.quiddName, '.buddies' );
     if ( !contacts ) {
         log.warn( 'Could not get contacts from SIP quiddity' );
         return null;
@@ -453,9 +453,8 @@ SipManager.prototype.attachShmdataToContact = function ( uri, path ) {
 /**
  * Detach shmdata from SIP contact
  *
- * @param path
- * @param uri
- * @param cb
+ * @param {string} uri - Contact URI
+ * @param {string} path - Shmdata path
  */
 SipManager.prototype.detachShmdataFromContact = function ( uri, path ) {
     log.info( 'Detaching shmdata', path, 'from contact', uri );
@@ -496,6 +495,50 @@ SipManager.prototype.hangUpContact = function ( uri ) {
         log.warn( 'Could not hang up on contact' );
     }
     return hungUp;
+};
+
+/**
+ * Disconnect from the contact
+ *
+ * @param {string} uri - Contact's URI
+ * @returns {boolean} - Success
+ */
+SipManager.prototype.disconnectContact = function( uri ) {
+    log.info('Disconnecting contact', uri);
+
+    // Get the contact list, without it we can't disconnect a contact
+    var contacts = this.getContacts();
+    if ( !contacts ) {
+        return false;
+    }
+
+    // Find the related contact, without it there's nothing to disconnect
+    var contact = _.findWhere(contacts, {uri:uri});
+    if ( !contact ) {
+        log.warn('Contact not found', uri);
+        return false;
+    }
+
+    // If we are calling, hang up first
+    if ( contact.send_status == 'calling' ) {
+        var hungUp = this.hangUpContact( uri );
+        if ( !hungUp ) {
+            return false;
+        }
+    }
+
+    // Then detach shmdatas
+    var allDetached = true;
+    if ( contact.connections && _.isArray(contact.connections)) {
+        _.each( contact.connections, function ( path ) {
+            var detached = this.detachShmdataFromContact( uri, path );
+            if ( !detached ) {
+                allDetached = false;
+            }
+        }, this );
+    }
+
+    return allDetached;
 };
 
 module.exports = SipManager;

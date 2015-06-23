@@ -53,7 +53,7 @@ define( [
          */
         addDestination: function ( contact ) {
             contact.set( 'showInDestinations', true );
-            // A little hack here to trigger marionette's rendering of the collectionview
+            // A little hack here to trigger marionette's rendering of the CollectionView
             contact.collection.trigger( 'reset' );
         },
 
@@ -64,14 +64,14 @@ define( [
          * @inheritdoc
          */
         filterDestination: function ( destination, useFilter ) {
-            return destination.has( 'connection' ) || destination.get( 'showInDestinations' );
+            return ( destination.has( 'connections' ) && destination.get('connections' ).length > 0 ) || destination.get( 'showInDestinations' );
         },
 
         /**
          * Retrieve the connection between a source and destination
          */
         getConnection: function ( source, destination ) {
-            return destination.get( 'connection' ) ? destination.get( 'connection' )[source.get( 'path' )] : null;
+            return destination.get( 'connections' ) ? destination.get( 'connections' )[source.get( 'path' )] : null;
         },
 
         /**

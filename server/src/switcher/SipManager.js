@@ -6,7 +6,6 @@ var i18n     = require( 'i18next' );
 var cryptoJS = require( 'crypto-js' );
 var async    = require( 'async' );
 var log      = require( '../lib/logger' );
-var logback  = require( '../utils/logback' );
 
 var secretString = 'Les patates sont douces!';
 

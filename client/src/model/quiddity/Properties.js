@@ -41,24 +41,19 @@ define( [
          * This was causing them to keep being referenced event after being used
          */
         bindToSocket: function() {
-            this.onSocket( 'onSignal', _.bind( this._onSignal, this ) );
             this.onSocket( 'propertyChanged', _.bind( this._onPropertyChanged, this ) );
+            this.onSocket( 'quiddity.property.added', _.bind( this._onPropertyAdded, this ) );
         },
 
         /**
-         * Signals Property Info Handler
-         * Listens to property additions concerning our parent quiddity and add properties if it matches
+         * Property Added Handler
          *
          * @param {string} quiddityId The name of the quiddity
-         * @param {string} signal The type of event on property or method
-         * @param {string} name The name of the property or method
+         * @param {Object} property The name of the property
          */
-        _onSignal: function ( quiddityId, signal, name ) {
-            if ( signal == 'on-property-added' && this.quiddity.id == quiddityId ) {
-                var property = this.add( {id: name}, {merge: true} );
-                //console.debug( 'Property info', property );
-                // The property is empty at this point, fetch its content
-                property.fetch();
+        _onPropertyAdded: function ( quiddityId, property ) {
+            if ( this.quiddity.id == quiddityId ) {
+                this.add( property, {merge: true} );
             }
         },
 
@@ -72,6 +67,7 @@ define( [
          */
         _onPropertyChanged: function ( quiddityId, key, value ) {
             if ( this.quiddity.id == quiddityId && this.get(key) == null ) {
+                console.warn('This should not happen');
                 // Somehow the property doesn't exists, create it but stay safe with merge
                 var property = this.add({id: key, value:value}, {merge:true});
                 //console.debug( 'Property value', property );

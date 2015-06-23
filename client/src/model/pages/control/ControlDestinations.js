@@ -36,7 +36,7 @@ define( [
          * Update the wrapper collection from the property value
          */
         updateCollection: function () {
-            //this.set( this.wrappedCollection.get( 'value' ).destinations );
+            //this.set( this.wrappedCollection );
         }
     } );
 

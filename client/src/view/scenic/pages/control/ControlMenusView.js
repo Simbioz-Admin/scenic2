@@ -10,9 +10,9 @@ define( [
 
     /**
      * @constructor
-     * @extends MenusView
+     * @extends TableMenusView
      */
-    var ControlMenus = TableMenusView.extend( {
+    var ControlMenusView = TableMenusView.extend( {
         template: _.template( ControlMenusTemplate ),
 
         ui: {
@@ -53,15 +53,20 @@ define( [
             // Map for the menu structure
             this.drop( this.ui.properties, _.groupBy( _.map( this.model.getControlProperties(), function ( property ) {
                 return {
-                    group: property.collection.quiddity.get( 'name' ),
+                    group: property.collection.quiddity.id,
                     id: property.id,
                     name: property.get( 'name' ),
                     title: property.get( 'description' )
                 };
             }, this ), 'group' ) );
+        },
+
+        createControlDestination: function(event) {
+            this.closeMenu();
+            this.model.createPropertyDestination( $( event.currentTarget ).data( 'group' ), $( event.currentTarget ).data( 'id' ) );
         }
 
     } );
 
-    return ControlMenus;
+    return ControlMenusView;
 });

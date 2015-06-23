@@ -33,11 +33,11 @@ define( [
         /**
          * Destinations View Filter
          *
-         * @param quiddity
+         * @param destination
          * @returns {boolean}
          */
-        filter: function ( quiddity ) {
-            return this.table.filterDestination( quiddity, true );
+        filter: function ( destination ) {
+            return this.table.filterDestination( destination, true );
         }
     } );
 

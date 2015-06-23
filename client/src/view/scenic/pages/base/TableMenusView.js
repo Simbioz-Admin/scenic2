@@ -12,7 +12,7 @@ define( [
      *  @constructor
      *  @augments module:Marionette.LayoutView
      */
-    var Menus = Marionette.ItemView.extend( {
+    var TableMenusView = Marionette.ItemView.extend( {
         initialize: function () {
             this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
             this.subMenuTemplate = _.template( SubMenuTemplate );
@@ -25,12 +25,12 @@ define( [
          * @returns {*}
          */
         mapMenu:          function ( models ) {
-            return _.groupBy( _.map( models, function ( classDescription ) {
+            return _.groupBy( _.map( models, function ( model ) {
                 return {
-                    id:    classDescription.get( 'class' ),
-                    name:  classDescription.get( 'name' ),
-                    title: classDescription.get( 'description' ),
-                    group: classDescription.get( 'category' )
+                    id:    model.get( 'class' ),
+                    name:  model.get( 'name' ),
+                    title: model.get( 'description' ),
+                    group: model.get( 'category' )
                 };
             }, this ), 'group' );
         },
@@ -48,7 +48,6 @@ define( [
             }
 
             $( anchor ).append( this.subMenuTemplate( {
-                type:    'classes',
                 groups: data
             } ) );
 
@@ -105,5 +104,6 @@ define( [
             );
         }
     } );
-    return Menus;
+
+    return TableMenusView;
 } );

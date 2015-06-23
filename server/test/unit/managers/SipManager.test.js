@@ -1020,8 +1020,8 @@ describe( 'Sip Manager', function () {
 
                 it( 'should follow protocol', function () {
                     sipManager.getContacts.returns( quiddities.contacts_parsed() );
-                    sipManager.hangUpContact.returns(true);
-                    sipManager.detachShmdataFromContact.returns(true);
+                    sipManager.hangUpContact.returns( true );
+                    sipManager.detachShmdataFromContact.returns( true );
 
                     var result = sipManager.disconnectContact( uri );
 
@@ -1029,11 +1029,11 @@ describe( 'Sip Manager', function () {
                     sipManager.getContacts.should.have.been.calledWithExactly();
 
                     sipManager.hangUpContact.should.have.been.calledOnce;
-                    sipManager.hangUpContact.should.have.been.calledWithExactly(uri);
+                    sipManager.hangUpContact.should.have.been.calledWithExactly( uri );
 
                     sipManager.detachShmdataFromContact.callCount.should.equal( contact.connections.length );
                     _.each( contact.connections, function ( path ) {
-                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly(uri, path);
+                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
                     }, this );
 
                     should.exist( result );
@@ -1041,9 +1041,9 @@ describe( 'Sip Manager', function () {
                 } );
 
                 it( 'should follow protocol when a call is not in progress', function () {
-                    uri     = '1003@10.10.30.247';
+                    uri = '1003@10.10.30.247';
                     sipManager.getContacts.returns( quiddities.contacts_parsed() );
-                    sipManager.detachShmdataFromContact.returns(true);
+                    sipManager.detachShmdataFromContact.returns( true );
 
                     var result = sipManager.disconnectContact( uri );
 
@@ -1054,7 +1054,7 @@ describe( 'Sip Manager', function () {
 
                     sipManager.detachShmdataFromContact.callCount.should.equal( contact.connections.length );
                     _.each( contact.connections, function ( path ) {
-                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly(uri, path);
+                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
                     }, this );
 
                     should.exist( result );
@@ -1064,7 +1064,7 @@ describe( 'Sip Manager', function () {
                 it( 'should follow protocol when there is no shmdata to detach', function () {
                     uri = '1005@10.10.30.247';
                     sipManager.getContacts.returns( quiddities.contacts_parsed() );
-                    sipManager.hangUpContact.returns(true);
+                    sipManager.hangUpContact.returns( true );
 
                     var result = sipManager.disconnectContact( uri );
 
@@ -1072,7 +1072,7 @@ describe( 'Sip Manager', function () {
                     sipManager.getContacts.should.have.been.calledWithExactly();
 
                     sipManager.hangUpContact.should.have.been.calledOnce;
-                    sipManager.hangUpContact.should.have.been.calledWithExactly(uri);
+                    sipManager.hangUpContact.should.have.been.calledWithExactly( uri );
 
                     sipManager.detachShmdataFromContact.should.not.have.been.called;
 
@@ -1098,9 +1098,9 @@ describe( 'Sip Manager', function () {
 
                 it( 'should return false if a shmdata fails to detach', function () {
                     sipManager.getContacts.returns( quiddities.contacts_parsed() );
-                    sipManager.hangUpContact.returns(true);
-                    sipManager.detachShmdataFromContact.returns(true);
-                    sipManager.detachShmdataFromContact.onSecondCall().returns(false);
+                    sipManager.hangUpContact.returns( true );
+                    sipManager.detachShmdataFromContact.returns( true );
+                    sipManager.detachShmdataFromContact.onSecondCall().returns( false );
 
                     var result = sipManager.disconnectContact( uri );
 
@@ -1108,11 +1108,11 @@ describe( 'Sip Manager', function () {
                     sipManager.getContacts.should.have.been.calledWithExactly();
 
                     sipManager.hangUpContact.should.have.been.calledOnce;
-                    sipManager.hangUpContact.should.have.been.calledWithExactly(uri);
+                    sipManager.hangUpContact.should.have.been.calledWithExactly( uri );
 
                     sipManager.detachShmdataFromContact.callCount.should.equal( contact.connections.length );
                     _.each( contact.connections, function ( path ) {
-                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly(uri, path);
+                        sipManager.detachShmdataFromContact.should.have.been.calledWithExactly( uri, path );
                     }, this );
 
                     should.exist( result );
@@ -1121,7 +1121,7 @@ describe( 'Sip Manager', function () {
 
                 it( 'should return false if hanging up fails', function () {
                     sipManager.getContacts.returns( quiddities.contacts_parsed() );
-                    sipManager.hangUpContact.returns(false);
+                    sipManager.hangUpContact.returns( false );
 
                     var result = sipManager.disconnectContact( uri );
 
@@ -1129,7 +1129,7 @@ describe( 'Sip Manager', function () {
                     sipManager.getContacts.should.have.been.calledWithExactly();
 
                     sipManager.hangUpContact.should.have.been.calledOnce;
-                    sipManager.hangUpContact.should.have.been.calledWithExactly(uri);
+                    sipManager.hangUpContact.should.have.been.calledWithExactly( uri );
 
                     sipManager.detachShmdataFromContact.should.not.have.been.called;
 

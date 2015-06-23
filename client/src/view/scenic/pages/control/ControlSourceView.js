@@ -6,32 +6,32 @@ define( [
     'marionette',
     'i18n',
     'view/scenic/pages/base/table/source/ShmdataView',
-    'text!template/scenic/pages/base/table/source.html'
-], function ( _, Backbone, Marionette, i18n, ShmdataView, SourceTemplate ) {
+    'text!template/scenic/pages/control/source.html'
+], function ( _, Backbone, Marionette, i18n, ShmdataView, ControlSourceTemplate ) {
 
     /**
-     * Source View
+     * Control Source View
      *
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var Source = Marionette.CompositeView.extend( {
-        template:           _.template( SourceTemplate ),
-        templateHelpers: function() {
+    var ControlSourceView = Marionette.CompositeView.extend( {
+        template:           _.template( ControlSourceTemplate ),
+        templateHelpers:    function () {
             return {
-                classDescription: this.model.get('classDescription' ).toJSON()
+                classDescription: this.model.get( 'classDescription' ).toJSON()
             }
         },
         className:          'quiddity source',
         childView:          ShmdataView,
         childViewOptions:   function () {
             return {
-                table:          this.options.table,
-                collection:     this.options.table.getDestinationCollection(),
+                table:          this.table,
+                collection:     this.table.getDestinationCollection(),
                 connectionView: this.options.connectionView
             }
         },
-        childViewContainer: '.shmdatas',
+        childViewContainer: '.source-properties',
 
         ui: {
             edit:   '.actions .action.edit',
@@ -46,21 +46,20 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.collection    = this.model.get( 'shmdatas' );
+            this.table         = options.table;
+            this.collection    = this.model.get( 'properties' );
         },
 
         /**
-         * Filter shmdata per table
+         * Filter properties per table
          *
-         * @param shmdata
+         * @param {Property} property
          * @returns {boolean}
          */
-        filter: function ( shmdata ) {
-            // Get back up to the table model to filter the displayed connections
-            //return this.options.table.filterShmdata( shmdata, true );
-            return shmdata.get('type') == 'writer';
+        filter: function ( property ) {
+            return _.contains( this.table.allowedPropertyTypes, property.get( 'type' ) );
         },
 
         /**
@@ -77,7 +76,7 @@ define( [
          */
         removeSource: function ( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.id} ), function ( confirmed ) {
+            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', { sourceName: this.model.id } ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
@@ -85,5 +84,5 @@ define( [
         }
     } );
 
-    return Source;
+    return ControlSourceView;
 } );

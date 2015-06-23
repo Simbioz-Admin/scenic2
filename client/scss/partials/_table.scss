@@ -92,7 +92,9 @@ $boxWidth: $sourceWidth;
               height: 100%;
             }
 
-            .shmdatas, .source-contacts {
+            .shmdatas,
+            .source-properties,
+            .source-contacts {
               min-height: $rowMinHeight;
               margin-left: $sourceWidth;
               background-color: $backgroundColor;

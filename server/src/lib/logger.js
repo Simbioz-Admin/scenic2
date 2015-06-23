@@ -52,12 +52,7 @@ var log = new(winston.Logger)({
 // Add line numbers to errors
 log.addFilter( function(msg, meta, level) {
   if ( level == 'error' ) {
-    if ( meta && meta.logback ) {
-      msg = traceCaller( 6 ) + ": " + msg;
-      delete meta.logback;
-    } else {
-      msg = traceCaller( 5 ) + ": " + msg;
-    }
+    msg = traceCaller( 5 ) + ": " + msg;
   } else if ( level == 'switcher' ) {
     var prefix = msg.split(':')[0];
     switch( prefix.split('-' ).pop() ) {

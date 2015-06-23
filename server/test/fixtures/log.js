@@ -11,7 +11,6 @@ module.exports = function () {
         debug:    sinon.stub(),
         info:     sinon.stub(),
         warn:     sinon.stub(),
-        error:    sinon.stub(),
-        logback:  sinon.stub()
+        error:    sinon.stub()
     };
 };

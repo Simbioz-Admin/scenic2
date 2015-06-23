@@ -343,9 +343,11 @@ describe( 'Quiddity Manager', function () {
             var id     = 'quiddity';
             var signal = 'on-property-added';
             var val    = 'smtng';
+            sinon.stub(quiddityManager, 'getPropertyDescription');
+            quiddityManager.getPropertyDescription.returns(quiddities.property_float_parsed());
             quiddityManager.onSwitcherSignal( id, signal, [val] );
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'onSignal', id, signal, val );
+            io.emit.should.have.been.calledWith( 'quiddity.property.added', id, quiddities.property_float_parsed() );
         } );
 
         it( 'should pass along property removed to clients', function () {
@@ -354,16 +356,18 @@ describe( 'Quiddity Manager', function () {
             var val    = 'smtng';
             quiddityManager.onSwitcherSignal( id, signal, [val] );
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'onSignal', id, signal, val );
+            io.emit.should.have.been.calledWith( 'quiddity.property.removed', id, val );
         } );
 
         it( 'should pass along method added to clients', function () {
             var id     = 'quiddity';
             var signal = 'on-method-added';
             var val    = 'smtng';
+            sinon.stub(quiddityManager, 'getMethodDescription');
+            quiddityManager.getMethodDescription.returns(quiddities.method_parsed());
             quiddityManager.onSwitcherSignal( id, signal, [val] );
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'onSignal', id, signal, val );
+            io.emit.should.have.been.calledWith( 'quiddity.method.added', id, quiddities.method_parsed() );
         } );
 
         it( 'should pass along method removed to clients', function () {
@@ -372,7 +376,7 @@ describe( 'Quiddity Manager', function () {
             var val    = 'smtng';
             quiddityManager.onSwitcherSignal( id, signal, [val] );
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'onSignal', id, signal, val );
+            io.emit.should.have.been.calledWith( 'quiddity.method.removed', id, val );
         } );
 
         it( 'should not pass along garbage to clients', function () {

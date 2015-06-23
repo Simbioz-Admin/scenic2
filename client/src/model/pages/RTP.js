@@ -87,7 +87,7 @@ define( [
         /**
          * @inheritdoc
          * @param {Shmdata} source
-         * @param {RTPDestiantion} destination
+         * @param {RTPDestination} destination
          * @return {boolean}
          */
         isConnected: function( source, destination ) {

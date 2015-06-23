@@ -8,6 +8,7 @@ var switcher        = require( 'switcher' );
 var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
 var RtpManager      = require( './RtpManager' );
+var ControlManager  = require( './ControlManager' );
 var log             = require( '../lib/logger' );
 var checkPort       = require( '../utils/check-port' );
 
@@ -19,8 +20,8 @@ var checkPort       = require( '../utils/check-port' );
  * @constructor
  */
 function SwitcherController( config, io ) {
-    this.config   = config;
-    this.io       = io;
+    this.config = config;
+    this.io     = io;
 
     // Namespace switcher with the scenic port from the config (if any, we silently ignore it otherwise) so that
     // multiple instances running on the same machine don't create shmdatas with conflicting names
@@ -29,6 +30,7 @@ function SwitcherController( config, io ) {
     this.quiddityManager = new QuiddityManager( this );
     this.sipManager      = new SipManager( this );
     this.rtpManager      = new RtpManager( this );
+    this.controlManager      = new ControlManager( this );
 }
 
 /**
@@ -107,6 +109,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
             self.quiddityManager.initialize();
             self.sipManager.initialize();
             self.rtpManager.initialize();
+            self.controlManager.initialize();
             callback();
         }
 
@@ -147,6 +150,7 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
     this.quiddityManager.onSwitcherProperty( quiddityId, property, value );
     this.rtpManager.onSwitcherProperty( quiddityId, property, value );
     this.sipManager.onSwitcherProperty( quiddityId, property, value );
+    this.controlManager.onSwitcherProperty( quiddityId, property, value );
 };
 
 /**
@@ -161,6 +165,7 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     this.quiddityManager.onSwitcherSignal( quiddityId, signal, value );
     this.rtpManager.onSwitcherSignal( quiddityId, signal, value );
     this.sipManager.onSwitcherSignal( quiddityId, signal, value );
+    this.controlManager.onSwitcherSignal( quiddityId, signal, value );
 
     //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
     //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤

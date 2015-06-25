@@ -98,9 +98,6 @@ describe( 'Switcher Controller', function () {
                 switcher.set_property_value.should.have.been.calledOnce;
                 switcher.set_property_value.should.have.been.calledWith( config.systemUsage.quiddName, 'period', String( config.systemUsage.period ) );
 
-                switcher.subscribe_to_signal.should.have.been.calledOnce;
-                switcher.subscribe_to_signal.should.have.been.calledWith( config.systemUsage.quiddName, 'on-tree-grafted' );
-
                 switcher.invoke.should.have.been.calledOnce;
                 switcher.invoke.should.have.been.calledWith( config.soap.quiddName, 'set_port', [config.soap.port] );
 

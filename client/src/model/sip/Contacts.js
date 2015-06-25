@@ -44,7 +44,7 @@ define( [
          * @private
          */
         _onContactInfo: function( userInfo ) {
-            this.add( userInfo, { merge: true } );
+            this.add( userInfo, { merge: true, parse: true } );
         }
     } );
     return Contacts;

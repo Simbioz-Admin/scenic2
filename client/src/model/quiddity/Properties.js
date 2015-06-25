@@ -53,7 +53,7 @@ define( [
          */
         _onPropertyAdded: function ( quiddityId, property ) {
             if ( this.quiddity.id == quiddityId ) {
-                this.add( property, {merge: true} );
+                this.add( property, {merge: true, parse: true} );
             }
         },
 

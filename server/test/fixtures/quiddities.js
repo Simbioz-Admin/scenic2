@@ -500,6 +500,10 @@ module.exports = {
                     "class": "audiotestsrc"
                 },
                 {
+                    "id":    "systemusage",
+                    "class": "systemusage"
+                },
+                {
                     "id":    "defaultrtp",
                     "class": "rtpsession"
                 }
@@ -541,8 +545,8 @@ module.exports = {
 
     quiddity_private: function () {
         return {
-            "id":    "systemusage",
-            "class": "systemusage"
+            "id":    "create_remove_spy",
+            "class": "create_remove_spy"
         }
     },
 
@@ -666,6 +670,122 @@ module.exports = {
                 }
             ]
         }
+    },
+
+    properties_parsed: function () {
+        return [
+            {
+                "name":        "Started",
+                "id":          "started",
+                "description": "started or not",
+                "order":       0,
+                "writable":    true,
+                "type":        "boolean",
+                "default":     false,
+                "value":       false
+            },
+            {
+                "name":        "Volume",
+                "id":          "volume",
+                "description": "Volume of test signal",
+                "order":       20,
+                "writable":    true,
+                "type":        "double",
+                "minimum":     0,
+                "maximum":     1,
+                "default":     0.8,
+                "value":       0.8
+            },
+            {
+                "name":        "Frequency",
+                "id":          "freq",
+                "description": "Frequency of test signal",
+                "order":       40,
+                "writable":    true,
+                "type":        "double",
+                "minimum":     0,
+                "maximum":     20000,
+                "default":     440,
+                "value":       440
+            },
+            {
+                "name":        "Signal Form",
+                "id":          "wave",
+                "description": "Oscillator waveform",
+                "order":       60,
+                "writable":    true,
+                "type":        "enum",
+                "default":     "sine",
+                "value":       "sine",
+                "options":      [
+                    {
+                        "name":  "Sine",
+                        "value": "sine",
+                        "id":    0
+                    },
+                    {
+                        "name":  "Square",
+                        "value": "square",
+                        "id":    1
+                    },
+                    {
+                        "name":  "Saw",
+                        "value": "saw",
+                        "id":    2
+                    },
+                    {
+                        "name":  "Triangle",
+                        "value": "triangle",
+                        "id":    3
+                    },
+                    {
+                        "name":  "Silence",
+                        "value": "silence",
+                        "id":    4
+                    },
+                    {
+                        "name":  "White uniform noise",
+                        "value": "white-noise",
+                        "id":    5
+                    },
+                    {
+                        "name":  "Pink noise",
+                        "value": "pink-noise",
+                        "id":    6
+                    },
+                    {
+                        "name":  "Sine table",
+                        "value": "sine-table",
+                        "id":    7
+                    },
+                    {
+                        "name":  "Periodic Ticks",
+                        "value": "ticks",
+                        "id":    8
+                    },
+                    {
+                        "name":  "White Gaussian noise",
+                        "value": "gaussian-noise",
+                        "id":    9
+                    },
+                    {
+                        "name":  "Red (brownian) noise",
+                        "value": "red-noise",
+                        "id":    10
+                    },
+                    {
+                        "name":  "Blue noise",
+                        "value": "blue-noise",
+                        "id":    11
+                    },
+                    {
+                        "name":  "Violet noise",
+                        "value": "violet-noise",
+                        "id":    12
+                    }
+                ]
+            }
+        ]
     },
 
     property_bool: function () {
@@ -948,6 +1068,27 @@ module.exports = {
         }
     },
 
+    methods_parsed: function () {
+        return [
+            {
+                "name":              "To Shmdata",
+                "id":                "to_shmdata",
+                "description":       "get streams from sdp description over http, accept also base64 encoded SDP string",
+                "order":             0,
+                "returnType":        "gboolean",
+                "returnDescription": "success or fail",
+                "args":         [
+                    {
+                        "name":        "URL",
+                        "id":          "url",
+                        "description": "URL to the sdp file, or a base64 encoded SDP description",
+                        "type":        "gchararray"
+                    }
+                ]
+            }
+        ]
+    },
+
     method: function () {
         return {
             "long name":          "Write SDP File",
@@ -1088,7 +1229,7 @@ module.exports = {
                 "send_status":        "calling",
                 "recv_status":        "disconnected",
                 "name":               "1002@10.10.30.247",
-                "connections":         [
+                "connections":        [
                     "/tmp/switcher_scenic8000_audiotestsrc0_audio",
                     "/tmp/switcher_scenic8000_audiotestsrc1_audio"
                 ]
@@ -1101,7 +1242,7 @@ module.exports = {
                 "send_status":        "disconnected",
                 "recv_status":        "disconnected",
                 "name":               "1003@10.10.30.247",
-                "connections":         [
+                "connections":        [
                     "/tmp/switcher_scenic8000_audiotestsrc0_audio",
                     "/tmp/switcher_scenic8000_audiotestsrc1_audio"
                 ]
@@ -1152,7 +1293,7 @@ module.exports = {
                 "recv_status":        "disconnected",
                 "name":               "1002@10.10.30.247",
                 "self":               false,
-                "connections":         [
+                "connections":        [
                     "/tmp/switcher_scenic8000_audiotestsrc0_audio",
                     "/tmp/switcher_scenic8000_audiotestsrc1_audio"
                 ]
@@ -1167,7 +1308,7 @@ module.exports = {
                 "recv_status":        "disconnected",
                 "name":               "1003@10.10.30.247",
                 "self":               false,
-                "connections":         [
+                "connections":        [
                     "/tmp/switcher_scenic8000_audiotestsrc0_audio",
                     "/tmp/switcher_scenic8000_audiotestsrc1_audio"
                 ]
@@ -1197,6 +1338,13 @@ module.exports = {
             id:   'buddy@sip.server',
             uri:  'buddy@sip.server',
             self: false
+        }
+    },
+
+    mapper: function() {
+        return {
+            'id': 'property-mapper0',
+            'class': 'property-mapper'
         }
     }
 

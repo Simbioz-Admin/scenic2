@@ -204,8 +204,7 @@ describe( 'Switcher Controller', function () {
 
     describe( 'Signal Events', function () {
 
-
-        it( 'should pass along system usage grafts', function () {
+        /* DEPRECATED it( 'should pass along system usage grafts', function () {
             var id     = 'systemusage';
             var signal = 'on-tree-grafted';
             var val    = 'smtng';
@@ -221,9 +220,9 @@ describe( 'Switcher Controller', function () {
             switcher.get_info.should.have.been.calledWith( id, val );
             io.emit.should.have.been.calledOnce;
             io.emit.should.have.been.calledWith( 'systemusage', ret );
-        } );
+        } );*/
 
-        it( 'should not pass along system usage prunes', function () {
+        /* DEPRECATED it( 'should not pass along system usage prunes', function () {
             var id     = 'systemusage';
             var signal = 'on-tree-pruned';
             var val    = 'smtng';
@@ -234,7 +233,7 @@ describe( 'Switcher Controller', function () {
 
             switcherController._onSwitcherSignal( id, signal, [val] );
             io.emit.should.not.have.been.called;
-        } );
+        } );*/
 
 
     } );

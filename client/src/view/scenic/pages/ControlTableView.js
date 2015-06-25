@@ -8,14 +8,15 @@ define( [
     'view/scenic/pages/base/table/SourcesView',
     'view/scenic/pages/control/ControlDestinationsView',
     'view/scenic/pages/control/ControlMenusView',
-    'view/scenic/pages/control/ControlSourceView'
-], function ( _, Backbone, Marionette, TableView, SourcesView, ControlDestinationsView, ControlMenus, ControlSourceView ) {
+    'view/scenic/pages/control/ControlSourceView',
+    'view/scenic/pages/control/ControlConnectionView'
+], function ( _, Backbone, Marionette, TableView, SourcesView, ControlDestinationsView, ControlMenus, ControlSourceView, ControlConnectionView ) {
 
     /**
      *  @constructor
      *  @augments TableView
      */
-    var Control = TableView.extend( {
+    var ControlTableView = TableView.extend( {
 
         className: 'table control',
 
@@ -38,7 +39,8 @@ define( [
             this.showChildView( 'sources', new SourcesView( {
                 table:      this.model,
                 collection: this.model.getSourceCollection(),
-                sourceView: ControlSourceView
+                sourceView: ControlSourceView,
+                connectionView: ControlConnectionView
             } ) );
             this.showChildView( 'destinations', new ControlDestinationsView( {
                 table:      this.model,
@@ -47,5 +49,5 @@ define( [
         }
     } );
 
-    return Control;
+    return ControlTableView;
 } );

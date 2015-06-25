@@ -8,21 +8,21 @@ define( [
 ], function ( _, Backbone, Marionette, ConnectionView ) {
 
     /**
-     * Connection View
+     * Control Connection View
      *
      * @constructor
      * @extends ConnectionView
      */
-    var SIPConnectionView = ConnectionView.extend( {
+    var ControlConnectionView = ConnectionView.extend( {
 
         /**
          * Initialize
          */
         initialize: function ( options ) {
             ConnectionView.prototype.initialize.apply( this, arguments );
-            this.listenTo( this.model, 'change:connections', this.render );
+            this.listenTo(this.table.destinations,'update', this.render );
         }
     } );
 
-    return SIPConnectionView;
+    return ControlConnectionView;
 } );

@@ -30,7 +30,7 @@ function SwitcherController( config, io ) {
     this.quiddityManager = new QuiddityManager( this );
     this.sipManager      = new SipManager( this );
     this.rtpManager      = new RtpManager( this );
-    this.controlManager      = new ControlManager( this );
+    this.controlManager  = new ControlManager( this );
 }
 
 /**
@@ -68,7 +68,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
     log.debug( 'Creating System Usage...' );
     this.switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     this.switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );
-    this.switcher.subscribe_to_signal( this.config.systemUsage.quiddName, 'on-tree-grafted' );
 
     var setSOAPPort = true;
 
@@ -166,15 +165,6 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     this.rtpManager.onSwitcherSignal( quiddityId, signal, value );
     this.sipManager.onSwitcherSignal( quiddityId, signal, value );
     this.controlManager.onSwitcherSignal( quiddityId, signal, value );
-
-    //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
-    //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
-    //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
-
-    if ( signal == 'on-tree-grafted' && quiddityId == this.config.systemUsage.quiddName ) {
-        var info = this.switcher.get_info( quiddityId, value[0] );
-        this.io.emit( 'systemusage', info );
-    }
 };
 
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗

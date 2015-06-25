@@ -99,7 +99,7 @@ define( [
         onRender: function () {
             this.showChildView( 'menu', new MenuView() );
             this.showChildView( 'tabs', new TabsView( {collection: this.pages} ) );
-            this.showChildView( 'usage', new SystemUsageView() );
+            this.showChildView( 'usage', new SystemUsageView( { model: this.app.quiddities.get('systemusage') }) );
             this.showChildView( 'inspector', new InspectorView() );
 
             this.showPage( this.pages.getCurrentPage() );

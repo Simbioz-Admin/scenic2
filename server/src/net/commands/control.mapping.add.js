@@ -68,7 +68,7 @@ module.exports = {
 
         if ( !mapped ) {
             return cb( i18n.t( 'Could not add mapping', {
-                lng:  this.lang,
+                lng:  this.lang
             } ) )
         }
 

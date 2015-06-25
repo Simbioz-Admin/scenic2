@@ -22,6 +22,10 @@ define( [
         id:        "system-usage",
         cpuRender: false,
 
+        modelEvents: {
+            'change': 'renderSystemUsage'
+        },
+
         /**
          * Initialize
          */
@@ -33,7 +37,7 @@ define( [
         onAttach: function () {
             $( this.el ).i18n();
             this.$net = $( '.network .content' );
-            socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
+            //socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
         },
 
         /**
@@ -41,11 +45,18 @@ define( [
          *
          * @param info
          */
-        renderSystemUsage: function ( info ) {
-            delete info.cpu.cpu;
-            this.renderCpu( info.cpu );
-            this.renderMemory( info.mem );
-            this.renderNetwork( info.net );
+        renderSystemUsage: function ( ) {
+            var tree = this.model.get('tree');
+            if ( tree && tree.top ) {
+                if ( tree.top.cpu ) {
+                    // Clone because we want to remove the first cpu object
+                    var cpu = _.clone( tree.top.cpu );
+                    delete cpu.cpu;
+                    this.renderCpu( cpu );
+                }
+                this.renderMemory( tree.top.mem );
+                this.renderNetwork( tree.top.net );
+            }
         },
 
         /**

@@ -32,7 +32,7 @@ function QuiddityManager( switcherController) {
         'create_remove_spy',
         'logger',
         'runtime',
-        'systemusage',
+        //'systemusage',
         'SOAPcontrolServer'
     ];
 
@@ -237,6 +237,49 @@ QuiddityManager.prototype._parseMethod = function ( method ) {
 //  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝
 
 /**
+ * Fill quiddity with its properties, methods and tree
+ *
+ * @param {Quiddity} quiddity
+ * @param {Object} config
+ * @returns {Quiddity}
+ * @private
+ */
+QuiddityManager.prototype._fillQuiddity = function( quiddity, config ) {
+
+    // Get all properties
+    if ( !config || config.properties ) {
+        try {
+            // Fill properties in the quiddity object
+            quiddity.properties = this.getProperties( quiddity.id );
+        } catch ( e ) {
+            log.error( 'Error getting properties for quiddity', quiddity.id, e );
+        }
+    }
+
+    // Get all methods
+    if ( !config || config.methods ) {
+        try {
+            // Fill methods in the quiddity object
+            quiddity.methods = this.getMethods( quiddity.id );
+        } catch ( e ) {
+            log.error( 'Error getting methods for quiddity', quiddity.id, e );
+        }
+    }
+
+    // Get tree
+    if ( !config || config.tree ) {
+        try {
+            // Fill tree in the quiddity object
+            quiddity.tree = this.getTreeInfo( quiddity.id, '.' );
+        } catch ( e ) {
+            log.error( 'Error getting tree for quiddity', quiddity.id, e );
+        }
+    }
+
+    return quiddity;
+};
+
+/**
  * On Quiddity Added Handler
  *
  * @param quiddityId
@@ -247,20 +290,20 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
 
     // Quiddity was created, get information on its type
     try {
-        var quiddityClass = this.switcher.get_quiddity_description( quiddityId );
+        var quiddity = this.switcher.get_quiddity_description( quiddityId );
     } catch ( e ) {
         return log.error( 'Error while retrieving quiddity information', quiddityId, e );
     }
-    if ( !quiddityClass ) {
+    if ( !quiddity ) {
         return log.error( 'Failed to get information for quiddity', quiddityId );
-    } else if ( quiddityClass.error ) {
-        return log.error( 'Failed to get information for quiddity', quiddityId, quiddityClass.error );
+    } else if ( quiddity.error ) {
+        return log.error( 'Failed to get information for quiddity', quiddityId, quiddity.error );
     }
 
-    log.debug( quiddityClass );
+    log.debug( quiddity );
 
     // Only proceed if it's not on of the 'private' quiddities, they don't matter to the client
-    if ( !_.contains( this.privateQuiddities, quiddityClass.class ) ) {
+    if ( !_.contains( this.privateQuiddities, quiddity.class ) ) {
 
         // Subscribe to property/method add/remove signals
         this.switcher.subscribe_to_signal( quiddityId, 'on-property-added' );
@@ -269,7 +312,7 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
         this.switcher.subscribe_to_signal( quiddityId, 'on-method-removed' );
 
         // SOAP Control Client
-        if ( quiddityClass.class == 'SOAPcontrolClient' ) {
+        if ( quiddity.class == 'SOAPcontrolClient' ) {
             log.debug( 'SOAP Control Client, subscribing to on-connection-tried' );
             this.switcher.subscribe_to_signal( quiddityId, 'on-connection-tried' );
         }
@@ -278,20 +321,19 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
         this.switcher.subscribe_to_signal( quiddityId, 'on-tree-grafted' );
         this.switcher.subscribe_to_signal( quiddityId, 'on-tree-pruned' );
 
-        // Then subscribe to all of the quiddity's properties
-        try {
-            var properties = this.switcher.get_properties_description( quiddityId ).properties;
-            _.each( properties, function ( property ) {
-                this._parseProperty( property );
+        // Fill with properties, methods and tree
+        this._fillQuiddity( quiddity );
+
+        // Subscribe to properties
+        if ( quiddity.properties ) {
+            _.each( quiddity.properties, function ( property ) {
                 log.debug( 'Subscribing to property ' + property.name + ' (' + property.id + ') of ' + quiddityId );
                 this.switcher.subscribe_to_property( quiddityId, property.id );
             }, this );
-        } catch ( e ) {
-            log.error( 'Error getting properties for quiddity', quiddityId, e );
         }
 
         // Broadcast creation message including the creator's socketId so that the interface can know if they created the quiddity
-        this.io.emit( 'create', quiddityClass, this.quidditySocketMap[quiddityId] );
+        this.io.emit( 'create', quiddity, this.quidditySocketMap[quiddityId] );
     }
 };
 
@@ -306,7 +348,11 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
 
     // Remove related stuff
     //TODO: Remove connections?
-    //TODO: Remove control destinations?
+    try {
+        this.switcherController.controlManager.removeMappingsByQuiddity( quiddityId );
+    } catch ( e ) {
+        log.error( 'Error while removing quiddity mappings', quiddityId, e);
+    }
 
     // Broadcast to clients
     this.io.emit( 'remove', quiddityId );
@@ -321,14 +367,16 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
  */
 QuiddityManager.prototype._onTreeGrafted = function( quiddityId, value ) {
     var graftedPath = value.split( '.' );
+    // Remove the first empty value, because paths start with a dot
     graftedPath.shift();
 
+    // Shmdatas
     if ( graftedPath[0] == 'shmdata' && graftedPath.length >= 3 ) {
         var graftedShmdataType = graftedPath[1];
         var graftedShmdataPath = graftedPath[2];
         if ( !_.isEmpty( graftedShmdataPath ) && _.contains( this.shmdataTypes, graftedShmdataType ) ) {
             try {
-                var shmdataInfo = this.switcher.get_info( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
+                var shmdataInfo = this.getTreeInfo( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
             } catch ( e ) {
                 log.error( e );
             }
@@ -341,6 +389,10 @@ QuiddityManager.prototype._onTreeGrafted = function( quiddityId, value ) {
                 this.io.emit( 'shmdata.update', quiddityId, shmdataInfo );
             }
         }
+    } else {
+        //TODO: Be more granular about this once switcher's tree can return individual values
+        var tree = this.getTreeInfo( quiddityId, '.' );
+        this.io.emit( 'quiddity.tree.updated', quiddityId, tree );
     }
 };
 
@@ -355,7 +407,7 @@ QuiddityManager.prototype._onTreePruned = function( quiddityId, value ) {
     var prunedPath = value.split( '.' );
     prunedPath.shift();
 
-    // Shmdata Writer
+    // Shmdatas
     if ( prunedPath[0] == 'shmdata' && prunedPath.length >= 2 ) {
         var prunedShmdataType = prunedPath[1];
         if ( _.contains( this.shmdataTypes, prunedShmdataType ) ) {
@@ -373,6 +425,10 @@ QuiddityManager.prototype._onTreePruned = function( quiddityId, value ) {
                 } );
             }
         }
+    } else {
+        //TODO: Be more granular about this once switcher's tree can return individual values
+        var tree = this.getTreeInfo( quiddityId, '.' );
+        this.io.emit( 'quiddity.tree.updated', quiddityId, tree );
     }
 };
 
@@ -590,7 +646,6 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId 
  */
 QuiddityManager.prototype.remove = function ( quiddityId ) {
     log.info( 'Removing quiddity ' + quiddityId );
-
     var result = this.switcher.remove( quiddityId );
     if ( result ) {
         log.debug( 'Quiddity ' + quiddityId + ' removed.' );
@@ -628,9 +683,10 @@ QuiddityManager.prototype.getQuiddityClasses = function () {
 /**
  * Get Quiddities
  *
+ * @param {Object} config
  * @returns {Array} List of quiddities
  */
-QuiddityManager.prototype.getQuiddities = function () {
+QuiddityManager.prototype.getQuiddities = function ( config ) {
     log.info( 'Getting quiddities' );
 
     var result = this.switcher.get_quiddities_description();
@@ -644,6 +700,11 @@ QuiddityManager.prototype.getQuiddities = function () {
             return !_.contains( this.privateQuiddities, quiddity.class );
         }, this );
     }
+
+    // Fill quiddities with their properties, methods and tree before sending
+    _.each( quiddities, function( quiddity ) {
+        this._fillQuiddity( quiddity, config );
+    }, this );
 
     return quiddities;
 };
@@ -678,7 +739,7 @@ QuiddityManager.prototype.getQuiddityDescription = function ( quiddityId ) {
  * @returns {Object} Information contained in the tree or an empty object if nothing was found
  */
 QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path ) {
-    log.info( 'Getting quiddity information for: ' + quiddityId + ' ' + path );
+    log.verbose( 'Getting quiddity tree for: ' + quiddityId + ' ' + path );
 
     var result = this.switcher.get_info( quiddityId, path );
     if ( result && result.error ) {

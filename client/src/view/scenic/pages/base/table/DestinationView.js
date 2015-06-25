@@ -14,7 +14,7 @@ define( [
      * @constructor
      * @extends module:Marionette.ItemView
      */
-    var Destination = Marionette.ItemView.extend( {
+    var DestinationView = Marionette.ItemView.extend( {
         template: _.template( DestinationTemplate ),
         templateHelpers: function() {
             return {
@@ -63,5 +63,5 @@ define( [
         }
     } );
 
-    return Destination;
+    return DestinationView;
 } );

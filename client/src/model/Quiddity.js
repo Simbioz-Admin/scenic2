@@ -20,7 +20,6 @@ define( [
 
     var Quiddity = ScenicModel.extend( {
 
-
         defaults: function () {
             return {
                 "id":          null,
@@ -28,6 +27,7 @@ define( [
                 "properties":  new Properties(),
                 "methods":     new Methods(),
                 "shmdatas":    new Shmdatas(),
+                "tree":        {},
                 // Dynamic
                 "maxReaders":  null
             }
@@ -38,6 +38,12 @@ define( [
             classDescription: function() {
                 return this.collection.classes.get( this.get('class') );
             }
+        },
+
+        parse: function( result ) {
+            result.properties = new Properties(result.properties, { parse: true });
+            result.methods = new Methods(result.methods, { parse: true });
+            return result;
         },
 
         /**
@@ -55,14 +61,18 @@ define( [
             // This prevents fetches and socket binding being done by temporary quiddities
             if ( !this.isNew() ) {
                 this.get( 'properties' ).bindToSocket();
-                this.get( 'properties' ).fetch();
+                //this.get( 'properties' ).fetch(); Quiddities now come filled with everything needed
                 this.get( 'methods' ).bindToSocket();
-                this.get( 'methods' ).fetch();
+                //this.get( 'methods' ).fetch(); Quiddities now come filled with everything needed
                 this.get( 'shmdatas' ).bindToSocket();
-                this.get( 'shmdatas' ).fetch();
+                //this.get( 'shmdatas' ).fetch(); Quiddities now come filled with everything needed
+                if ( this.has('tree') ) {
+                    this.get( 'shmdatas' ).set( this.get( 'tree' ).shmdata, { parse: true } );
+                }
 
                 // Handlers
                 this.onSocket( "remove", _.bind( this._onRemoved, this ) );
+                this.onSocket( "quiddity.tree.updated", _.bind( this._onTreeUpdated, this ) );
             }
 
         },
@@ -86,6 +96,19 @@ define( [
 
                 // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );
+            }
+        },
+
+        /**
+         * Tre Updated Handler
+         *
+         * @param {string} quiddityId
+         * @param {Object} tree
+         * @private
+         */
+        _onTreeUpdated: function( quiddityId, tree ) {
+            if ( this.id == quiddityId ) {
+                this.set('tree', tree);
             }
         },
 

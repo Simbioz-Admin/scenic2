@@ -37,6 +37,7 @@ define( [
          * @inheritdoc
          */
         canConnect: function ( shmdata, destination, callback ) {
+            //TODO: There must be a better way than having to send caps to the server every time
             socket.emit( 'quiddity.method.invoke', destination.id, 'can-sink-caps', [shmdata.get( 'caps' )], function ( error, canSink ) {
                 if ( error ) {
                     console.error( error );

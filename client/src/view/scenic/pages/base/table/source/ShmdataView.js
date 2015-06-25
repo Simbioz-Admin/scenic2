@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/source/shmdata/ConnectionView',
+    'view/scenic/pages/base/table/ConnectionView',
     'text!template/scenic/pages/base/table/source/shmdata.html'
 ], function ( _, Backbone, Marionette, ConnectionView, ShmdataTemplate ) {
 
@@ -14,14 +14,14 @@ define( [
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var Shmdata = Marionette.CompositeView.extend( {
+    var ShmdataView = Marionette.CompositeView.extend( {
         template:           _.template( ShmdataTemplate ),
         className:          'shmdata',
 
         childView:          ConnectionView,
         childViewOptions: function() {
             return {
-                shmdata: this.model,
+                source: this.model,
                 table: this.options.table
             }
         },
@@ -89,5 +89,5 @@ define( [
         }
     } );
 
-    return Shmdata;
+    return ShmdataView;
 } );

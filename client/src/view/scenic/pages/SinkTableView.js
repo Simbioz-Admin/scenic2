@@ -7,8 +7,9 @@ define( [
     'view/scenic/pages/base/TableView',
     'view/scenic/pages/base/table/SourcesView',
     'view/scenic/pages/base/table/DestinationsView',
-    'view/scenic/pages/sink/SinkMenus',
-], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, SinkMenus ) {
+    'view/scenic/pages/sink/SinkConnectionView',
+    'view/scenic/pages/sink/SinkMenus'
+], function ( _, Backbone, Marionette, TableView, SourcesView, DestinationsView, SinkConnectionView, SinkMenus ) {
 
     /**
      * @constructor
@@ -36,7 +37,8 @@ define( [
             } ) );
             this.showChildView( 'sources', new SourcesView( {
                 table:      this.model,
-                collection: this.model.getSourceCollection()
+                collection: this.model.getSourceCollection(),
+                connectionView: SinkConnectionView
             } ) );
             this.showChildView( 'destinations', new DestinationsView( {
                 table:      this.model,

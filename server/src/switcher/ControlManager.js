@@ -46,6 +46,15 @@ ControlManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value
 
 };
 
+/**
+ * Add Mapping
+ *
+ * @param {string} sourceQuiddity
+ * @param {string} sourceProperty
+ * @param {string} destinationQuiddity
+ * @param {string} destinationProperty
+ * @returns {boolean}
+ */
 ControlManager.prototype.addMapping = function( sourceQuiddity, sourceProperty, destinationQuiddity, destinationProperty ) {
     log.info('Adding mapping', sourceQuiddity, sourceProperty, 'to', destinationQuiddity, destinationProperty );
     
@@ -93,6 +102,69 @@ ControlManager.prototype.addMapping = function( sourceQuiddity, sourceProperty, 
 
     // If we are here everything went smoothly
     return true;
+};
+
+/**
+ * Remove Mappings By Source
+ *
+ * @param {string} targetQuiddity
+ */
+ControlManager.prototype.removeMappingsByQuiddity = function( targetQuiddity ) {
+    log.info( 'Removing mappers by quiddity', targetQuiddity );
+
+    var quiddities = this.switcherController.quiddityManager.getQuiddities({ tree: true });
+    if ( !quiddities ) {
+        return false;
+    }
+    var mappers = _.filter(quiddities, function( quiddity ) {
+        return ( quiddity.class == 'property-mapper' && quiddity.tree && (
+            ( quiddity.tree.source && quiddity.tree.source.quiddity == targetQuiddity ) ||
+            ( quiddity.tree.sink && quiddity.tree.sink.quiddity == targetQuiddity )
+        ) );
+    }, this);
+
+    var allRemoved = true;
+    _.each( mappers, function( mapper ) {
+        var removed = this.switcherController.quiddityManager.remove( mapper.id );
+        if ( !removed ) {
+            allRemoved = false;
+        }
+    }, this );
+
+    return allRemoved;
+};
+
+/**
+ * Remove Mappings By Destination
+ *
+ * @param {string} destinationQuiddity
+ * @param {string} destinationProperty
+ */
+ControlManager.prototype.removeMappingsByDestination = function( destinationQuiddity, destinationProperty ) {
+    log.info( 'Removing mappers by destination', destinationQuiddity, destinationProperty);
+    var quiddities = this.switcherController.quiddityManager.getQuiddities();
+    if ( !quiddities ) {
+        return false;
+    }
+
+    var mappers = _.filter(quiddities, function( quiddity ) {
+        return (
+            quiddity.class == 'property-mapper' &&
+            quiddity.tree &&
+            quiddity.tree.sink &&
+            quiddity.tree.sink.quiddity == destinationQuiddity &&
+            quiddity.tree.sink.property == destinationProperty );
+    }, this);
+
+    var allRemoved = true;
+    _.each( mappers, function( mapper ) {
+        var removed = this.switcherController.quiddityManager.remove( mapper.id );
+        if ( !removed ) {
+            allRemoved = false;
+        }
+    }, this );
+
+    return allRemoved;
 };
 
 

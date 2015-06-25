@@ -45,7 +45,7 @@ define( [
                 step:  step,
                 min:   minimum,
                 max:   maximum,
-                animate: 'fast',
+                animate: false,
                 slide: function ( event, ui ) {
                     self.model.updateValue( ui.value );
                 }

@@ -11,7 +11,7 @@ define( [
      *  @constructor
      *  @augments module:Marionette.LayoutView
      */
-    var Table = Marionette.LayoutView.extend( {
+    var TableView = Marionette.LayoutView.extend( {
         tagName:   'div',
         className: 'table',
         template:  _.template( TableTemplate ),
@@ -30,5 +30,5 @@ define( [
         }
     } );
 
-    return Table;
+    return TableView;
 } );

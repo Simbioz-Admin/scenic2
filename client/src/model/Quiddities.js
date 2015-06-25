@@ -39,14 +39,14 @@ define( [
 
         /**
          * Create Handler
-         * Listens to quididity creations and add/merge new quiddities to the collection
+         * Listens to quiddity creations and add/merge new quiddities to the collection
          *
          * @private
          * @param quiddityData
          * @param socketId
          */
         _onCreate: function ( quiddityData, socketId ) {
-            var quiddity = this.add( quiddityData, {merge: true} );
+            var quiddity = this.add( quiddityData, {merge: true, parse: true} );
             this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
             // If we created it, start editing it
             if ( socket.id == socketId ) {

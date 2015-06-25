@@ -88,7 +88,8 @@ define( [
                 // The id generation is done here but could as well be done on the server,
                 // but since this id is only used in backbone's context I left it here.
                 shmdata.id = shmdata.path + '.' + shmdata.type;
-                this.add( shmdata, { merge: true } );
+                // For now it is already parsed
+                this.add( shmdata, { merge: true/*, parse: true*/ } );
             }
         }
     } );

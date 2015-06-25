@@ -68,7 +68,8 @@ var config = {
     homePath: homePath,
     savePath: homePath + "/save_files/",
     contactsPath: homePath + "/contacts.json",
-    logPath: homePath + '/logs/'
+    logPath: homePath + '/logs/',
+    logLevel: 'switcher'
 };
 
 module.exports = config;

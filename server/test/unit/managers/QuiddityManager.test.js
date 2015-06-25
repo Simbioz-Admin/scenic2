@@ -20,14 +20,14 @@ describe( 'Quiddity Manager', function () {
     var quiddityManager;
 
     beforeEach( function () {
-        switcher                = new switcherStub.Switcher();
-        config                  = {
+        switcher = new switcherStub.Switcher();
+        config   = {
             systemUsage: {
                 quiddName: 'systemusage'
             }
         };
-        io                      = {};
-        io.emit                 = sinon.spy();
+        io       = {};
+        io.emit  = sinon.spy();
 
         switcherController = {
             switcher: switcher,
@@ -35,11 +35,11 @@ describe( 'Quiddity Manager', function () {
             io:       io
         };
 
-        var QuiddityManager     = proxyquire( '../../../src/switcher/QuiddityManager', {
-            'switcher':         switcher,
-            '../lib/logger':    logStub()
+        var QuiddityManager = proxyquire( '../../../src/switcher/QuiddityManager', {
+            'switcher':      switcher,
+            '../lib/logger': logStub()
         } );
-        quiddityManager         = new QuiddityManager( switcherController );
+        quiddityManager     = new QuiddityManager( switcherController );
     } );
 
     afterEach( function () {
@@ -124,11 +124,22 @@ describe( 'Quiddity Manager', function () {
 
     describe( 'Internals', function () {
 
-        it( 'should register added quiddity correctly', function () {
-            var id = 'someId';
+        beforeEach( function () {
+            sinon.stub( quiddityManager, 'getTreeInfo' );
+        } );
 
-            switcher.get_quiddity_description.returns( quiddities.class() );
+        it( 'should register added quiddity correctly', function () {
+            var id = quiddities.quiddity().id;
+
+            switcher.get_quiddity_description.returns( quiddities.quiddity() );
             switcher.get_properties_description.returns( quiddities.properties() );
+            switcher.get_methods_description.returns( quiddities.methods() );
+            quiddityManager.getTreeInfo.returns( quiddities.tree() );
+
+            var resultBundle        = quiddities.quiddity();
+            resultBundle.properties = quiddities.properties_parsed();
+            resultBundle.methods    = quiddities.methods_parsed();
+            resultBundle.tree       = quiddities.tree();
 
             quiddityManager._onCreated( id );
 
@@ -146,13 +157,19 @@ describe( 'Quiddity Manager', function () {
             switcher.get_properties_description.should.have.been.calledOnce;
             switcher.get_properties_description.should.have.been.calledWith( id );
 
+            switcher.get_methods_description.should.have.been.calledOnce;
+            switcher.get_methods_description.should.have.been.calledWith( id );
+
+            quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            quiddityManager.getTreeInfo.should.have.been.calledWith( id );
+
             switcher.subscribe_to_property.callCount.should.eql( quiddities.properties().properties.length );
             quiddities.properties().properties.forEach( function ( property ) {
                 switcher.subscribe_to_property.should.have.been.calledWith( id, property.name );
             } );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'create', quiddities.class() );
+            io.emit.should.have.been.calledWith( 'create', resultBundle );
         } );
 
         it( 'should stop when registering added private quiddity', function () {
@@ -187,7 +204,7 @@ describe( 'Quiddity Manager', function () {
 
         it( 'should stop when registering added quiddity returns error', function () {
             var error = 'some error';
-            switcher.get_quiddity_description.returns( {error: error} );
+            switcher.get_quiddity_description.returns( { error: error } );
 
             quiddityManager._onCreated( 0 );
 
@@ -266,7 +283,7 @@ describe( 'Quiddity Manager', function () {
             var value    = 'val';
             var error    = 'some error';
 
-            switcher.get_property_description.returns( {error: error} );
+            switcher.get_property_description.returns( { error: error } );
 
             quiddityManager.onSwitcherProperty( quiddity, property, value );
 
@@ -311,74 +328,6 @@ describe( 'Quiddity Manager', function () {
 
     describe( 'Signals Events', function () {
 
-        it( 'should notify clients and cleanup when quiddity is removed', function () {
-            quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'remove', 'anything' );
-        } );
-
-        it( 'should internally add quiddity on quiddity created', function () {
-            var id      = 'quiddity';
-            var onAdded = sinon.stub( quiddityManager, '_onCreated' );
-            quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-created', [id] );
-            onAdded.should.have.been.calledOnce;
-            onAdded.should.have.been.calledWith( id );
-        } );
-
-        it( 'should internally remove quiddity on quiddity removed', function () {
-            var id        = 'quiddity';
-            var onRemoved = sinon.stub( quiddityManager, '_onRemoved' );
-            quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', [id] );
-            onRemoved.should.have.been.calledOnce;
-            onRemoved.should.have.been.calledWith( id );
-        } );
-
-        it( 'should subscribe to property when property is added', function () {
-            quiddityManager.onSwitcherSignal( 'irrelevant', 'on-property-added', ['anything'] );
-            switcher.subscribe_to_property.should.have.been.calledOnce;
-            switcher.subscribe_to_property.should.have.been.calledWith( 'irrelevant', 'anything' );
-        } );
-
-        it( 'should pass along property added to clients', function () {
-            var id     = 'quiddity';
-            var signal = 'on-property-added';
-            var val    = 'smtng';
-            sinon.stub(quiddityManager, 'getPropertyDescription');
-            quiddityManager.getPropertyDescription.returns(quiddities.property_float_parsed());
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'quiddity.property.added', id, quiddities.property_float_parsed() );
-        } );
-
-        it( 'should pass along property removed to clients', function () {
-            var id     = 'quiddity';
-            var signal = 'on-property-removed';
-            var val    = 'smtng';
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'quiddity.property.removed', id, val );
-        } );
-
-        it( 'should pass along method added to clients', function () {
-            var id     = 'quiddity';
-            var signal = 'on-method-added';
-            var val    = 'smtng';
-            sinon.stub(quiddityManager, 'getMethodDescription');
-            quiddityManager.getMethodDescription.returns(quiddities.method_parsed());
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'quiddity.method.added', id, quiddities.method_parsed() );
-        } );
-
-        it( 'should pass along method removed to clients', function () {
-            var id     = 'quiddity';
-            var signal = 'on-method-removed';
-            var val    = 'smtng';
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'quiddity.method.removed', id, val );
-        } );
-
         it( 'should not pass along garbage to clients', function () {
             var id     = 'quiddity';
             var signal = 'some-fake-signal';
@@ -387,261 +336,376 @@ describe( 'Quiddity Manager', function () {
             io.emit.should.not.have.been.called;
         } );
 
-        it( 'should add shmdata writers', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
+        describe( 'Quiddity lifecycle signals', function () {
 
-            switcher.get_info.returns( quiddities.shmdata_writer() );
+            it( 'should notify clients and cleanup when quiddity is removed', function () {
+                quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'remove', 'anything' );
+            } );
 
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
+            it( 'should internally add quiddity on quiddity created', function () {
+                var id      = 'quiddity';
+                var onAdded = sinon.stub( quiddityManager, '_onCreated' );
+                quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-created', [id] );
+                onAdded.should.have.been.calledOnce;
+                onAdded.should.have.been.calledWith( id );
+            } );
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWith( id, val );
-            //Skipped second call, relevant to deprecated vu meters
+            it( 'should internally remove quiddity on quiddity removed', function () {
+                var id        = 'quiddity';
+                var onRemoved = sinon.stub( quiddityManager, '_onRemoved' );
+                quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', [id] );
+                onRemoved.should.have.been.calledOnce;
+                onRemoved.should.have.been.calledWith( id );
+            } );
 
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_writer_parsed(), {
-                path: shm,
-                type: type
-            } ) );
         } );
 
-        it( 'should not add shmdata writers when it throws', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            var error  = 'some error';
+        describe( 'Quiddity properties signals', function () {
 
-            switcher.get_info.throws( error );
+            it( 'should subscribe to property when property is added', function () {
+                quiddityManager.onSwitcherSignal( 'irrelevant', 'on-property-added', ['anything'] );
+                switcher.subscribe_to_property.should.have.been.calledOnce;
+                switcher.subscribe_to_property.should.have.been.calledWith( 'irrelevant', 'anything' );
+            } );
 
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
+            it( 'should pass along property added to clients', function () {
+                var id     = 'quiddity';
+                var signal = 'on-property-added';
+                var val    = 'smtng';
+                sinon.stub( quiddityManager, 'getPropertyDescription' );
+                quiddityManager.getPropertyDescription.returns( quiddities.property_float_parsed() );
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'quiddity.property.added', id, quiddities.property_float_parsed() );
+            } );
 
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
+            it( 'should pass along property removed to clients', function () {
+                var id     = 'quiddity';
+                var signal = 'on-property-removed';
+                var val    = 'smtng';
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'quiddity.property.removed', id, val );
+            } );
+
         } );
 
-        it( 'should not add shmdata writers when it returns null', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
+        describe( 'Quiddity methods signals', function () {
 
-            switcher.get_info.returns( null );
+            it( 'should pass along method added to clients', function () {
+                var id     = 'quiddity';
+                var signal = 'on-method-added';
+                var val    = 'smtng';
+                sinon.stub( quiddityManager, 'getMethodDescription' );
+                quiddityManager.getMethodDescription.returns( quiddities.method_parsed() );
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'quiddity.method.added', id, quiddities.method_parsed() );
+            } );
 
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
+            it( 'should pass along method removed to clients', function () {
+                var id     = 'quiddity';
+                var signal = 'on-method-removed';
+                var val    = 'smtng';
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'quiddity.method.removed', id, val );
+            } );
 
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
         } );
 
-        it( 'should not add shmdata writers when it returns an error', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            var error  = 'some error';
-
-            switcher.get_info.returns( {error: error} );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-
-        it( 'should not add shmdata writers when it returns garbage', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'writer';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-
-            switcher.get_info.returns( 'pouet' );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-
-        it( 'should add shmdata readers', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-
-            switcher.get_info.returns( quiddities.shmdata_reader() );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWith( id, val );
-
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_reader(), {
-                path: shm,
-                type: type
-            } ) );
-        } );
-
-        it( 'should not add shmdata readers when it throws', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            var error  = 'some error';
-
-            switcher.get_info.throws( error );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-
-        it( 'should not add shmdata readers when it returns null', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-
-            switcher.get_info.returns( null );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-
-        it( 'should not add shmdata readers when it returns an error', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-            var error  = 'some error';
-
-            switcher.get_info.returns( {error: error} );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-
-        it( 'should not add shmdata readers when it returns garbage', function () {
-            var id     = 'irrelevant';
-            var signal = 'on-tree-grafted';
-            var type   = 'reader';
-            var shm    = 'something';
-            var val    = '.shmdata.' + type + '.' + shm;
-
-            switcher.get_info.returns( 'pouet' );
-
-            quiddityManager.onSwitcherSignal( id, signal, [val] );
-
-            switcher.get_info.should.have.been.calledOnce;
-            io.emit.should.not.have.been.called;
-        } );
-        //TODO: Error cases
-
-        describe('Removing shmdatas', function() {
+        describe( 'Quiddity tree signals', function() {
 
             var id;
-            var signal;
-            var type;
-            var shm;
             var val;
 
             beforeEach(function() {
-                id     = 'irrelevant';
-                signal = 'on-tree-pruned';
+                id = 'someId';
+                val    = 'smtng';
+                sinon.stub( quiddityManager, 'getTreeInfo');
             });
 
-            describe('Writers', function() {
+            it( 'should pass along tree updates when grafting', function () {
+                var signal = 'on-tree-grafted';
+                quiddityManager.getTreeInfo.returns( quiddities.tree() );
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                quiddityManager.getTreeInfo.should.have.been.calledOnce;
+                quiddityManager.getTreeInfo.should.have.been.calledWithExactly( id, '.');
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith('quiddity.tree.updated', id, quiddities.tree());
+            } );
 
-                beforeEach(function() {
-                    type   = 'writer';
-                    shm    = 'something';
-                    val    = '.shmdata.' + type + '.' + shm;
-                });
-
-                it( 'should remove shmdata writers individually', function () {
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
-                } );
-
-                it( 'should remove all shmdata writers when empty path present', function () {
-                    shm = '';
-                    val = '.shmdata.' + type + '.' + shm;
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
-                } );
-
-                it( 'should remove all shmdata writers when no path present', function () {
-                    val = '.shmdata.' + type;
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
-                } );
-
-            });
-
-            describe('Readers', function() {
-
-                beforeEach(function() {
-                    type   = 'reader';
-                    shm    = 'something';
-                    val    = '.shmdata.' + type + '.' + shm;
-                });
-
-                it( 'should remove shmdata readers', function () {
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
-                } );
-
-                it( 'should remove all shmdata readers when empty path present', function () {
-                    shm = '';
-                    val = '.shmdata.' + type + '.' + shm;
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
-                } );
-
-                it( 'should remove all shmdata readers when no path present', function () {
-                    val = '.shmdata.' + type;
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.have.been.calledOnce;
-                    io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
-                } );
-            });
-
-            describe('Misc', function() {
-
-                it( 'should not remove when shmdata type is unknown', function () {
-                    type   = 'something';
-                    shm    = 'else';
-                    val    = '.shmdata.' + type + '.' + shm;
-                    quiddityManager.onSwitcherSignal( id, signal, [val] );
-                    io.emit.should.not.have.been.called;
-                } );
-
-            });
+            it( 'should pass along tree updates when pruning', function () {
+                var signal = 'on-tree-pruned';
+                quiddityManager.getTreeInfo.returns( quiddities.tree() );
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+                quiddityManager.getTreeInfo.should.have.been.calledOnce;
+                quiddityManager.getTreeInfo.should.have.been.calledWithExactly( id, '.');
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith('quiddity.tree.updated', id, quiddities.tree());
+            } );
 
         });
+
+        describe( 'Quiddity shmdata signals', function () {
+
+            it( 'should add shmdata writers', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'writer';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( quiddities.shmdata_writer() );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                switcher.get_info.should.have.been.calledWith( id, val );
+                //Skipped second call, relevant to deprecated vu meters
+
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_writer_parsed(), {
+                    path: shm,
+                    type: type
+                } ) );
+            } );
+
+            it( 'should not add shmdata writers when it throws', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'writer';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+                var error  = 'some error';
+
+                switcher.get_info.throws( error );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata writers when it returns null', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'writer';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( null );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata writers when it returns an error', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'writer';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+                var error  = 'some error';
+
+                switcher.get_info.returns( { error: error } );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata writers when it returns garbage', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'writer';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( 'pouet' );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should add shmdata readers', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'reader';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( quiddities.shmdata_reader() );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                switcher.get_info.should.have.been.calledWith( id, val );
+
+                io.emit.should.have.been.calledOnce;
+                io.emit.should.have.been.calledWith( 'shmdata.update', id, _.extend( quiddities.shmdata_reader(), {
+                    path: shm,
+                    type: type
+                } ) );
+            } );
+
+            it( 'should not add shmdata readers when it throws', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'reader';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+                var error  = 'some error';
+
+                switcher.get_info.throws( error );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata readers when it returns null', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'reader';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( null );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata readers when it returns an error', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'reader';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+                var error  = 'some error';
+
+                switcher.get_info.returns( { error: error } );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+
+            it( 'should not add shmdata readers when it returns garbage', function () {
+                var id     = 'irrelevant';
+                var signal = 'on-tree-grafted';
+                var type   = 'reader';
+                var shm    = 'something';
+                var val    = '.shmdata.' + type + '.' + shm;
+
+                switcher.get_info.returns( 'pouet' );
+
+                quiddityManager.onSwitcherSignal( id, signal, [val] );
+
+                switcher.get_info.should.have.been.calledOnce;
+                io.emit.should.not.have.been.called;
+            } );
+            //TODO: Error cases
+
+            describe( 'Removing shmdatas', function () {
+
+                var id;
+                var signal;
+                var type;
+                var shm;
+                var val;
+
+                beforeEach( function () {
+                    id     = 'irrelevant';
+                    signal = 'on-tree-pruned';
+                } );
+
+                describe( 'Writers', function () {
+
+                    beforeEach( function () {
+                        type = 'writer';
+                        shm  = 'something';
+                        val  = '.shmdata.' + type + '.' + shm;
+                    } );
+
+                    it( 'should remove shmdata writers individually', function () {
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
+                    } );
+
+                    it( 'should remove all shmdata writers when empty path present', function () {
+                        shm = '';
+                        val = '.shmdata.' + type + '.' + shm;
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                    } );
+
+                    it( 'should remove all shmdata writers when no path present', function () {
+                        val = '.shmdata.' + type;
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                    } );
+
+                } );
+
+                describe( 'Readers', function () {
+
+                    beforeEach( function () {
+                        type = 'reader';
+                        shm  = 'something';
+                        val  = '.shmdata.' + type + '.' + shm;
+                    } );
+
+                    it( 'should remove shmdata readers', function () {
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { path: shm, type: type } );
+                    } );
+
+                    it( 'should remove all shmdata readers when empty path present', function () {
+                        shm = '';
+                        val = '.shmdata.' + type + '.' + shm;
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                    } );
+
+                    it( 'should remove all shmdata readers when no path present', function () {
+                        val = '.shmdata.' + type;
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.have.been.calledOnce;
+                        io.emit.should.have.been.calledWith( 'shmdata.remove', id, { type: type } );
+                    } );
+                } );
+
+                describe( 'Misc', function () {
+
+                    it( 'should not remove when shmdata type is unknown', function () {
+                        type = 'something';
+                        shm  = 'else';
+                        val  = '.shmdata.' + type + '.' + shm;
+                        quiddityManager.onSwitcherSignal( id, signal, [val] );
+                        io.emit.should.not.have.been.called;
+                    } );
+
+                } );
+            } );
+        } );
     } );
 
     describe( 'Methods', function () {
@@ -650,14 +714,14 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol', function () {
                 switcher.get_classes_doc.returns( quiddities.classes_doc() );
-                var result         = quiddityManager.getQuiddityClasses();
+                var result = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
                 result.should.eql( quiddities.classes_doc_public().classes );
             } );
 
             it( 'should follow protocol with empty classes', function () {
-                switcher.get_classes_doc.returns( {classes: []} );
+                switcher.get_classes_doc.returns( { classes: [] } );
                 var result = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
@@ -673,7 +737,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should throw error when switcher returns error', function () {
                 var error = 'some error';
-                switcher.get_classes_doc.returns( {error: error} );
+                switcher.get_classes_doc.returns( { error: error } );
                 expect( quiddityManager.getQuiddityClasses.bind( quiddityManager ) ).to.throw( error );
                 switcher.get_classes_doc.should.have.been.calledOnce;
             } );
@@ -687,7 +751,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return empty array when switcher returns null classes', function () {
-                switcher.get_classes_doc.returns( {classes: null} );
+                switcher.get_classes_doc.returns( { classes: null } );
                 var result = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
@@ -695,7 +759,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return emptu array when switcher returns garbage classes 1', function () {
-                switcher.get_classes_doc.returns( {classes: 'not an array'} );
+                switcher.get_classes_doc.returns( { classes: 'not an array' } );
                 var result = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
@@ -703,7 +767,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return empty array when switcher returns garbage classes 2', function () {
-                switcher.get_classes_doc.returns( {classes: {not: 'an array'}} );
+                switcher.get_classes_doc.returns( { classes: { not: 'an array' } } );
                 var result = quiddityManager.getQuiddityClasses();
                 switcher.get_classes_doc.should.have.been.calledOnce;
                 should.exist( result );
@@ -722,18 +786,42 @@ describe( 'Quiddity Manager', function () {
 
         describe( 'Quiddities', function () {
 
+            beforeEach( function () {
+                sinon.stub( quiddityManager, 'getTreeInfo' );
+            } );
+
             it( 'should follow protocol', function () {
+                var resultBundle = quiddities.quiddities_public().quiddities;
+                _.each( resultBundle, function ( quiddity ) {
+                    quiddity.properties = quiddities.properties_parsed();
+                    quiddity.methods    = quiddities.methods_parsed();
+                    quiddity.tree       = quiddities.tree();
+                } );
+
                 switcher.get_quiddities_description.returns( quiddities.quiddities() );
-                var result            = quiddityManager.getQuiddities();
+                for ( var i = 0; i < resultBundle.length; i++ ) {
+                    switcher.get_properties_description.onCall( i ).returns( quiddities.properties() );
+                    switcher.get_methods_description.onCall( i ).returns( quiddities.methods() );
+                    quiddityManager.getTreeInfo.onCall( i ).returns( quiddities.tree() );
+                }
+
+                var result = quiddityManager.getQuiddities();
+
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.callCount.should.equal( resultBundle.length );
+                switcher.get_methods_description.callCount.should.equal( resultBundle.length );
+                quiddityManager.getTreeInfo.callCount.should.equal( resultBundle.length );
+
                 should.exist( result );
-                result.should.eql( quiddities.quiddities_public().quiddities );
+                result.should.eql( resultBundle );
             } );
 
             it( 'should follow protocol with empty quiddities', function () {
-                switcher.get_quiddities_description.returns( {quiddities: []} );
+                switcher.get_quiddities_description.returns( { quiddities: [] } );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
@@ -743,43 +831,55 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddities_description.throws( new Error( error ) );
                 expect( quiddityManager.getQuiddities.bind( quiddityManager ) ).to.throw( error );
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
             } );
 
             it( 'should throw error when switcher returns error', function () {
                 var error = 'some error';
-                switcher.get_quiddities_description.returns( {error: error} );
+                switcher.get_quiddities_description.returns( { error: error } );
                 expect( quiddityManager.getQuiddities.bind( quiddityManager ) ).to.throw( error );
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
             } );
 
             it( 'should return empty array when switcher returns null', function () {
                 switcher.get_quiddities_description.returns( null );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
 
             it( 'should return empty array when switcher returns null quiddities', function () {
-                switcher.get_quiddities_description.returns( {quiddities: null} );
+                switcher.get_quiddities_description.returns( { quiddities: null } );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
 
             it( 'should return empty array when switcher returns garbage quiddities 1', function () {
-                switcher.get_quiddities_description.returns( {quiddities: 'not an array'} );
+                switcher.get_quiddities_description.returns( { quiddities: 'not an array' } );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
 
             it( 'should return empty array when switcher returns garbage quiddities 2', function () {
-                switcher.get_quiddities_description.returns( {quiddities: {not: 'an array'}} );
+                switcher.get_quiddities_description.returns( { quiddities: { not: 'an array' } } );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
@@ -788,6 +888,8 @@ describe( 'Quiddity Manager', function () {
                 switcher.get_quiddities_description.returns( {} );
                 var result = quiddityManager.getQuiddities();
                 switcher.get_quiddities_description.should.have.been.calledOnce;
+                switcher.get_properties_description.should.not.have.been.called;
+                switcher.get_methods_description.should.not.have.been.called;
                 should.exist( result );
                 result.should.eql( [] );
             } );
@@ -797,9 +899,9 @@ describe( 'Quiddity Manager', function () {
         describe( 'Quiddity Description', function () {
 
             it( 'should follow protocol', function () {
-                var id       = 'someId';
+                var id     = 'someId';
                 switcher.get_quiddity_description.returns( quiddities.quiddity() );
-                var result   = quiddityManager.getQuiddityDescription( id );
+                var result = quiddityManager.getQuiddityDescription( id );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
@@ -807,9 +909,9 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return empty object with empty quiddity', function () {
-                var id       = 'someId';
+                var id     = 'someId';
                 switcher.get_quiddity_description.returns( {} );
-                var result   = quiddityManager.getQuiddityDescription( id );
+                var result = quiddityManager.getQuiddityDescription( id );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
@@ -817,8 +919,8 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should throw error when switcher throws', function () {
-                var error    = 'some error';
-                var id       = 'someId';
+                var error = 'some error';
+                var id    = 'someId';
                 switcher.get_quiddity_description.throws( new Error( error ) );
                 expect( quiddityManager.getQuiddityDescription.bind( quiddityManager, id ) ).to.throw( error );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
@@ -826,18 +928,18 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should throw error when switcher returns error', function () {
-                var error    = 'some error';
-                var id       = 'someId';
-                switcher.get_quiddity_description.returns( {error: error} );
+                var error = 'some error';
+                var id    = 'someId';
+                switcher.get_quiddity_description.returns( { error: error } );
                 expect( quiddityManager.getQuiddityDescription.bind( quiddityManager, id ) ).to.throw( error );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
             } );
 
             it( 'should return empty object when switcher returns null', function () {
-                var id       = 'someId';
+                var id     = 'someId';
                 switcher.get_quiddity_description.returns( null );
-                var result   = quiddityManager.getQuiddityDescription( id );
+                var result = quiddityManager.getQuiddityDescription( id );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
@@ -845,9 +947,9 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return empty object when switcher returns garbage quiddity 1', function () {
-                var id       = 'someId';
+                var id     = 'someId';
                 switcher.get_quiddity_description.returns( 'not a quiddity' );
-                var result   = quiddityManager.getQuiddityDescription( id );
+                var result = quiddityManager.getQuiddityDescription( id );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
@@ -855,9 +957,9 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should return empty object when switcher returns garbage quiddity 2', function () {
-                var id       = 'someId';
-                switcher.get_quiddity_description.returns( [{not: 'a quiddity'}] );
-                var result   = quiddityManager.getQuiddityDescription( id );
+                var id     = 'someId';
+                switcher.get_quiddity_description.returns( [{ not: 'a quiddity' }] );
+                var result = quiddityManager.getQuiddityDescription( id );
                 switcher.get_quiddity_description.should.have.been.calledOnce;
                 switcher.get_quiddity_description.should.have.been.calledWith( id );
                 should.exist( result );
@@ -865,7 +967,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
         } );
-        
+
         describe( 'Tree', function () {
 
             it( 'should follow protocol', function () {
@@ -904,7 +1006,7 @@ describe( 'Quiddity Manager', function () {
                 var id    = 'someId';
                 var path  = '.some.path';
                 var error = 'some error';
-                switcher.get_info.returns( {error: error} );
+                switcher.get_info.returns( { error: error } );
                 expect( quiddityManager.getTreeInfo.bind( quiddityManager, id, path ) ).to.throw( error );
                 switcher.get_info.should.have.been.calledOnce;
                 switcher.get_info.should.have.been.calledWith( id, path );
@@ -959,7 +1061,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty properties', function () {
                 var id     = 'someId';
-                switcher.get_properties_description.returns( {properties: []} );
+                switcher.get_properties_description.returns( { properties: [] } );
                 var result = quiddityManager.getProperties( id );
                 switcher.get_properties_description.should.have.been.calledOnce;
                 switcher.get_properties_description.should.have.been.calledWith( id );
@@ -979,7 +1081,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should throw error when switcher returns error', function () {
                 var id    = 'someId';
                 var error = 'some error';
-                switcher.get_properties_description.returns( {error: error} );
+                switcher.get_properties_description.returns( { error: error } );
                 expect( quiddityManager.getProperties.bind( quiddityManager, id ) ).to.throw( error );
                 switcher.get_properties_description.should.have.been.calledOnce;
                 switcher.get_properties_description.should.have.been.calledWith( id );
@@ -997,7 +1099,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return mpety array when switcher returns null properties', function () {
                 var id     = 'someId';
-                switcher.get_properties_description.returns( {properties: null} );
+                switcher.get_properties_description.returns( { properties: null } );
                 var result = quiddityManager.getProperties( id );
                 switcher.get_properties_description.should.have.been.calledOnce;
                 switcher.get_properties_description.should.have.been.calledWith( id );
@@ -1007,7 +1109,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return empty array when switcher returns garbage properties 1', function () {
                 var id     = 'someId';
-                switcher.get_properties_description.returns( {properties: 'not an array'} );
+                switcher.get_properties_description.returns( { properties: 'not an array' } );
                 var result = quiddityManager.getProperties( id );
                 switcher.get_properties_description.should.have.been.calledOnce;
                 switcher.get_properties_description.should.have.been.calledWith( id );
@@ -1017,7 +1119,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return empty array when switcher returns garbage properties 2', function () {
                 var id     = 'someId';
-                switcher.get_properties_description.returns( {properties: {not: 'an array'}} );
+                switcher.get_properties_description.returns( { properties: { not: 'an array' } } );
                 var result = quiddityManager.getProperties( id );
                 switcher.get_properties_description.should.have.been.calledOnce;
                 switcher.get_properties_description.should.have.been.calledWith( id );
@@ -1075,7 +1177,7 @@ describe( 'Quiddity Manager', function () {
                 var error    = 'some error';
                 var id       = 'someId';
                 var property = 'prop';
-                switcher.get_property_description.returns( {error: error} );
+                switcher.get_property_description.returns( { error: error } );
                 expect( quiddityManager.getPropertyDescription.bind( quiddityManager, id, property ) ).to.throw( error );
                 switcher.get_property_description.should.have.been.calledOnce;
                 switcher.get_property_description.should.have.been.calledWith( id, property );
@@ -1106,7 +1208,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return empty object when switcher returns garbage property 2', function () {
                 var id       = 'someId';
                 var property = 'prop';
-                switcher.get_property_description.returns( [{not: 'a property'}] );
+                switcher.get_property_description.returns( [{ not: 'a property' }] );
                 var result   = quiddityManager.getPropertyDescription( id, property );
                 switcher.get_property_description.should.have.been.calledOnce;
                 switcher.get_property_description.should.have.been.calledWith( id, property );
@@ -1116,48 +1218,48 @@ describe( 'Quiddity Manager', function () {
 
         } );
 
-        describe( 'Getting Property', function() {
+        describe( 'Getting Property', function () {
 
             var id;
             var prop;
             var val;
 
-            beforeEach(function(){
-                id = 'someId';
+            beforeEach( function () {
+                id   = 'someId';
                 prop = 'someProperty';
-                val = 'someVal';
-            });
+                val  = 'someVal';
+            } );
 
-            it('should follow protocol', function() {
-                switcher.get_property_value.returns(val);
-                var result = quiddityManager.getPropertyValue( id, prop);
+            it( 'should follow protocol', function () {
+                switcher.get_property_value.returns( val );
+                var result = quiddityManager.getPropertyValue( id, prop );
                 switcher.get_property_value.should.have.been.calledOnce;
                 switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
-                should.exist(result);
-                result.should.equal(val);
-            });
+                should.exist( result );
+                result.should.equal( val );
+            } );
 
-            it('should follow protocol even when value is null', function() {
-                switcher.get_property_value.returns(null);
-                var result = quiddityManager.getPropertyValue( id, prop);
+            it( 'should follow protocol even when value is null', function () {
+                switcher.get_property_value.returns( null );
+                var result = quiddityManager.getPropertyValue( id, prop );
                 switcher.get_property_value.should.have.been.calledOnce;
                 switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
-                should.not.exist(result);
-            });
+                should.not.exist( result );
+            } );
 
-            it('should throw error if switcher returns an error', function() {
-                switcher.get_property_value.returns({error:'some error'});
-                expect(quiddityManager.getPropertyValue.bind( quiddityManager, id, prop )).to.throw('some error');
+            it( 'should throw error if switcher returns an error', function () {
+                switcher.get_property_value.returns( { error: 'some error' } );
+                expect( quiddityManager.getPropertyValue.bind( quiddityManager, id, prop ) ).to.throw( 'some error' );
                 switcher.get_property_value.should.have.been.calledOnce;
                 switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
-            });
+            } );
 
-            it('should throw error if switcher throws', function() {
-                switcher.get_property_value.throws(new Error('some error'));
-                expect(quiddityManager.getPropertyValue.bind( quiddityManager, id, prop )).to.throw('some error');
+            it( 'should throw error if switcher throws', function () {
+                switcher.get_property_value.throws( new Error( 'some error' ) );
+                expect( quiddityManager.getPropertyValue.bind( quiddityManager, id, prop ) ).to.throw( 'some error' );
                 switcher.get_property_value.should.have.been.calledOnce;
                 switcher.get_property_value.should.have.been.calledWithExactly( id, prop );
-            });
+            } );
 
         } );
 
@@ -1224,7 +1326,7 @@ describe( 'Quiddity Manager', function () {
                 var id       = 'someId';
                 var property = 'prop';
                 var value    = 'val';
-                switcher.set_property_value.returns( {error: error} );
+                switcher.set_property_value.returns( { error: error } );
                 expect( quiddityManager.setPropertyValue.bind( quiddityManager, id, property, value ) ).to.throw();
                 switcher.set_property_value.should.have.been.calledOnce;
                 switcher.set_property_value.should.have.been.calledWith( id, property, String( value ) );
@@ -1249,7 +1351,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should follow protocol with empty methods', function () {
                 var id     = 'someId';
-                switcher.get_methods_description.returns( {methods: []} );
+                switcher.get_methods_description.returns( { methods: [] } );
                 var result = quiddityManager.getMethods( id );
                 switcher.get_methods_description.should.have.been.calledOnce;
                 switcher.get_methods_description.should.have.been.calledWith( id );
@@ -1269,7 +1371,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should throw error when switcher returns error', function () {
                 var id    = 'someId';
                 var error = 'some error';
-                switcher.get_methods_description.returns( {error: error} );
+                switcher.get_methods_description.returns( { error: error } );
                 expect( quiddityManager.getMethods.bind( quiddityManager, id ) ).to.throw( error );
                 switcher.get_methods_description.should.have.been.calledOnce;
                 switcher.get_methods_description.should.have.been.calledWith( id );
@@ -1287,7 +1389,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return mpety array when switcher returns null methods', function () {
                 var id     = 'someId';
-                switcher.get_methods_description.returns( {methods: null} );
+                switcher.get_methods_description.returns( { methods: null } );
                 var result = quiddityManager.getMethods( id );
                 switcher.get_methods_description.should.have.been.calledOnce;
                 switcher.get_methods_description.should.have.been.calledWith( id );
@@ -1297,7 +1399,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return empty array when switcher returns garbage methods 1', function () {
                 var id     = 'someId';
-                switcher.get_methods_description.returns( {methods: 'not an array'} );
+                switcher.get_methods_description.returns( { methods: 'not an array' } );
                 var result = quiddityManager.getMethods( id );
                 switcher.get_methods_description.should.have.been.calledOnce;
                 switcher.get_methods_description.should.have.been.calledWith( id );
@@ -1307,7 +1409,7 @@ describe( 'Quiddity Manager', function () {
 
             it( 'should return empty array when switcher returns garbage methods 2', function () {
                 var id     = 'someId';
-                switcher.get_methods_description.returns( {methods: {not: 'an array'}} );
+                switcher.get_methods_description.returns( { methods: { not: 'an array' } } );
                 var result = quiddityManager.getMethods( id );
                 switcher.get_methods_description.should.have.been.calledOnce;
                 switcher.get_methods_description.should.have.been.calledWith( id );
@@ -1365,7 +1467,7 @@ describe( 'Quiddity Manager', function () {
                 var error  = 'some error';
                 var id     = 'someId';
                 var method = 'meth';
-                switcher.get_method_description.returns( {error: error} );
+                switcher.get_method_description.returns( { error: error } );
                 expect( quiddityManager.getMethodDescription.bind( quiddityManager, id, method ) ).to.throw( error );
                 switcher.get_method_description.should.have.been.calledOnce;
                 switcher.get_method_description.should.have.been.calledWith( id, method );
@@ -1396,7 +1498,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should return empty object when switcher returns garbage method 2', function () {
                 var id     = 'someId';
                 var method = 'meth';
-                switcher.get_method_description.returns( [{not: 'a method'}] );
+                switcher.get_method_description.returns( [{ not: 'a method' }] );
                 var result = quiddityManager.getMethodDescription( id, method );
                 switcher.get_method_description.should.have.been.calledOnce;
                 switcher.get_method_description.should.have.been.calledWith( id, method );
@@ -1463,13 +1565,13 @@ describe( 'Quiddity Manager', function () {
             var name;
             var socketId;
 
-            beforeEach(function() {
+            beforeEach( function () {
                 type     = 'some type';
                 name     = 'some name';
                 socketId = 'some socket id';
-                sinon.stub(quiddityManager, 'getQuiddityDescription');
+                sinon.stub( quiddityManager, 'getQuiddityDescription' );
                 quiddityManager.getQuiddityDescription.returns( quiddities.quiddity() );
-            });
+            } );
 
             it( 'should follow protocol', function () {
                 switcher.create.returns( name );
@@ -1505,16 +1607,16 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should throw error when switcher throws at create', function () {
-                var error    = 'some error';
+                var error = 'some error';
                 switcher.create.throws( new Error( error ) );
-                expect(quiddityManager.create.bind(quiddityManager, type, name, socketId ) ).to.throw(error);
+                expect( quiddityManager.create.bind( quiddityManager, type, name, socketId ) ).to.throw( error );
                 switcher.create.should.have.been.calledOnce;
                 switcher.create.should.have.been.calledWithExactly( type, name );
                 quiddityManager.getQuiddityDescription.should.not.have.been.called;
             } );
 
             it( 'should return null when switcher returns null at create', function () {
-                var error    = 'some error';
+                var error  = 'some error';
                 switcher.create.returns( null );
                 var result = quiddityManager.create( type, name, socketId );
                 switcher.create.should.have.been.calledOnce;
@@ -1524,10 +1626,10 @@ describe( 'Quiddity Manager', function () {
             } );
 
             it( 'should throw error when switcher throws at quiddity description', function () {
-                var error    = 'some error';
+                var error = 'some error';
                 switcher.create.returns( name );
                 quiddityManager.getQuiddityDescription.throws( new Error( error ) );
-                expect(quiddityManager.create.bind( quiddityManager, type, name, socketId ) ).to.throw(error);
+                expect( quiddityManager.create.bind( quiddityManager, type, name, socketId ) ).to.throw( error );
                 switcher.create.should.have.been.calledOnce;
                 switcher.create.should.have.been.calledWithExactly( type, name );
                 quiddityManager.getQuiddityDescription.should.have.been.calledOnce;
@@ -1539,30 +1641,30 @@ describe( 'Quiddity Manager', function () {
         describe( 'Removing Quiddities', function () {
 
             it( 'should follow protocol', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 switcher.remove.returns( true );
                 var result = quiddityManager.remove( id );
                 switcher.remove.should.have.been.calledOnce;
                 switcher.remove.should.have.been.calledWithExactly( id );
-                should.exist(result);
+                should.exist( result );
                 result.should.be.true;
             } );
 
             it( 'should follow protocol when switcher returns false', function () {
-                var id = 'someId';
+                var id     = 'someId';
                 switcher.remove.returns( false );
                 var result = quiddityManager.remove( id );
                 switcher.remove.should.have.been.calledOnce;
                 switcher.remove.should.have.been.calledWithExactly( id );
-                should.exist(result);
+                should.exist( result );
                 result.should.be.false;
             } );
 
             it( 'should throw error when switcher throws', function () {
                 var id    = 'someId';
                 var error = 'some error';
-                switcher.remove.throws( new Error(error) );
-                expect(quiddityManager.remove.bind( quiddityManager, id ) ).to.throw(error);
+                switcher.remove.throws( new Error( error ) );
+                expect( quiddityManager.remove.bind( quiddityManager, id ) ).to.throw( error );
                 switcher.remove.should.have.been.calledOnce;
                 switcher.remove.should.have.been.calledWithExactly( id );
             } );

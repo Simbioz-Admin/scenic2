@@ -4,7 +4,7 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/source/shmdata/ConnectionView',
+    'view/scenic/pages/base/table/ConnectionView',
     'text!template/scenic/pages/rtp/connection.html'
 ], function ( _, Backbone, Marionette, ConnectionView, RTPConnectionTemplate ) {
 
@@ -12,7 +12,7 @@ define( [
      * Connection View
      *
      * @constructor
-     * @extends module:Marionette.CompositeView
+     * @extends ConnectionView
      */
     var RTPConnectionView = ConnectionView.extend( {
         template:  _.template( RTPConnectionTemplate ),
@@ -45,11 +45,11 @@ define( [
         initialize: function ( options ) {
             ConnectionView.prototype.initialize.apply( this, arguments );
 
-            this.listenTo( this.model, 'change:data_streams', this.render );
+            this.listenTo( this.destination, 'change:data_streams', this.render );
         },
 
         onBeforeRender: function () {
-            var connection = this.table.getConnection( this.shmdata, this.destination );
+            var connection = this.table.getConnection( this.source, this.destination );
             this.port      = connection ? connection.port : null;
         },
 
@@ -66,9 +66,9 @@ define( [
                 return;
             }
 
-            if ( this.table.isConnected( this.shmdata, this.destination ) ) {
+            if ( this.table.isConnected( this.source, this.destination ) ) {
                 this.portEntry = false;
-                this.table.disconnect( this.shmdata, this.destination );
+                this.table.disconnect( this.source, this.destination );
             } else {
                 this.portEntry = true;
                 this.render();
@@ -87,7 +87,7 @@ define( [
             if ( key == 13 ) {
                 // ENTER Key, connect
                 var self = this;
-                this.table.connect( this.shmdata, this.destination, this.ui.port.val(), function ( error ) {
+                this.table.connect( this.source, this.destination, this.ui.port.val(), function ( error ) {
                     if ( !error ) {
                         self.cancel();
                     }

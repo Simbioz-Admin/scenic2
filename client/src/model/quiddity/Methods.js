@@ -48,11 +48,11 @@ define( [
          * Method Added Handler
          *
          * @param {string} quiddityId The name of the quiddity
-         * @param {string} name The name of the property or method
+         * @param {string} method The method attributes
          */
         _onMethodAdded: function ( quiddityId, method ) {
             if ( this.quiddity.id == quiddityId ) {
-                this.add( method, {merge: true} );
+                this.add( method, {merge: true, parse: true} );
             }
         }
     } );

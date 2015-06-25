@@ -13,16 +13,18 @@ define( [
      * @constructor
      * @extends ConnectionView
      */
-    var SIPConnectionView = ConnectionView.extend( {
+    var SinkConnectionView = ConnectionView.extend( {
 
         /**
          * Initialize
          */
         initialize: function ( options ) {
             ConnectionView.prototype.initialize.apply( this, arguments );
-            this.listenTo( this.model, 'change:connections', this.render );
+
+            // Re-render when destination shmdatas change, it might mean we connected/disconnected
+            this.listenTo( this.destination.get( 'shmdatas' ), 'update', this.render );
         }
     } );
 
-    return SIPConnectionView;
+    return SinkConnectionView;
 } );

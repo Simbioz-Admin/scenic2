@@ -274,6 +274,10 @@ $boxWidth: $sourceWidth;
           }
         }
       }
+
+      &.single .action {
+        width: 100%;
+      }
     }
 
   }

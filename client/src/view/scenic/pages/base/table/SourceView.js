@@ -18,7 +18,10 @@ define( [
     var Source = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
         templateHelpers: function() {
+            console.log(this.model.get('properties' ).get('started' ));
             return {
+                startable: this.model.get('properties' ).get('started' ) != null,
+                started: this.model.get('properties' ).get('started' ) ? this.model.get('properties' ).get('started' ).get('value') : true,
                 classDescription: this.model.get('classDescription' ).toJSON()
             }
         },
@@ -31,24 +34,30 @@ define( [
                 connectionView: this.options.connectionView
             }
         },
-        childViewContainer: '.shmdatas',
+        childViewContainer: '.source-children',
 
         ui: {
             edit:   '.actions .action.edit',
-            remove: '.actions .action.remove'
+            remove: '.actions .action.remove',
+            power: '.actions .action.power'
         },
 
         events: {
             'click @ui.edit':   'editSource',
-            'click @ui.remove': 'removeSource'
+            'click @ui.remove': 'removeSource',
+            'click @ui.power': 'togglePower'
         },
 
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.table = options.table;
             this.collection    = this.model.get( 'shmdatas' );
+            if ( this.model.get('properties' ).get('started' ) ) {
+                this.listenTo( this.model.get( 'properties' ).get( 'started' ), 'change:value', this.render );
+            }
         },
 
         /**
@@ -82,6 +91,13 @@ define( [
                     self.model.destroy();
                 }
             } );
+        },
+
+        togglePower: function( event ) {
+            if (  this.model.get('properties' ).get('started' ) ) {
+                var current = this.model.get('properties' ).get('started' ).get('value');
+                this.model.get('properties' ).get('started' ).updateValue( !current );
+            }
         }
     } );
 

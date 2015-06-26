@@ -92,9 +92,7 @@ $boxWidth: $sourceWidth;
               height: 100%;
             }
 
-            .shmdatas,
-            .source-properties,
-            .source-contacts {
+            .source-children {
               min-height: $rowMinHeight;
               margin-left: $sourceWidth;
               background-color: $backgroundColor;
@@ -257,6 +255,17 @@ $boxWidth: $sourceWidth;
             background: image-url('icons/724-info.png') center center no-repeat;
           }
         }
+        &.power {
+          &:hover {
+            background: $green;
+            &.on {
+              background: $red;
+            }
+          }
+          .icon {
+            background: image-url('icons/51-power.png') center center no-repeat;
+          }
+        }
         &.edit {
           &:hover {
             background: $orange;
@@ -275,8 +284,16 @@ $boxWidth: $sourceWidth;
         }
       }
 
-      &.single .action {
+      &.actions-1 .action {
         width: 100%;
+      }
+
+      &.actions-2 .action {
+        width: 50%;
+      }
+
+      &.actions-3 .action {
+        width: 33.333%;
       }
     }
 

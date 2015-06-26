@@ -7,10 +7,9 @@ define( [
     'lib/socket',
     'crypto-js',
     'app',
-    'model/mixins/PropertyWatcher',
     'model/sip/Contacts',
     'model/sip/Contact'
-], function ( _, Backbone, Cocktail, socket, CryptoJS, app, PropertyWatcher, Contacts, Contact ) {
+], function ( _, Backbone, Cocktail, socket, CryptoJS, app, Contacts, Contact ) {
 
     /**
      * SIP Connection
@@ -31,7 +30,8 @@ define( [
                 user:       null,
                 port:       null,
                 self:       null,
-                contacts:   new Contacts( null, { sip: this } )
+                contacts:   new Contacts( null, { sip: this } ),
+                quiddity:   null
             }
         },
 
@@ -49,24 +49,50 @@ define( [
             this.set( 'user', sip && sip.user ? sip.user : null );
             this.set( 'uri', sip && sip.uri ? sip.uri : null );
 
-            this.quiddityId   = app.config.sip.quiddName;
-            this.propertyName = 'sip-registration';
+            // Watch contacts changes in ourder to find the "self" user
+            this.listenTo( this.get( 'contacts' ), 'update', this._checkForSelf );
 
-            this.listenTo( this.get('contacts'), 'update', this._checkForSelf );
+            // Here we have to set up a watcher on quiddities updates because SIP is not always available
+            // and we need to track properties on whichever instance will come up from the network
+            this.listenTo( app.quiddities, 'add', this._onQuiddityAdded );
+            this.listenTo( app.quiddities, 'remove', this._onQuiddityRemoved );
+            if ( app.quiddities.get(app.config.sip.quiddName)) {
+                this._registerSipQuiddity(app.quiddities.get(app.config.sip.quiddName));
+            }
+        },
+
+        _registerSipQuiddity: function( sipQuiddity ) {
+            this.set('quiddity', sipQuiddity);
+            this.listenTo( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+
+            this._onSipRegistrationChange();
+        },
+
+        _onQuiddityAdded: function(model, collection, options) {
+            if ( model.id == app.config.sip.quiddName ) {
+                this._registerSipQuiddity(model);
+            }
+        },
+
+        _onQuiddityRemoved: function(model, collection, options) {
+            if ( model.id == app.config.sip.quiddName ) {
+                if ( this.quiddity ) {
+                    this.stopListening( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+                    this.set('quiddity', null);
+
+                    this._onSipRegistrationChange();
+                }
+            }
         },
 
         /**
          * Handler for when the watched property 'sip-registration' changes.
-         * Fetch the contact list when we get a positive connection.
-         *
-         * @inheritdoc
-         * @param value
          */
-        propertyChanged: function ( value ) {
-            var connected = !!value;
+        _onSipRegistrationChange: function () {
+            var connected = this.get('quiddity').get('properties' ).get('sip-registration' ).get('value');
             this.set( 'connected', connected );
-            if ( connected ) {
-                this.get('contacts' ).fetch();
+            if ( !connected ) {
+                this.set( 'self', null );
             }
         },
 
@@ -83,7 +109,7 @@ define( [
             var self = this;
 
             this.set( 'server', server );
-            this.set( 'port', _.isEmpty(port) ? this.get('port') : port );
+            this.set( 'port', _.isEmpty( port ) ? this.get( 'port' ) : port );
             this.set( 'user', user );
             this.set( 'uri', user + '@' + server );
 
@@ -153,12 +179,22 @@ define( [
             } );
         },
 
-        _checkForSelf: function() {
-            this.set('self', this.get( 'contacts' ).findWhere( { self: true } ) );
+        /**
+         * Find the "self" user in the contact list
+         *
+         * @private
+         */
+        _checkForSelf: function () {
+            var self = null;
+            if ( this.get('quiddity') ) {
+                var tree = this.get('quiddity').get( 'tree' );
+                if ( tree && !_.isEmpty( tree.self ) ) {
+                    self = this.get( 'contacts' ).get( tree.self );
+                }
+            }
+            this.set( 'self', self );
         }
     } );
-
-    Cocktail.mixin( SIPConnection, PropertyWatcher );
 
     return SIPConnection;
 } );

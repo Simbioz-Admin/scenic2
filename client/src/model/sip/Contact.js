@@ -55,9 +55,11 @@ define( [
             ScenicModel.prototype.initialize.apply( this, arguments );
 
             if ( options && options.self ) {
+                console.info("IS THAT EVER USED?");
                 this.self = options.self;
             }
             if ( options && options.sip ) {
+                console.info("IS THAT EVER USED?");
                 this.sip = options.sip;
             }
             // Handlers

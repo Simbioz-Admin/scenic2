@@ -249,11 +249,50 @@ describe( 'Sip Manager', function () {
                 result.should.be.false;
             } );
 
-        } )
+        } );
+
+        describe( 'Get Self', function() {
+
+            beforeEach(function() {
+                sinon.stub(switcherController.quiddityManager, 'getTreeInfo');
+            });
+
+            it('should follow protocol', function() {
+                switcherController.quiddityManager.getTreeInfo.returns({ self: 'me@myself.and.i' });
+                var result = sipManager._getSelf();
+                should.exist(result);
+                result.should.equal('me@myself.and.i');
+            });
+
+            it('should return null if receiving an empty string', function() {
+                switcherController.quiddityManager.getTreeInfo.returns({ self: '' });
+                var result = sipManager._getSelf();
+                should.not.exist(result);
+            });
+
+            it('should return null if self is null', function() {
+                switcherController.quiddityManager.getTreeInfo.returns({ self: null });
+                var result = sipManager._getSelf();
+                should.not.exist(result);
+            });
+
+            it('should return null is self is undefined', function() {
+                switcherController.quiddityManager.getTreeInfo.returns({  });
+                var result = sipManager._getSelf();
+                should.not.exist(result);
+            });
+
+            it('should return null if tree is not found', function() {
+                switcherController.quiddityManager.getTreeInfo.returns(null);
+                var result = sipManager._getSelf();
+                should.not.exist(result);
+            });
+
+        });
 
     } );
 
-    describe( 'Signal Events', function () {
+    /*describe( 'Signal Events', function () {
 
         it( 'should emit contact info when buddy list gets grafted', function () {
             var id     = 'sip-quiddity-name';
@@ -268,7 +307,7 @@ describe( 'Sip Manager', function () {
             switcher.get_info.should.have.been.calledWithExactly( id, '.buddies.0' );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWithExactly( 'contactInfo', quiddities.contact_parsed() );
+            io.emit.should.have.been.calledWithExactly( 'sip.contact.info', quiddities.contact_parsed() );
         } );
 
         it( 'should emit contact info when buddy list gets pruned', function () {
@@ -284,7 +323,7 @@ describe( 'Sip Manager', function () {
             switcher.get_info.should.have.been.calledWithExactly( id, '.buddies.0' );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWithExactly( 'contactInfo', quiddities.contact_parsed() );
+            io.emit.should.have.been.calledWithExactly( 'sip.contact.info', quiddities.contact_parsed() );
         } );
 
         it( 'should not emit contact info when it doesn\'t relate to a buddy', function () {
@@ -356,7 +395,7 @@ describe( 'Sip Manager', function () {
             io.emit.should.not.have.been.called;
         } );
 
-    } );
+    } );*/
 
     describe( 'Public Methods', function () {
 
@@ -371,8 +410,10 @@ describe( 'Sip Manager', function () {
                 name = 'Joe Blow';
                 sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
                 switcherController.quiddityManager.invokeMethod.returns( true );
-                me   = sipManager.uri = 'myself@me.com';
+                me   = 'myself@me.com';
                 sinon.stub( sipManager, '_saveContacts' );
+                sinon.stub( sipManager, '_getSelf');
+                sipManager._getSelf.returns(me);
             } );
 
             describe( 'Adding contact', function () {
@@ -403,6 +444,19 @@ describe( 'Sip Manager', function () {
                     should.exist( sipManager.contacts[me] );
                     should.exist( sipManager.contacts[me][uri] );
                     sipManager.contacts[me][uri].should.equal( uri );
+                } );
+
+                it( 'should follow protocol without a selfURI', function () {
+                    sipManager._getSelf.returns(null);
+                    var result = sipManager.addContact( uri, name );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'add_buddy', [uri] );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [name, uri] );
+                    sipManager._saveContacts.should.not.have.been.called;
+                    should.exist( result );
+                    result.should.be.true;
+                    should.exist( sipManager.contacts );
+                    should.not.exist(sipManager.contacts[me]);
                 } );
 
                 it( 'should not save if we tell it not to', function () {
@@ -459,6 +513,20 @@ describe( 'Sip Manager', function () {
                     should.exist( sipManager.contacts );
                     should.exist( sipManager.contacts[me] );
                     should.not.exist( sipManager.contacts[me][uri] );
+                } );
+
+                it( 'should follow protocol without a selfURI', function () {
+                    sipManager._getSelf.returns(null);
+                    var result = sipManager.removeContact( uri );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'del_buddy', [uri] );
+                    sipManager._saveContacts.should.not.have.been.called;
+                    should.exist( result );
+                    result.should.be.true;
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    //Unfortunately this case doesn't get to remove the contact
+                    should.exist( sipManager.contacts[me][uri] );
                 } );
 
                 it( 'should not save when told not to', function () {
@@ -518,6 +586,30 @@ describe( 'Sip Manager', function () {
                     should.exist( sipManager.contacts[me] );
                     should.exist( sipManager.contacts[me][uri] );
                     sipManager.contacts[me][uri].should.equal( info.name );
+                } );
+
+                it( 'should follow protocol without a self uri', function () {
+                    var info   = {
+                        name:        'new name',
+                        status:      'status',
+                        status_text: 'message'
+                    };
+                    sipManager._getSelf.returns(null);
+                    var result = sipManager.updateContact( uri, info );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'name_buddy', [info.name, uri] );
+                    sipManager._saveContacts.should.not.have.been.called;
+                    switcherController.quiddityManager.setPropertyValue.should.have.been.calledTwice;
+                    switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'status', info.status.toUpperCase() );
+                    switcherController.quiddityManager.setPropertyValue.should.have.been.calledWithExactly( config.sip.quiddName, 'status-note', info.status_text );
+                    should.exist( result );
+                    result.should.be.true;
+
+                    should.exist( sipManager.contacts );
+                    should.exist( sipManager.contacts[me] );
+                    should.exist( sipManager.contacts[me][uri] );
+                    // Unfortunately this case doesn't get to update the contact list
+                    sipManager.contacts[me][uri].should.equal( name );
                 } );
 
                 it( 'should follow protocol with only name', function () {
@@ -610,7 +702,7 @@ describe( 'Sip Manager', function () {
 
             } );
 
-            describe( 'Getting contact list', function () {
+            /*describe( 'Getting contact list', function () {
 
                 var contacts;
                 var contacts_parsed;
@@ -630,26 +722,6 @@ describe( 'Sip Manager', function () {
                             name: 'myself'
                         }
                     };
-                    contacts_parsed = [
-                        {
-                            id:   'uri1@server.com',
-                            uri:  'uri1@server.com',
-                            name: 'name1',
-                            self: false
-                        },
-                        {
-                            id:   'uri2@server.com',
-                            uri:  'uri2@server.com',
-                            name: 'name2',
-                            self: false
-                        },
-                        {
-                            id:   'myself@me.com',
-                            uri:  'myself@me.com',
-                            name: 'myself',
-                            self: true
-                        }
-                    ];
 
                     sinon.stub( switcherController.quiddityManager, 'exists' );
                     sinon.stub( switcherController.quiddityManager, 'getTreeInfo' );
@@ -705,7 +777,7 @@ describe( 'Sip Manager', function () {
                     should.not.exist( result );
                 } );
 
-            } );
+            } );*/
 
         } );
 
@@ -745,9 +817,6 @@ describe( 'Sip Manager', function () {
             it( 'should follow protocol without a sip quiddity', function () {
                 var result = sipManager.login( credentials );
 
-                should.exist( sipManager.uri );
-                sipManager.uri.should.equal( uri );
-
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
 
@@ -777,9 +846,6 @@ describe( 'Sip Manager', function () {
                 switcherController.quiddityManager.exists.returns( true );
                 var result = sipManager.login( credentials );
 
-                should.exist( sipManager.uri );
-                sipManager.uri.should.equal( uri );
-
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
 
@@ -807,9 +873,6 @@ describe( 'Sip Manager', function () {
             it( 'should follow protocol without contacts', function () {
                 sipManager.contacts = {};
                 var result          = sipManager.login( credentials );
-
-                should.exist( sipManager.uri );
-                sipManager.uri.should.equal( uri );
 
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
@@ -840,8 +903,6 @@ describe( 'Sip Manager', function () {
 
                 var result = sipManager.login( credentials );
 
-                should.not.exist( sipManager.uri );
-
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
 
@@ -864,8 +925,6 @@ describe( 'Sip Manager', function () {
                 switcherController.quiddityManager.setPropertyValue.returns( false );
 
                 var result = sipManager.login( credentials );
-
-                should.not.exist( sipManager.uri );
 
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
@@ -891,8 +950,6 @@ describe( 'Sip Manager', function () {
                 switcherController.quiddityManager.invokeMethod.returns( false );
 
                 var result = sipManager.login( credentials );
-
-                should.not.exist( sipManager.uri );
 
                 should.exist( config.sip.port );
                 config.sip.port.should.equal( credentials.port );
@@ -924,7 +981,6 @@ describe( 'Sip Manager', function () {
 
             beforeEach( function () {
                 uri            = 'some.user@server.com';
-                sipManager.uri = uri;
                 sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
             } );
 
@@ -935,7 +991,6 @@ describe( 'Sip Manager', function () {
                 switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'unregister', [] );
                 should.exist( result );
                 result.should.be.true;
-                should.not.exist( sipManager.uri );
             } );
 
             it( 'should return false and not reset uri if unregister fails', function () {
@@ -945,8 +1000,6 @@ describe( 'Sip Manager', function () {
                 switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.sip.quiddName, 'unregister', [] );
                 should.exist( result );
                 result.should.be.false;
-                should.exist( sipManager.uri );
-                sipManager.uri.should.equal( uri );
             } );
 
         } );

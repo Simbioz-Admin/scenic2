@@ -1336,8 +1336,7 @@ module.exports = {
     contact_parsed: function () {
         return {
             id:   'buddy@sip.server',
-            uri:  'buddy@sip.server',
-            self: false
+            uri:  'buddy@sip.server'
         }
     },
 

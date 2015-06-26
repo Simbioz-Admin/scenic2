@@ -9,7 +9,7 @@ chai.use( sinonChai );
 
 var quiddities = require( '../fixtures/quiddities' );
 
-describe( 'Control Mappings', function () {
+describe.skip( 'Control Mappings', function () {
 
     var config;
     var io;

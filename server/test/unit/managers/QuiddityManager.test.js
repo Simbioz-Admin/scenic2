@@ -981,6 +981,26 @@ describe( 'Quiddity Manager', function () {
                 result.should.eql( quiddities.tree() );
             } );
 
+            it( 'should follow protocol with null path', function () {
+                var id     = 'someId';
+                switcher.get_info.returns( quiddities.tree() );
+                var result = quiddityManager.getTreeInfo( id, null );
+                switcher.get_info.should.have.been.calledOnce;
+                switcher.get_info.should.have.been.calledWith( id, '.' );
+                should.exist( result );
+                result.should.eql( quiddities.tree() );
+            } );
+
+            it( 'should follow protocol without a path', function () {
+                var id     = 'someId';
+                switcher.get_info.returns( quiddities.tree() );
+                var result = quiddityManager.getTreeInfo( id );
+                switcher.get_info.should.have.been.calledOnce;
+                switcher.get_info.should.have.been.calledWith( id, '.' );
+                should.exist( result );
+                result.should.eql( quiddities.tree() );
+            } );
+
             it( 'should follow protocol with empty tree', function () {
                 var id     = 'someId';
                 var path   = '.some.path';

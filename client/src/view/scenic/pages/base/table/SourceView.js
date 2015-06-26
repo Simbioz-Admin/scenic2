@@ -18,7 +18,6 @@ define( [
     var Source = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
         templateHelpers: function() {
-            console.log(this.model.get('properties' ).get('started' ));
             return {
                 startable: this.model.get('properties' ).get('started' ) != null,
                 started: this.model.get('properties' ).get('started' ) ? this.model.get('properties' ).get('started' ).get('value') : true,

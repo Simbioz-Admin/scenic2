@@ -735,12 +735,14 @@ QuiddityManager.prototype.getQuiddityDescription = function ( quiddityId ) {
  * Get quiddity tree information
  *
  * @param {String} quiddityId Quiddity for which we want to retrieve the tree information
- * @param {String} path Branch/leaf path to query inside the tree
+ * @param {String} [path] Branch/leaf path to query inside the tree
  * @returns {Object} Information contained in the tree or an empty object if nothing was found
  */
 QuiddityManager.prototype.getTreeInfo = function ( quiddityId, path ) {
     log.verbose( 'Getting quiddity tree for: ' + quiddityId + ' ' + path );
-
+    if ( path == null ) {
+        path = '.';
+    }
     var result = this.switcher.get_info( quiddityId, path );
     if ( result && result.error ) {
         throw new Error( result.error );

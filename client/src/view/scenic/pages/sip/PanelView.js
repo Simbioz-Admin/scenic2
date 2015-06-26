@@ -42,7 +42,11 @@ define( [
         },
 
         onSelfChanged: function() {
-            this.showChildView( 'self', new SelfView( {model: this.model.sip.get( 'self' )} ) );
+            if ( this.model.sip.get( 'self' ) ) {
+                this.showChildView( 'self', new SelfView( { model: this.model.sip.get( 'self' ) } ) );
+            } else {
+                this.getRegion( 'self' ).empty();
+            }
         }
     } );
 

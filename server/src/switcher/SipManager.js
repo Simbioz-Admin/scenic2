@@ -27,7 +27,6 @@ function SipManager( switcherController ) {
  * Initialize
  */
 SipManager.prototype.initialize = function () {
-    this.uri = null;
     this._loadContacts();
 };
 
@@ -43,10 +42,10 @@ SipManager.prototype.initialize = function () {
  *
  * @param contact
  * @private
+ * @deprecated
  */
 SipManager.prototype._parseContact = function ( contact ) {
     contact.id   = contact.uri;
-    contact.self = ( this.uri == contact.uri );
     return contact;
 };
 
@@ -135,6 +134,22 @@ SipManager.prototype._reconnect = function ( uri ) {
     }
 };
 
+/**
+ * Get self uri from the sip tree
+ *
+ * @returns {string} self uri
+ * @private
+ */
+SipManager.prototype._getSelf = function() {
+    // TODO: Only get self when tree is modified to support returning values
+    var tree = this.switcherController.quiddityManager.getTreeInfo( this.config.sip.quiddName );
+    if ( !tree ) {
+        log.warn( 'Could not get SIP tree' );
+        return null;
+    }
+    return !_.isEmpty( tree.self ) ? tree.self : null;
+};
+
 //  ███████╗██╗   ██╗██████╗ ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
 //  ██╔════╝██║   ██║██╔══██╗██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
 //  ███████╗██║   ██║██████╔╝███████╗██║     ██████╔╝██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
@@ -161,7 +176,7 @@ SipManager.prototype.onSwitcherProperty = function ( quiddityId, property, value
  * @param value
  */
 SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
-    if ( quiddityId == this.config.sip.quiddName && ( signal == 'on-tree-grafted' || signal == 'on-tree-pruned' ) ) {
+    /*if ( quiddityId == this.config.sip.quiddName && ( signal == 'on-tree-grafted' || signal == 'on-tree-pruned' ) ) {
         var path = value[0].split( '.' );
         path.shift();
 
@@ -176,15 +191,16 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
 
             if ( !contact || contact.error ) {
                 // We silently fail here because leaving contacts don't exist obviously
+                this.io.emit( 'sip.contact.info', contact );
                 return;
             }
 
             // Parse contact
             this._parseContact( contact );
 
-            this.io.emit( 'contactInfo', contact );
+            this.io.emit( 'sip.contact.info', contact );
         }
-    }
+    }*/
 };
 
 //  ██╗      ██████╗  ██████╗ ██╗███╗   ██╗
@@ -202,8 +218,6 @@ SipManager.prototype.onSwitcherSignal = function ( quiddityId, signal, value ) {
  */
 SipManager.prototype.login = function ( credentials ) {
     log.info( 'SIP login attempt: ' + credentials.user + '@' + credentials.server + ':' + credentials.port );
-
-    this.uri = null;
 
     this.config.sip.port = parseInt( credentials.port );
 
@@ -239,11 +253,8 @@ SipManager.prototype.login = function ( credentials ) {
         return false;
     }
 
-    // Save the user's URI
-    this.uri = uri;
-
     // Add self to the contact list
-    this.addContact( this.uri, credentials.user, true );
+    this.addContact( uri, credentials.user, true );
 
     // Add user's contacts
     if ( this.contacts && this.contacts[uri] ) {
@@ -271,8 +282,6 @@ SipManager.prototype.logout = function () {
         log.warn( 'Could not log out of SIP' );
         return false;
     }
-
-    this.uri = null;
 
     return true;
 };
@@ -310,14 +319,20 @@ SipManager.prototype.addContact = function ( uri, name, doNotSave ) {
         return false;
     }
 
-    // Add to local contact list
-    if ( !this.contacts[this.uri] ) {
-        this.contacts[this.uri] = {};
-    }
-    this.contacts[this.uri][uri] = name;
+    // Get self from tree
+    var selfURI = this._getSelf();
+    if ( selfURI ) {
+        // Add to local contact list
+        if ( !this.contacts[selfURI] ) {
+            this.contacts[selfURI] = {};
+        }
+        this.contacts[selfURI][uri] = name;
 
-    if ( !doNotSave ) {
-        this._saveContacts();
+        if ( !doNotSave ) {
+            this._saveContacts();
+        }
+    } else {
+        log.warn('Self URI not found');
     }
 
     return true;
@@ -332,8 +347,9 @@ SipManager.prototype.addContact = function ( uri, name, doNotSave ) {
  */
 SipManager.prototype.removeContact = function ( uri, doNotSave ) {
     log.info( 'Removing contact', uri );
-    if ( this.uri && this.contacts[this.uri] && this.contacts[this.uri][uri] ) {
-        delete this.contacts[this.uri][uri];
+    var selfURI = this._getSelf();
+    if ( selfURI && this.contacts[selfURI] && this.contacts[selfURI][uri] ) {
+        delete this.contacts[selfURI][uri];
         if ( !doNotSave ) {
             this._saveContacts();
         }
@@ -352,6 +368,7 @@ SipManager.prototype.removeContact = function ( uri, doNotSave ) {
  * Get Contacts List
  *
  * @returns {Array} List of contacts
+ * @deprecated
  */
 SipManager.prototype.getContacts = function () {
     log.info( 'Getting contacts' );
@@ -395,8 +412,9 @@ SipManager.prototype.updateContact = function ( uri, info ) {
             success = false;
         } else {
             // Add to local contact list
-            if ( this.contacts[this.uri] ) {
-                this.contacts[this.uri][uri] = info.name;
+            var selfURI = this._getSelf();
+            if ( selfURI && this.contacts[selfURI] ) {
+                this.contacts[selfURI][uri] = info.name;
                 this._saveContacts();
             }
         }

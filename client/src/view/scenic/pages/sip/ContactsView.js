@@ -32,11 +32,15 @@ define( [
         /**
          * Contacts View Filter
          *
+         * FIXME
+         *
          * @param contact
          * @returns {boolean}
          */
         filter: function (contact) {
-            return !contact.get('self');
+            var self = this.options.table.sip.get('self' );
+            console.log( self, contact.id);
+            return self ? self.id != contact.id : true;
         }
     } );
 

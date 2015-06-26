@@ -94,9 +94,17 @@ define( [
         },
 
         togglePower: function( event ) {
+            var self = this;
             if (  this.model.get('properties' ).get('started' ) ) {
-                var current = this.model.get('properties' ).get('started' ).get('value');
-                this.model.get('properties' ).get('started' ).updateValue( !current );
+                if ( this.model.get('properties' ).get('started' ).get('value') ) {
+                    this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to stop __quiddity__ source?', {quiddity: this.model.id} ), function ( confirmed ) {
+                        if ( confirmed ) {
+                            self.model.get('properties' ).get('started' ).updateValue( false );
+                        }
+                    } );
+                } else {
+                    self.model.get('properties' ).get('started' ).updateValue( true );
+                }
             }
         }
     } );

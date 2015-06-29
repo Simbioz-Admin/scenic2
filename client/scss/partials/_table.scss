@@ -165,8 +165,13 @@ $boxWidth: $sourceWidth;
                     }
 
                     &.disabled {
-                      cursor: not-allowed;
                       background: $disabled;
+                      .actions:hover {
+                        opacity: 0.0;
+                        .action {
+                          cursor: not-allowed;
+                        }
+                      }
                     }
 
                     .controls {

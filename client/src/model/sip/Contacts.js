@@ -16,6 +16,9 @@ define( [
      */
     var Contacts = Backbone.Collection.extend( {
         model:      Contact,
+        comparator: function( contact ) {
+            return this.sip.statuses.indexOf(contact.get('status')) + '.' + contact.get('name');
+        },
 
         /**
          * Initialize
@@ -26,6 +29,9 @@ define( [
             // Watch the SIP quiddity as it is not always available on start
             this.quiddity = this.sip.get('quiddity');
             this.listenTo( this.sip, 'change:quiddity', this._onSipQuiddityChanged );
+
+            // Watch for properties that trigger a re-sort
+            this.listenTo( this, 'change:status change:name', this.sort );
         },
 
         /**

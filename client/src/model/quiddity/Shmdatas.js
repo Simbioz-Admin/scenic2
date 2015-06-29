@@ -16,8 +16,8 @@ define( [
      */
     var Shmdatas = ScenicCollection.extend( {
         model:      Shmdata,
+        comparator: 'path',
         quiddity:   null,
-
         methodMap:  {
             'create': null,
             'update': null,

@@ -35,6 +35,14 @@ define( [
             }
         },
 
+        statuses: [
+            'available',
+            'online',
+            'busy',
+            'away',
+            'offline'
+        ],
+
         /**
          * Initialize
          */

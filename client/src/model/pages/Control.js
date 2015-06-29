@@ -82,8 +82,7 @@ define( [
             var property    = app.quiddities.get( quiddityId ).get( 'properties' ).get( propertyId );
             var destination = {
                 id:       property.collection.quiddity.id + '.' + property.id,
-                property: property,
-                manual: true
+                property: property
             };
             this.destinations.add( destination, { merge: true } );
         },

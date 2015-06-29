@@ -14,6 +14,11 @@ define( [
      */
     var ControlDestinations = Backbone.Collection.extend( {
         model: ControlDestination,
+        comparator: function( controlDestination ) {
+            var quiddity = controlDestination.get('property' ).collection.quiddity;
+            return quiddity.get('classDescription' ).get('category') + '.' + quiddity.get('class') + '.' + quiddity.id + '.' + controlDestination.get('property' ).get('order');
+
+        },
 
         /**
          * Initialization

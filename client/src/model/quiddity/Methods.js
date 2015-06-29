@@ -16,7 +16,7 @@ define( [
      */
     var Methods = ScenicCollection.extend( {
         model:     Method,
-        comparator: 'position weight',
+        comparator: 'order',
         quiddity:  null,
         methodMap: {
             'create': null,

@@ -16,6 +16,10 @@ define( [
      */
     var Quiddities = ScenicCollection.extend( {
         model:     Quiddity,
+        comparator: function( quiddity ) {
+            return quiddity.get('classDescription' ).get('category') + '.' + quiddity.get('class') + '.' + quiddity.id;
+        },
+
         methodMap: {
             'create': null,
             'update': null,

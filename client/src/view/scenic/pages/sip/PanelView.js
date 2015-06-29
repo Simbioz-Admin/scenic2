@@ -30,7 +30,7 @@ define( [
          */
         initialize: function ( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.listenTo(this.model.sip, 'change:self', this.onSelfChanged);
+            this.listenTo(this.model.sip.get('contacts'), 'update', this.showSelf);
         },
 
         onBeforeShow: function () {
@@ -39,11 +39,13 @@ define( [
                 table:      this.model,
                 collection: this.model.sip.get( 'contacts' )
             } ) );
+            this.showSelf();
         },
 
-        onSelfChanged: function() {
-            if ( this.model.sip.get( 'self' ) ) {
-                this.showChildView( 'self', new SelfView( { model: this.model.sip.get( 'self' ) } ) );
+        showSelf: function() {
+            var self = this.model.sip.get('contacts' ).findWhere({self:true});
+            if ( self ) {
+                this.showChildView( 'self', new SelfView( { model: self } ) );
             } else {
                 this.getRegion( 'self' ).empty();
             }

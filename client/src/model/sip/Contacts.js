@@ -42,6 +42,7 @@ define( [
         parse: function(models, options) {
             _.each( models, function( model ) {
                 model.id = model.uri;
+                model.self = model.uri == options.self;
             });
             return models;
         },
@@ -72,7 +73,10 @@ define( [
          */
         _updateContactsFromTree: function() {
             if ( this.quiddity ) {
-                this.set( _.values( this.quiddity.get( 'tree' ).buddies ), { parse: true } );
+                this.set( _.values( this.quiddity.get( 'tree' ).buddies ), {
+                    self: this.quiddity.get( 'tree' ).self,
+                    parse: true
+                } );
             } else {
                 this.reset();
             }

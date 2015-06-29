@@ -49,9 +49,6 @@ define( [
             this.set( 'user', sip && sip.user ? sip.user : null );
             this.set( 'uri', sip && sip.uri ? sip.uri : null );
 
-            // Watch contacts changes in ourder to find the "self" user
-            this.listenTo( this.get( 'contacts' ), 'update', this._checkForSelf );
-
             // Here we have to set up a watcher on quiddities updates because SIP is not always available
             // and we need to track properties on whichever instance will come up from the network
             this.listenTo( app.quiddities, 'add', this._onQuiddityAdded );
@@ -64,7 +61,6 @@ define( [
         _registerSipQuiddity: function( sipQuiddity ) {
             this.set('quiddity', sipQuiddity);
             this.listenTo( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
-
             this._onSipRegistrationChange();
         },
 
@@ -79,7 +75,6 @@ define( [
                 if ( this.quiddity ) {
                     this.stopListening( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
                     this.set('quiddity', null);
-
                     this._onSipRegistrationChange();
                 }
             }
@@ -91,9 +86,6 @@ define( [
         _onSipRegistrationChange: function () {
             var connected = this.get('quiddity').get('properties' ).get('sip-registration' ).get('value');
             this.set( 'connected', connected );
-            if ( !connected ) {
-                this.set( 'self', null );
-            }
         },
 
         /**
@@ -177,22 +169,6 @@ define( [
                     self.scenicChannel.vent.trigger( 'error', error );
                 }
             } );
-        },
-
-        /**
-         * Find the "self" user in the contact list
-         *
-         * @private
-         */
-        _checkForSelf: function () {
-            var self = null;
-            if ( this.get('quiddity') ) {
-                var tree = this.get('quiddity').get( 'tree' );
-                if ( tree && !_.isEmpty( tree.self ) ) {
-                    self = this.get( 'contacts' ).get( tree.self );
-                }
-            }
-            this.set( 'self', self );
         }
     } );
 

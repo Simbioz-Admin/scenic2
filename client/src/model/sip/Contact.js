@@ -24,9 +24,9 @@ define( [
             send_status:        null,
             recv_status:        null,
             name:               null,
-            self:               false,
             connections:        [],
             // Dynamic
+            self:               false,
             showInDestinations: false
         },
 
@@ -53,30 +53,7 @@ define( [
          */
         initialize: function ( attributes, options ) {
             ScenicModel.prototype.initialize.apply( this, arguments );
-
-            if ( options && options.self ) {
-                console.info("IS THAT EVER USED?");
-                this.self = options.self;
-            }
-            if ( options && options.sip ) {
-                console.info("IS THAT EVER USED?");
-                this.sip = options.sip;
-            }
-            // Handlers
-            //this.onSocket( 'removeUser', _.bind( this._onRemoved, this ) );
         },
-
-        /**
-         * Delete Handler
-         *
-         * @param {String} uri
-         * @private
-         */
-        /*_onRemoved: function ( uri ) {
-         if ( this.id == uri ) {
-         this.trigger( 'destroy', this, this.collection );
-         }
-         },*/
 
         /**
          * Call Contact

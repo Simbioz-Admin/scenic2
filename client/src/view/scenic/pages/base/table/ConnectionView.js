@@ -17,8 +17,12 @@ define( [
         template:  _.template( ConnectionTemplate ),
         className: 'connection',
 
+        ui: {
+            connect: '.action.connect'
+        },
+
         events: {
-            'click': 'toggleConnection'
+            'click @ui.connect': 'toggleConnection'
         },
 
         /**

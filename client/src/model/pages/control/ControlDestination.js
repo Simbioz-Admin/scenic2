@@ -15,13 +15,12 @@ define( [
     var ControlDestination = ScenicModel.extend( {
 
         defaults: {
-            quiddity: null,
             property: null
         },
 
         methodMap: {
             'delete': function () {
-                return ['control.mapping.remove.destination', this.get( 'quiddity' ).id, this.get('property' ).id];
+                return ['control.mapping.remove.destination', this.get('property' ).collection.quiddity.id, this.get('property' ).id];
             }
         }
 

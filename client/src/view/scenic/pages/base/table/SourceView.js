@@ -25,7 +25,9 @@ define( [
             }
         },
         className:          'quiddity source',
-        childView:          ShmdataView,
+        getChildView: function( item ) {
+            return this.options.sourceChildView ? this.options.sourceChildView : ShmdataView
+        },
         childViewOptions:   function () {
             return {
                 table:          this.options.table,

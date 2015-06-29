@@ -16,18 +16,16 @@ define( [
      */
     var RTPConnectionView = ConnectionView.extend( {
         template:  _.template( RTPConnectionTemplate ),
-        className: 'connection',
 
-        ui: {
+        ui: _.extend({}, ConnectionView.prototype.ui, {
             port: '.portInput'
-        },
+        }),
 
-        events: {
-            'click':             'toggleConnection',
+        events:  _.extend({}, ConnectionView.prototype.events, {
             'keypress @ui.port': 'validateCharacter',
             'keydown @ui.port':  'portKeyAction',
             'blur @ui.port':     'cancel'
-        },
+        }),
 
         templateHelpers: function () {
             return {

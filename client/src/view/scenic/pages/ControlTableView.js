@@ -9,8 +9,9 @@ define( [
     'view/scenic/pages/control/ControlDestinationsView',
     'view/scenic/pages/control/ControlMenusView',
     'view/scenic/pages/control/ControlSourceView',
+    'view/scenic/pages/control/ControlPropertyView',
     'view/scenic/pages/control/ControlConnectionView'
-], function ( _, Backbone, Marionette, TableView, SourcesView, ControlDestinationsView, ControlMenus, ControlSourceView, ControlConnectionView ) {
+], function ( _, Backbone, Marionette, TableView, SourcesView, ControlDestinationsView, ControlMenus, ControlSourceView, ControlPropertyView, ControlConnectionView ) {
 
     /**
      *  @constructor
@@ -37,10 +38,11 @@ define( [
                 model: this.model
             } ) );
             this.showChildView( 'sources', new SourcesView( {
-                table:      this.model,
-                collection: this.model.getSourceCollection(),
-                sourceView: ControlSourceView,
-                connectionView: ControlConnectionView
+                table:           this.model,
+                collection:      this.model.getSourceCollection(),
+                sourceView:      ControlSourceView,
+                sourceChildView: ControlPropertyView,
+                connectionView:  ControlConnectionView
             } ) );
             this.showChildView( 'destinations', new ControlDestinationsView( {
                 table:      this.model,

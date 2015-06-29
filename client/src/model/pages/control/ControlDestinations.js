@@ -34,9 +34,17 @@ define( [
 
         /**
          * Update the wrapper collection from the property value
+         * We start by cloning the actual models, this way we'll always keep the temporarily
+         * or unmapped properties in the table (the only thing telling us a property should be
+         * there otherwise is the mapper)
+         *
+         * Properties will only be removed from the table when explicitly removed.
+         *
+         * This is valid only for the current session, refreshing the page or seeing from another
+         * session will not keep unmapped properties in the table.
          */
         updateCollection: function () {
-            var destinations = [];
+            var destinations = _.clone(this.models);
 
             // Find all property mappers
             var mappers = this.quiddities.where( { 'class': 'property-mapper' } );
@@ -53,7 +61,6 @@ define( [
                 if ( property ) {
                     destinations.push( {
                         id: property.collection.quiddity.id + '.' + property.id,
-                        quiddity: property.collection.quiddity,
                         property: property
                     } );
                 }
@@ -61,7 +68,7 @@ define( [
 
             // By resetting we are simplifying the control connection update process
             // It would be better to just update (set) but then it doesn't trigger when the properties stay the same
-            this.reset( destinations, {  } );
+            this.reset( destinations );
         }
     } );
 

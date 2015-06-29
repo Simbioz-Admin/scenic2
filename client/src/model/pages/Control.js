@@ -79,12 +79,11 @@ define( [
         },
 
         createPropertyDestination: function ( quiddityId, propertyId ) {
-            var quiddity    = app.quiddities.get( quiddityId );
-            var property    = quiddity.get( 'properties' ).get( propertyId );
+            var property    = app.quiddities.get( quiddityId ).get( 'properties' ).get( propertyId );
             var destination = {
-                id:       quiddity.id + '.' + property.id,
-                quiddity: quiddity,
-                property: property
+                id:       property.collection.quiddity.id + '.' + property.id,
+                property: property,
+                manual: true
             };
             this.destinations.add( destination, { merge: true } );
         },
@@ -104,7 +103,7 @@ define( [
                 } else {
                     return tree.source.quiddity == source.collection.quiddity.id &&
                            tree.source.property == source.id &&
-                           tree.sink.quiddity == destination.get( 'quiddity' ).id &&
+                           tree.sink.quiddity == destination.get( 'property' ).collection.quiddity.id &&
                            tree.sink.property == destination.get( 'property' ).id;
 
                 }
@@ -140,7 +139,7 @@ define( [
          */
         connect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'control.mapping.add', source.collection.quiddity.id, source.id, destination.get( 'quiddity' ).id, destination.get( 'property' ).id, function ( error ) {
+            socket.emit( 'control.mapping.add', source.collection.quiddity.id, source.id, destination.get( 'property' ).collection.quiddity.id, destination.get( 'property' ).id, function ( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );

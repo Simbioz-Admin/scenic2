@@ -4,9 +4,8 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'view/scenic/pages/base/table/ConnectionView',
-    'text!template/scenic/pages/base/table/source/shmdata.html'
-], function ( _, Backbone, Marionette, ConnectionView, ShmdataTemplate ) {
+    'view/scenic/pages/base/table/source/SourceChildView'
+], function ( _, Backbone, Marionette, SourceChildView ) {
 
     /**
      * Shmdata View
@@ -14,19 +13,8 @@ define( [
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var ShmdataView = Marionette.CompositeView.extend( {
-        template:           _.template( ShmdataTemplate ),
-        className:          'shmdata',
-
-        childView:          ConnectionView,
-        childViewOptions: function() {
-            return {
-                source: this.model,
-                table: this.options.table
-            }
-        },
-
-        childViewContainer: '.connections',
+    var ShmdataView = SourceChildView.extend( {
+        className: SourceChildView.prototype.className + ' shmdata',
 
         modelEvents: {
             'change:byte_rate': 'updateByteRate'
@@ -44,10 +32,7 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            if ( this.options.connectionView ) {
-                this.childView = this.options.connectionView;
-            }
+            SourceChildView.prototype.initialize.apply(this, arguments);
         },
 
         /**
@@ -56,17 +41,6 @@ define( [
         onRender: function() {
             // Check the byte rate to update status
             this.updateByteRate();
-        },
-
-        /**
-         * Filter destinations in order to display connections for shmdata
-         *
-         * @param destination
-         * @returns {boolean}
-         */
-        filter: function (destination) {
-            // Get back up to the table model to filter the displayed connections
-            return this.options.table.filterDestination( destination, true );
         },
 
         /**

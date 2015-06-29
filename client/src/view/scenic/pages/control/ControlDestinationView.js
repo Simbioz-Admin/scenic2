@@ -20,7 +20,7 @@ define( [
 
         templateHelpers: function() {
             return {
-                quiddity: this.model.has('quiddity') ? this.model.get('quiddity' ).toJSON() : null,
+                quiddity: this.model.has('property') ? this.model.get('property' ).collection.quiddity.toJSON() : null,
                 property: this.model.has('property') ? this.model.get('property' ).toJSON() : null
             }
         },
@@ -39,7 +39,7 @@ define( [
         removeDestination: function( event ) {
             var self = this;
             this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove all mappings to property __property__ of __quiddity__?', {
-                quiddity: this.model.get('quiddity' ).id,
+                quiddity: this.model.get('property' ).collection.quiddity.id,
                 property: this.model.get('property' ).get('name')
             }), function( confirmed ) {
                 if ( confirmed ) {

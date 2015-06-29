@@ -133,11 +133,10 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            socket.emit( 'rtp.destination.disconnect', source.get('path'), destination.id, function( error ) {
+            socket.emit( 'rtp.destination.disconnect', destination.id, source.get('path'), function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
-                    return cb( error );
                 }
             } );
         }

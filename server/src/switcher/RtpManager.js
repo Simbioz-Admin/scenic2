@@ -280,9 +280,8 @@ RtpManager.prototype.connectRTPDestination = function ( id, path, port ) {
  *
  * @param {String} id - id of the destination
  * @param {String} path - path of the shmdata
- * @param cb
  */
-RtpManager.prototype.disconnectRTPDestination = function ( id, path, cb ) {
+RtpManager.prototype.disconnectRTPDestination = function ( id, path ) {
     log.info( 'Disconnecting RTP destination', id, path );
 
     if ( _.isEmpty( id ) || !_.isString( id ) ) {

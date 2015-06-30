@@ -53,6 +53,8 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
+            this.get( 'args' ).method = this;
+
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io
             if ( !this.isNew() ) {
@@ -82,7 +84,15 @@ define( [
             socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.get('args' ).pluck('value'), function( error, result ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error );
+                    if ( callback ) {
+                        return callback( error, result );
+                    }
                 }
+
+                self.get('args' ).each( function( arg ) {
+                    arg.set('value', '');
+                });
+
                 if ( callback ) {
                     callback( error, result );
                 }

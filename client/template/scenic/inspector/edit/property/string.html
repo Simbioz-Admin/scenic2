@@ -1,2 +1,2 @@
-<input id="<%=id%>" name="<%=id%>" class="property string <%=type%>" type="text" value="<%=value%>" placeholder="<%=name%>">
+<input id="<%=id%>" name="<%=id%>" class="property string <%=type%>" type="text" value="<%=value%>" placeholder="<%=name%>" <% if ( !writable ) { %>disabled<% } %>>
 <a class="btn update" id="btn-<%=id%>" data-i18n>Update</a>

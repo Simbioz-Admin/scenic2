@@ -12,7 +12,7 @@ define( [
      * @constructor
      * @extends module:Marionette.ItemView
      */
-    var Field = Marionette.ItemView.extend( {
+    var FieldView = Marionette.ItemView.extend( {
 
         modelEvents: {
             'change:value': 'onModelValueChanged'
@@ -37,5 +37,5 @@ define( [
         }
     } );
 
-    return Field;
+    return FieldView;
 } );

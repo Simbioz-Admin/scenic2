@@ -49,6 +49,9 @@ define( [
          * On Show Handler
          */
         onRender: function () {
+            if ( !this.model.get('writable') ) {
+                this.$el.addClass( 'readonly' );
+            }
             this.showFieldView();
         },
 

@@ -1,2 +1,2 @@
-<input id="<%=id%>" name="<%=id%>" class="property bool checkbox" type="checkbox" autofocus="autofocus" value="<%=value%>"<% if(value){ %> checked="checked"<% } %>>
+<input id="<%=id%>" name="<%=id%>" class="property bool checkbox" type="checkbox" autofocus="autofocus" value="<%=value%>"<% if(value){ %> checked="checked"<% } %> <% if ( !writable ) { %>disabled<% } %>>
 <label class="checkbox" for="<%=id%>"></label>

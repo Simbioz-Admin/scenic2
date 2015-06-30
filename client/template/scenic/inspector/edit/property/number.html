@@ -7,4 +7,5 @@
        class="property number <%=type%> slider"
        min="<%=minimum%>"
        max="<%=maximum%>"
-       placeholder="Value type <%=type%>"/>
+       placeholder="Value type <%=type%>"
+       <% if ( !writable ) { %>disabled<% } %>/>

@@ -40,6 +40,7 @@ define( [
             var maximum = this.model.get( 'maximum' );
             var step    = type.indexOf('int') != -1 ? 1 : (maximum - minimum ) / 200;
             this.ui.slider.slider( {
+                disabled: !this.model.get('writable'),
                 range: "min",
                 value: self.model.get( "value" ),
                 step:  step,

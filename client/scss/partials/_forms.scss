@@ -216,17 +216,24 @@ label {
 }
 
 .ui-slider {
-  background: #eee;
+  background: $backgroundColorDarkish;
   float: left;
-  width: 63%;
-  margin: 12px 20px 0 12px;
+  height: 24px;
+  //margin: 12px 20px 0 12px;
   @include border-radius(5px);
   .ui-slider-range {
     background: $blue;
     @include border-radius(5px);
+    &:hover {
+      background: lighten($blue, 5% );
+    }
+    &:active {
+      background: lighten($blue, 15% );;
+    }
   }
   .ui-slider-handle {
-    background: #fcfcfc;
+    display:none;
+    /*background: #fcfcfc;
     @include border-radius(3px);
     width: 24px;
     height: 16px;
@@ -234,14 +241,46 @@ label {
     margin-left: -12px;
     &:hover {
       background: white;
-    }
+    }*/
   }
 }
 
-input.slider {
-  width: 60px;
-  padding: 0 8px;
-  height: 22px;
-  text-align: center;
-  color: $textColorBrighter;
+.ui-selectmenu-button {
+  height: 24px;
+  font-size: 1.5em;
+  background-color: $backgroundColorDarkish;
+  &.ui-corner-all {
+    @include border-radius(5px);
+  }
+  &.ui-corner-top {
+    @include border-radius( 5px 5px 0 0);
+  }
+  span.ui-selectmenu-text {
+    padding: 1px 2em 0 0.5em;
+  }
+  span.ui-icon {
+    margin-top: -4px;
+  }
+  .ui-icon-triangle-1-s {
+    width: 23px;
+    height: 7px;
+    background: image-url('icons/arrow-down-small.png') no-repeat 8px;
+  }
+}
+
+.ui-selectmenu-menu {
+  .ui-menu {
+    background-color: $backgroundColorDarkish;
+    @include border-radius(0 0 5px 5px);
+    .ui-menu-item {
+      border-top: 1px solid $backgroundColorDarker;
+      padding: 0.5em 1em 0.5em 0.5em;
+      font-size: 1.5em;
+      &.ui-state-focus {
+        margin: 0;
+        color: $textColorDark;
+        background-color: $blue;
+      }
+    }
+  }
 }

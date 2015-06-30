@@ -20,7 +20,7 @@ define( [
     var Property = Marionette.LayoutView.extend( {
         template:  _.template( PropertyTemplate ),
         tagName:   'li',
-        className: 'property',
+        className: 'property-form',
 
         regions: {
             field: '.field'
@@ -72,16 +72,20 @@ define( [
                 case 'int64':
                 case 'double':
                 case 'uint':
+                    this.$el.addClass( 'number' );
                     view = new NumberView( {model: this.model} );
                     break;
                 case 'boolean':
+                    this.$el.addClass( 'bool' );
                     view = new BoolView( {model: this.model} );
                     break;
                 case 'enum':
+                    this.$el.addClass( 'select' );
                     view = new SelectView( {model: this.model} );
                     break;
                 case 'string':
                 default:
+                    this.$el.addClass( 'string' );
                     view = new StringView( {model: this.model} );
                     break;
             }

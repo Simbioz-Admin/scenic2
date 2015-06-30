@@ -18,7 +18,8 @@ define( [
         template: _.template( SelectTemplate ),
 
         ui: {
-            property: '.property'
+            property: '.property',
+
         },
 
         events: {
@@ -30,6 +31,13 @@ define( [
          */
         initialize: function( ) {
             FieldView.prototype.initialize( this, arguments );
+        },
+
+        onRender: function() {
+            this.ui.property.selectmenu( {
+                disabled: !this.model.get('writable'),
+                width: '100%'
+            });
         },
 
         /**

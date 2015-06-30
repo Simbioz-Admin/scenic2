@@ -18,8 +18,7 @@ define( [
         template: _.template( SelectTemplate ),
 
         ui: {
-            property: '.property',
-
+            property: '.property'
         },
 
         events: {
@@ -33,10 +32,14 @@ define( [
             FieldView.prototype.initialize( this, arguments );
         },
 
-        onRender: function() {
+        onAttach: function() {
+            var self = this;
             this.ui.property.selectmenu( {
                 disabled: !this.model.get('writable'),
-                width: '100%'
+                width: '100%',
+                change: function ( event, ui ) {
+                    self.model.updateValue( ui.item.value );
+                }
             });
         },
 
@@ -46,7 +49,6 @@ define( [
          * @param event
          */
         updateModel: function ( event ) {
-            // Update the model
             this.model.updateValue( this.ui.property.val() );
         },
 
@@ -56,6 +58,7 @@ define( [
          */
         onModelValueChanged: function( model, value, options ) {
             this.ui.property.val( value );
+            this.ui.property.selectmenu('refresh');
         }
     } );
 

@@ -15,7 +15,7 @@ define( [
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var Source = Marionette.CompositeView.extend( {
+    var SourceView = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
         templateHelpers: function() {
             return {
@@ -26,7 +26,12 @@ define( [
         },
         className:          'quiddity source',
         getChildView: function( item ) {
-            return this.options.sourceChildView ? this.options.sourceChildView : ShmdataView
+            return this.options.sourceChildView ?
+                    this.options.sourceChildView :
+                    ( this.childView ?
+                        this.childView :
+                        ShmdataView
+                   );
         },
         childViewOptions:   function () {
             return {
@@ -110,5 +115,5 @@ define( [
         }
     } );
 
-    return Source;
+    return SourceView;
 } );

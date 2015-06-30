@@ -23,7 +23,8 @@ define( [
         },
 
         events: {
-            'click @ui.update': 'updateModel'
+            'click @ui.update': 'updateModel',
+            'keypress @ui.property': 'checkForEnterKey'
         },
 
         /**
@@ -48,6 +49,14 @@ define( [
          */
         onModelValueChanged: function( model, value, options ) {
             this.ui.property.val( value );
+        },
+
+        checkForEnterKey: function() {
+            var key = event.which || event.keyCode;
+            if ( key == 13 ) {
+                event.preventDefault();
+                this.updateModel();
+            }
         }
     } );
 

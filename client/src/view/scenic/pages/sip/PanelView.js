@@ -19,10 +19,19 @@ define( [
     var PanelView = Marionette.LayoutView.extend( {
         template: _.template( PanelTemplate ),
 
+        ui: {
+            logout: '.action.logout',
+            addContact: '.action.add'
+        },
+
         regions: {
             self:     '.self',
-            control:  '.control',
             contacts: '.contacts'
+        },
+
+        events: {
+            'click @ui.logout': 'logout',
+            'click @ui.addContact': 'addContact'
         },
 
         /**
@@ -34,7 +43,6 @@ define( [
         },
 
         onBeforeShow: function () {
-            this.showChildView( 'control', new ControlView( {model: this.model.sip} ) );
             this.showChildView( 'contacts', new ContactsView( {
                 table:      this.model,
                 collection: this.model.sip.get( 'contacts' )
@@ -49,6 +57,17 @@ define( [
             } else {
                 this.getRegion( 'self' ).empty();
             }
+        },
+
+        logout: function() {
+            this.model.sip.logout();
+        },
+
+        addContact: function() {
+            this.scenicChannel.commands.execute(
+                'contact:add',
+                _.bind( this.model.sip.addContact, this.model )
+            );
         }
     } );
 

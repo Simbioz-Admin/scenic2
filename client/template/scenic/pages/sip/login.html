@@ -1,26 +1,24 @@
-<form id="sip-form">
-    <h2 data-i18n>SIP Login</h2>
+<h2 data-i18n>SIP Login</h2>
 
-    <label for="sipServer" data-i18n>Address</label>
-    <input id="sipServer" name="sipServer" type="text" placeholder="Server" data-i18n="[placeholder]Server" value="<%=server%>">
+<label for="sipServer" data-i18n>Address</label>
+<input id="sipServer" name="sipServer" type="text" placeholder="Server" data-i18n="[placeholder]Server" value="<%=server%>">
 
-    <div class="">
-        <label for="sipUsername" data-i18n>Username</label>
-        <input id="sipUsername" name="sipUsername" type="text" placeholder="Username" data-i18n="[placeholder]Username" value="<%=user%>" autofocus>
+<div class="">
+    <label for="sipUsername" data-i18n>Username</label>
+    <input id="sipUsername" name="sipUsername" type="text" placeholder="Username" data-i18n="[placeholder]Username" value="<%=user%>" autofocus>
 
-    </div>
-    <div class="">
-        <label for="sipPassword" data-i18n>Password</label>
-        <input id="sipPassword" name="sipPassword" type="password" placeholder="Password" data-i18n="[placeholder]Password">
-    </div>
-    <div class="">
-        <label for="sipPort" data-i18n>Port</label>
-        <input id="sipPort" name="sipPort" type="text" placeholder="Port" data-i18n="[placeholder]Port" value="<%=port%>">
-    </div>
+</div>
+<div class="">
+    <label for="sipPassword" data-i18n>Password</label>
+    <input id="sipPassword" name="sipPassword" type="password" placeholder="Password" data-i18n="[placeholder]Password">
+</div>
+<div class="">
+    <label for="sipPort" data-i18n>Port</label>
+    <input id="sipPort" name="sipPort" type="text" placeholder="Port" data-i18n="[placeholder]Port" value="<%=port%>">
+</div>
 
-    <% if ( error ) { %>
-    <div class="alert alert-error"><%=error%></div>
-    <% } %>
+<% if ( error ) { %>
+<div class="alert alert-error"><%=error%></div>
+<% } %>
 
-    <input id="sipLogin" type="button" class="btn btn-info" data-i18n="[value]Login" value="Login" >
-</form>
+<input id="sipLogin" type="button" class="btn btn-info" data-i18n=" [value]Login" value="Login" >

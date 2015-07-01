@@ -7,10 +7,11 @@ define( [
     'view/scenic/inspector/CreateRTP',
     'view/scenic/inspector/EditRTP',
     'view/scenic/inspector/ShmdataInfo',
+    'view/scenic/inspector/AddContact',
     'view/scenic/inspector/EditContact',
     'text!template/scenic/inspector.html'
 ], function ( _, Backbone, Marionette,
-              CreateQuiddityView, EditQuiddityView, CreateRTPView, EditRTPView, ShmdataInfoView, EditContactView,
+              CreateQuiddityView, EditQuiddityView, CreateRTPView, EditRTPView, ShmdataInfoView, AddContactView, EditContactView,
               InspectorTemplate ) {
 
     /**
@@ -61,6 +62,7 @@ define( [
             this.scenicChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
             this.scenicChannel.commands.setHandler( 'rtp:edit', _.bind( this._onRTPEdit, this ) );
 
+            this.scenicChannel.commands.setHandler( 'contact:add', _.bind( this._onContactAdd, this ) );
             this.scenicChannel.commands.setHandler( 'contact:edit', _.bind( this._onContactEdit, this ) );
 
             this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
@@ -146,6 +148,18 @@ define( [
          */
         _onShmdataInfo: function ( shmdata ) {
             this.currentPanel = new ShmdataInfoView( {model: shmdata} );
+            this.showChildView( 'content', this.currentPanel );
+            this.$el.fadeIn( 250 );
+        },
+
+        /**
+         * Add Contact Handler
+         * Display the contact add form
+         *
+         * @private
+         */
+        _onContactAdd: function ( callback ) {
+            this.currentPanel = new AddContactView( {callback: callback} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },

@@ -80,7 +80,6 @@ define( [
                 var width = $('.cpu .content .bars' ).width();
                 var count = _.values( info ).length;
                 var barWidth = Math.floor(width / count) - 1;
-                console.log( width, count, barWidth );
                 _.each( info, function ( cpu, name ) {
                     this.lastValues[name] = cpu.total;
                     $( ".cpu .content .bars", this.el ).append( '<div class="bar" data-cpu="' + name + '" style="height:' + cpu.total * 100 + '%;width:' + barWidth + 'px;left:' + leftBar +'px"></div>' );

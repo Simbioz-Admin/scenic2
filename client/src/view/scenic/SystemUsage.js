@@ -13,7 +13,7 @@ define( [
      * SystemUsageView
      *
      * @constructor
-     * @extends Backbone.View
+     * @extends module:Marionette.ItemView
      */
 
     var SystemUsageView = Marionette.ItemView.extend( {
@@ -42,8 +42,6 @@ define( [
 
         /**
          * Render System Usage
-         *
-         * @param info
          */
         renderSystemUsage: function ( ) {
             var tree = this.model.get('tree');
@@ -54,8 +52,17 @@ define( [
                     delete cpu.cpu;
                     this.renderCpu( cpu );
                 }
-                this.renderMemory( tree.top.mem );
-                this.renderNetwork( tree.top.net );
+
+                if ( tree.top.mem ) {
+                    this.renderMemory( tree.top.mem );
+                }
+
+                if ( tree.top.net ) {
+                // Clone because we want to remove the 'lo' interface
+                    var net = _.clone( tree.top.net );
+                    delete net.lo;
+                    this.renderNetwork( net );
+                }
             }
         },
 
@@ -69,10 +76,15 @@ define( [
             if ( !this.cpuRender ) {
                 var leftBar    = 0;
                 this.lastValues = {};
+                $( ".cpu .content", this.el ).append('<div class="bars"></div>');
+                var width = $('.cpu .content .bars' ).width();
+                var count = _.values( info ).length;
+                var barWidth = Math.floor(width / count) - 1;
+                console.log( width, count, barWidth );
                 _.each( info, function ( cpu, name ) {
                     this.lastValues[name] = cpu.total;
-                    $( ".cpu .content", this.el ).prepend( "<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>" );
-                    leftBar = leftBar + 6;
+                    $( ".cpu .content .bars", this.el ).append( '<div class="bar" data-cpu="' + name + '" style="height:' + cpu.total * 100 + '%;width:' + barWidth + 'px;left:' + leftBar +'px"></div>' );
+                    leftBar += barWidth + 1;
                 }, this );
                 that.cpuRender = true;
             } else {
@@ -125,23 +137,23 @@ define( [
             this.$net.html( html );
         },
 
-        convertBytes: function ( bytes ) {
-            var bytes = parseFloat( bytes );
+        convertBytes: function ( totalBytes ) {
+            var total = parseFloat( totalBytes );
             var size  = null;
-            if ( bytes >= 1099511627776 ) {
-                var terabytes = bytes / 1099511627776;
+            if ( total >= 1099511627776 ) {
+                var terabytes = total / 1099511627776;
                 size          = terabytes.toFixed( 2 ) + "T";
-            } else if ( bytes >= 1073741824 ) {
-                var gigabytes = bytes / 1073741824;
+            } else if ( total >= 1073741824 ) {
+                var gigabytes = total / 1073741824;
                 size          = gigabytes.toFixed( 2 ) + "G";
-            } else if ( bytes >= 1048576 ) {
-                var megabytes = bytes / 1048576;
+            } else if ( total >= 1048576 ) {
+                var megabytes = total / 1048576;
                 size          = megabytes.toFixed( 2 ) + "M";
-            } else if ( bytes >= 1024 ) {
-                var bytes = bytes / 1024;
+            } else if ( total >= 1024 ) {
+                var bytes = total / 1024;
                 size      = bytes.toFixed( 2 ) + "K";
             } else {
-                size = bytes.toFixed( 2 ) + "b";
+                size = total.toFixed( 2 ) + "b";
             }
             return size;
         }

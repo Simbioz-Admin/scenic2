@@ -5,3 +5,12 @@
 <div class="menu destination properties">
     <div class="button" data-i18n>Properties</div>
 </div>
+
+<div class="filter">
+    <select class="filter-select">
+        <option value="" data-i18n>Show all categories</option>
+        <% _.each(categories, function(category) { %>
+        <option value="<%=category%>"<% if ( filter == category ) { %> selected<% } %>><%=category%></option>
+        <% }); %>
+    </select>
+</div>

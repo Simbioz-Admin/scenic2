@@ -17,14 +17,27 @@ define( [
 
         ui: {
             'source': '.menu.source',
-            'properties': '.menu.properties'
+            'properties': '.menu.properties',
+            'filter': '.filter-select'
         },
 
         events: {
             'click @ui.source .button': 'dropSources',
             'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.properties .button': 'dropProperties',
-            'click @ui.properties .item': 'createControlDestination'
+            'click @ui.properties .item': 'createControlDestination',
+            'change @ui.filter': 'filter'
+        },
+
+        templateHelpers: function () {
+            var categories = _.uniq( _.map( app.quiddities.filter( function ( quiddity ) {
+                return this.model.filterSource( quiddity ) || this.model.filterDestination( quiddity );
+            }, this ), function ( quiddity ) {
+                return quiddity.get( 'classDescription' ).get( 'category' );
+            } ) );
+            return {
+                categories: categories
+            }
         },
 
         /**
@@ -32,6 +45,15 @@ define( [
          */
         initialize: function () {
             TableMenusView.prototype.initialize.apply( this, arguments );
+        },
+
+        onRender: function() {
+            var self = this;
+            this.ui.filter.selectmenu( {
+                change: function ( event, ui ) {
+                    self.model.set( 'filter', ui.item.value );
+                }
+            });
         },
 
         /**
@@ -64,6 +86,15 @@ define( [
         createControlDestination: function(event) {
             this.closeMenu();
             this.model.createPropertyDestination( $( event.currentTarget ).data( 'group' ), $( event.currentTarget ).data( 'id' ) );
+        },
+
+        /**
+         * Filter table
+         *
+         * @param event
+         */
+        filter: function ( event ) {
+            this.model.set( 'filter', $( event.currentTarget ).val() );
         }
 
     } );

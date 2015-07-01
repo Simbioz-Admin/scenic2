@@ -9,27 +9,28 @@
   color: white;
   position: absolute;
   width: 100%;
-  background: #222;
   bottom: 0;
   .content {
-    margin: 5px 10px 10px 10px;
+    padding: 5px;
+    background-color: darken($backgroundColorDarker,1%);
   }
   .info {
     text-align: center;
     position: relative;
     width: 100%;
     float: left;
-    border-top: 1px solid #111;
+    border-top: 1px solid darken($backgroundColorDarker,1%);
     .label {
       font-size: 10px;
-      color: #aaa;
-      margin-bottom: 3px;
+      color: $textColorBright;
+      padding-top: 2px;
+      padding-bottom: 3px;
     }
   }
   .cpu {
     .bar {
       width: 5px;
-      height: 2%;
+      height: 0;
       background: #555;
       position: absolute;
       bottom: 0;
@@ -37,9 +38,11 @@
       @include transition(0.5s);
     }
     .content {
-      height: 22px;
-      width: 100%;
-      position: relative;
+      .bars {
+        width: 100%;
+        height: 24px;
+        position: relative;
+      }
     }
   }
   .cpu-warning {
@@ -49,16 +52,15 @@
     background: $red !important;
   }
   .memory {
-    .content {
-      margin-top: 8px;
-    }
+
   }
   .network {
-    padding-bottom: 3px;
     font-size: 9px;
     color: #ccc;
     .iface {
-      padding-top: 4px;
+      &:not(:last-child) {
+        margin-bottom: 4px;
+      }
       .name {
         background-color: #333;
         font-weight: bold;

@@ -24,7 +24,7 @@ define( [
             'click @ui.source .button': 'dropSources',
             'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.destination .button': 'dropDestinations',
-            'click @ui.destination .item': 'create',
+            'click @ui.destination .item': 'addContactDestination',
             'change @ui.filter': 'filter'
         },
 
@@ -68,7 +68,23 @@ define( [
          * @param event
          */
         dropDestinations: function ( event ) {
-            this.drop( this.ui.destination, this.mapMenu( this.model.getDestinations() ) );
+            this.drop( this.ui.destination, _.groupBy( this.model.getDestinations().map( function ( contact ) {
+                return {
+                    id: contact.id,
+                    name: contact.get( 'name' ),
+                    status: contact.get('status')
+                };
+            }, this ), 'status' ), 0 );
+        },
+
+        /**
+         * Add a contact destination
+         *
+         * @param event
+         */
+        addContactDestination: function(event) {
+            this.closeMenu();
+            this.model.addDestination( this.model.sip.get('contacts' ).get( $( event.currentTarget ).data( 'id' ) ) );
         },
 
         /**

@@ -40,7 +40,7 @@ define( [
          *
          * @param data
          */
-        drop: function ( anchor, data ) {
+        drop: function ( anchor, data, activeIndex ) {
             this.closeMenu();
 
             if ( data.length == 0 ) {
@@ -53,7 +53,7 @@ define( [
 
             $( '#sub-menu .content' ).accordion( {
                 collapsible: true,
-                active:      false,
+                active:      activeIndex != null ? activeIndex : false,
                 heightStyle: 'content',
                 icons:       false,
                 animate:     125

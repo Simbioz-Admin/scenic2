@@ -45,6 +45,18 @@ define( [
         },
 
         /**
+         * Get destinations
+         * Currently the same as the collection
+         *
+         * @returns {Contacts}
+         */
+        getDestinations: function() {
+            return this.getDestinationCollection().filter( function ( contact ) {
+                return !contact.get('self');
+            });
+        },
+
+        /**
          * Add a potential destination
          * Flag the contact to be temporarily show in destinations
          * Normally only contacts with connections appear as a destination

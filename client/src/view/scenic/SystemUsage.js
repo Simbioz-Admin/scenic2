@@ -136,21 +136,27 @@ define( [
             this.$net.html( html );
         },
 
+        /**
+         * Transforms incoming byes into bits and make it readable
+         *
+         * @param totalBytes
+         * @returns {*}
+         */
         convertBytes: function ( totalBytes ) {
-            var total = parseFloat( totalBytes );
+            var total = parseFloat( totalBytes ) * 8;
             var size  = null;
             if ( total >= 1099511627776 ) {
-                var terabytes = total / 1099511627776;
-                size          = terabytes.toFixed( 2 ) + "T";
+                var terabits = total / 1099511627776;
+                size          = terabits.toFixed( 2 ) + "Tb";
             } else if ( total >= 1073741824 ) {
-                var gigabytes = total / 1073741824;
-                size          = gigabytes.toFixed( 2 ) + "G";
+                var gigabits = total / 1073741824;
+                size          = gigabits.toFixed( 2 ) + "Gb";
             } else if ( total >= 1048576 ) {
-                var megabytes = total / 1048576;
-                size          = megabytes.toFixed( 2 ) + "M";
+                var megabits = total / 1048576;
+                size          = megabits.toFixed( 2 ) + "Mb";
             } else if ( total >= 1024 ) {
-                var bytes = total / 1024;
-                size      = bytes.toFixed( 2 ) + "K";
+                var bits = total / 1024;
+                size      = bits.toFixed( 2 ) + "Kb";
             } else {
                 size = total.toFixed( 2 ) + "b";
             }

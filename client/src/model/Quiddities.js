@@ -38,7 +38,7 @@ define( [
             this.classes = options.classes;
 
             // Handlers
-            this.onSocket( "create", _.bind( this._onCreate, this ) );
+            this.onSocket( 'quiddity.created', _.bind( this._onCreate, this ) );
         },
 
         /**
@@ -54,7 +54,6 @@ define( [
             this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
             // If we created it, start editing it
             if ( socket.id == socketId ) {
-                //TODO: Send quiddity:created with local flag instead
                 quiddity.edit();
             }
         }

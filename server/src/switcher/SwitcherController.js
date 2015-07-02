@@ -45,6 +45,16 @@ SwitcherController.prototype.initialize = function ( callback ) {
 
     var self = this;
 
+    // Create save file directory
+    if ( !fs.existsSync( this.config.savePath ) ) {
+        try {
+            fs.mkdirSync( this.config.savePath );
+        } catch ( err ) {
+            console.error( "Could not create directory: " + this.config.savePath + " Error: " + err.toString() );
+            return process.exit(1);
+        }
+    }
+
     // Switcher Callbacks
     this.switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
     this.switcher.register_signal_callback( this._onSwitcherSignal.bind( this ) );
@@ -222,7 +232,11 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 return cb( error );
             }
             files = _.map( files, function ( file ) {
-                return file.replace( path.extname( file ), '' );
+                var stat = fs.statSync( savePath + file );
+                return {
+                    name: file.replace( path.extname( file ), '' ),
+                    date: stat.mtime
+                };
             } );
             cb( null, files );
         } );

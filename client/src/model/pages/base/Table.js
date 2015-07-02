@@ -136,6 +136,7 @@ define( [
                 success: function ( quiddity ) {
                     if ( info.device ) {
                         //TODO: What is this I don't even
+                        alert('What is this I don\'t even');
                         quiddity.setProperty( 'device', info.device );
                     }
                 }

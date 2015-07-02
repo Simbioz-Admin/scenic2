@@ -71,8 +71,8 @@ define( [
                 }
 
                 // Handlers
-                this.onSocket( "remove", _.bind( this._onRemoved, this ) );
-                this.onSocket( "quiddity.tree.updated", _.bind( this._onTreeUpdated, this ) );
+                this.onSocket( 'quiddity.removed', _.bind( this._onRemoved, this ) );
+                this.onSocket( 'quiddity.tree.updated', _.bind( this._onTreeUpdated, this ) );
             }
 
         },

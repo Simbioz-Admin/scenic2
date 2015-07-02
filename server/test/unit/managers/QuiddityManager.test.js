@@ -169,7 +169,7 @@ describe( 'Quiddity Manager', function () {
             } );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'create', resultBundle );
+            io.emit.should.have.been.calledWith( 'quiddity.created', resultBundle );
         } );
 
         it( 'should stop when registering added private quiddity', function () {
@@ -238,7 +238,7 @@ describe( 'Quiddity Manager', function () {
             quiddityManager._onRemoved( id );
 
             io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'remove', id );
+            io.emit.should.have.been.calledWith( 'quiddity.removed', id );
         } );
 
     } );
@@ -341,7 +341,7 @@ describe( 'Quiddity Manager', function () {
             it( 'should notify clients and cleanup when quiddity is removed', function () {
                 quiddityManager.onSwitcherSignal( 'irrelevant', 'on-quiddity-removed', ['anything'] );
                 io.emit.should.have.been.calledOnce;
-                io.emit.should.have.been.calledWith( 'remove', 'anything' );
+                io.emit.should.have.been.calledWith( 'quiddity.removed', 'anything' );
             } );
 
             it( 'should internally add quiddity on quiddity created', function () {

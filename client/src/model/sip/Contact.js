@@ -122,13 +122,8 @@ define( [
         edit: function () {
             var self = this;
             this.scenicChannel.commands.execute( 'contact:edit', this, function ( info ) {
-                //TODO: Use the contact's internal update method
-                socket.emit( 'sip.contact.update', self.id, info, function ( error ) {
-                    if ( error ) {
-                        self.scenicChannel.vent.trigger( 'error', error );
-                        return;
-                    }
-                } )
+                self.set( info );
+                self.save();
             } );
         }
     } );

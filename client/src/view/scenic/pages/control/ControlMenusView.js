@@ -73,7 +73,7 @@ define( [
         dropProperties: function ( event ) {
             //TODO: Show message when empty
             // Map for the menu structure
-            this.drop( this.ui.properties, _.groupBy( _.map( this.model.getControlProperties(), function ( property ) {
+            this.drop( this.ui.properties, _.groupBy( _.map( this.model.getDestinations(), function ( property ) {
                 return {
                     group: property.collection.quiddity.id,
                     id: property.id,

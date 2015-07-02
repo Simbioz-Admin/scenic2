@@ -19,7 +19,7 @@ define( [
 
         attributes: function () {
             return {
-                class: [ 'sip', 'destination', this.model.get('send_status') == 'calling' ? 'connected' : 'disconnected'].join(' '),
+                class: [ 'sip', 'destination', this.model.get('send_status') == 'calling' ? 'connected' : 'disconnected'].join(' ')
             }
         },
 

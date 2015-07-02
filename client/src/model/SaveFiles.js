@@ -25,10 +25,6 @@ define( [
             'read':   'file.list'
         },
 
-        parse: function( result ) {
-            return _.map( result, function( item ) { return { name: item }; } );
-        },
-
         /**
          * Initialize
          */

@@ -333,7 +333,7 @@ QuiddityManager.prototype._onCreated = function ( quiddityId ) {
         }
 
         // Broadcast creation message including the creator's socketId so that the interface can know if they created the quiddity
-        this.io.emit( 'create', quiddity, this.quidditySocketMap[quiddityId] );
+        this.io.emit( 'quiddity.created', quiddity, this.quidditySocketMap[quiddityId] );
     }
 };
 
@@ -355,7 +355,7 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
     }
 
     // Broadcast to clients
-    this.io.emit( 'remove', quiddityId );
+    this.io.emit( 'quiddity.removed', quiddityId );
 };
 
 /**
@@ -528,14 +528,6 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
 
     // Send to clients
     this.io.emit( 'propertyChanged', quiddityId, property, value );
-
-    // If stopping a quiddity, check for associated shmdata and remove them
-    if ( property == 'started' && !value ) {
-        log.debug( 'Quiddity ' + quiddityId + ' was stopped' );
-        //
-        //TODO: Remove connections
-        //
-    }
 };
 
 /**

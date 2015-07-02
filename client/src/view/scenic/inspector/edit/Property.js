@@ -57,12 +57,6 @@ define( [
 
         /**
          * Shows the view & template associated with the property type
-         *
-         * TODO: Read-only properties?
-         * <% if(property.writable == "false") { %>
-         * <h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
-         * <%=property["default value"]%>
-         * <% } %>
          */
         showFieldView: function () {
             var view = null;

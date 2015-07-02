@@ -362,11 +362,11 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
  * Tree Grafted Handler
  * 
  * @param quiddityId
- * @param value
+ * @param path
  * @private
  */
-QuiddityManager.prototype._onTreeGrafted = function( quiddityId, value ) {
-    var graftedPath = value.split( '.' );
+QuiddityManager.prototype._onTreeGrafted = function( quiddityId, path ) {
+    var graftedPath = path.split( '.' );
     // Remove the first empty value, because paths start with a dot
     graftedPath.shift();
 
@@ -375,18 +375,28 @@ QuiddityManager.prototype._onTreeGrafted = function( quiddityId, value ) {
         var graftedShmdataType = graftedPath[1];
         var graftedShmdataPath = graftedPath[2];
         if ( !_.isEmpty( graftedShmdataPath ) && _.contains( this.shmdataTypes, graftedShmdataType ) ) {
-            try {
-                var shmdataInfo = this.getTreeInfo( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
-            } catch ( e ) {
-                log.error( e );
-            }
-            if ( !shmdataInfo || !_.isObject( shmdataInfo ) || shmdataInfo.error ) {
-                log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
+
+            //TODO: Merge into a more unified tree management
+            var key = graftedPath[graftedPath.length-1];
+            if ( key == 'byte_rate' ) {
+                // This is a special case done to send less data over the network
+                // It should eventually be merged into a better tree management
+                var value = this.getTreeInfo(quiddityId, path );
+                this.io.emit('shmdata.update.rate', quiddityId, graftedShmdataType + '.' + graftedShmdataPath, parseInt(value) );
             } else {
-                this._parseShmdata( shmdataInfo );
-                shmdataInfo.path = graftedShmdataPath;
-                shmdataInfo.type = graftedShmdataType;
-                this.io.emit( 'shmdata.update', quiddityId, shmdataInfo );
+                try {
+                    var shmdataInfo = this.getTreeInfo( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
+                } catch ( e ) {
+                    log.error( e );
+                }
+                if ( !shmdataInfo || !_.isObject( shmdataInfo ) || shmdataInfo.error ) {
+                    log.error( shmdataInfo ? shmdataInfo.error : 'Could not get shmdata writer info' );
+                } else {
+                    this._parseShmdata( shmdataInfo );
+                    shmdataInfo.path = graftedShmdataPath;
+                    shmdataInfo.type = graftedShmdataType;
+                    this.io.emit( 'shmdata.update', quiddityId, shmdataInfo );
+                }
             }
         }
     } else {
@@ -427,8 +437,8 @@ QuiddityManager.prototype._onTreePruned = function( quiddityId, value ) {
         }
     } else {
         //TODO: Be more granular about this once switcher's tree can return individual values
-        var tree = this.getTreeInfo( quiddityId, '.' );
-        this.io.emit( 'quiddity.tree.updated', quiddityId, tree );
+        var value = this.getTreeInfo( quiddityId, '.' );
+        this.io.emit( 'quiddity.tree.updated', quiddityId, value );
     }
 };
 

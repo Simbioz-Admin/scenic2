@@ -42,7 +42,19 @@ define( [
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io
             if ( !this.isNew() ) {
+                this.onSocket( 'shmdata.update.rate', _.bind( this._onRateUpdated, this ) );
                 this.onSocket( 'shmdata.remove', _.bind( this._onRemoved, this ) );
+            }
+        },
+
+        /**
+         * Update byte rate
+         * This is only a temporary solution until a better tree management is put in place
+         * @private
+         */
+        _onRateUpdated: function( quiddityId, shmdataId, value ) {
+            if ( quiddityId == this.collection.quiddity.id && shmdataId == this.id ) {
+                this.set('byte_rate', value);
             }
         },
 

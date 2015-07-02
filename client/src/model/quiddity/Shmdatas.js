@@ -16,7 +16,7 @@ define( [
      */
     var Shmdatas = ScenicCollection.extend( {
         model:      Shmdata,
-        comparator: 'path',
+        comparator: 'id',
         quiddity:   null,
         methodMap:  {
             'create': null,
@@ -40,7 +40,7 @@ define( [
                 this.quiddity.set( 'maxReaders', response.max_reader );
                 if ( response.reader && typeof response.reader == 'object' ) {
                     _.each( response.reader, function ( shmdata, path ) {
-                        shmdata.id = path + '.reader';
+                        shmdata.id = 'reader.' + path;
                         shmdata.path = path;
                         shmdata.type = 'reader';
                         shmdatas.push( shmdata );
@@ -48,7 +48,7 @@ define( [
                 }
                 if ( response.writer && typeof response.writer == 'object' ) {
                     _.each( response.writer, function ( shmdata, path ) {
-                        shmdata.id = path + '.writer';
+                        shmdata.id = 'writer.' + path;
                         shmdata.path = path;
                         shmdata.type = 'writer';
                         shmdatas.push( shmdata );
@@ -77,7 +77,8 @@ define( [
         /**
          * Update Shmdata Handler
          *
-         * There is no difference between updating and adding a shmdata so just merge-add
+         * There is no difference between updating and adding a shmdata so just merge-add,
+         * that's also why this is done here and not in the shmdata class
          *
          * @param quiddityId
          * @param shmdata
@@ -87,7 +88,7 @@ define( [
             if ( this.quiddity.id == quiddityId ) {
                 // The id generation is done here but could as well be done on the server,
                 // but since this id is only used in backbone's context I left it here.
-                shmdata.id = shmdata.path + '.' + shmdata.type;
+                shmdata.id = shmdata.type + '.' + shmdata.path;
                 // For now it is already parsed
                 this.add( shmdata, { merge: true/*, parse: true*/ } );
             }

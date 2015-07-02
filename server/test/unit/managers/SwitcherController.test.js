@@ -56,6 +56,9 @@ describe( 'Switcher Controller', function () {
         switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
         switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
         switcherController.sipManager      = sinon.stub( switcherController.sipManager );
+
+        fs.existsSync = sinon.stub();
+        fs.existsSync.returns( true );
     }
 
     // Hey, dummy test to get started
@@ -152,7 +155,7 @@ describe( 'Switcher Controller', function () {
     describe( 'Manager delegation', function () {
 
         it( 'should bind client to managers', function () {
-            var socket = { on: sinon.spy() };
+            var socket                    = { on: sinon.spy() };
             switcherController.rtpManager = sinon.stub( switcherController.rtpManager );
             switcherController.sipManager = sinon.stub( switcherController.sipManager );
         } );
@@ -202,35 +205,35 @@ describe( 'Switcher Controller', function () {
     describe( 'Signal Events', function () {
 
         /* DEPRECATED it( 'should pass along system usage grafts', function () {
-            var id     = 'systemusage';
-            var signal = 'on-tree-grafted';
-            var val    = 'smtng';
-            var ret    = 'sysinfo';
+         var id     = 'systemusage';
+         var signal = 'on-tree-grafted';
+         var val    = 'smtng';
+         var ret    = 'sysinfo';
 
-            switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
-            switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
-            switcherController.sipManager      = sinon.stub( switcherController.sipManager );
+         switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
+         switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
+         switcherController.sipManager      = sinon.stub( switcherController.sipManager );
 
-            switcher.get_info.returns( ret );
-            switcherController._onSwitcherSignal( id, signal, [val] );
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWith( id, val );
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'systemusage', ret );
-        } );*/
+         switcher.get_info.returns( ret );
+         switcherController._onSwitcherSignal( id, signal, [val] );
+         switcher.get_info.should.have.been.calledOnce;
+         switcher.get_info.should.have.been.calledWith( id, val );
+         io.emit.should.have.been.calledOnce;
+         io.emit.should.have.been.calledWith( 'systemusage', ret );
+         } );*/
 
         /* DEPRECATED it( 'should not pass along system usage prunes', function () {
-            var id     = 'systemusage';
-            var signal = 'on-tree-pruned';
-            var val    = 'smtng';
+         var id     = 'systemusage';
+         var signal = 'on-tree-pruned';
+         var val    = 'smtng';
 
-            switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
-            switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
-            switcherController.sipManager      = sinon.stub( switcherController.sipManager );
+         switcherController.quiddityManager = sinon.stub( switcherController.quiddityManager );
+         switcherController.rtpManager      = sinon.stub( switcherController.rtpManager );
+         switcherController.sipManager      = sinon.stub( switcherController.sipManager );
 
-            switcherController._onSwitcherSignal( id, signal, [val] );
-            io.emit.should.not.have.been.called;
-        } );*/
+         switcherController._onSwitcherSignal( id, signal, [val] );
+         io.emit.should.not.have.been.called;
+         } );*/
 
 
     } );
@@ -251,23 +254,33 @@ describe( 'Switcher Controller', function () {
         var file;
         var ext;
 
-        beforeEach(function() {
-            ext = '.json';
+        beforeEach( function () {
+            ext             = '.json';
             file            = 'file';
             config.savePath = 'some/path/';
-        });
+        } );
 
         describe( 'File list', function () {
 
             var cb;
 
             beforeEach( function () {
-                cb = sinon.stub();
+                cb          = sinon.stub();
+                fs.statSync = sinon.stub();
+                fs.statSync.returns( { mtime: new Date( '1984/10/23' ) } );
             } );
 
             it( 'should get save files', function () {
-                var files_fs       = ['file-a.json', 'file-b.json'];
-                var files_ui       = ['file-a', 'file-b'];
+                var files_fs    = ['file-a.json', 'file-b.json'];
+                var files_ui    = [
+                    {
+                        name: 'file-a',
+                        date: new Date( '1984/10/23' )
+                    }, {
+                        name: 'file-b',
+                        date: new Date( '1984/10/23' )
+                    }
+                ];
                 config.savePath = 'some/path/';
                 fs.readdir      = sinon.stub();
                 fs.readdir.yields( null, files_fs );
@@ -308,7 +321,7 @@ describe( 'Switcher Controller', function () {
                 should.exist( result );
                 result.should.be.true;
                 io.emit.should.have.been.calledTwice;
-                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledBefore( switcher.load_history_from_scratch );
                 io.emit.should.have.been.calledWithExactly( 'file.loading', file );
                 io.emit.should.have.been.calledWithExactly( 'file.loaded', file );
             } );
@@ -320,7 +333,7 @@ describe( 'Switcher Controller', function () {
                 switcher.load_history_from_scratch.should.have.been.calledOnce;
                 switcher.load_history_from_scratch.should.have.been.calledWith( config.savePath + file + ext );
                 io.emit.should.have.been.calledOnce;
-                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledBefore( switcher.load_history_from_scratch );
                 io.emit.should.have.been.calledWithExactly( 'file.loading', file );
             } );
 
@@ -330,7 +343,7 @@ describe( 'Switcher Controller', function () {
                 should.exist( result );
                 result.should.be.false;
                 io.emit.should.have.been.calledTwice;
-                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledBefore( switcher.load_history_from_scratch );
                 io.emit.should.have.been.calledWithExactly( 'file.loading', file );
                 io.emit.should.have.been.calledWithExactly( 'file.load.error', file );
             } );
@@ -343,7 +356,7 @@ describe( 'Switcher Controller', function () {
                 should.exist( result );
                 result.should.be.true;
                 io.emit.should.have.been.calledTwice;
-                io.emit.should.have.been.calledBefore(switcher.load_history_from_scratch);
+                io.emit.should.have.been.calledBefore( switcher.load_history_from_scratch );
                 io.emit.should.have.been.calledWithExactly( 'file.loading', 'mydirtyfile' );
                 io.emit.should.have.been.calledWithExactly( 'file.loaded', 'mydirtyfile' );
             } );
@@ -431,7 +444,7 @@ describe( 'Switcher Controller', function () {
             var cb;
 
             beforeEach( function () {
-                cb              = sinon.stub();
+                cb = sinon.stub();
             } );
 
             it( 'should delete a save file', function () {

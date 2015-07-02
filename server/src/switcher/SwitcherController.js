@@ -235,7 +235,7 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 var stat = fs.statSync( savePath + file );
                 return {
                     name: file.replace( path.extname( file ), '' ),
-                    date: stat.mtime
+                    date: new Date(stat.mtime)
                 };
             } );
             cb( null, files );

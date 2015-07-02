@@ -25,6 +25,11 @@ define( [
             'read':   'file.list'
         },
 
+        parse: function( result ) {
+            result.date = new Date( result.date );
+            return result;
+        },
+
         /**
          * Initialize
          */

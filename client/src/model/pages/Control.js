@@ -62,8 +62,7 @@ define( [
         /**
          * Get a list of controllable properties
          */
-        getControlProperties: function () {
-            //TODO: Remove already assigned
+        getDestinations: function () {
             // Get source quiddity classes
             var quiddities    = app.quiddities.filter( function ( quiddity ) {
                 return this._filterQuiddity( quiddity, ['writer', 'reader'] );
@@ -71,7 +70,7 @@ define( [
             var controllables = [];
             _.each( quiddities, function ( quiddity ) {
                 var properties = quiddity.get( 'properties' ).filter( function ( property ) {
-                    return property.get( 'writable' ) && _.contains( this.allowedPropertyTypes, property.get( 'type' ) );
+                    return property.get( 'writable' ) && _.contains( this.allowedPropertyTypes, property.get( 'type' ) ) && !this.destinations.get(quiddity.id + '.' + property.id);
                 }, this );
                 controllables  = controllables.concat( properties );
             }, this );

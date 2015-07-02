@@ -17,5 +17,6 @@ module.exports = {
                 process.exit();
             }, 2000 ) );
         }
+        this.destroy();
     }
 };

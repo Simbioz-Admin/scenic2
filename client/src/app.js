@@ -73,7 +73,7 @@ define( [
      *
      * @returns {object} Local configuration
      */
-    Scenic.prototype.readLocalConfig = function () {
+    /*Scenic.prototype.readLocalConfig = function () {
         // Local config
         var localConfig = JSON.parse( localStorage.getItem( 'scenic' ) ) || {};
         if ( !localConfig.hosts ) {
@@ -84,20 +84,20 @@ define( [
         }
         return localConfig;
     };
-
+*/
     /**
      * Helper method to flush local config
      */
-    Scenic.prototype.flushLocalConfig = function () {
+    /*Scenic.prototype.flushLocalConfig = function () {
         localStorage.setItem( 'scenic', JSON.stringify( this.localConfig ) );
-    };
+    };*/
 
     /**
      * Initialize
      *
      * @param config
      */
-    Scenic.prototype.initialize = function ( config ) {
+    /*Scenic.prototype.initialize = function ( config ) {
 
         if ( this.initialized ) {
             return;
@@ -152,15 +152,15 @@ define( [
         } );
 
         this.initialized = true;
-    };
+    };*/
 
-    Scenic.prototype._onShutdown = function () {
+    /*Scenic.prototype._onShutdown = function () {
         this.scenicChannel.vent.trigger( 'shutdown' );
         this.socket.close();
         this.scenicView.destroy();
         this.shutdownView = new ShutdownView( this );
         this.shutdownView.render();
-    };
+    };*/
 
     /**
      * We use exports as this module will be subject to circular dependency as it is required by many other modules

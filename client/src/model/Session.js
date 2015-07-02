@@ -67,7 +67,7 @@ define( [
 
             // Announce ourselves and recover config information from the server
             var self = this;
-            this.socket.emit( 'config', lang, this.sessionConfig.socketId ? this.sessionConfig.socketId : null, function ( config ) {
+            this.socket.emit( 'config', this.get('lang'), this.sessionConfig.socketId ? this.sessionConfig.socketId : null, function ( config ) {
                 self.sessionConfig.socketId = self.socket.id;
                 self.flushScenicConfig();
                 self.start( config );
@@ -77,7 +77,7 @@ define( [
             this.socket.on( 'shutdown', _.bind( this._onShutdown, this ) );
             this.socket.on( 'disconnect', _.bind( this._onShutdown, this ) );
 
-            this.scenic = new Scenic( this.get('host'), this.get('lang') );
+            //this.scenic = new Scenic( this.get('host'), this.get('lang') );
         },
 
         start: function( config ) {
@@ -165,6 +165,14 @@ define( [
          */
         activate: function () {
             this.collection.setCurrentSession( this );
+        },
+
+        _onShutdown: function () {
+            this.sessionChannel.vent.trigger( 'shutdown' );
+            this.socket.close();
+            //this.scenicView.destroy();
+            //this.shutdownView = new ShutdownView( this );
+            //this.shutdownView.render();
         }
     } );
 

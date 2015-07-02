@@ -60,7 +60,7 @@ define( [
                 this.$el.removeClass( this.currentSession.id );
             }
             if ( session ) {
-                this.showChildView( 'session', new ScenicView( session.scenic ) );
+                this.showChildView( 'session', new ScenicView( session ) );
                 this.currentSession = session;
             } else {
                 this.getRegion( 'session' ).empty();

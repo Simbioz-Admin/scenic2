@@ -58,10 +58,10 @@ define( [
                 }
 
                 if ( tree.top.net ) {
-                // Clone because we want to remove the 'lo' interface
-                    var net = _.clone( tree.top.net );
-                    delete net.lo;
-                    this.renderNetwork( net );
+                    // Clone because we want to remove the 'lo' interface
+                    //var net = _.clone( tree.top.net );
+                    //delete net.lo;
+                    this.renderNetwork( tree.top.net );
                 }
             }
         },

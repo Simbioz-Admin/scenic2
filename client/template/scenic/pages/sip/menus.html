@@ -2,9 +2,16 @@
     <div class="button" data-i18n>Sources</div>
 </div>
 
-<select class="filter">
-    <option value="" data-i18n>Show all categories</option>
-    <% _.each(categories, function(category) { %>
-    <option value="<%=category%>"<% if ( filter == category ) { %> selected<% } %>><%=category%></option>
-    <% }); %>
-</select>
+<div class="menu destination sink">
+    <div class="button" data-i18n>Contacts</div>
+</div>
+
+
+<div class="filter">
+    <select class="filter-select">
+        <option value="" data-i18n>Show all categories</option>
+        <% _.each(categories, function(category) { %>
+        <option value="<%=category%>"<% if ( filter == category ) { %> selected<% } %>><%=category%></option>
+        <% }); %>
+    </select>
+</div>

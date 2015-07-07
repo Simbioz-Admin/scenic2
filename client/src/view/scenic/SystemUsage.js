@@ -12,7 +12,7 @@ define( [
      * SystemUsageView
      *
      * @constructor
-     * @extends Backbone.View
+     * @extends module:Marionette.ItemView
      */
 
     var SystemUsageView = Marionette.ItemView.extend( {
@@ -20,6 +20,10 @@ define( [
         className: 'monitor',
         id:        "system-usage",
         cpuRender: false,
+
+        modelEvents: {
+            'change': 'renderSystemUsage'
+        },
 
         /**
          * Initialize
@@ -33,19 +37,33 @@ define( [
         onAttach: function () {
             $( this.el ).i18n();
             this.$net = $( '.network .content' );
-            this.scenic.socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
+            //socket.on( "systemusage", _.bind( this.renderSystemUsage, this ) );
         },
 
         /**
          * Render System Usage
-         *
-         * @param info
          */
-        renderSystemUsage: function ( info ) {
-            delete info.cpu.cpu;
-            this.renderCpu( info.cpu );
-            this.renderMemory( info.mem );
-            this.renderNetwork( info.net );
+        renderSystemUsage: function ( ) {
+            var tree = this.model.get('tree');
+            if ( tree && tree.top ) {
+                if ( tree.top.cpu ) {
+                    // Clone because we want to remove the first cpu object
+                    var cpu = _.clone( tree.top.cpu );
+                    delete cpu.cpu;
+                    this.renderCpu( cpu );
+                }
+
+                if ( tree.top.mem ) {
+                    this.renderMemory( tree.top.mem );
+                }
+
+                if ( tree.top.net ) {
+                    // Clone because we want to remove the 'lo' interface
+                    //var net = _.clone( tree.top.net );
+                    //delete net.lo;
+                    this.renderNetwork( tree.top.net );
+                }
+            }
         },
 
         /**
@@ -58,10 +76,14 @@ define( [
             if ( !this.cpuRender ) {
                 var leftBar    = 0;
                 this.lastValues = {};
+                $( ".cpu .content", this.el ).append('<div class="bars"></div>');
+                var width = $('.cpu .content .bars' ).width();
+                var count = _.values( info ).length;
+                var barWidth = Math.floor(width / count) - 1;
                 _.each( info, function ( cpu, name ) {
                     this.lastValues[name] = cpu.total;
-                    $( ".cpu .content", this.el ).prepend( "<div class='bar' data-cpu='" + name + "' style='height:" + cpu.total * 100 + "%;left:" + leftBar + "px;'></div>" );
-                    leftBar = leftBar + 6;
+                    $( ".cpu .content .bars", this.el ).append( '<div class="bar" data-cpu="' + name + '" style="height:' + cpu.total * 100 + '%;width:' + barWidth + 'px;left:' + leftBar +'px"></div>' );
+                    leftBar += barWidth + 1;
                 }, this );
                 that.cpuRender = true;
             } else {
@@ -114,23 +136,29 @@ define( [
             this.$net.html( html );
         },
 
-        convertBytes: function ( bytes ) {
-            var bytes = parseFloat( bytes );
+        /**
+         * Transforms incoming byes into bits and make it readable
+         *
+         * @param totalBytes
+         * @returns {*}
+         */
+        convertBytes: function ( totalBytes ) {
+            var total = parseFloat( totalBytes ) * 8;
             var size  = null;
-            if ( bytes >= 1099511627776 ) {
-                var terabytes = bytes / 1099511627776;
-                size          = terabytes.toFixed( 2 ) + "T";
-            } else if ( bytes >= 1073741824 ) {
-                var gigabytes = bytes / 1073741824;
-                size          = gigabytes.toFixed( 2 ) + "G";
-            } else if ( bytes >= 1048576 ) {
-                var megabytes = bytes / 1048576;
-                size          = megabytes.toFixed( 2 ) + "M";
-            } else if ( bytes >= 1024 ) {
-                var bytes = bytes / 1024;
-                size      = bytes.toFixed( 2 ) + "K";
+            if ( total >= 1099511627776 ) {
+                var terabits = total / 1099511627776;
+                size          = terabits.toFixed( 2 ) + "Tb";
+            } else if ( total >= 1073741824 ) {
+                var gigabits = total / 1073741824;
+                size          = gigabits.toFixed( 2 ) + "Gb";
+            } else if ( total >= 1048576 ) {
+                var megabits = total / 1048576;
+                size          = megabits.toFixed( 2 ) + "Mb";
+            } else if ( total >= 1024 ) {
+                var bits = total / 1024;
+                size      = bits.toFixed( 2 ) + "Kb";
             } else {
-                size = bytes.toFixed( 2 ) + "b";
+                size = total.toFixed( 2 ) + "b";
             }
             return size;
         }

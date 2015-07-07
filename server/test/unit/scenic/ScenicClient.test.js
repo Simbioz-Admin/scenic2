@@ -17,7 +17,6 @@ describe( 'Scenic Client', function () {
 
     beforeEach( function () {
         switcherController = {
-            bindClient: sinon.stub()
         };
         config             = {};
         socket             = {
@@ -28,8 +27,6 @@ describe( 'Scenic Client', function () {
 
     it( 'Should initialize correctly', function () {
         should.exist( client );
-        switcherController.bindClient.should.have.been.calledOnce;
-        switcherController.bindClient.should.have.been.calledWithExactly( socket );
     } );
 
 } );

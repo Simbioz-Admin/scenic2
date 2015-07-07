@@ -11,7 +11,7 @@ define( [
      *  @constructor
      *  @augments PageView
      */
-    var Settings = Marionette.ItemView.extend( {
+    var SettingsTableView = Marionette.ItemView.extend( {
         tagName: 'div',
         className: 'settings',
         template: _.template(SettingsTemplate),
@@ -24,5 +24,5 @@ define( [
         }
     } );
 
-    return Settings;
+    return SettingsTableView;
 } );

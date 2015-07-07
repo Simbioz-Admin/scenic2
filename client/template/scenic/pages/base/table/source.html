@@ -1,6 +1,11 @@
 <div class="controls">
-    <div class="info"><span class="class"><%=classDescription.name%></span><span class="name"><%=id%></span></div>
-    <div class="actions">
+    <div class="info"><span class="class"><%=id%></span><span class="name"><%=classDescription.name%></span></div>
+    <div class="actions actions-<% if ( startable ) { %>3<% } else { %>2<% } %>">
+        <% if ( startable ) { %>
+        <div class="action power power-source<% if ( started ) {%> on<% } %>">
+            <div class="icon"></div>
+        </div>
+        <% } %>
         <div class="action edit edit-source">
             <div class="icon"></div>
         </div>
@@ -9,4 +14,4 @@
         </div>
     </div>
 </div>
-<div class="shmdatas"></div>
+<div class="source-children"></div>

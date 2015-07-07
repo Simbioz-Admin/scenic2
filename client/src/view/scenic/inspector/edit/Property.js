@@ -20,7 +20,7 @@ define( [
     var Property = Marionette.LayoutView.extend( {
         template:  _.template( PropertyTemplate ),
         tagName:   'li',
-        className: 'property',
+        className: 'property-form',
 
         regions: {
             field: '.field'
@@ -49,17 +49,14 @@ define( [
          * On Show Handler
          */
         onRender: function () {
+            if ( !this.model.get('writable') ) {
+                this.$el.addClass( 'readonly' );
+            }
             this.showFieldView();
         },
 
         /**
          * Shows the view & template associated with the property type
-         *
-         * TODO: Read-only properties?
-         * <% if(property.writable == "false") { %>
-         * <h3 class="info" title="<%=property['short description']%><br><%=moreInfo%>" ><%=property['long name']%></h3>
-         * <%=property["default value"]%>
-         * <% } %>
          */
         showFieldView: function () {
             var view = null;
@@ -69,16 +66,20 @@ define( [
                 case 'int64':
                 case 'double':
                 case 'uint':
+                    this.$el.addClass( 'number' );
                     view = new NumberView( {model: this.model} );
                     break;
                 case 'boolean':
+                    this.$el.addClass( 'bool' );
                     view = new BoolView( {model: this.model} );
                     break;
                 case 'enum':
+                    this.$el.addClass( 'select' );
                     view = new SelectView( {model: this.model} );
                     break;
                 case 'string':
                 default:
+                    this.$el.addClass( 'string' );
                     view = new StringView( {model: this.model} );
                     break;
             }

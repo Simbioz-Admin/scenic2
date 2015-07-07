@@ -1,4 +1,3 @@
-<form>
     <label for="quiddityName" data-i18n>Choose a name, if empty a default name will been defined</label>
     <input type="text" id="quiddityName" name="quiddityName" data-i18n="[placeholder]Name" placeholder="Name" value="" autofocus/>
     <% if (devices.length > 0) { %>
@@ -9,5 +8,4 @@
             <% }) %>
         </select>
     <% } %>
-    <a id="create" class="btn btn-success" data-i18n>Create</a>
-</form>
+    <input id="create" class="btn btn-success" type="button" data-i18n="[value]Create">

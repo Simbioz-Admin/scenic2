@@ -85,27 +85,112 @@
   @include clearfix;
 }
 
-.property {
-  margin-bottom: 10px;
+.property-form,
+.method {
+  position: relative;
+  margin-bottom: 0.5em;
   @include clearfix;
+  border-bottom: 1px solid lighten($backgroundColorDarker, 5%);
+  padding-bottom: 1em;
+  label {
+    font-size: 1.25em;
+  }
   .description {
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
     color: $textColorSubtle;
+  }
+
+  &.bool {
+    .info {
+      float: left;
+    }
+    .field {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      margin-top: -16px;
+    }
+  }
+
+  &.number {
+    .ui-slider {
+      width: 65%;
+      @include border-radius( 5px 0 0 5px);
+      .ui-slider-range {
+        @include border-radius( 5px 0 0 5px);
+      }
+    }
+    input {
+      float: left;
+      width: 35%;
+      border-left: 1px solid $backgroundColorDarker;
+      text-align: center;
+      @include border-radius( 0 5px 5px 0);
+      &:focus {
+        border: lighten($backgroundColorDark, 15%) solid 1px;
+      }
+    }
+  }
+
+  &.string {
+    input {
+      float: left;
+      width: 65%;
+      border-right: 1px solid $backgroundColorDarker;
+      @include border-radius(5px 0 0 5px);
+      &:focus {
+        border: lighten($backgroundColorDark, 15%) solid 1px;
+      }
+    }
+    .btn {
+      margin: 0;
+      float: left;
+      width: 35%;
+      padding: 4px;
+      height: 24px;
+      @include border-radius( 0 5px 5px 0);
+    }
+  }
+
+  input {
+    height: 24px;
+    margin: 0;
   }
 }
 
-input.property.string,
-input.method {
-  width: 73%;
-  float: left;
-}
+.method {
+  .argument {
+    margin-bottom: 1px;
+    .info {
+      margin: 0;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+      color: $textColor;
+      background-color: $backgroundColorDarkish;
+      border-bottom: 1px solid $backgroundColorDarker;
+      .name {
+        font-weight: 600;
+        color: $textColorBright;
+      }
+      .type {
+        font-style: italic;
+        color: $textColorSubtle;
+      }
+      .description {
+        color: $textColor;
+      }
+    }
+    &:first-child {
+      .info {
+        @include border-radius(5px 5px 0 0);
+      }
+    }
 
-.field {
-  .update {
-    float: left;
-    margin-left: 6px;
-    width: 60px;
-    padding: 9px;
-    height: 35px;
+    input {
+      @include border-radius(0);
+    }
+  }
+  .btn.invoke {
+    margin: 0;
+    @include border-radius(0 0 5px 5px);
   }
 }

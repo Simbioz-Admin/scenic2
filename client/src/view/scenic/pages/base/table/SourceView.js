@@ -15,15 +15,24 @@ define( [
      * @constructor
      * @extends module:Marionette.CompositeView
      */
-    var Source = Marionette.CompositeView.extend( {
+    var SourceView = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
         templateHelpers: function() {
             return {
+                startable: this.model.get('properties' ).get('started' ) != null,
+                started: this.model.get('properties' ).get('started' ) ? this.model.get('properties' ).get('started' ).get('value') : true,
                 classDescription: this.model.get('classDescription' ).toJSON()
             }
         },
         className:          'quiddity source',
-        childView:          ShmdataView,
+        getChildView: function( item ) {
+            return this.options.sourceChildView ?
+                    this.options.sourceChildView :
+                    ( this.childView ?
+                        this.childView :
+                        ShmdataView
+                   );
+        },
         childViewOptions:   function () {
             return {
                 table:          this.options.table,
@@ -31,29 +40,29 @@ define( [
                 connectionView: this.options.connectionView
             }
         },
-        childViewContainer: '.shmdatas',
+        childViewContainer: '.source-children',
 
         ui: {
             edit:   '.actions .action.edit',
-            remove: '.actions .action.remove'
+            remove: '.actions .action.remove',
+            power: '.actions .action.power'
         },
 
         events: {
             'click @ui.edit':   'editSource',
-            'click @ui.remove': 'removeSource'
+            'click @ui.remove': 'removeSource',
+            'click @ui.power': 'togglePower'
         },
 
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.table = options.table;
             this.collection    = this.model.shmdatas;
-
-            // Check for started property
-            var startedProperty = this.model.properties.findWhere( {name: 'started'} );
-            if ( startedProperty ) {
-                this.listenTo( startedProperty, 'change:value', this._onStartedChanged );
+            if ( this.model.properties.get('started' ) ) {
+                this.listenTo( this.model.properties.get( 'started' ), 'change:value', this.render );
             }
         },
 
@@ -90,14 +99,21 @@ define( [
             } );
         },
 
-        _onStartedChanged: function ( model, value ) {
-            if ( value ) {
-                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was started', {name: this.model.id} ) );
-            } else {
-                this.scenicChannel.vent.trigger( 'info', i18n.t( 'Quiddity __name__ was stopped', {name: this.model.id} ) );
+        togglePower: function( event ) {
+            var self = this;
+            if (  this.model.get('properties' ).get('started' ) ) {
+                if ( this.model.get('properties' ).get('started' ).get('value') ) {
+                    this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to stop __quiddity__ source?', {quiddity: this.model.id} ), function ( confirmed ) {
+                        if ( confirmed ) {
+                            self.model.get('properties' ).get('started' ).updateValue( false );
+                        }
+                    } );
+                } else {
+                    self.model.get('properties' ).get('started' ).updateValue( true );
+                }
             }
         }
     } );
 
-    return Source;
+    return SourceView;
 } );

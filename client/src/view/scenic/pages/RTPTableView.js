@@ -15,7 +15,7 @@ define( [
      *  @constructor
      *  @augments TableView
      */
-    var RTP = TableView.extend( {
+    var RTPTableView = TableView.extend( {
 
         className: 'table rtp',
 
@@ -47,5 +47,5 @@ define( [
         }
     } );
 
-    return RTP;
+    return RTPTableView;
 } );

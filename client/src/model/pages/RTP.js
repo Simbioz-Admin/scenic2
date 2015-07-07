@@ -86,7 +86,7 @@ define( [
         /**
          * @inheritdoc
          * @param {Shmdata} source
-         * @param {RTPDestiantion} destination
+         * @param {RTPDestination} destination
          * @return {boolean}
          */
         isConnected: function( source, destination ) {
@@ -115,7 +115,7 @@ define( [
          */
         connect: function ( shmdata, destination, port, cb ) {
             var self = this;
-            this.scenic.socket.emit( 'connectRTPDestination', shmdata.get('path'), destination.id, port, function( error ) {
+            this.scenic.socket.emit( 'rtp.destination.connect',  destination.id, shmdata.get('path'), port, function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
@@ -132,11 +132,10 @@ define( [
          */
         disconnect: function( source, destination ) {
             var self = this;
-            this.scenic.socket.emit( 'disconnectRTPDestination', source.get('path'), destination.id, function( error ) {
+            this.scenic.socket.emit( 'rtp.destination.disconnect', destination.id, source.get('path'), function( error ) {
                 if ( error ) {
                     console.error( error );
                     self.scenicChannel.vent.trigger( 'error', error );
-                    return cb( error );
                 }
             } );
         }

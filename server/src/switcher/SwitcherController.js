@@ -1,13 +1,14 @@
 "use strict";
 
 var fs              = require( 'fs' );
-var path            = require('path');
+var path            = require( 'path' );
 var _               = require( 'underscore' );
 var async           = require( 'async' );
 var switcher        = require( 'switcher' );
 var SipManager      = require( './SipManager' );
 var QuiddityManager = require( './QuiddityManager' );
 var RtpManager      = require( './RtpManager' );
+var ControlManager  = require( './ControlManager' );
 var log             = require( '../lib/logger' );
 var checkPort       = require( '../utils/check-port' );
 
@@ -19,13 +20,17 @@ var checkPort       = require( '../utils/check-port' );
  * @constructor
  */
 function SwitcherController( config, io ) {
-    this.config   = config;
-    this.io       = io;
-    this.switcher = new switcher.Switcher( 'scenic', this._onSwitcherLog.bind( this ) );
+    this.config = config;
+    this.io     = io;
+
+    // Namespace switcher with the scenic port from the config (if any, we silently ignore it otherwise) so that
+    // multiple instances running on the same machine don't create shmdatas with conflicting names
+    this.switcher = new switcher.Switcher( 'scenic' + ( ( config.scenic && config.scenic.port ) ? config.scenic.port : '' ), this._onSwitcherLog.bind( this ) );
 
     this.quiddityManager = new QuiddityManager( this );
     this.sipManager      = new SipManager( this );
     this.rtpManager      = new RtpManager( this );
+    this.controlManager  = new ControlManager( this );
 }
 
 /**
@@ -39,6 +44,16 @@ SwitcherController.prototype.initialize = function ( callback ) {
     log.debug( "Initializing Switcher Controller..." );
 
     var self = this;
+
+    // Create save file directory
+    if ( !fs.existsSync( this.config.savePath ) ) {
+        try {
+            fs.mkdirSync( this.config.savePath );
+        } catch ( err ) {
+            console.error( "Could not create directory: " + this.config.savePath + " Error: " + err.toString() );
+            return process.exit(1);
+        }
+    }
 
     // Switcher Callbacks
     this.switcher.register_prop_callback( this._onSwitcherProperty.bind( this ) );
@@ -63,7 +78,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
     log.debug( 'Creating System Usage...' );
     this.switcher.create( 'systemusage', this.config.systemUsage.quiddName );
     this.switcher.set_property_value( this.config.systemUsage.quiddName, 'period', String( this.config.systemUsage.period ) );
-    this.switcher.subscribe_to_signal( this.config.systemUsage.quiddName, 'on-tree-grafted' );
 
     var setSOAPPort = true;
 
@@ -104,6 +118,7 @@ SwitcherController.prototype.initialize = function ( callback ) {
             self.quiddityManager.initialize();
             self.sipManager.initialize();
             self.rtpManager.initialize();
+            self.controlManager.initialize();
             callback();
         }
 
@@ -113,16 +128,6 @@ SwitcherController.prototype.initialize = function ( callback ) {
         }
         callback();
     } );
-};
-
-/**
- * Binds a new client socket
- *
- * @param socket
- */
-SwitcherController.prototype.bindClient = function ( socket ) {
-    this.sipManager.bindClient( socket );
-    this.rtpManager.bindClient( socket );
 };
 
 //   ██████╗ █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
@@ -154,6 +159,7 @@ SwitcherController.prototype._onSwitcherProperty = function ( quiddityId, proper
     this.quiddityManager.onSwitcherProperty( quiddityId, property, value );
     this.rtpManager.onSwitcherProperty( quiddityId, property, value );
     this.sipManager.onSwitcherProperty( quiddityId, property, value );
+    this.controlManager.onSwitcherProperty( quiddityId, property, value );
 };
 
 /**
@@ -168,15 +174,7 @@ SwitcherController.prototype._onSwitcherSignal = function ( quiddityId, signal, 
     this.quiddityManager.onSwitcherSignal( quiddityId, signal, value );
     this.rtpManager.onSwitcherSignal( quiddityId, signal, value );
     this.sipManager.onSwitcherSignal( quiddityId, signal, value );
-
-    //  ┌─┐┬ ┬┌─┐┌┬┐┌─┐┌┬┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
-    //  └─┐└┬┘└─┐ │ ├┤ │││  │ │└─┐├─┤│ ┬├┤
-    //  └─┘ ┴ └─┘ ┴ └─┘┴ ┴  └─┘└─┘┴ ┴└─┘└─┘
-
-    if ( signal == 'on-tree-grafted' && quiddityId == this.config.systemUsage.quiddName ) {
-        var info = this.switcher.get_info( quiddityId, value[0] );
-        this.io.emit( 'systemusage', info );
-    }
+    this.controlManager.onSwitcherSignal( quiddityId, signal, value );
 };
 
 //  ██╗     ██╗███████╗███████╗ ██████╗██╗   ██╗ ██████╗██╗     ███████╗
@@ -214,7 +212,7 @@ SwitcherController.prototype.close = function () {
  */
 function cleanFileName( name ) {
     // Just clean up dots, slashes, backslashes and messy filename stuff
-    return name.replace(/(\.|\/|\\|:|;)/g, '' );
+    return name.replace( /(\.|\/|\\|:|;)/g, '' );
 }
 
 /**
@@ -233,9 +231,13 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 log.error( error );
                 return cb( error );
             }
-            files = _.map( files, function( file ) {
-                return file.replace( path.extname(file), '' );
-            });
+            files = _.map( files, function ( file ) {
+                var stat = fs.statSync( savePath + file );
+                return {
+                    name: file.replace( path.extname( file ), '' ),
+                    date: new Date(stat.mtime)
+                };
+            } );
             cb( null, files );
         } );
     } catch ( e ) {
@@ -251,17 +253,17 @@ SwitcherController.prototype.getFileList = function ( cb ) {
  * @returns {Boolean} If the operation was successful
  */
 SwitcherController.prototype.loadFile = function ( name ) {
-    var fileName = cleanFileName(name);
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Loading scenic file', filePath );
-    this.io.emit('file.loading', fileName);
-    var loaded = this.switcher.load_history_from_scratch( filePath );
+    this.io.emit( 'file.loading', fileName );
+    var loaded   = this.switcher.load_history_from_scratch( filePath );
     if ( !loaded ) {
-        log.warn('Could not load scenic file', filePath);
-        this.io.emit('file.load.error', fileName);
+        log.warn( 'Could not load scenic file', filePath );
+        this.io.emit( 'file.load.error', fileName );
     } else {
-        log.info('Scenic file loaded', filePath);
-        this.io.emit('file.loaded', fileName);
+        log.info( 'Scenic file loaded', filePath );
+        this.io.emit( 'file.loaded', fileName );
     }
     return loaded;
 };
@@ -272,15 +274,15 @@ SwitcherController.prototype.loadFile = function ( name ) {
  * @param {String} name File name
  */
 SwitcherController.prototype.saveFile = function ( name ) {
-    var fileName = cleanFileName(name);
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Saving scenic file', filePath );
-    var saved = this.switcher.save_history( filePath );
+    var saved    = this.switcher.save_history( filePath );
     if ( !saved ) {
-        log.warn('Could not save scenic file', filePath);
+        log.warn( 'Could not save scenic file', filePath );
     } else {
-        log.info('Scenic file saved', filePath);
-        this.io.emit('file.saved', fileName );
+        log.info( 'Scenic file saved', filePath );
+        this.io.emit( 'file.saved', fileName );
     }
     return saved;
 };
@@ -294,8 +296,8 @@ SwitcherController.prototype.saveFile = function ( name ) {
  * @param {Function} cb Callback
  */
 SwitcherController.prototype.deleteFile = function ( name, cb ) {
-    var self = this;
-    var fileName = cleanFileName(name);
+    var self     = this;
+    var fileName = cleanFileName( name );
     var filePath = this.config.savePath + fileName + '.json';
     log.info( 'Removing scenic file', filePath );
     try {
@@ -304,8 +306,8 @@ SwitcherController.prototype.deleteFile = function ( name, cb ) {
                 log.error( error );
                 return cb( error );
             }
-            log.info('Scenic file deleted', filePath);
-            self.io.emit('file.deleted', fileName );
+            log.info( 'Scenic file deleted', filePath );
+            self.io.emit( 'file.deleted', fileName );
             cb();
         } );
     } catch ( e ) {

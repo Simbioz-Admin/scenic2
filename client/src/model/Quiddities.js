@@ -15,6 +15,10 @@ define( [
      */
     var Quiddities = ScenicCollection.extend( {
         model:     Quiddity,
+        comparator: function( quiddity ) {
+            return quiddity.get('classDescription' ).get('category') + '.' + quiddity.get('class') + '.' + quiddity.id;
+        },
+
         methodMap: {
             'create': null,
             'update': null,
@@ -33,23 +37,22 @@ define( [
             this.classes = this.scenic.classes;
 
             // Handlers
-            this.onSocket( "create", _.bind( this._onCreate, this ) );
+            this.onSocket( 'quiddity.created', _.bind( this._onCreate, this ) );
         },
 
         /**
          * Create Handler
-         * Listens to quididity creations and add/merge new quiddities to the collection
+         * Listens to quiddity creations and add/merge new quiddities to the collection
          *
          * @private
          * @param quiddityData
          * @param socketId
          */
         _onCreate: function ( quiddityData, socketId ) {
-            var quiddity = this.add( quiddityData, {merge: true} );
+            var quiddity = this.add( quiddityData, {merge: true, parse: true} );
             this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
             // If we created it, start editing it
             if ( this.scenic.socket.id == socketId ) {
-                //TODO: Send quiddity:created with local flag instead
                 quiddity.edit();
             }
         }

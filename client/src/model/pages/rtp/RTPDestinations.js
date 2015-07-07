@@ -16,6 +16,7 @@ define( [
      */
     var RTPDestinations = PropertyWatcherCollection.extend( {
         model: RTPDestination,
+        comparator: 'name',
 
         /**
          * Initialization

@@ -15,6 +15,10 @@ define( [
      */
     var ClassDescriptions = ScenicCollection.extend( {
         model:     ClassDescription,
+        comparator: function( classDescription ) {
+            return classDescription.get('category') + '.' + classDescription.get('class');
+        },
+
         methodMap: {
             'create': null,
             'update': null,

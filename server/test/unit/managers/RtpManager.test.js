@@ -4,6 +4,7 @@ var chai       = require( "chai" );
 var sinon      = require( "sinon" );
 var sinonChai  = require( "sinon-chai" );
 var should     = chai.should();
+var expect     = chai.expect;
 chai.use( sinonChai );
 
 var logStub      = require( '../../fixtures/log' );
@@ -13,11 +14,10 @@ var quiddities   = require( '../../fixtures/quiddities' );
 describe( 'RTP Manager', function () {
 
     var switcher;
-    var config;
     var io;
+    var config;
     var switcherController;
     var rtpManager;
-    var cb;
 
     before( function ( done ) {
         var i18n = require( '../../../src/lib/i18n' );
@@ -25,37 +25,35 @@ describe( 'RTP Manager', function () {
     } );
 
     beforeEach( function () {
-        switcher           = new switcherStub.Switcher();
-        config             = {
+        io      = {};
+        io.emit = sinon.spy();
+        config  = {
             nameComputer: 'computer-name',
+            host:         'myhost.local',
             rtp:          {
                 quiddName: 'rtp-quiddity-name'
             },
             soap:         {
-                soapControlClientPrefix: 'soap-control-client-prefix'
+                controlClientPrefix: 'soap-control-client-prefix-',
+                port:                '1234'
+            },
+            httpSdpDec:   {
+                refreshTimeout: 250 //Lower for the sake of the tests
             }
         };
-        io                 = {};
-        io.emit            = sinon.spy();
 
-        switcherController = {
-            switcher: switcher,
-            config:   config,
-            io:       io
-        };
-
-        var RtpManager     = proxyquire( '../../../src/switcher/RtpManager', {
-            'switcher':         switcher,
-            '../lib/logger':    logStub(),
-            '../utils/logback': function ( e, c ) {
-                //if ( e ) { console.error(e);}
-                c( e );
-            }
+        var RtpManager = proxyquire( '../../../src/switcher/RtpManager', {
+            '../lib/logger': logStub()
         } );
-        rtpManager         = new RtpManager( switcherController );
-        rtpManager.logback = sinon.stub();
-        rtpManager.logback.yields();
-        cb                 = sinon.stub();
+
+        var SwitcherController = proxyquire( '../../../src/switcher/SwitcherController', {
+            './RtpManager': RtpManager,
+            'switcher':     switcherStub
+        } );
+
+        switcherController = new SwitcherController( config, io );
+        switcher           = switcherController.switcher;
+        rtpManager         = switcherController.rtpManager;
     } );
 
     afterEach( function () {
@@ -63,7 +61,6 @@ describe( 'RTP Manager', function () {
         config     = null;
         io         = null;
         rtpManager = null;
-        cb         = null;
     } );
 
     // Hey, dummy test to get started
@@ -73,7 +70,7 @@ describe( 'RTP Manager', function () {
 
     describe( 'Initialization', function () {
 
-        it( 'should have been instanciated correctly', function () {
+        it( 'should have been instantiated correctly', function () {
             should.exist( rtpManager.config );
             rtpManager.config.should.equal( config );
 
@@ -84,1556 +81,954 @@ describe( 'RTP Manager', function () {
             rtpManager.io.should.equal( io );
         } );
 
-        it( 'should bind to clients', function () {
-            var socket = {on: sinon.spy()};
+    } );
 
-            rtpManager.bindClient( socket );
+    describe( 'Internals', function () {
 
-            socket.on.callCount.should.equal( 5 );
-            socket.on.should.have.been.calledWith( 'createRTPDestination' );
-            socket.on.should.have.been.calledWith( 'removeRTPDestination' );
-            socket.on.should.have.been.calledWith( 'connectRTPDestination' );
-            socket.on.should.have.been.calledWith( 'disconnectRTPDestination' );
-            socket.on.should.have.been.calledWith( 'updateRTPDestination' );
+        describe( 'HTTP SDP Dec. refresh', function () {
+
+            var id;
+            var url;
+
+            beforeEach( function () {
+                id  = 'someId';
+                url = 'http://' + config.host + ':' + config.soap.port + '/sdp?rtpsession=' + config.rtp.quiddName + '&destination=' + id;
+                sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
+            } );
+
+            it( 'should follow protocol', function ( done ) {
+                switcherController.quiddityManager.invokeMethod.returns( true );
+                rtpManager._refreshHttpSdpDec( id, function ( error ) {
+                    should.not.exist( error );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly(
+                        config.soap.controlClientPrefix + id,
+                        'invoke1',
+                        [config.nameComputer, 'to_shmdata', url]
+                    );
+                    done();
+                } );
+            } );
+
+            it( 'should callback an error when refresh fails', function ( done ) {
+                switcherController.quiddityManager.invokeMethod.returns( false );
+                rtpManager._refreshHttpSdpDec( id, function ( error ) {
+                    should.exist( error );
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                    switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly(
+                        config.soap.controlClientPrefix + id,
+                        'invoke1',
+                        [config.nameComputer, 'to_shmdata', url]
+                    );
+                    done();
+                } );
+            } );
+
         } );
+
     } );
 
     describe( 'Creating RTP destination', function () {
 
-        it( 'should follow protocol', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
+        var name;
+        var host;
+        var port;
 
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+        beforeEach( function () {
+            name = 'some name';
+            host = 'some.host';
+            port = 9090;
+            sinon.stub( switcherController.quiddityManager, 'getPropertyValue' );
+            sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
         } );
 
-        it( 'should follow protocol with a host with protocol', function () {
-            var name        = 'some name';
-            var host        = 'http://some.host';
-            var host_parsed = 'some.host';
-            var port        = 9090;
+        describe( 'Various partial successful cases', function () {
 
-            switcher.get_property_value.returns( quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
+            var result;
 
-            rtpManager.createRTPDestination( name, host, port, cb );
+            beforeEach( function () {
+                result = undefined;
+                switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+                switcherController.quiddityManager.invokeMethod.returns( true );
+            } );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            afterEach( function () {
+                switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host_parsed] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host_parsed + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
 
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
+                switcher.create.should.not.have.been.called;
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+                should.exist( result );
+                result.should.be.true;
+            } );
+
+            it( 'should work without a port', function () {
+                result = rtpManager.createRTPDestination( name, host );
+            } );
+
+            it( 'should work with an empty port', function () {
+                result = rtpManager.createRTPDestination( name, host, '' );
+            } );
+
+
+            it( 'should work with a null port', function () {
+                result = rtpManager.createRTPDestination( name, host, null );
+            } );
+
         } );
 
-        it( 'should follow protocol with a string port', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = '9090';
+        describe( 'Various full successful cases', function () {
+            var result;
 
-            switcher.get_property_value.returns(JSON.stringify( quiddities.destinations_json() ));
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
+            beforeEach( function () {
+                result = undefined;
+                switcherController.quiddityManager.invokeMethod.returns( true );
+                switcher.create.returns( config.soap.controlClientPrefix + name );
+            } );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
+            afterEach( function () {
+                switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+                switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledThrice;
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+                switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
 
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
+                switcher.create.should.have.been.calledOnce;
+                switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
+                should.exist( result );
+                result.should.be.true;
+            } );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            it( 'should follow protocol', function () {
+                switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+                result = rtpManager.createRTPDestination( name, host, port );
+            } );
+
+            it( 'should work with a host containing a protocol', function () {
+                var protocolHost = 'http://' + host;
+                switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+                result           = rtpManager.createRTPDestination( name, protocolHost, port );
+            } );
+
+            it( 'should work with a string port', function () {
+                var stringPort = String( port );
+                switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+                result         = rtpManager.createRTPDestination( name, host, stringPort );
+            } );
+
+            it( 'should work without existing destinations', function () {
+                switcherController.quiddityManager.getPropertyValue.returns( null );
+                result = rtpManager.createRTPDestination( name, host, port );
+            } );
+
+            it( 'should work with empty destinations', function () {
+                switcherController.quiddityManager.getPropertyValue.returns( { destinations: [] } );
+                result = rtpManager.createRTPDestination( name, host, port );
+            } );
+
+            it( 'should work with null destinations', function () {
+                switcherController.quiddityManager.getPropertyValue.returns( { destinations: null } );
+                result = rtpManager.createRTPDestination( name, host, port );
+            } );
+
+            it( 'should work with invalid destinations', function () {
+                switcherController.quiddityManager.getPropertyValue.returns( { destinations: { not: 'an array' } } );
+                result = rtpManager.createRTPDestination( name, host, port );
+            } );
+
         } );
 
-        it( 'should follow protocol without a port', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = null;
+        it( 'should throw with no name', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, null, host, port ) ).to.throw();
+        } );
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ));
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
+        it( 'should throw with no name', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, '', host, port ) ).to.throw();
+        } );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
+        it( 'should throw with invalid name', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, 666, host, port ) ).to.throw();
+        } );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+        it( 'should throw with no host', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, null, port ) ).to.throw();
+        } );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+        it( 'should throw with empty host', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, '', port ) ).to.throw();
+        } );
 
+        it( 'should throw with invalid host', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, 666, port ) ).to.throw();
+        } );
+
+        it( 'should throw with malformed host', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, 'not//a/host', port ) ).to.throw();
+        } );
+
+        it( 'should throw with invalid port', function () {
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, host, 'not a port' ) ).to.throw();
+        } );
+
+        it( 'should throw when destination name already exists', function () {
+            name = quiddities.destinations_json().destinations[0].name;
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            expect( rtpManager.createRTPDestination.bind( rtpManager, name, host, port ) ).to.throw();
+        } );
+
+        it( 'should return false when first invoke returns null', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.onFirstCall().returns( null );
+            var result = rtpManager.createRTPDestination( name, host, port );
+
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
             switcher.create.should.not.have.been.called;
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should follow protocol without an empty port', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = '';
+        it( 'should return false when first invoke returns false', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.onFirstCall().returns( false );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
             switcher.create.should.not.have.been.called;
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should follow protocol without destinations', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  {});
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
-        } );
-
-        it( 'should follow protocol with empty destinations', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  {destinations: []});
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
-        } );
-
-        it( 'should follow protocol with null destinations', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  {destinations: null});
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
-        } );
-
-        it( 'should follow protocol with invalid destinations', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  {destinations: {not: 'an array'}});
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
-        } );
-
-        it( 'should return error with no name', function () {
-            var name = null;
-            var host = 'some.host';
-            var port = 9090;
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error with empty name', function () {
-            var name = '';
-            var host = 'some.host';
-            var port = 9090;
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error with no host', function () {
-            var name = 'some name';
-            var host = null;
-            var port = 9090;
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error with empty host', function () {
-            var name = 'some name';
-            var host = '';
-            var port = 9090;
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error with invalid port', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 'this is not a port';
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when get_property_value throws', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
-
-            switcher.get_property_value.throws( error );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when get_property_value returns an error', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
-
-            switcher.get_property_value.returns(  {error: error} );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when get_property_value destination name already exists', function () {
-            var name = 'destination 1 name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns( quiddities.destinations_json() );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.not.have.been.called;
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( name );
-        } );
-
-        it( 'should return error when first invoke throws', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
-
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.onFirstCall().throws( error );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when first invoke returns null', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.onFirstCall().returns( null );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.create.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when create throws', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
-
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.throws( error );
-
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-
-            switcher.create.should.have.been.calledOnce;
-            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when create returns null', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
-
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
+        it( 'should return false when create returns null', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
             switcher.create.returns( null );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
 
             switcher.create.should.have.been.calledOnce;
             switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when second invoke throws', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
+        it( 'should return false when create returns false', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcher.create.returns( false );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-            switcher.invoke.onSecondCall().throws( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
 
             switcher.create.should.have.been.calledOnce;
             switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when second invoke returns null', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
+        it( 'should return false when second invoke returns null', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onSecondCall().returns( null );
+            switcher.create.returns( config.soap.controlClientPrefix + name );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            switcher.get_property_value.returns( JSON.stringify( quiddities.destinations_json() ));
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-            switcher.invoke.onSecondCall().returns( null );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
 
             switcher.create.should.have.been.calledOnce;
             switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when third invoke throws', function () {
-            var name  = 'some name';
-            var host  = 'some.host';
-            var port  = 9090;
-            var error = 'some error';
+        it( 'should return false when second invoke returns false', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onSecondCall().returns( false );
+            switcher.create.returns( config.soap.controlClientPrefix + name );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-            switcher.invoke.onThirdCall().throws( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
 
             switcher.create.should.have.been.calledOnce;
             switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when third invoke returns null', function () {
-            var name = 'some name';
-            var host = 'some.host';
-            var port = 9090;
+        it( 'should return false when third invoke returns null', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onThirdCall().returns( null );
+            switcher.create.returns( config.soap.controlClientPrefix + name );
+            var result = rtpManager.createRTPDestination( name, host, port );
 
-            switcher.get_property_value.returns(  quiddities.destinations_json());
-            switcher.invoke.returns( [true] );
-            switcher.create.returns( [config.soap.controlClientPrefix + name] );
-            switcher.invoke.onThirdCall().returns( null );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            rtpManager.createRTPDestination( name, host, port, cb );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.invoke.should.have.been.calledThrice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledThrice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
 
             switcher.create.should.have.been.calledOnce;
             switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            should.exist( result );
+            result.should.be.false;
+        } );
+
+        it( 'should return false when third invoke returns false', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onThirdCall().returns( false );
+            switcher.create.returns( config.soap.controlClientPrefix + name );
+            var result = rtpManager.createRTPDestination( name, host, port );
+
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledThrice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_destination', [name, host] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'set_remote_url_retry', ['http://' + host + ':' + port] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + name, 'create', ['httpsdpdec', config.nameComputer] );
+
+            switcher.create.should.have.been.calledOnce;
+            switcher.create.should.have.been.calledWithExactly( 'SOAPcontrolClient', config.soap.controlClientPrefix + name );
+
+            should.exist( result );
+            result.should.be.false;
         } );
 
     } );
 
     describe( 'Removing RTP destinations', function () {
 
-        it( 'should follow protocol', function () {
-            var id = 'someId';
+        var id;
 
-            switcher.invoke.returns( true );
-            switcher.remove.returns( true );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
-            switcher.remove.should.have.been.calledOnce;
-            switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly(null);
+        beforeEach( function () {
+            id = 'someId';
+            sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
         } );
 
-        it( 'should return error when removing destination throws', function () {
-            var id    = 'someId';
-            var error = 'some error';
-
-            switcher.invoke.onFirstCall().throws( error );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-
-            switcher.remove.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+        it( 'should follow protocol', function () {
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcher.remove.returns( true );
+            var result = rtpManager.removeRTPDestination( id );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
+            switcher.remove.should.have.been.calledOnce;
+            switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            should.exist( result );
+            result.should.be.true;
         } );
 
         it( 'should return error but continue removing when removing destination returns false', function () {
-            var id = 'someId';
-
-            switcher.invoke.onFirstCall().returns( false );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
+            switcherController.quiddityManager.invokeMethod.onFirstCall().returns( false );
+            var result = rtpManager.removeRTPDestination( id );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
             switcher.remove.should.have.been.calledOnce;
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when removing httpsdpdec throws', function () {
-            var id    = 'someId';
-            var error = 'some error';
-
-            switcher.invoke.returns( [true] );
-            switcher.invoke.onSecondCall().throws( error );
+        it( 'should continue and succeed when removing httpsdpdec fails', function () {
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onSecondCall().returns( false );
             switcher.remove.returns( true );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
-            switcher.remove.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should continue when removing httpsdpdec fails', function () {
-            var id = 'someId';
-
-            switcher.invoke.returns( [true] );
-            switcher.invoke.onSecondCall().returns( false );
-            switcher.remove.returns( true );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
+            var result = rtpManager.removeRTPDestination( id );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
             switcher.remove.should.have.been.calledOnce;
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch('');
+            should.exist( result );
+            result.should.be.true;
         } );
 
-        it( 'should return error when removing soap control client throws', function () {
-            var id    = 'someId';
-            var error = 'some error';
-
-            switcher.invoke.returns( [true] );
-            switcher.remove.throws( error );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
-            switcher.remove.should.have.been.calledOnce;
-            switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should continue when removing soap control client fails', function () {
-            var id = 'someId';
-
-            switcher.invoke.returns( [true] );
+        it( 'should continue and succeed when removing soap control client fails', function () {
+            switcherController.quiddityManager.invokeMethod.returns( true );
             switcher.remove.returns( false );
-
-            rtpManager.removeRTPDestination( id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
-
+            var result = rtpManager.removeRTPDestination( id );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_destination', [id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id, 'remove', [config.nameComputer] );
             switcher.remove.should.have.been.calledOnce;
             switcher.remove.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch('');
+            should.exist( result );
+            result.should.be.true;
         } );
 
     } );
 
     describe( 'Connecting RTP destination', function () {
 
+        var id;
+        var path;
+        var port;
+
+        beforeEach( function () {
+            id   = 'someId';
+            path = '/tmp/some_shmdata_path';
+            port = 9090;
+            sinon.stub( switcherController.quiddityManager, 'getTreeInfo' );
+            sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
+            sinon.stub( switcherController.quiddityManager, 'exists' );
+            sinon.stub( rtpManager, 'disconnectRTPDestination' );
+            sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        } );
+
         it( 'should follow protocol', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.returns( [true] );
-            switcher.has_quiddity.returns( true );
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            var result = rtpManager.connectRTPDestination( id, path, port );
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, String(port)] );
 
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
+            rtpManager.disconnectRTPDestination.should.not.have.been.called;
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            refresh.should.have.been.calledOnce;
-            refresh.should.have.been.calledWith( id );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist( result );
+            result.should.be.true;
+        } );
+
+        it( 'should follow protocol with a parseable string port', function () {
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
+
+            var result = rtpManager.connectRTPDestination( id, path, '666' );
+
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, '666'] );
+
+            rtpManager.disconnectRTPDestination.should.not.have.been.called;
+
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
+
+            should.exist( result );
+            result.should.be.true;
         } );
 
         it( 'should follow protocol when the connection already exists', function () {
-            var path    = '/tmp/switcher_nodeserver_audiotestsrc0_audio';
-            var id      = 'some id';
-            var port    = 9090;
+            path = '/tmp/switcher_nodeserver_audiotestsrc0_audio';
 
-            switcher.get_info.returns( quiddities.shmdata_readers() );
-            switcher.invoke.returns( [true] );
-            switcher.has_quiddity.returns( true );
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            var result = rtpManager.connectRTPDestination( id, path, port );
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, String(port)] );
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            rtpManager.disconnectRTPDestination.should.not.have.been.called;
 
-            refresh.should.have.been.calledOnce;
-            refresh.should.have.been.calledWith( id );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
+
+            should.exist( result );
+            result.should.be.true;
         } );
 
         it( 'should follow protocol when there is no soap control client', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( false );
 
-            switcher.get_info.returns( quiddities.shmdata_readers() );
-            switcher.invoke.returns( [true] );
-            switcher.has_quiddity.returns( false );
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            var result = rtpManager.connectRTPDestination( id, path, port );
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, String(port)] );
 
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
+            rtpManager.disconnectRTPDestination.should.not.have.been.called;
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            refresh.should.not.have.been.called;
+            rtpManager._refreshHttpSdpDec.should.not.have.been.called;
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist( result );
+            result.should.be.true;
         } );
 
-        it( 'should return error when path is missing', function () {
-            var path    = null;
-            var id      = 'some id';
-            var port    = 9090;
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        describe( 'Validation', function () {
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            afterEach( function () {
+                switcherController.quiddityManager.getTreeInfo.should.not.have.been.called;
+                switcherController.quiddityManager.invokeMethod.should.not.have.been.called;
+                rtpManager.disconnectRTPDestination.should.not.have.been.called;
+                switcherController.quiddityManager.exists.should.not.have.been.called;
+                rtpManager._refreshHttpSdpDec.should.not.have.been.called;
+            } );
 
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
+            it( 'should throw error when id is missing', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, null, path, port ) ).to.throw();
+            } );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            it( 'should throw error when id is empty', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, '', path, port ) ).to.throw();
+            } );
+
+            it( 'should throw error when id is not a tring', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, 666, path, port ) ).to.throw();
+            } );
+
+            it( 'should throw error when path is missing', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, null, port ) ).to.throw();
+            } );
+
+            it( 'should throw error when path is empty', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, '', port ) ).to.throw();
+            } );
+
+            it( 'should throw error when path is not a string', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, 666, port ) ).to.throw();
+            } );
+
+            it( 'should throw error when port is missing', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, path, null ) ).to.throw();
+            } );
+
+            it( 'should throw error when port is empty', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, path, '' ) ).to.throw();
+            } );
+
+            it( 'should throw error when port is an invalid string', function () {
+                expect( rtpManager.connectRTPDestination.bind( rtpManager, id, path, 'pouet' ) ).to.throw();
+            } );
+
         } );
 
-        it( 'should return error when path is empty', function () {
-            var path    = '';
-            var id      = 'some id';
-            var port    = 9090;
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when id is missing', function () {
-            var path    = 'path';
-            var id      = null;
-            var port    = 9090;
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when id is empty', function () {
-            var path    = 'path';
-            var id      = '';
-            var port    = 9090;
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when port is missing', function () {
-            var path    = 'path';
-            var id      = 'some id';
-            var port    = null;
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when port is empty', function () {
-            var path    = '';
-            var id      = 'some id';
-            var port    = '';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when port is invalid', function () {
-            var path    = '';
-            var id      = 'some id';
-            var port    = 'not a number';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.not.have.been.called;
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when get_info throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.get_info.throws( error );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when adding data stream throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.throws( error );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
 
         it( 'should return error when adding data stream fails', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onFirstCall().returns( false );
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.returns( false );
+            var result = rtpManager.connectRTPDestination( id, path, port );
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
+            rtpManager.disconnectRTPDestination.should.not.have.been.called;
+            switcherController.quiddityManager.exists.should.not.have.been.called;
+            rtpManager._refreshHttpSdpDec.should.not.have.been.called;
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when adding udp to destination throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.returns( true );
-            switcher.invoke.onSecondCall().throws( error );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            should.exist( result );
+            result.should.be.false;
         } );
 
         it( 'should return error when adding udp to destination fails', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getTreeInfo.returns( quiddities.shmdata_readers() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onSecondCall().returns( false );
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.returns( true );
-            switcher.invoke.onSecondCall().returns( false );
+            var result = rtpManager.connectRTPDestination( id, path, port );
 
-            rtpManager.connectRTPDestination( path, id, port, cb );
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledOnce;
+            switcherController.quiddityManager.getTreeInfo.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, String(port)] );
+            rtpManager.disconnectRTPDestination.should.have.been.calledOnce;
+            rtpManager.disconnectRTPDestination.should.have.been.calledWithExactly( id, path );
+            switcherController.quiddityManager.exists.should.not.have.been.called;
+            rtpManager._refreshHttpSdpDec.should.not.have.been.calledOnce;
 
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            should.exist( result );
+            result.should.be.false;
         } );
 
-        it( 'should return error when checking for soap control client throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var port    = 9090;
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.get_info.returns(  quiddities.shmdata_readers() );
-            switcher.invoke.returns( true );
-            switcher.has_quiddity.throws( error );
-
-            rtpManager.connectRTPDestination( path, id, port, cb );
-
-            switcher.get_info.should.have.been.calledOnce;
-            switcher.get_info.should.have.been.calledWithExactly( config.rtp.quiddName, '.shmdata.reader' );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_data_stream', [path] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'add_udp_stream_to_dest', [path, id, port] );
-
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
     } );
 
     describe( 'Disconnecting RTP destination', function () {
 
+        var id;
+        var path;
+
+        beforeEach(function() {
+            id = 'someId';
+            path = '/tmp/some_shmdata_path';
+            sinon.stub( switcherController.quiddityManager, 'getPropertyValue' );
+            sinon.stub( switcherController.quiddityManager, 'invokeMethod' );
+            sinon.stub( switcherController.quiddityManager, 'exists' );
+            sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        });
+
         it( 'should follow protocol', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-            switcher.has_quiddity.returns( true );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
 
-            refresh.should.have.been.calledOnce;
-            refresh.should.have.been.calledWith( id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
         it( 'should follow protocol when shmdata is still in use', function () {
-            var path    = '/tmp/switcher_nodeserver_audiotestsrc1_audio';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            path    = '/tmp/switcher_nodeserver_audiotestsrc1_audio';
 
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-            switcher.has_quiddity.returns( true );
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledOnce;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            refresh.should.have.been.calledOnce;
-            refresh.should.have.been.calledWith( id );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
         it( 'should follow protocol when not getting json destinations', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getPropertyValue.returns( {} );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns(  {} );
-            switcher.has_quiddity.returns( true );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
 
-            refresh.should.have.been.calledOnce;
-            refresh.should.have.been.calledWith( id );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
         it( 'should follow protocol when soap control client does not exists', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( false );
 
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-            switcher.has_quiddity.returns( false );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
+            rtpManager._refreshHttpSdpDec.should.not.have.been.called;
 
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
-        it( 'should return error when removing udp stream throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        it( 'should return false when removing udp stream fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onFirstCall().returns(false);
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.invoke.throws( error );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.calledOnce;
-            refresh.should.not.have.been.called;
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
+
+            should.exist(result);
+            result.should.be.false;
         } );
 
-        it( 'should return error when removing udp stream fails', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        it( 'should continue and succeed when removing data stream fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.invokeMethod.onSecondCall().returns(false);
+            switcherController.quiddityManager.exists.returns( true );
 
-            switcher.invoke.returns( false );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.not.have.been.called;
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
+            rtpManager._refreshHttpSdpDec.should.have.been.calledOnce;
+            rtpManager._refreshHttpSdpDec.should.have.been.calledWith( id );
+
+            should.exist(result);
+            result.should.be.true;
         } );
 
-        it( 'should return error when get property value throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
+        it( 'should not refresh http sdp dec when quiddity is not found', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            switcherController.quiddityManager.invokeMethod.returns( true );
+            switcherController.quiddityManager.exists.returns( false );
 
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.throws( error );
+            var result = rtpManager.disconnectRTPDestination( id, path );
 
-            rtpManager.disconnectRTPDestination( path, id, cb );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledTwice;
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.invokeMethod.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
 
-            switcher.invoke.should.have.been.calledOnce;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
 
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
+            switcherController.quiddityManager.exists.should.have.been.calledOnce;
+            switcherController.quiddityManager.exists.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
 
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
+            rtpManager._refreshHttpSdpDec.should.not.have.been.called;
 
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when removing data stream throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.invoke.returns( [true] );
-            switcher.invoke.onSecondCall().throws( error );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-
-            rtpManager.disconnectRTPDestination( path, id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when removing data stream fails', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.invoke.returns( [true] );
-            switcher.invoke.onSecondCall().returns( false );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-
-            rtpManager.disconnectRTPDestination( path, id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.has_quiddity.should.not.have.been.called;
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( '' );
-        } );
-
-        it( 'should return error when has quiddity throws', function () {
-            var path    = 'some path';
-            var id      = 'some id';
-            var error   = 'some error';
-            var refresh = sinon.stub( rtpManager, '_refreshHttpSdpDec' );
-
-            switcher.invoke.returns( [true] );
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-            switcher.has_quiddity.throws( error );
-
-            rtpManager.disconnectRTPDestination( path, id, cb );
-
-            switcher.invoke.should.have.been.calledTwice;
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_udp_stream_to_dest', [path, id] );
-            switcher.invoke.should.have.been.calledWithExactly( config.rtp.quiddName, 'remove_data_stream', [path] );
-
-            switcher.get_property_value.should.have.been.calledOnce;
-            switcher.get_property_value.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json' );
-
-            switcher.has_quiddity.should.have.been.calledOnce;
-            switcher.has_quiddity.should.have.been.calledWithExactly( config.soap.controlClientPrefix + id );
-
-            refresh.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            should.exist(result);
+            result.should.be.true;
         } );
 
     } );
 
     describe( 'Updating RTP destination', function () {
 
-        it( 'should follow protocol', function () {
-            var id   = 'destination 1 name';
-            var info = {
-                name: 'new destiantion name',
+        var id;
+        var info;
+
+        beforeEach(function() {
+            id = 'destination 1 name';
+            info = {
+                name: 'new destination name',
                 host: 'some host',
                 port: 9090
             };
+            sinon.stub( switcherController.quiddityManager, 'getPropertyValue' );
+            sinon.stub( rtpManager, 'removeRTPDestination' );
+            sinon.stub( rtpManager, 'createRTPDestination' );
+            sinon.stub( rtpManager, 'connectRTPDestination' );
+        });
 
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
+        it( 'should follow protocol', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(true);
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
-            connect.should.have.been.calledWith(
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[0].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[0].port
             );
-
-            connect.should.have.been.calledWith(
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[1].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[1].port
             );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            should.exist(result);
+            result.should.be.true;
         } );
 
         it( 'should follow protocol without existing destination', function () {
-            var id   = 'destination 1 name';
-            var info = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
+            switcherController.quiddityManager.getPropertyValue.returns({} );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(true);
 
-            switcher.get_property_value.returns(  {} );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithExactly();
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.should.not.have.been.called;
+            should.exist(result);
+            result.should.be.true;
         } );
 
-        it( 'should return error when getting destinations throws', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when removing fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(false);
 
-            switcher.get_property_value.throws( error );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.not.have.been.called;
-            create.should.not.have.been.called;
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.not.have.been.called;
+            rtpManager.connectRTPDestination.should.not.have.been.called
+            should.exist(result);
+            result.should.be.false;
         } );
 
-        it( 'should return error when removing returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when creating fails', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(false);
 
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields( error );
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.not.have.been.called;
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.should.not.have.been.called;
+            should.exist(result);
+            result.should.be.false;
         } );
 
-        it( 'should return error when creating returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
+        it( 'should return false when connecting fails (but still stry to connect all)', function () {
+            switcherController.quiddityManager.getPropertyValue.returns( quiddities.destinations_json() );
+            rtpManager.removeRTPDestination.returns(true);
+            rtpManager.createRTPDestination.returns(true);
+            rtpManager.connectRTPDestination.returns(false);
 
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
+            var result = rtpManager.updateRTPDestination( id, info );
 
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields( error );
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields();
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.should.not.have.been.called;
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
-        } );
-
-        it( 'should return error when connecting returns an error', function () {
-            var id    = 'destination 1 name';
-            var info  = {
-                name: 'new destiantion name',
-                host: 'some host',
-                port: 9090
-            };
-            var error = 'some error';
-
-            switcher.get_property_value.returns(  quiddities.destinations_json() );
-
-            var remove = sinon.stub( rtpManager, 'removeRTPDestination' );
-            remove.yields();
-
-            var create = sinon.stub( rtpManager, 'createRTPDestination' );
-            create.yields();
-
-            var connect = sinon.stub( rtpManager, 'connectRTPDestination' );
-            connect.yields( error );
-
-            rtpManager.updateRTPDestination( id, info, cb );
-
-            remove.should.have.been.calledOnce;
-            remove.should.have.been.calledWith( id );
-
-            create.should.have.been.calledOnce;
-            create.should.have.been.calledWith( info.name, info.host, info.port );
-
-            connect.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
-            connect.should.have.been.calledWith(
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledOnce;
+            switcherController.quiddityManager.getPropertyValue.should.have.been.calledWithExactly( config.rtp.quiddName, 'destinations-json');
+            rtpManager.removeRTPDestination.should.have.been.calledOnce;
+            rtpManager.removeRTPDestination.should.have.been.calledWith( id );
+            rtpManager.createRTPDestination.should.have.been.calledOnce;
+            rtpManager.createRTPDestination.should.have.been.calledWith( info.name, info.host, info.port );
+            rtpManager.connectRTPDestination.callCount.should.equal( quiddities.destinations_json().destinations[0].data_streams.length );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
                 quiddities.destinations_json().destinations[0].data_streams[0].path,
                 info.name,
                 quiddities.destinations_json().destinations[0].data_streams[0].port
             );
-
-            cb.should.have.been.calledOnce;
-            cb.should.have.been.calledWithMatch( error );
+            rtpManager.connectRTPDestination.should.have.been.calledWith(
+                quiddities.destinations_json().destinations[0].data_streams[1].path,
+                info.name,
+                quiddities.destinations_json().destinations[0].data_streams[1].port
+            );
+            should.exist(result);
+            result.should.be.false;
         } );
 
     } );

@@ -19,11 +19,11 @@ define( [
 
     var Quiddity = ScenicModel.extend( {
 
-
         defaults: function () {
             return {
                 "id":         null,
                 "class":      null,
+                "tree":        {},
                 // Dynamic
                 "maxReaders": null
             }
@@ -34,6 +34,12 @@ define( [
             classDescription: function () {
                 return this.scenic.classes.get( this.get( 'class' ) );
             }
+        },
+
+        parse: function( result ) {
+            result.properties = new Properties(result.properties, { parse: true });
+            result.methods = new Methods(result.methods, { parse: true });
+            return result;
         },
 
         /**
@@ -52,14 +58,15 @@ define( [
             // This prevents fetches and socket binding being done by temporary quiddities
             if ( !this.isNew() ) {
                 this.properties.bindToSocket();
-                this.properties.fetch();
+                //this.properties.fetch();
                 this.methods.bindToSocket();
-                this.methods.fetch();
+                //this.methods.fetch();
                 this.shmdatas.bindToSocket();
-                this.shmdatas.fetch();
+                //this.shmdatas.fetch();
 
                 // Handlers
-                this.onSocket( "remove", _.bind( this._onRemoved, this ) );
+                this.onSocket( 'quiddity.removed', _.bind( this._onRemoved, this ) );
+                this.onSocket( 'quiddity.tree.updated', _.bind( this._onTreeUpdated, this ) );
             }
 
         },
@@ -83,6 +90,19 @@ define( [
 
                 // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );
+            }
+        },
+
+        /**
+         * Tre Updated Handler
+         *
+         * @param {string} quiddityId
+         * @param {Object} tree
+         * @private
+         */
+        _onTreeUpdated: function( quiddityId, tree ) {
+            if ( this.id == quiddityId ) {
+                this.set('tree', tree);
             }
         },
 

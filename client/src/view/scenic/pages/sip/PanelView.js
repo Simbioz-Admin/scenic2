@@ -19,10 +19,19 @@ define( [
     var PanelView = Marionette.LayoutView.extend( {
         template: _.template( PanelTemplate ),
 
+        ui: {
+            logout: '.action.logout',
+            addContact: '.action.add'
+        },
+
         regions: {
             self:     '.self',
-            control:  '.control',
             contacts: '.contacts'
+        },
+
+        events: {
+            'click @ui.logout': 'logout',
+            'click @ui.addContact': 'addContact'
         },
 
         /**
@@ -30,15 +39,35 @@ define( [
          */
         initialize: function ( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.listenTo(this.model.sip.contacts, 'update', this.showSelf);
         },
 
         onBeforeShow: function () {
-            this.showChildView( 'self', new SelfView( {model: this.model.sip.self} ) );
-            this.showChildView( 'control', new ControlView( {model: this.model.sip} ) );
             this.showChildView( 'contacts', new ContactsView( {
                 table:      this.model,
-                collection: this.model.sip.contacts
+                collection: this.model.sip.gcontacts
             } ) );
+            this.showSelf();
+        },
+
+        showSelf: function() {
+            var self = this.model.sip.get('contacts' ).findWhere({self:true});
+            if ( self ) {
+                this.showChildView( 'self', new SelfView( { model: self } ) );
+            } else {
+                this.getRegion( 'self' ).empty();
+            }
+        },
+
+        logout: function() {
+            this.model.sip.logout();
+        },
+
+        addContact: function() {
+            this.scenicChannel.commands.execute(
+                'contact:add',
+                _.bind( this.model.sip.addContact, this.model )
+            );
         }
     } );
 

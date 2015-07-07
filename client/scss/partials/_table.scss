@@ -92,18 +92,20 @@ $boxWidth: $sourceWidth;
               height: 100%;
             }
 
-            .shmdatas, .source-contacts {
+            .source-children {
               min-height: $rowMinHeight;
               margin-left: $sourceWidth;
               background-color: $backgroundColor;
 
-              .shmdata {
+              .source-child {
                 position: relative;
                 background: $backgroundColorDarkish;
-                border-left: $shmdataGap solid $red;
-
-                &.active {
-                  border-left: $shmdataGap solid $green;
+                border-left: 1px solid $backgroundColor;
+                &.shmdata {
+                  border-left: $shmdataGap solid $red;
+                  &.active {
+                    border-left: $shmdataGap solid $green;
+                  }
                 }
 
                 &:not(:last-child) {
@@ -133,7 +135,12 @@ $boxWidth: $sourceWidth;
                     &.enabled {
                       cursor: pointer;
                       background: $backgroundColorDark;
-                      &.active {
+
+                      .actions {
+                        opacity: 1.0;
+                      }
+
+                      &.active .action.connect {
                         background: $backgroundColorDarker;
                         &:hover {
                           background: $red image-url('icons/x.png') no-repeat center;
@@ -143,30 +150,37 @@ $boxWidth: $sourceWidth;
                         }
                       }
                       &.inactive {
-                        background: $backgroundColorDark;
-                        &:hover {
-                          cursor: pointer;
-                          background: $green image-url('icons/plus.png') center no-repeat;
+                        .action.edit {
+                          display: none;
+                        }
+                        .action.connect {
+                          width: 100%;
+                          background: $backgroundColorDark;
+                          &:hover {
+                            cursor: pointer;
+                            background: $green image-url('icons/plus.png') center no-repeat;
+                          }
                         }
                       }
                     }
 
                     &.disabled {
-                      cursor: not-allowed;
                       background: $disabled;
+                      .actions:hover {
+                        opacity: 0.0;
+                        .action {
+                          cursor: not-allowed;
+                        }
+                      }
                     }
 
                     .controls {
-                      //height: $rowMinHeight;
                       position: relative;
                       height: 100%;
                     }
 
                     .icon {
-                      position: absolute;
-                      width: 100%;
-                      height: 100%;
-                      opacity: 0.25;
+                      opacity: 0.65;
                     }
                   }
                 }
@@ -255,6 +269,17 @@ $boxWidth: $sourceWidth;
             background: image-url('icons/724-info.png') center center no-repeat;
           }
         }
+        &.power {
+          &:hover {
+            background: $green;
+            &.on {
+              background: $red;
+            }
+          }
+          .icon {
+            background: image-url('icons/51-power.png') center center no-repeat;
+          }
+        }
         &.edit {
           &:hover {
             background: $orange;
@@ -271,6 +296,18 @@ $boxWidth: $sourceWidth;
             background: image-url('icons/711-trash.png') center center no-repeat;
           }
         }
+      }
+
+      &.actions-1 .action {
+        width: 100%;
+      }
+
+      &.actions-2 .action {
+        width: 50%;
+      }
+
+      &.actions-3 .action {
+        width: 33.333%;
       }
     }
 
@@ -350,6 +387,8 @@ $boxWidth: $sourceWidth;
     .connection {
       .port {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         display: table;
@@ -363,6 +402,8 @@ $boxWidth: $sourceWidth;
       }
       .portEntry {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         background: $backgroundColorDark;
@@ -376,6 +417,34 @@ $boxWidth: $sourceWidth;
           height: 100%;
           text-align: center;
           font-size: 2em;
+        }
+      }
+    }
+  }
+
+  // CONTROL
+  &.control {
+    .bar-container {
+      position: absolute;
+      width: $shmdataWidth;
+      height: $rowMinHeight;
+      .bar {
+        width: 0;
+        height: 100%;
+        background-color: $blue;
+      }
+    }
+    .controls {
+      .info {
+        @include text-shadow( 1px 1px rgba(0,0,0,0.25));
+        .property-name {
+          font-weight: bold;
+          display: block;
+          color: $textColorBrighter;
+        }
+        .property-value {
+          display: block;
+          color: $textColorBright;
         }
       }
     }

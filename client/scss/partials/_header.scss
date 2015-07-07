@@ -69,7 +69,8 @@
           color: white;
           border: none;
           &.active {
-            color: $satColor;
+            color: $textColorDark;
+            background-color: $satColor;
           }
           &:hover {
             background: #222;

@@ -29,9 +29,18 @@ function ScenicClient( switcherController, config, socket ) {
     this.switcherController = switcherController;
     this.config = config;
     this.socket = socket;
-    this.switcherController.bindClient( socket );
     this.bindCommands( commands );
 }
+
+/**
+ * Remove this client instance
+ */
+ScenicClient.prototype.destroy = function() {
+    this.socket.removeAllListeners();
+    this.switcherController = null;
+    this.config = null;
+    this.socket = null;
+};
 
 /**
  * Binds a list of command modules to the socket instance

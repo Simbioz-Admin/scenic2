@@ -12,8 +12,8 @@ define( [
      *  @constructor
      *  @augments module:Marionette.LayoutView
      */
-    var Menus = Marionette.ItemView.extend( {
-        initialize: function (options) {
+    var TableMenusView = Marionette.ItemView.extend( {
+        initialize: function () {
             this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
             this.subMenuTemplate = _.template( SubMenuTemplate );
         },
@@ -25,12 +25,12 @@ define( [
          * @returns {*}
          */
         mapMenu:          function ( models ) {
-            return _.groupBy( _.map( models, function ( classDescription ) {
+            return _.groupBy( _.map( models, function ( model ) {
                 return {
-                    id:    classDescription.get( 'class' ),
-                    name:  classDescription.get( 'name' ),
-                    title: classDescription.get( 'description' ),
-                    group: classDescription.get( 'category' )
+                    id:    model.get( 'class' ),
+                    name:  model.get( 'name' ),
+                    title: model.get( 'description' ),
+                    group: model.get( 'category' )
                 };
             }, this ), 'group' );
         },
@@ -40,7 +40,7 @@ define( [
          *
          * @param data
          */
-        drop: function ( anchor, data ) {
+        drop: function ( anchor, data, activeIndex ) {
             this.closeMenu();
 
             if ( data.length == 0 ) {
@@ -48,13 +48,12 @@ define( [
             }
 
             $( anchor ).append( this.subMenuTemplate( {
-                type:    'classes',
                 groups: data
             } ) );
 
             $( '#sub-menu .content' ).accordion( {
                 collapsible: true,
-                active:      false,
+                active:      activeIndex != null ? activeIndex : false,
                 heightStyle: 'content',
                 icons:       false,
                 animate:     125
@@ -86,7 +85,7 @@ define( [
             this.closeMenu();
             this.scenicChannel.commands.execute(
                 'quiddity:create',
-                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
+                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         },
@@ -100,10 +99,11 @@ define( [
             this.closeMenu();
             this.scenicChannel.commands.execute(
                 'quiddity:create',
-                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
+                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         }
     } );
-    return Menus;
+
+    return TableMenusView;
 } );

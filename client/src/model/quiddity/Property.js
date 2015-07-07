@@ -16,7 +16,7 @@ define( [
     var Property = ScenicModel.extend( {
         defaults: {
             'type':        null,
-            'writable':    null,
+            'writable':    false,
             'name':        null,
             'description': null,
             'default':     null,
@@ -48,21 +48,19 @@ define( [
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io
             if ( !this.isNew() ) {
-                this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
                 this.onSocket( "propertyChanged", _.bind( this._onPropertyChanged, this ) );
+                this.onSocket( 'quiddity.property.removed', _.bind( this._onPropertyRemoved, this ) );
             }
         },
 
         /**
-         * Signals Property Info Handler
-         * Listens to property removal concerning our parent quiddity and destroy this property if it matches
+         * Property Removed Handler
          *
          * @param {string} quiddityId The name of the quiddity
-         * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignal: function ( quiddityId, signal, name ) {
-            if ( !this.isNew() && signal == "on-property-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
+        _onPropertyRemoved: function ( quiddityId, name ) {
+            if ( !this.isNew() && this.collection.quiddity.id == quiddityId && this.id == name ) {
                 this.trigger( 'destroy', this, this.collection );
             }
         },

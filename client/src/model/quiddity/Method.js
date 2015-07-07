@@ -52,24 +52,23 @@ define( [
             ScenicModel.prototype.initialize.apply( this, arguments );
 
             this.args = new Arguments(null, {scenic: this.scenic});
+            this.args.method = this;
 
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io
             if ( !this.isNew() ) {
-                this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
+                this.onSocket( "quiddity.method.removed", _.bind( this._onMethodRemoved, this ) );
             }
         },
 
         /**
-         * Signals Property Info Handler
-         * Listens to method removal concerning our parent quiddity and destroy this method if it matches
+         * Method Removed Handler
          *
          * @param {string} quiddityId The name of the quiddity
-         * @param {string} signal The type of event on property or method
          * @param {string} name The name of the property or method
          */
-        _onSignal: function ( quiddityId, signal, name ) {
-            if ( signal == "on-method-removed" && this.collection.quiddity.id == quiddityId && this.id == name ) {
+        _onMethodRemoved: function ( quiddityId, name ) {
+            if ( this.collection.quiddity.id == quiddityId && this.id == name ) {
                 this.args.destroy();
                 this.trigger( 'destroy', this, this.collection );
             }
@@ -84,7 +83,15 @@ define( [
             this.scenic.socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.args.pluck('value'), function( error, result ) {
                 if ( error ) {
                     self.scenicChannel.vent.trigger('error', error );
+                    if ( callback ) {
+                        return callback( error, result );
+                    }
                 }
+
+                self.args.each( function( arg ) {
+                    arg.set('value', '');
+                });
+
                 if ( callback ) {
                     callback( error, result );
                 }

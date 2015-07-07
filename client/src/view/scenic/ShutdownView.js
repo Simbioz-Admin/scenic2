@@ -17,10 +17,7 @@ define( [
         template: _.template( ShutdownTemplate ),
         el:       'body',
 
-        initialize: function ( app ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-            this.app = app;
-        }
+        initialize: function ( ) {}
     } );
     return ShutdownView;
 } );

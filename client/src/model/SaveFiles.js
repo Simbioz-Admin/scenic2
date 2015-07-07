@@ -25,7 +25,8 @@ define( [
         },
 
         parse: function( result ) {
-            return _.map( result, function( item ) { return { name: item }; } );
+            result.date = new Date( result.date );
+            return result;
         },
 
         /**

@@ -21,23 +21,53 @@
         overflow-y: auto;
         overflow-x: hidden;
         .file {
+          position: relative;
           padding: 1em;
-          font-size: 1.5em;
           overflow: hidden;
           &:hover {
-            background: $satColor;
-            color: $textColorBrighter;
+            background: $blue;
+            .file-info {
+              .name,
+              .date {
+                color: $textColorDark;
+              }
+            }
           }
-          .name {
+          .file-info {
             float: left;
             margin-right: 1em;
-            a {
+            .name {
+              font-size: 1.5em;
+              margin-bottom: 0.5em;
+              a {
+                cursor: default;
+              }
+            }
+            .date {
+              color: $textColorSubtle;
               cursor: default;
             }
           }
           .remove {
-            float: right;
             cursor: default;
+            height: 100%;
+            position: absolute;
+            right: 0;
+            top : 0;
+            width: 40px;
+            &:hover {
+              border-left: 1px solid $backgroundColorDarker;
+              background-color: $red;
+            }
+            .icon {
+              position: absolute;
+              top: 50%;
+              margin-top: -7px;
+              right: 12px;
+              width: 14px;
+              height: 14px;
+              background: image-url('icons/x-small.png') no-repeat;
+            }
           }
         }
       }

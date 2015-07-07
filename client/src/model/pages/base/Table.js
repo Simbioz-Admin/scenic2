@@ -44,14 +44,14 @@ define( [
          * Filter Quiddity for access from this table
          *
          * @param {Quiddity} quiddity - Quiddity to test
-         * @param {String[]} filterTags - List of allowed tags
+         * @param {string[]} [filterTags] - List of allowed tags
          * @param {boolean} filterCategory - Use category filter
          * @returns {boolean} Is the quiddity allowed by the filter tags and/or filter category
          */
         _filterQuiddity: function ( quiddity, filterTags, filterCategory ) {
-            var classDescription = quiddity.get( 'classDescription' );
-            var classIncluded    = this._filterClass( classDescription, filterTags );
-            var categoryIncluded = classIncluded && filterCategory && this.get( 'filter' ) ? this.get( 'filter' ) == classDescription.get( 'category' ) : true;
+            var classDescription = quiddity.get('classDescription');
+            var classIncluded = filterTags ? this._filterClass(classDescription, filterTags) : true;
+            var categoryIncluded = classIncluded && filterCategory && this.get('filter') ? this.get('filter') == classDescription.get('category') : true;
             return classIncluded && categoryIncluded;
         },
 
@@ -135,6 +135,7 @@ define( [
                 success: function ( quiddity ) {
                     if ( info.device ) {
                         //TODO: What is this I don't even
+                        alert('What is this I don\'t even');
                         quiddity.setProperty( 'device', info.device );
                     }
                 }

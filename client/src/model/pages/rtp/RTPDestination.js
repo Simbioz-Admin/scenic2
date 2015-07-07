@@ -24,12 +24,12 @@ define( [
          */
         methodMap: {
             'create': function () {
-                return ['createRTPDestination', this.get( 'info' ).name, this.get( 'info' ).host, this.get( 'info' ).port];
+                return ['rtp.destination.create', this.get('info').name, this.get('info').host, this.get('info').port];
             },
             'update': null,
             'patch':  null,
             'delete': function () {
-                return ['removeRTPDestination', this.id];
+                return ['rtp.destination.remove', this.id];
             },
             'read':   null
         },
@@ -58,8 +58,8 @@ define( [
          */
         edit: function () {
             var self = this;
-            this.scenicChannel.commands.execute( 'rtp:edit', this, function ( info ) {
-                self.scenic.socket.emit( 'updateRTPDestination', self.id, info, function ( error ) {
+            this.scenicChannel.commands.execute( 'rtp:edit', this, function( info ) {
+                self.scenic.socket.emit( 'rtp.destination.update', self.id, info, function( error ) {
                     if ( error ) {
                         self.scenicChannel.vent.trigger( 'error', error );
                         return;

@@ -34,7 +34,7 @@ describe( 'Remove Contact Command', function () {
         client.switcherController.sipManager.removeContact.returns( true );
         command( 'uri@server.com', cb );
         client.switcherController.sipManager.removeContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly('uri@server.com' );
+        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly( 'uri@server.com' );
         cb.should.have.been.calledWithExactly( null, true );
     } );
 
@@ -42,7 +42,7 @@ describe( 'Remove Contact Command', function () {
         client.switcherController.sipManager.removeContact.throws();
         command( 'uri@server.com', cb );
         client.switcherController.sipManager.removeContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly('uri@server.com' );
+        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly( 'uri@server.com' );
         cb.should.have.been.calledWithMatch( '' );
     } );
 
@@ -50,7 +50,7 @@ describe( 'Remove Contact Command', function () {
         client.switcherController.sipManager.removeContact.returns( false );
         command( 'uri@server.com', cb );
         client.switcherController.sipManager.removeContact.should.have.been.calledOnce;
-        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly('uri@server.com' );
+        client.switcherController.sipManager.removeContact.should.have.been.calledWithExactly( 'uri@server.com' );
         cb.should.have.been.calledWithMatch( '' ); // Any message is good
     } );
 

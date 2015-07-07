@@ -14,24 +14,30 @@ define( [
      * @augments module:Marionette.CollectionView
      */
     var Destinations = Marionette.CollectionView.extend( {
-        childView: DestinationView,
-        className: 'destination-list',
+        childView:        DestinationView,
+        childViewOptions: function () {
+            return {
+                table: this.table
+            }
+        },
+        className:        'destination-list',
 
         /**
          * Initialize
          */
-        initialize: function( ) {
-            this.listenTo( this.options.table, 'change:filter', this.render );
+        initialize: function ( options ) {
+            this.table = options.table;
+            this.listenTo( this.table, 'change:filter', this.render );
         },
 
         /**
          * Destinations View Filter
          *
-         * @param quiddity
+         * @param destination
          * @returns {boolean}
          */
-        filter: function (quiddity) {
-            return this.options.table.filterDestination( quiddity, true );
+        filter: function ( destination ) {
+            return this.table.filterDestination( destination, true );
         }
     } );
 

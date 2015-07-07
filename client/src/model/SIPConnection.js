@@ -6,10 +6,9 @@ define( [
     'cocktail',
     'crypto-js',
     'app',
-    'model/mixins/PropertyWatcher',
     'model/sip/Contacts',
     'model/sip/Contact'
-], function ( _, Backbone, Cocktail, CryptoJS, app, PropertyWatcher, Contacts, Contact ) {
+], function ( _, Backbone, Cocktail, CryptoJS, app, Contacts, Contact ) {
 
     /**
      * SIP Connection
@@ -32,6 +31,14 @@ define( [
             }
         },
 
+        statuses: [
+            'available',
+            'online',
+            'busy',
+            'away',
+            'offline'
+        ],
+
         /**
          * Initialize
          */
@@ -48,19 +55,46 @@ define( [
             this.set( 'user', sip && sip.user ? sip.user : null );
             this.set( 'uri', sip && sip.uri ? sip.uri : null );
 
-            this.quiddityId   = this.scenic.config.sip.quiddName;
-            this.propertyName = 'sip-registration';
+            // Here we have to set up a watcher on quiddities updates because SIP is not always available
+            // and we need to track properties on whichever instance will come up from the network
+            this.listenTo( this.scenic.quiddities, 'add', this._onQuiddityAdded );
+            this.listenTo( this.scenic.quiddities, 'remove', this._onQuiddityRemoved );
+            if ( this.scenic.quiddities.get(this.scenic.config.sip.quiddName)) {
+                this._registerSipQuiddity(this.scenic.quiddities.get(this.scenic.config.sip.quiddName));
+            }
 
             this.self = new Contact( null, {self: true, sip: this, scenic: this.scenic });
             this.contacts = new Contacts( null, {sip: this, scenic: this.scenic});
-
-            // Fetch contacts
-            this.listenTo( this.contacts, 'update', this._checkForSelf );
-            this.contacts.fetch();
+        },
+        
+        _registerSipQuiddity: function( sipQuiddity ) {
+            this.set('quiddity', sipQuiddity);
+            this.listenTo( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+            this._onSipRegistrationChange();
         },
 
-        propertyChanged: function ( value ) {
-            this.set( 'connected', !!value );
+        _onQuiddityAdded: function(model, collection, options) {
+            if ( model.id == app.config.sip.quiddName ) {
+                this._registerSipQuiddity(model);
+            }
+        },
+
+        _onQuiddityRemoved: function(model, collection, options) {
+            if ( model.id == app.config.sip.quiddName ) {
+                if ( this.quiddity ) {
+                    this.stopListening( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+                    this.set('quiddity', null);
+                    this._onSipRegistrationChange();
+                }
+            }
+        },
+
+        /**
+         * Handler for when the watched property 'sip-registration' changes.
+         */
+        _onSipRegistrationChange: function () {
+            var connected = this.get('quiddity').get('properties' ).get('sip-registration' ).get('value');
+            this.set( 'connected', connected );
         },
 
         /**
@@ -76,7 +110,7 @@ define( [
             var self = this;
 
             this.set( 'server', server );
-            this.set( 'port', _.isEmpty(port) ? this.get('port') : port );
+            this.set( 'port', _.isEmpty( port ) ? this.get( 'port' ) : port );
             this.set( 'user', user );
             this.set( 'uri', user + '@' + server );
 
@@ -136,7 +170,7 @@ define( [
         addContact: function ( uri ) {
             var self    = this;
             var contact = new Contact();
-            contact.save( {uri: uri}, {
+            contact.save( { uri: uri }, {
                 success: function () {
                     //no-op
                 },
@@ -147,15 +181,13 @@ define( [
         },
 
         _checkForSelf: function() {
-            var self = this.contacts.findWhere( { self: true } );
+            var self = this.get( 'contacts' ).findWhere( { self: true } );
             if ( self ) {
-                this.self.set( self.attributes );
+                this.get('self').set( self.attributes );
             }
 
         }
     } );
-
-    Cocktail.mixin( SIPConnection, PropertyWatcher );
 
     return SIPConnection;
 } );

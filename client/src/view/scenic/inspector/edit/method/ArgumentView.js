@@ -22,7 +22,12 @@ define( [
         },
 
         events: {
-            'change @ui.input': 'updateArgument'
+            'change @ui.input': 'updateArgument',
+            'keypress @ui.input': 'checkForEnterKey'
+        },
+
+        modelEvents: {
+            'change:value': 'render'
         },
 
         /**
@@ -34,6 +39,15 @@ define( [
 
         updateArgument: function() {
             this.model.set('value', this.ui.input.val() );
+        },
+
+        checkForEnterKey: function() {
+            var key = event.which || event.keyCode;
+            if ( key == 13 ) {
+                event.preventDefault();
+                this.updateArgument();
+                this.model.collection.method.invoke();
+            }
         }
     } );
 

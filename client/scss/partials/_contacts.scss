@@ -1,8 +1,78 @@
 $actionsWidth: 125px;
+$sipControlsHeight: 48px;
 
 .sip-panel {
   header {
-    padding: 1em;
+
+    h2 {
+      padding: 1em;
+      background: image-url('icons/arrow-down-small.png') no-repeat right 16px center;
+    }
+
+    .controls {
+      overflow: hidden;
+      height: 0;
+      margin-bottom: 0;
+      @include transition( height 0.5s ease-out );
+
+      .actions {
+        .action {
+          position: relative;
+          height: $sipControlsHeight;
+          padding: 1em;
+          .icon {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            top: 50%;
+            margin-top: -16px;
+          }
+          .label {
+            font-size: 1.5em;
+            left: 48px;
+            top: 16px;
+            position: absolute;
+            color : $textColorBrighter;
+          }
+          &:hover {
+            .label {
+
+            }
+          }
+          &.add {
+            &:hover {
+              background: $green;
+            }
+            .icon {
+              background: image-url('icons/plus.png') center no-repeat;
+            }
+          }
+          &.logout {
+            &:hover {
+              background: $red;
+            }
+            .icon {
+              background: image-url('icons/x.png') center no-repeat;
+            }
+          }
+        }
+      }
+    }
+
+    &:hover {
+      h2 {
+        background: image-url('icons/arrow-up-small.png') no-repeat right 16px center;
+      }
+      .controls {
+        height: $sipControlsHeight * 2.5;
+        @include transition( height 0.5s ease-in );
+      }
+    }
+
+    &.contacts-header {
+      background: image-url('icons/779-users.png') no-repeat 8px center;
+      padding-left: 44px;
+    }
   }
 
   .sip-actions {
@@ -10,7 +80,7 @@ $actionsWidth: 125px;
   }
 
   .contact-list {
-    border-top: 1px solid darken($backgroundColorDarker, 5%);
+    //border-top: 1px solid darken($backgroundColorDarker, 5%);
     overflow-y: auto;
     overflow-x: hidden;
 

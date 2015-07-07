@@ -20,7 +20,7 @@ for (var k in interfaces) {
 }
 
 var config = {
-    version: "2.1.0",
+    version: "2.2.0",
     lang : 'en',
     host: addresses[0],
 
@@ -68,7 +68,8 @@ var config = {
     homePath: homePath,
     savePath: homePath + "/save_files/",
     contactsPath: homePath + "/contacts.json",
-    logPath: homePath + '/logs/'
+    logPath: homePath + '/logs/',
+    logLevel: 'switcher'
 };
 
 module.exports = config;

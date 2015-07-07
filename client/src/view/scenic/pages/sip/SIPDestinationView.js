@@ -19,7 +19,7 @@ define( [
 
         attributes: function () {
             return {
-                class: [ 'sip', 'destination', this.model.get('send_status') == 'calling' ? 'connected' : 'disconnected'].join(' '),
+                class: [ 'sip', 'destination', this.model.get('send_status') == 'calling' ? 'connected' : 'disconnected'].join(' ')
             }
         },
 
@@ -62,8 +62,19 @@ define( [
             this.model.hangUp();
         },
 
-        removeDestination: function() {
-            alert('not implemented');
+        /**
+         * Remove Handler
+         *
+         * @inheritdoc
+         * @param event
+         */
+        removeDestination: function( event ) {
+            var self = this;
+            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
+                if ( confirmed ) {
+                    self.model.disconnectAll();
+                }
+            });
         }
     } );
 

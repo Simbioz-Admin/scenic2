@@ -14,7 +14,7 @@ define( [
      * @constructor
      * @extends module:Marionette.ItemView
      */
-    var Destination = Marionette.ItemView.extend( {
+    var DestinationView = Marionette.ItemView.extend( {
         template: _.template( DestinationTemplate ),
         templateHelpers: function() {
             return {
@@ -36,8 +36,9 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( ) {
+        initialize: function( options ) {
             this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.table = options.table;
         },
 
         /**
@@ -62,5 +63,5 @@ define( [
         }
     } );
 
-    return Destination;
+    return DestinationView;
 } );

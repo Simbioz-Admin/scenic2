@@ -15,7 +15,7 @@ define( [
      */
     var Methods = ScenicCollection.extend( {
         model:     Method,
-        comparator: 'position weight',
+        comparator: 'order',
         quiddity:  null,
         methodMap: {
             'create': null,
@@ -41,22 +41,18 @@ define( [
          * This was causing them to keep being referenced event after being used
          */
         bindToSocket: function() {
-            this.onSocket( "onSignal", _.bind( this._onSignal, this ) );
+            this.onSocket( "quiddity.method.added", _.bind( this._onMethodAdded, this ) );
         },
 
         /**
-         * Signals Property Info Handler
-         * Listens to method addition concerning our parent quiddity and add new methods if it matches
+         * Method Added Handler
          *
          * @param {string} quiddityId The name of the quiddity
-         * @param {string} signal The type of event on property or method
-         * @param {string} name The name of the property or method
+         * @param {string} method The method attributes
          */
-        _onSignal: function ( quiddityId, signal, name ) {
-            if ( signal == "on-method-added" && this.quiddity.id == quiddityId ) {
-                var method = this.add( {id: name}, {merge: true} );
-                //The method is empty at this point, fetch its content
-                method.fetch();
+        _onMethodAdded: function ( quiddityId, method ) {
+            if ( this.quiddity.id == quiddityId ) {
+                this.add( method, {merge: true, parse: true} );
             }
         }
     } );

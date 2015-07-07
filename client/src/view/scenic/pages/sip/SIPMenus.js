@@ -18,13 +18,13 @@ define( [
         ui: {
             'source': '.menu.source',
             'destination': '.menu.destination',
-            'filter': '.filter'
+            'filter': '.filter-select'
         },
         events: {
             'click @ui.source .button': 'dropSources',
             'click @ui.source .item': 'createSourceQuiddity',
             'click @ui.destination .button': 'dropDestinations',
-            'click @ui.destination .item': 'create',
+            'click @ui.destination .item': 'addContactDestination',
             'change @ui.filter': 'filter'
         },
 
@@ -38,10 +38,20 @@ define( [
                 categories: categories
             }
         },
+        
         initialize: function (options) {
             TableMenusView.prototype.initialize.apply( this, arguments );
             this.quiddities = this.model.scenic.quiddities;
             this.listenTo( this.quiddities, 'update', this.render );
+        },
+
+        onRender: function() {
+            var self = this;
+            this.ui.filter.selectmenu( {
+                change: function ( event, ui ) {
+                    self.model.set( 'filter', ui.item.value );
+                }
+            });
         },
 
         /**
@@ -59,7 +69,23 @@ define( [
          * @param event
          */
         dropDestinations: function ( event ) {
-            this.drop( this.ui.destination, this.mapMenu( this.model.getDestinations() ) );
+            this.drop( this.ui.destination, _.groupBy( this.model.getDestinations().map( function ( contact ) {
+                return {
+                    id: contact.id,
+                    name: contact.get( 'name' ),
+                    status: contact.get('status')
+                };
+            }, this ), 'status' ), 0 );
+        },
+
+        /**
+         * Add a contact destination
+         *
+         * @param event
+         */
+        addContactDestination: function(event) {
+            this.closeMenu();
+            this.model.addDestination( this.model.sip.get('contacts' ).get( $( event.currentTarget ).data( 'id' ) ) );
         },
 
         /**

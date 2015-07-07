@@ -139,12 +139,12 @@ label {
   margin: 5px 0 10px 0;
   padding: 0.5em 1em;
   color: $textColorBrighter;
-  text-shadow: 1px 1px 0px darken( $backgroundColorDark, 10%);
+  text-shadow: 1px 1px 0 darken( $backgroundColorDark, 10%);
   font-size: 1.25em;
   text-align: center;
   border-radius: 6px;
   background: $backgroundColorDark;
-  border: lighten( $backgroundColorDark, 5% ) 1px solid;
+  border: lighten( $backgroundColorDark, 2.5% ) 1px solid;
   cursor: pointer;
   &:hover {
     background: $backgroundColor;
@@ -206,42 +206,78 @@ label {
   .btn {
     margin: 0 0 10px 0;
     border-radius: 0;
+    float: left;
     &:first-child {
       border-radius: 6px 0 0 6px;
     }
     &:last-child {
       border-radius: 0 6px 6px 0;
     }
-  }
-}
-
-.ui-slider {
-  background: #eee;
-  float: left;
-  width: 63%;
-  margin: 12px 20px 0 12px;
-  @include border-radius(5px);
-  .ui-slider-range {
-    background: $blue;
-    @include border-radius(5px);
-  }
-  .ui-slider-handle {
-    background: #fcfcfc;
-    @include border-radius(3px);
-    width: 24px;
-    height: 16px;
-    top: -4px;
-    margin-left: -12px;
-    &:hover {
-      background: white;
+    &:not(:last-child){
+      margin-right: 1px;
     }
   }
 }
 
-input.slider {
-  width: 60px;
-  padding: 0 8px;
-  height: 22px;
-  text-align: center;
-  color: $textColorBrighter;
+.ui-slider {
+  background: $backgroundColorDarkish;
+  float: left;
+  height: 24px;
+  @include border-radius(5px);
+  .ui-slider-range {
+    background: $blue;
+    @include border-radius(5px);
+    &:hover {
+      background: lighten($blue, 5% );
+    }
+    &:active {
+      background: lighten($blue, 15% );;
+    }
+  }
+  .ui-slider-handle {
+    display:none;
+  }
+}
+
+.ui-selectmenu-button {
+  height: 24px;
+  font-size: 1.5em;
+  background-color: $backgroundColorDarkish;
+  &.ui-corner-all {
+    @include border-radius(5px);
+  }
+  &.ui-corner-top {
+    @include border-radius( 5px 5px 0 0);
+  }
+  span.ui-selectmenu-text {
+    padding: 0 2em 0 0.5em;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+  }
+  span.ui-icon {
+    margin-top: -4px;
+  }
+  .ui-icon-triangle-1-s {
+    width: 23px;
+    height: 7px;
+    background: image-url('icons/arrow-down-small.png') no-repeat 8px;
+  }
+}
+
+.ui-selectmenu-menu {
+  .ui-menu {
+    background-color: $backgroundColorDarkish;
+    @include border-radius(0 0 5px 5px);
+    .ui-menu-item {
+      border-top: 1px solid $backgroundColorDarker;
+      padding: 0.5em 1em 0.5em 0.5em;
+      font-size: 1.5em;
+      &.ui-state-focus {
+        margin: 0;
+        color: $textColorDark;
+        background-color: $blue;
+      }
+    }
+  }
 }

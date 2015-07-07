@@ -17,17 +17,19 @@ define( [
     var SourcesView = Marionette.CollectionView.extend( {
         className:        'source-list',
         getChildView:     function ( item ) {
+            // This is per-quiddity and not per-table that's why
+            // it was not passed as an option
             if ( item.get( 'class' ) == 'sip' ) {
                 return SIPSourceView;
-            }
-            else {
-                return SourceView;
+            } else {
+                return this.options.sourceView ? this.options.sourceView : SourceView;
             }
         },
         childViewOptions: function () {
             return {
-                table:          this.options.table,
-                connectionView: this.options.connectionView
+                table:           this.options.table,
+                sourceChildView: this.options.sourceChildView,
+                connectionView:  this.options.connectionView
             }
         },
 

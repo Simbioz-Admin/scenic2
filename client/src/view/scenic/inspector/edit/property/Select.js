@@ -32,13 +32,23 @@ define( [
             FieldView.prototype.initialize( this, arguments );
         },
 
+        onAttach: function() {
+            var self = this;
+            this.ui.property.selectmenu( {
+                disabled: !this.model.get('writable'),
+                width: '100%',
+                change: function ( event, ui ) {
+                    self.model.updateValue( ui.item.value );
+                }
+            });
+        },
+
         /**
          * Update
          *
          * @param event
          */
         updateModel: function ( event ) {
-            // Update the model
             this.model.updateValue( this.ui.property.val() );
         },
 
@@ -48,6 +58,7 @@ define( [
          */
         onModelValueChanged: function( model, value, options ) {
             this.ui.property.val( value );
+            this.ui.property.selectmenu('refresh');
         }
     } );
 

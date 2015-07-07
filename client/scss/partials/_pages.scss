@@ -15,7 +15,6 @@
     top: $sessionsHeight;
     height: 40px;
     margin: 12px 12px 8px 24px;
-    background: #333;
     padding: 0;
     cursor: move;
     .menu {
@@ -46,23 +45,16 @@
       }
     }
     .filter {
-      padding: 0;
-      width: 160px;
+      width: 200px;
+      height: 36px;
       float: left;
       opacity: 0.5;
       &:hover {
         opacity: 1;
-        cursor: pointer;
       }
-      background: #444;
-      border: #444;
-      color: white;
-      cursor: pointer;
-      height: 36px;
-      margin: 0;
-      option {
-        cursor: pointer;
-        border: none;
+      .ui-selectmenu-button {
+        height: 100%;
+        width: 100% !important;
       }
     }
   }
@@ -111,7 +103,8 @@
       background: #323232;
       border: 0;
       &:hover {
-        background: $satColor;
+        background: $blue;
+        color: $textColorDark;
       }
     }
   }

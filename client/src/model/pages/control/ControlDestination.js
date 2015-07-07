@@ -13,25 +13,17 @@ define( [
      * @extends ScenicModel
      */
     var ControlDestination = ScenicModel.extend( {
-        idAttribute: 'name',
 
-        /**
-         * Method map
-         * Maps Backbone sync methods to our socket methods
-         * Supports either strings of functions returning arrays of arguments
-         * Can be overridden in sub classes
-         */
+        defaults: {
+            property: null
+        },
+
         methodMap: {
-            'create': function () {
-                return ['__TODO__' /* TODO */];
-            },
-            'update': null,
-            'patch':  null,
             'delete': function () {
-                return ['__TODO__', this.id];
-            },
-            'read':   null
+                return ['control.mapping.remove.destination', this.get('property' ).collection.quiddity.id, this.get('property' ).id];
+            }
         }
+
     } );
 
     return ControlDestination;

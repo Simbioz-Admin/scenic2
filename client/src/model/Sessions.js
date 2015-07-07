@@ -3,15 +3,15 @@
 define( [
     'underscore',
     'backbone',
-    'app'
-], function ( _, Backbone, Scenic ) {
+    'model/Session'
+], function ( _, Backbone, Session ) {
 
     /**
      *  @constructor
      *  @augments module:Backbone.Collection
      */
     var Sessions = Backbone.Collection.extend( {
-        model:        Scenic,
+        model:        Session,
 
         initialize: function ( models, options ) {
 
@@ -20,7 +20,7 @@ define( [
         /**
          * Get the current session
          *
-         * @returns {Scenic}
+         * @returns {Session}
          */
         getCurrentSession: function () {
             return this.findWhere({active:true});
@@ -29,14 +29,14 @@ define( [
         /**
          * Set current Session
          *
-         * @param {Scenic} session
+         * @param {Session} session
          */
-        setCurrentSession: function ( scenic ) {
+        setCurrentSession: function ( session ) {
             this.each( function ( s ) {
                 s.set( 'active', false );
             } );
-            scenic.set( 'active', true );
-            this.trigger( 'change:current', scenic );
+            session.set( 'active', true );
+            this.trigger( 'change:current', session );
         }
     } );
 

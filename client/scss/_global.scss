@@ -1,6 +1,12 @@
 #scenic {
   display: none;
+  height: 100%;
+  .interface {
+    height: 100%;
+  }
 }
+
+
 
 .alert {
   background: rgba(0,0,0,0.5);

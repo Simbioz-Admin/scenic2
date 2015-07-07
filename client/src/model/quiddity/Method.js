@@ -82,7 +82,7 @@ define( [
             this.args.pluck('value');
             this.scenic.socket.emit( 'quiddity.method.invoke', this.collection.quiddity.id, this.id, this.args.pluck('value'), function( error, result ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger('error', error );
+                    self.scenic.sessionChannel.vent.trigger('error', error );
                     if ( callback ) {
                         return callback( error, result );
                     }

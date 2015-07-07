@@ -22,7 +22,7 @@ define( [
             ConnectionView.prototype.initialize.apply( this, arguments );
 
             // Re-render when destination shmdatas change, it might mean we connected/disconnected
-            this.listenTo( this.destination.get( 'shmdatas' ), 'update', this.render );
+            this.listenTo( this.destination.shmdatas, 'update', this.render );
         }
     } );
 

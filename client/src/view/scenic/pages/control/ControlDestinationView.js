@@ -38,7 +38,7 @@ define( [
          */
         removeDestination: function( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove all mappings to property __property__ of __quiddity__?', {
+            this.scenic.sessionChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove all mappings to property __property__ of __quiddity__?', {
                 quiddity: this.model.get('property' ).collection.quiddity.id,
                 property: this.model.get('property' ).get('name')
             }), function( confirmed ) {

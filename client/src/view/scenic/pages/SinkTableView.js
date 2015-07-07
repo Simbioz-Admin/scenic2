@@ -33,14 +33,17 @@ define( [
          */
         onBeforeShow: function () {
             this.showChildView( 'menus', new SinkMenus( {
+                scenic: this.scenic,
                 model: this.model
             } ) );
             this.showChildView( 'sources', new SourcesView( {
+                scenic: this.scenic,
                 table:      this.model,
                 collection: this.model.getSourceCollection(),
                 connectionView: SinkConnectionView
             } ) );
             this.showChildView( 'destinations', new DestinationsView( {
+                scenic: this.scenic,
                 table:      this.model,
                 collection: this.model.getDestinationCollection()
             } ) );

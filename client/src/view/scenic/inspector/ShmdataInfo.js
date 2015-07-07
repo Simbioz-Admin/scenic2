@@ -53,7 +53,7 @@ define( [
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
-                this.scenicChannel.commands.execute( 'inspector:close' );
+                this.scenic.sessionChannel.commands.execute( 'inspector:close' );
             }
         }
     } );

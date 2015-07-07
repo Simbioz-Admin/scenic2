@@ -27,13 +27,7 @@ define( [
          */
         initialize: function ( attributes, options ) {
             this.scenic = options.scenic;
-
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
             this.viewClass = options.viewClass;
-
             this.set('active', localStorage.getItem( 'currentPage' ) == this.id );
         },
 
@@ -48,7 +42,7 @@ define( [
          * Get View Instance
          */
         getViewInstance: function() {
-            return new (this.viewClass)( { model: this } );
+            return new (this.viewClass)( { model: this, scenic: this.scenic } );
         }
     } );
 

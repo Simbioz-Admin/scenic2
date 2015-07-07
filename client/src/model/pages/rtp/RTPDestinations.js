@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'app',
     'model/base/PropertyWatcherCollection',
     'model/pages/rtp/RTPDestination'
-], function ( _, Backbone, app, PropertyWatcherCollection, RTPDestination ) {
+], function ( _, Backbone, PropertyWatcherCollection, RTPDestination ) {
 
     /**
      * RTP Destinations

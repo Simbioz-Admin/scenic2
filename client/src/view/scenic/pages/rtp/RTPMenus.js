@@ -4,10 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'app',
     'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/rtp/menus.html'
-], function ( _, Backbone, Marionette, app, TableMenusView, RTPMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, RTPMenusTemplate ) {
 
     /**
      * @constructor
@@ -71,7 +70,7 @@ define( [
          * @param event
          */
         createRTPDestination: function ( event ) {
-            this.scenicChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
+            this.scenic.sessionChannel.commands.execute( 'rtp:create', _.bind( this.model.createRTPDestination, this.model ) );
         },
 
         /**

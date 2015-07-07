@@ -37,8 +37,9 @@ define( [
         },
 
         parse: function( result ) {
-            result.properties = new Properties(result.properties, { parse: true });
-            result.methods = new Methods(result.methods, { parse: true });
+            // TODO: Leave alone, and react on 'update' or something
+            //result.properties = new Properties(result.properties, { parse: true, quiddity: this, scenic: this.scenic });
+            //result.methods = new Methods(result.methods, { parse: true, quiddity: this, scenic: this.scenic });
             return result;
         },
 
@@ -50,9 +51,18 @@ define( [
 
             // Setup child collections
 
-            this.properties                   = new Properties( null, {scenic: this.scenic, quiddity: this} );
-            this.methods                      = new Methods( null, {scenic: this.scenic, quiddity: this} );
-            this.shmdatas                     = new Shmdatas( null, {scenic: this.scenic, quiddity: this} );
+            this.properties                   = new Properties( this.get('properties'), {scenic: this.scenic, quiddity: this} );
+            this.methods                      = new Methods( this.get('methods'), {scenic: this.scenic, quiddity: this} );
+            this.shmdatas                     = new Shmdatas( this.get('tree' ) ? this.get('tree' ).shmdata : null, {scenic: this.scenic, quiddity: this, parse: true} );
+
+            /*this.listenTo(this, 'sync', function( model, value, options ) {
+                this.properties.set( value, {scenic:this.scenic} );
+                console.log(this.properties);
+            });*/
+
+            /*this.listenTo(this, 'change:methods', function( model, value, options ) {
+                this.methods.set( value, {scenic:this.scenic} );
+            });*/
 
             // Only fetch the rest when we are not new
             // This prevents fetches and socket binding being done by temporary quiddities
@@ -81,7 +91,7 @@ define( [
         _onRemoved: function ( quiddityId ) {
             if ( this.id == quiddityId ) {
                 // Broadcast first so that everyone has a change to identify
-                this.scenicChannel.vent.trigger( 'quiddity:removed', this );
+                this.scenic.sessionChannel.vent.trigger( 'quiddity:removed', this );
 
                 // Destroy child collections
                 this.properties.destroy();
@@ -110,7 +120,7 @@ define( [
          *  Edit Quiddity
          */
         edit: function () {
-            this.scenicChannel.commands.execute( 'quiddity:edit', this );
+            this.scenic.sessionChannel.commands.execute( 'quiddity:edit', this );
         }
 
     } );

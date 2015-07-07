@@ -1,9 +1,8 @@
 "use strict";
 
 define( [
-    'underscore',
-    'app'
-], function ( _, app ) {
+    'underscore'
+], function ( _ ) {
 
     /**
      * Property Watcher Mixin

@@ -4,10 +4,9 @@ define( [
     'underscore',
     'backbone',
     'i18n',
-    'app',
     'model/pages/base/Table',
     'model/pages/control/ControlDestinations'
-], function ( _, Backbone, i18n, app, Table, ControlDestinations ) {
+], function ( _, Backbone, i18n, Table, ControlDestinations ) {
 
     /**
      * Control Table
@@ -44,7 +43,7 @@ define( [
          */
         getDestinationCollection: function () {
             if ( !this.destinations ) {
-                this.destinations = new ControlDestinations( null, {quiddities: this.scenic.quiddities} );
+                this.destinations = new ControlDestinations( null, {scenic: this.scenic, quiddities: this.scenic.quiddities} );
             }
             return this.destinations;
         },
@@ -63,12 +62,12 @@ define( [
          */
         getDestinations: function () {
             // Get source quiddity classes
-            var quiddities    = app.quiddities.filter( function ( quiddity ) {
+            var quiddities    = this.scenic.quiddities.filter( function ( quiddity ) {
                 return this._filterQuiddity( quiddity, ['writer', 'reader'] );
             }, this );
             var controllables = [];
             _.each( quiddities, function ( quiddity ) {
-                var properties = quiddity.get( 'properties' ).filter( function ( property ) {
+                var properties = quiddity.properties.filter( function ( property ) {
                     return property.get( 'writable' ) && _.contains( this.allowedPropertyTypes, property.get( 'type' ) ) && !this.destinations.get(quiddity.id + '.' + property.id);
                 }, this );
                 controllables  = controllables.concat( properties );
@@ -77,12 +76,12 @@ define( [
         },
 
         createPropertyDestination: function ( quiddityId, propertyId ) {
-            var property    = app.quiddities.get( quiddityId ).get( 'properties' ).get( propertyId );
+            var property    = this.scenic.quiddities.get( quiddityId ).properties.get( propertyId );
             var destination = {
                 id:       property.collection.quiddity.id + '.' + property.id,
                 property: property
             };
-            this.destinations.add( destination, { merge: true } );
+            this.destinations.add( destination, { merge: true, scenic: this.scenic } );
         },
 
         /**
@@ -93,7 +92,7 @@ define( [
          * @returns {*}
          */
         getConnection: function ( source, destination ) {
-            return _.find( app.quiddities.where( { 'class': 'property-mapper' } ), function ( mapper ) {
+            return _.find( this.scenic.quiddities.where( { 'class': 'property-mapper' } ), function ( mapper ) {
                 var tree = mapper.get( 'tree' );
                 if ( !tree || !tree.source || !tree.source.quiddity || !tree.source.property || !tree.sink || !tree.sink.quiddity || !tree.sink.property ) {
                     return false;
@@ -136,10 +135,10 @@ define( [
          */
         connect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'control.mapping.add', source.collection.quiddity.id, source.id, destination.get( 'property' ).collection.quiddity.id, destination.get( 'property' ).id, function ( error ) {
+            this.scenic.socket.emit( 'control.mapping.add', source.collection.quiddity.id, source.id, destination.get( 'property' ).collection.quiddity.id, destination.get( 'property' ).id, function ( error ) {
                 if ( error ) {
                     console.error( error );
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     return;
                 }
             } );

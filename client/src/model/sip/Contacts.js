@@ -23,11 +23,11 @@ define( [
          * Initialize
          */
         initialize: function( models, options ) {
+            this.scenic = options.scenic;
             this.sip = options.sip;
 
             // Watch the SIP quiddity as it is not always available on start
             this.quiddity = this.sip.get('quiddity');
-            this.listenTo( this.sip, 'change:quiddity', this._onSipQuiddityChanged );
 
             // Watch for properties that trigger a re-sort
             this.listenTo( this, 'change:status change:name', this.sort );
@@ -58,13 +58,14 @@ define( [
          *
          * @private
          */
-        _onSipQuiddityChanged: function( ) {
+
+        setSipQuiddity: function( sip ) {
             if ( this.quiddity ) {
-                this.stopListening( this.sip.get('quiddity'), 'change:tree', this._updateContactsFromTree );
+                this.stopListening( this.sip.quiddity, 'change:tree', this._updateContactsFromTree );
             }
-            this.quiddity = this.sip.get('quiddity');
+            this.quiddity = this.sip.quiddity;
             if ( this.quiddity ) {
-                this.listenTo( this.sip.get( 'quiddity' ), 'change:tree', this._updateContactsFromTree );
+                this.listenTo( this.sip.quiddity, 'change:tree', this._updateContactsFromTree );
             }
             // Check for current values (or not)
             this._updateContactsFromTree();
@@ -80,6 +81,7 @@ define( [
             if ( this.quiddity ) {
                 this.set( _.values( this.quiddity.get( 'tree' ).buddies ), {
                     self: this.quiddity.get( 'tree' ).self,
+                    scenic: this.scenic,
                     parse: true
                 } );
             } else {

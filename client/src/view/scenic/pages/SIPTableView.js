@@ -29,9 +29,9 @@ define( [
         initialize: function( ) {
             TableView.prototype.initialize.apply(this,arguments);
 
-            this.scenicChannel.vent.on('sip:login', this._onLogin, this);
-            this.scenicChannel.vent.on('sip:loggedin', this._onLoggedIn, this);
-            this.scenicChannel.vent.on('sip:loggedout', this._onLoggedOut, this);
+            this.scenic.sessionChannel.vent.on('sip:login', this._onLogin, this);
+            this.scenic.sessionChannel.vent.on('sip:loggedin', this._onLoggedIn, this);
+            this.scenic.sessionChannel.vent.on('sip:loggedout', this._onLoggedOut, this);
 
             this.addRegion('sip', '.sip-panel');
 
@@ -45,14 +45,17 @@ define( [
          */
         onBeforeShow: function( ) {
             this.showChildView('menus', new SIPMenusView({
+                scenic: this.scenic,
                 model: this.model
             }));
             this.showChildView('sources', new SourcesView({
+                scenic: this.scenic,
                 table: this.model,
                 collection: this.model.getSourceCollection(),
                 connectionView: SIPConnectionView
             }));
             this.showChildView('destinations', new SIPDestinationsView({
+                scenic: this.scenic,
                 table: this.model,
                 collection: this.model.getDestinationCollection()
             }));
@@ -64,10 +67,12 @@ define( [
         showSIPView: function() {
             if ( this.model.scenic.sip.get('connected') ) {
                 this.showChildView('sip', new PanelView({
+                    scenic: this.scenic,
                     model: this.model
                 }));
             } else {
                 this.showChildView('sip', new LoginView({
+                    scenic: this.scenic,
                     table: this.model,
                     model: this.model.scenic.sip
                 }));

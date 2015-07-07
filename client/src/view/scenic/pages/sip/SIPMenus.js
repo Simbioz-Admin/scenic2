@@ -4,10 +4,9 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'app',
     'view/scenic/pages/base/TableMenusView',
     'text!template/scenic/pages/sip/menus.html'
-], function ( _, Backbone, Marionette, app, TableMenusView, SIPMenusTemplate ) {
+], function ( _, Backbone, Marionette, TableMenusView, SIPMenusTemplate ) {
 
     /**
      * @constructor
@@ -85,7 +84,7 @@ define( [
          */
         addContactDestination: function(event) {
             this.closeMenu();
-            this.model.addDestination( this.model.sip.get('contacts' ).get( $( event.currentTarget ).data( 'id' ) ) );
+            this.model.addDestination( this.model.sip.contacts.get( $( event.currentTarget ).data( 'id' ) ) );
         },
 
         /**

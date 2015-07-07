@@ -74,3 +74,22 @@
     }
   }
 }
+
+#session-container {
+  height: 100%;
+  .session {
+    height: 100%;
+    &.disconnected {
+      .header,
+      .tabs,
+      .usage,
+      .page,
+      .inspector {
+        display: none;
+      }
+    }
+    .modal-container {
+      height: 100%;
+    }
+  }
+}

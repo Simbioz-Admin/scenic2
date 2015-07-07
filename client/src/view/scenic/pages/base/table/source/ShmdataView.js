@@ -48,7 +48,7 @@ define( [
          * @param event
          */
         showInfo: function( event ) {
-            this.scenicChannel.commands.execute( 'shmdata:info', this.model );
+            this.scenic.sessionChannel.commands.execute( 'shmdata:info', this.model );
         },
 
         /**

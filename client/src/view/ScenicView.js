@@ -7,8 +7,6 @@ define( [
     'marionette',
     'i18n',
     'lib/spin',
-    // App
-    'app',
     // Model
     'model/Pages',
     'model/pages/Sink',
@@ -27,14 +25,16 @@ define( [
     'view/scenic/SystemUsage',
     'view/scenic/Notifications',
     'view/scenic/Inspector',
+    'view/scenic/ShutdownView',
     // Template
+    'text!template/shutdown.html',
     'text!template/scenic.html'
 ], function ( _, Backbone, Marionette, i18n, spin,
-              app,
               Pages,
               SinkPage, RTPPage, SIPPage, ControlPage, SettingsPage,
               SinkView, RTPView, SIPView, ControlView, SettingsView,
               MenuView, TabsView, SystemUsageView, NotificationsView, InspectorView,
+              ShutdownView, ShutdownTemplate,
               ScenicTemplate ) {
 
     /**
@@ -43,42 +43,49 @@ define( [
      */
     var ScenicView = Marionette.LayoutView.extend( {
         template: _.template( ScenicTemplate ),
+        className: 'session',
 
         regions: {
-            tabs:      '#tabs',
-            usage:     '#usage',
-            menu:      '#header .menu',
-            page:      '#page',
-            inspector: '#inspector'
+            tabs:      '.tabs',
+            usage:     '.usage',
+            menu:      '.header .menu',
+            page:      '.page',
+            inspector: '.inspector',
+            modal:     '.modal-container'
         },
 
-        initialize: function ( scenic ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+        modelEvents: {
+            'change:shutdown': '_onShutdownChanged'
+        },
 
-            this.scenic = scenic;
+        initialize: function ( options ) {
+            this.scenic = this.model;
 
-            this.notifications = new NotificationsView();
+            if ( !this.scenic.get('shutdown') ) {
+                this.notifications = new NotificationsView( { scenic: this.scenic } );
 
-            this.pages = new Pages( null, {scenic: scenic} );
-            this.pages.add( new SinkPage( null, {scenic: scenic, viewClass: SinkView} ) );
-            this.pages.add( new RTPPage( null, {scenic: scenic, viewClass: RTPView} ) );
-            this.pages.add( new SIPPage( null, {scenic: scenic, viewClass: SIPView} ) );
-            this.pages.add( new ControlPage( null, {scenic: scenic, viewClass: ControlView} ) );
-            this.pages.add( new SettingsPage( null, {scenic: scenic, viewClass: SettingsView} ) );
+                this.pages = new Pages( null, { scenic: this.scenic } );
+                this.pages.add( new SinkPage( null, { scenic: this.scenic, viewClass: SinkView } ) );
+                this.pages.add( new RTPPage( null, { scenic: this.scenic, viewClass: RTPView } ) );
+                this.pages.add( new SIPPage( null, { scenic: this.scenic, viewClass: SIPView } ) );
+                this.pages.add( new ControlPage( null, { scenic: this.scenic, viewClass: ControlView } ) );
+                this.pages.add( new SettingsPage( null, { scenic: this.scenic, viewClass: SettingsView } ) );
 
-            this.pages.on( 'change:current', _.bind( this.showPage, this ) );
+                this.pages.on( 'change:current', _.bind( this.showPage, this ) );
 
-            // Wreqr Handlers
-            this.scenicChannel.commands.setHandler( 'set:language', this.setLanguage, this );
+                // Wreqr Handlers
+                this.scenic.sessionChannel.commands.setHandler( 'set:language', this.setLanguage, this );
 
-            //TODO: Put in notification manager
-            this.scenicChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
-            this.scenicChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
-            this.scenicChannel.vent.on( 'file:added', this._onFileAdded, this );
-            this.scenicChannel.vent.on( 'file:removed', this._onFileRemoved, this );
-            this.scenicChannel.vent.on( 'file:loading', this._onFileLoading, this );
-            this.scenicChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
-            this.scenicChannel.vent.on( 'file:load:error', this._onFileLoadError, this );
+                //TODO: Put in notification manager
+                this.scenic.sessionChannel.vent.on( 'shutdown', this._onShutdown, this );
+                this.scenic.sessionChannel.vent.on( 'quiddity:added', this._onQuiddityAdded, this );
+                this.scenic.sessionChannel.vent.on( 'quiddity:removed', this._onQuiddityRemoved, this );
+                this.scenic.sessionChannel.vent.on( 'file:added', this._onFileAdded, this );
+                this.scenic.sessionChannel.vent.on( 'file:removed', this._onFileRemoved, this );
+                this.scenic.sessionChannel.vent.on( 'file:loading', this._onFileLoading, this );
+                this.scenic.sessionChannel.vent.on( 'file:loaded', this._onFileLoaded, this );
+                this.scenic.sessionChannel.vent.on( 'file:load:error', this._onFileLoadError, this );
+            }
         },
 
         /**
@@ -86,12 +93,19 @@ define( [
          * Special case for the moment as we don't use a master application view to render us
          */
         onRender: function () {
-            this.showChildView( 'menu', new MenuView( {scenic: this.scenic} ) );
-            this.showChildView( 'tabs', new TabsView( {collection: this.pages} ) );
-            this.showChildView( 'usage', new SystemUsageView( {scenic: this.scenic} ) );
-            this.showChildView( 'inspector', new InspectorView() );
+            if ( !this.scenic.get('shutdown')) {
+                this.showChildView( 'menu', new MenuView( { scenic: this.scenic } ) );
+                this.showChildView( 'tabs', new TabsView( { collection: this.pages, scenic: this.scenic } ) );
+                this.showChildView( 'usage', new SystemUsageView( {
+                    model:  this.scenic.quiddities.get( 'systemusage' ),
+                    scenic: this.scenic
+                } ) );
+                this.showChildView( 'inspector', new InspectorView( { scenic: this.scenic } ) );
 
-            this.showPage( this.pages.getCurrentPage() );
+                this.showPage( this.pages.getCurrentPage() );
+            } else {
+                this._onShutdown();
+            }
         },
 
         /**
@@ -142,7 +156,7 @@ define( [
          * @private
          */
         _onQuiddityAdded: function ( quiddity ) {
-            this.scenicChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ added', {name: quiddity.id} ) );
+            this.scenic.sessionChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ added', { name: quiddity.id } ) );
         },
 
         /**
@@ -152,7 +166,7 @@ define( [
          * @private
          */
         _onQuiddityRemoved: function ( quiddity ) {
-            this.scenicChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ removed', {name: quiddity.id} ) );
+            this.scenic.sessionChannel.vent.trigger( 'success', i18n.t( 'Quiddity __name__ removed', { name: quiddity.id } ) );
         },
 
         //  ███████╗██╗██╗     ███████╗███████╗
@@ -169,7 +183,7 @@ define( [
          * @private
          */
         _onFileAdded: function ( file ) {
-            this.scenicChannel.vent.trigger( 'info', i18n.t( 'File __name__ added', {name: file.id} ) );
+            this.scenic.sessionChannel.vent.trigger( 'info', i18n.t( 'File __name__ added', { name: file.id } ) );
         },
 
         /**
@@ -179,7 +193,7 @@ define( [
          * @private
          */
         _onFileRemoved: function ( file ) {
-            this.scenicChannel.vent.trigger( 'info', i18n.t( 'File __name__ removed', {name: file.id} ) );
+            this.scenic.sessionChannel.vent.trigger( 'info', i18n.t( 'File __name__ removed', { name: file.id } ) );
         },
 
         /**
@@ -189,7 +203,7 @@ define( [
          * @private
          */
         _onFileLoading: function ( file ) {
-            this.scenicChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', {name: file.get( 'name' )} ) );
+            this.scenic.sessionChannel.vent.trigger( 'info', i18n.t( 'Loading file __name__', { name: file.get( 'name' ) } ) );
             this.stopSpinner = spin();
         },
 
@@ -199,7 +213,7 @@ define( [
          * @private
          */
         _onFileLoaded: function ( file ) {
-            this.scenicChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', {name: file.get( 'name' )} ) );
+            this.scenic.sessionChannel.vent.trigger( 'success', i18n.t( 'File __name__ loaded successfully', { name: file.get( 'name' ) } ) );
             this.stopSpinner();
         },
 
@@ -210,9 +224,34 @@ define( [
          * @private
          */
         _onFileLoadError: function ( file ) {
-            this.scenicChannel.vent.trigger( 'error', i18n.t( 'Could not load file __name__', {name: file.get( 'name' )} ) );
+            this.scenic.sessionChannel.vent.trigger( 'error', i18n.t( 'Could not load file __name__', { name: file.get( 'name' ) } ) );
             if ( this.stopSpinner ) {
                 this.stopSpinner();
+            }
+        },
+
+        //  ███████╗██╗  ██╗██╗   ██╗████████╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
+        //  ██╔════╝██║  ██║██║   ██║╚══██╔══╝██╔══██╗██╔═══██╗██║    ██║████╗  ██║
+        //  ███████╗███████║██║   ██║   ██║   ██║  ██║██║   ██║██║ █╗ ██║██╔██╗ ██║
+        //  ╚════██║██╔══██║██║   ██║   ██║   ██║  ██║██║   ██║██║███╗██║██║╚██╗██║
+        //  ███████║██║  ██║╚██████╔╝   ██║   ██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
+        //  ╚══════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
+
+        /**
+         * Shutdown handler
+         *
+         * @private
+         */
+        _onShutdownChanged: function () {
+            if ( this.model.get('shutdown') ) {
+                this.showPage( null );
+                this.$el.addClass( 'disconnected' );
+                this.getRegion( 'menu' ).empty();
+                this.getRegion( 'tabs' ).empty();
+                this.getRegion( 'usage' ).empty();
+                this.getRegion( 'page' ).empty();
+                this.getRegion( 'inspector' ).empty();
+                this.showChildView( 'modal', new ShutdownView() );
             }
         }
     } );

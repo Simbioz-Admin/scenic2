@@ -25,9 +25,10 @@ define( [
                 this.scenic = options.scenic;
             }
 
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            if ( this.scenic == undefined ) {
+                console.error('Scenic collection requires a reference to the active scenic session.');
+                return;
+            }
 
             /**
              * List of socket listeners
@@ -53,7 +54,7 @@ define( [
 
             // Collection Error Handler, goes directly into the vent
             this.on( 'error', function ( model, error ) {
-                this.scenicChannel.vent.trigger( 'error', error );
+                this.scenic.sessionChannel.vent.trigger( 'error', error );
             } );
         },
 

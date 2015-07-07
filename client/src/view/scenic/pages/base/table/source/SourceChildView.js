@@ -16,11 +16,14 @@ define( [
      */
     var SourceChildView = Marionette.CompositeView.extend( {
         template:           _.template( SourceChildTemplate ),
+
         className: 'source-child',
 
         childView:          ConnectionView,
+
         childViewOptions: function() {
             return {
+                scenic: this.scenic,
                 source: this.model,
                 table: this.options.table
             }
@@ -32,7 +35,7 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.scenic = options.scenic;
             if ( this.options.connectionView ) {
                 this.childView = this.options.connectionView;
             }
@@ -54,7 +57,7 @@ define( [
          * @param event
          */
         showInfo: function( event ) {
-            this.scenicChannel.commands.execute( 'shmdata:info', this.model );
+            this.scenic.sessionChannel.commands.execute( 'shmdata:info', this.model );
         },
 
         /**

@@ -33,7 +33,6 @@ define( [
         initialize: function ( models, options ) {
             ScenicCollection.prototype.initialize.apply( this, arguments );
 
-            this.scenic = options.scenic;
             this.classes = this.scenic.classes;
 
             // Handlers
@@ -50,7 +49,7 @@ define( [
          */
         _onCreate: function ( quiddityData, socketId ) {
             var quiddity = this.add( quiddityData, {merge: true, parse: true} );
-            this.scenicChannel.vent.trigger( 'quiddity:added', quiddity );
+            this.scenic.sessionChannel.vent.trigger( 'quiddity:added', quiddity );
             // If we created it, start editing it
             if ( this.scenic.socket.id == socketId ) {
                 quiddity.edit();

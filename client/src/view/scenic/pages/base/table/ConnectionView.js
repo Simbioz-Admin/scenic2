@@ -32,6 +32,7 @@ define( [
             var self = this;
 
             // Keep options internally
+            this.scenic      = options.scenic;
             this.table       = options.table;
             this.source      = options.source;
             this.destination = options.model;

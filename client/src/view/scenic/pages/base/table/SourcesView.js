@@ -27,6 +27,7 @@ define( [
         },
         childViewOptions: function () {
             return {
+                scenic:          this.scenic,
                 table:           this.options.table,
                 sourceChildView: this.options.sourceChildView,
                 connectionView:  this.options.connectionView
@@ -36,7 +37,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
+        initialize: function (options) {
+            this.scenic = options.scenic;
             this.listenTo( this.options.table, 'change:filter', this.render );
         },
 

@@ -5,10 +5,9 @@ define( [
     'backbone',
     'cocktail',
     'crypto-js',
-    'app',
     'model/sip/Contacts',
     'model/sip/Contact'
-], function ( _, Backbone, Cocktail, CryptoJS, app, Contacts, Contact ) {
+], function ( _, Backbone, Cocktail, CryptoJS, Contacts, Contact ) {
 
     /**
      * SIP Connection
@@ -45,15 +44,13 @@ define( [
         initialize: function (attributes, options) {
             this.scenic = options.scenic;
 
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
             var sip = JSON.parse( localStorage.getItem( 'sip' ) );
             this.set( 'server', sip && sip.server ? sip.server : this.scenic.config.sip.server );
             this.set( 'port', sip && sip.port ? sip.port : this.scenic.config.sip.port );
             this.set( 'user', sip && sip.user ? sip.user : null );
             this.set( 'uri', sip && sip.uri ? sip.uri : null );
+
+            this.contacts = new Contacts( null, {sip: this, scenic: this.scenic});
 
             // Here we have to set up a watcher on quiddities updates because SIP is not always available
             // and we need to track properties on whichever instance will come up from the network
@@ -62,28 +59,26 @@ define( [
             if ( this.scenic.quiddities.get(this.scenic.config.sip.quiddName)) {
                 this._registerSipQuiddity(this.scenic.quiddities.get(this.scenic.config.sip.quiddName));
             }
-
-            this.self = new Contact( null, {self: true, sip: this, scenic: this.scenic });
-            this.contacts = new Contacts( null, {sip: this, scenic: this.scenic});
         },
         
         _registerSipQuiddity: function( sipQuiddity ) {
-            this.set('quiddity', sipQuiddity);
-            this.listenTo( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+            this.quiddity = sipQuiddity;
+            this.contacts.setSipQuiddity( this.quiddity );
+            this.listenTo( this.quiddity.properties.get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
             this._onSipRegistrationChange();
         },
 
         _onQuiddityAdded: function(model, collection, options) {
-            if ( model.id == app.config.sip.quiddName ) {
+            if ( model.id == this.scenic.config.sip.quiddName ) {
                 this._registerSipQuiddity(model);
             }
         },
 
         _onQuiddityRemoved: function(model, collection, options) {
-            if ( model.id == app.config.sip.quiddName ) {
+            if ( model.id == this.scenic.config.sip.quiddName ) {
                 if ( this.quiddity ) {
-                    this.stopListening( this.get('quiddity').get( 'properties' ).get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
-                    this.set('quiddity', null);
+                    this.stopListening( this.quiddity.properties.get( 'sip-registration' ), 'change:value', this._onSipRegistrationChange );
+                    this.quiddity = null;
                     this._onSipRegistrationChange();
                 }
             }
@@ -93,7 +88,7 @@ define( [
          * Handler for when the watched property 'sip-registration' changes.
          */
         _onSipRegistrationChange: function () {
-            var connected = this.get('quiddity').get('properties' ).get('sip-registration' ).get('value');
+            var connected = this.quiddity.properties.get('sip-registration' ).get('value');
             this.set( 'connected', connected );
         },
 
@@ -116,7 +111,7 @@ define( [
 
             this.set( 'connecting', true );
 
-            this.scenicChannel.vent.trigger( 'sip:login' );
+            this.scenic.sessionChannel.vent.trigger( 'sip:login' );
 
             var credentials = {
                 server:   server,
@@ -135,14 +130,14 @@ define( [
             this.scenic.socket.emit( 'sip.login', credentials, function ( error ) {
                 self.set( 'connecting', false );
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'sip:loggedout', error );
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'sip:loggedout', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     if ( callback ) {
                         callback( error );
                     }
                     return;
                 }
-                self.scenicChannel.vent.trigger( 'sip:loggedin' );
+                self.scenic.sessionChannel.vent.trigger( 'sip:loggedin' );
                 if ( callback ) {
                     callback();
                 }
@@ -156,9 +151,9 @@ define( [
             var self = this;
             this.scenic.socket.emit( 'sip.logout', function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
-                self.scenicChannel.vent.trigger( 'sip:loggedout', error );
+                self.scenic.sessionChannel.vent.trigger( 'sip:loggedout', error );
             } );
         },
 
@@ -175,17 +170,9 @@ define( [
                     //no-op
                 },
                 error:   function ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
-        },
-
-        _checkForSelf: function() {
-            var self = this.get( 'contacts' ).findWhere( { self: true } );
-            if ( self ) {
-                this.get('self').set( self.attributes );
-            }
-
         }
     } );
 

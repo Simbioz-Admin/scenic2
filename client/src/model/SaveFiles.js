@@ -48,7 +48,7 @@ define( [
          */
         _onSaved: function ( file ) {
             var file = this.add( {name: file}, {merge: true} );
-            this.scenicChannel.vent.trigger( 'file:added', file );
+            this.scenic.sessionChannel.vent.trigger( 'file:added', file );
         }
     } );
     return SaveFiles;

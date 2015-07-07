@@ -1,6 +1,7 @@
 @import "compass/css3/filter";
 @import "compass/css3/transition";
 
+// Global modal
 #modal {
   opacity: 0;
   @include transition(opacity 0.5s);

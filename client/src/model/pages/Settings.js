@@ -4,9 +4,8 @@ define( [
     'underscore',
     'backbone',
     'i18n',
-    'app',
     'model/Page'
-], function ( _, Backbone, i18n, app, Page ) {
+], function ( _, Backbone, i18n, Page ) {
 
     /**
      * Settings Page

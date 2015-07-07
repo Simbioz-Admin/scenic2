@@ -27,7 +27,6 @@ define( [
         },
 
         initialize: function ( config ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.title         = i18n.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class' )} );
             this.callback      = config.callback;
 
@@ -48,7 +47,7 @@ define( [
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
-                this.scenicChannel.commands.execute( 'inspector:close' );
+                this.scenic.sessionChannel.commands.execute( 'inspector:close' );
             }
         },
 

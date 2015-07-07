@@ -35,9 +35,11 @@ define( [
          */
         onBeforeShow: function () {
             this.showChildView( 'menus', new ControlMenus( {
-                model: this.model
+                scenic: this.scenic,
+                model:  this.model
             } ) );
             this.showChildView( 'sources', new SourcesView( {
+                scenic: this.scenic,
                 table:           this.model,
                 collection:      this.model.getSourceCollection(),
                 sourceView:      ControlSourceView,
@@ -45,6 +47,7 @@ define( [
                 connectionView:  ControlConnectionView
             } ) );
             this.showChildView( 'destinations', new ControlDestinationsView( {
+                scenic: this.scenic,
                 table:      this.model,
                 collection: this.model.getDestinationCollection()
             } ) );

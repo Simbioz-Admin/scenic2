@@ -16,11 +16,13 @@ define( [
      */
     var DestinationView = Marionette.ItemView.extend( {
         template: _.template( DestinationTemplate ),
+
         templateHelpers: function() {
             return {
                 classDescription: this.model.has('classDescription' ) ? this.model.get('classDescription' ).toJSON() : null
             }
         },
+
         className: 'destination',
 
         ui: {
@@ -37,7 +39,7 @@ define( [
          * Initialize
          */
         initialize: function( options ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.scenic = options.scenic;
             this.table = options.table;
         },
 
@@ -55,7 +57,7 @@ define( [
          */
         removeDestination: function( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
+            this.scenic.sessionChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }

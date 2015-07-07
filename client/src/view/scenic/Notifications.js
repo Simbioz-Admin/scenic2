@@ -12,15 +12,13 @@ define( [
      *  @augments module:Backbone.View
      */
     var NotificationsView = Backbone.View.extend( {
-        el: '#scenic',
+        el: '.session',
 
-        initialize: function ( app ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
-
-            // Wreqr Handlers
-            this.scenicChannel.vent.on( 'info', this._onInfo, this );
-            this.scenicChannel.vent.on( 'success', this._onSuccess, this );
-            this.scenicChannel.vent.on( 'error', this._onError, this );
+        initialize: function ( options ) {
+            this.scenic = options.scenic;
+            this.scenic.sessionChannel.vent.on( 'info', this._onInfo, this );
+            this.scenic.sessionChannel.vent.on( 'success', this._onSuccess, this );
+            this.scenic.sessionChannel.vent.on( 'error', this._onError, this );
 
             toastr.options = {
                 'closeButton':       true,

@@ -9,13 +9,10 @@ define( [
     'model/SaveFiles',
     'model/ClassDescriptions',
     'model/Quiddities',
-    'model/SIPConnection',
-    // Legacy
-    'app'
+    'model/SIPConnection'
 ], function ( _, Backbone, async, io,
               // Models
-              SaveFiles, ClassDescriptions, Quiddities, SIPConnection,
-              Scenic ) {
+              SaveFiles, ClassDescriptions, Quiddities, SIPConnection) {
 
     /**
      * Session
@@ -32,7 +29,11 @@ define( [
                 name:        null,
                 host:        null,
                 lang:        localStorage.getItem( 'lang' ) ? localStorage.getItem( 'lang' ) : 'en',
-                connected:   false
+                default:     false,
+                connecting:  false,
+                connected:   false,
+                active:      false,
+                shutdown:    false
             }
         },
 
@@ -40,6 +41,8 @@ define( [
          * Initialize
          */
         initialize: function ( attributes, options ) {
+
+            this.set('connecting', true);
 
             // Session models
             this.config            = null;
@@ -59,6 +62,9 @@ define( [
             // Session Config
             this.sessionConfig = this.readSessionConfig();
 
+            // Global Scenic Channel
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
             // Session Channel
             this.sessionChannel = Backbone.Wreqr.radio.channel( this.id );
 
@@ -76,8 +82,6 @@ define( [
             // When the server is closed or crashes shutdown the app
             this.socket.on( 'shutdown', _.bind( this._onShutdown, this ) );
             this.socket.on( 'disconnect', _.bind( this._onShutdown, this ) );
-
-            //this.scenic = new Scenic( this.get('host'), this.get('lang') );
         },
 
         start: function( config ) {
@@ -128,10 +132,12 @@ define( [
                     return;
                 }
 
+                self.set('connecting', false);
                 self.set('connected', true);
-                // Scenic Main View
-                //self.scenicView = new ScenicView( self );
-                //self.scenicView.render();
+
+                if ( self.get('default') ) {
+                    self.activate();
+                }
             } );
 
             this.started = true;
@@ -168,11 +174,11 @@ define( [
         },
 
         _onShutdown: function () {
+            this.set('connected', false);
+            this.set('shutdown', true);
             this.sessionChannel.vent.trigger( 'shutdown' );
             this.socket.close();
-            //this.scenicView.destroy();
-            //this.shutdownView = new ShutdownView( this );
-            //this.shutdownView.render();
+            //Destroy models!
         }
     } );
 

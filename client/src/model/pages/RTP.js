@@ -4,11 +4,10 @@ define( [
     'underscore',
     'backbone',
     'i18n',
-    'app',
     'model/pages/base/Table',
     'model/pages/rtp/RTPDestinations',
     'model/pages/rtp/RTPDestination'
-], function ( _, Backbone, i18n, app, Table, RTPDestinations, RTPDestination ) {
+], function ( _, Backbone, i18n, Table, RTPDestinations, RTPDestination ) {
 
     /**
      * RTP Table
@@ -67,7 +66,7 @@ define( [
             var rtpDestination = new RTPDestination({info: info}, {scenic: this.scenic});
             rtpDestination.save( null, {
                 success: function( rtpDestination ) {
-                    self.scenicChannel.vent.trigger( 'rtp:created' );
+                    self.scenic.sessionChannel.vent.trigger( 'rtp:created' );
                 }
             });
         },
@@ -118,7 +117,7 @@ define( [
             this.scenic.socket.emit( 'rtp.destination.connect',  destination.id, shmdata.get('path'), port, function( error ) {
                 if ( error ) {
                     console.error( error );
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     return cb( error );
                 }
                 cb();
@@ -135,7 +134,7 @@ define( [
             this.scenic.socket.emit( 'rtp.destination.disconnect', destination.id, source.get('path'), function( error ) {
                 if ( error ) {
                     console.error( error );
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         }

@@ -60,7 +60,7 @@ define( [
                 this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                     if ( error ) {
                         console.error( error );
-                        self.scenicChannel.vent.trigger( 'error', error );
+                        self.scenic.sessionChannel.vent.trigger( 'error', error );
                     }
                 } );
             } else {
@@ -69,14 +69,14 @@ define( [
                         if ( error ) {
                             console.error( error );
                         }
-                        this.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
+                        self.scenic.socket.emit( 'quiddity.method.invoke', destination.id, 'connect', [shmdata.get('path')], function ( error, result ) {
                             if ( error ) {
                                 console.error( error );
                             }
                         } );
                     } );
                 } else {
-                    self.scenicChannel.vent.trigger( 'error', i18n.t( 'You have reached the maximum number of connections. The limit is __limit__', {limit: maxReaders} ) );
+                    self.scenic.sessionChannel.vent.trigger( 'error', i18n.t( 'You have reached the maximum number of connections. The limit is __limit__', {limit: maxReaders} ) );
                 }
             }
         },

@@ -17,14 +17,17 @@ define( [
      */
     var SourceView = Marionette.CompositeView.extend( {
         template:           _.template( SourceTemplate ),
+
         templateHelpers: function() {
             return {
-                startable: this.model.get('properties' ).get('started' ) != null,
-                started: this.model.get('properties' ).get('started' ) ? this.model.get('properties' ).get('started' ).get('value') : true,
+                startable: this.model.properties.get('started' ) != null,
+                started: this.model.properties.get('started' ) ? this.model.properties.get('started' ).get('value') : true,
                 classDescription: this.model.get('classDescription' ).toJSON()
             }
         },
+
         className:          'quiddity source',
+
         getChildView: function( item ) {
             return this.options.sourceChildView ?
                     this.options.sourceChildView :
@@ -33,13 +36,16 @@ define( [
                         ShmdataView
                    );
         },
+
         childViewOptions:   function () {
             return {
+                scenic:         this.scenic,
                 table:          this.options.table,
                 collection:     this.options.table.getDestinationCollection(),
                 connectionView: this.options.connectionView
             }
         },
+
         childViewContainer: '.source-children',
 
         ui: {
@@ -58,7 +64,7 @@ define( [
          * Initialize
          */
         initialize: function (options) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            this.scenic = options.scenic;
             this.table = options.table;
             this.collection    = this.model.shmdatas;
             if ( this.model.properties.get('started' ) ) {
@@ -92,7 +98,7 @@ define( [
          */
         removeSource: function ( event ) {
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.id} ), function ( confirmed ) {
+            this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove the __sourceName__ source?', {sourceName: this.model.id} ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
@@ -101,15 +107,15 @@ define( [
 
         togglePower: function( event ) {
             var self = this;
-            if (  this.model.get('properties' ).get('started' ) ) {
-                if ( this.model.get('properties' ).get('started' ).get('value') ) {
-                    this.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to stop __quiddity__ source?', {quiddity: this.model.id} ), function ( confirmed ) {
+            if (  this.model.properties.get('started' ) ) {
+                if ( this.model.properties.get('started' ).get('value') ) {
+                    this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to stop __quiddity__ source?', {quiddity: this.model.id} ), function ( confirmed ) {
                         if ( confirmed ) {
-                            self.model.get('properties' ).get('started' ).updateValue( false );
+                            self.model.properties.get('started' ).updateValue( false );
                         }
                     } );
                 } else {
-                    self.model.get('properties' ).get('started' ).updateValue( true );
+                    self.model.properties.get('started' ).updateValue( true );
                 }
             }
         }

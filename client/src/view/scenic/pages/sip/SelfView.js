@@ -55,7 +55,7 @@ define( [
 
         templateHelpers: function () {
             return {
-                statuses: this.model.sip.quiddity.properties.get('status' ).get('options')
+                statuses: this.model.scenic.sip.quiddity.properties.get('status' ).get('options')
             }
         },
 
@@ -69,7 +69,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+            
         },
 
         onRender: function () {
@@ -89,7 +89,7 @@ define( [
             var self = this;
             this.model.save( { name: this.ui.alias.val(), status_text: this.ui.statusText.val() }, {
                 error: function ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         },
@@ -105,7 +105,7 @@ define( [
             var status = $( event.currentTarget ).data( 'status' );
             this.model.save( { status: status }, {
                 error: function ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
             this.closeStatusList();

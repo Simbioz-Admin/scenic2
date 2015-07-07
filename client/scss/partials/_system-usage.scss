@@ -1,11 +1,11 @@
-#usage {
+.usage {
   position: absolute;
   width: $tabsWidth;
   bottom: 0;
   z-index: 10;
 }
 
-#system-usage {
+.system-usage {
   color: white;
   position: absolute;
   width: 100%;

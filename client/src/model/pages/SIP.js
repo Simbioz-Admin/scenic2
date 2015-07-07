@@ -30,7 +30,7 @@ define( [
          */
         initialize: function ( attributes, options) {
             Table.prototype.initialize.apply( this, arguments );
-            this.sip = options.sip;
+            this.sip = this.scenic.sip;
         },
 
         /**
@@ -107,9 +107,9 @@ define( [
          */
         connect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'sip.contact.attach', destination.id, source.get( 'path' ), function ( error ) {
+            this.scenic.socket.emit( 'sip.contact.attach', destination.id, source.get( 'path' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         },
@@ -119,9 +119,9 @@ define( [
          */
         disconnect: function ( source, destination ) {
             var self = this;
-            socket.emit( 'sip.contact.detach', destination.id, source.get( 'path' ), function ( error ) {
+            this.scenic.socket.emit( 'sip.contact.detach', destination.id, source.get( 'path' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         }

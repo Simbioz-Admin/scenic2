@@ -49,22 +49,22 @@ require( {
     ]
 }, [
     'async',
+    'backbone',
+    'mutators',
     'marionette',
     'model/Sessions',
     'model/Session',
     'view/ApplicationView'
-], function ( async, Marionette, Sessions, Session, ApplicationView ) {
+], function ( async, Backbone, Mutators, Marionette, Sessions, Session, ApplicationView ) {
 
     // TODO: Legacy
-    $( document ).tooltip();
-    /*$( document ).tooltip( {
-     track:   true,
-     content: function () {
-     var element = $( this );
-     return element.attr( "title" );
-
-     }
-     } );*/
+    $( document ).tooltip( {
+        track:   true,
+        content: function () {
+        var element = $( this );
+        return element.attr( "title" );
+        }
+    } );
 
     async.series( [
 
@@ -103,14 +103,13 @@ require( {
 
     ], function( error ) {
         if ( error ) {
-            //TODO: Startup errors
             alert(error);
             console.error(error);
         } else {
             window.sessions = this.sessions = new Sessions();
 
             // Create the default session
-            this.defaultSession = new Session();
+            this.defaultSession = new Session({default: true});
             window.scenic = this.defaultSession.scenic;
 
             this.sessions.add( this.defaultSession ); // Default session
@@ -119,9 +118,5 @@ require( {
             this.applicationView.render();
         }
     });
-
-
-
-
 
 } );

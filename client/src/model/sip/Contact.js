@@ -61,7 +61,7 @@ define( [
             var self = this;
             this.scenic.socket.emit( 'sip.contact.call', this.id, function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     if ( cb ) {
                         return cb( error );
                     }
@@ -79,7 +79,7 @@ define( [
             var self = this;
             this.scenic.socket.emit( 'sip.contact.hangup', this.id, function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     if ( cb ) {
                         return cb( error );
                     }
@@ -106,7 +106,7 @@ define( [
             // Later signals will then remove it from the table as it is not sticky anymore
             this.scenic.socket.emit( 'sip.contact.disconnect', this.id, function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         },
@@ -120,7 +120,7 @@ define( [
          */
         edit: function () {
             var self = this;
-            this.scenicChannel.commands.execute( 'contact:edit', this, function ( info ) {
+            this.scenic.sessionChannel.commands.execute( 'contact:edit', this, function ( info ) {
                 self.set( info );
                 self.save();
             } );

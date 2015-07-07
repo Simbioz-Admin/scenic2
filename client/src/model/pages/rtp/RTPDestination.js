@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'app',
     'model/base/ScenicModel'
-], function ( _, Backbone, app, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * RTP Destination
@@ -58,10 +57,10 @@ define( [
          */
         edit: function () {
             var self = this;
-            this.scenicChannel.commands.execute( 'rtp:edit', this, function( info ) {
+            this.scenic.sessionChannel.commands.execute( 'rtp:edit', this, function( info ) {
                 self.scenic.socket.emit( 'rtp.destination.update', self.id, info, function( error ) {
                     if ( error ) {
-                        self.scenicChannel.vent.trigger( 'error', error );
+                        self.scenic.sessionChannel.vent.trigger( 'error', error );
                         return;
                     }
                 } )

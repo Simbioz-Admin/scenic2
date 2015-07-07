@@ -13,10 +13,10 @@ define( [
      * @extends module:Backbone.Collection
      */
     var ControlDestinations = Backbone.Collection.extend( {
-        model: ControlDestination,
-        comparator: function( controlDestination ) {
-            var quiddity = controlDestination.get('property' ).collection.quiddity;
-            return quiddity.get('classDescription' ).get('category') + '.' + quiddity.get('class') + '.' + quiddity.id + '.' + controlDestination.get('property' ).get('order');
+        model:      ControlDestination,
+        comparator: function ( controlDestination ) {
+            var quiddity = controlDestination.get( 'property' ).collection.quiddity;
+            return quiddity.get( 'classDescription' ).get( 'category' ) + '.' + quiddity.get( 'class' ) + '.' + quiddity.id + '.' + controlDestination.get( 'property' ).get( 'order' );
 
         },
 
@@ -28,6 +28,7 @@ define( [
          * @param options
          */
         initialize: function ( models, options ) {
+            this.scenic     = options.scenic;
             this.quiddities = options.quiddities;
 
             // By listening to "wrappedCollection" and using "set" we are merely wrapping/filtering the collection
@@ -49,7 +50,7 @@ define( [
          * session will not keep unmapped properties in the table.
          */
         updateCollection: function () {
-            var destinations = _.clone(this.models);
+            var destinations = _.clone( this.models );
 
             // Find all property mappers
             var mappers = this.quiddities.where( { 'class': 'property-mapper' } );
@@ -62,10 +63,10 @@ define( [
                 if ( !quiddity ) {
                     return;
                 }
-                var property = quiddity.get( 'properties' ).get( tree.sink.property );
+                var property = quiddity.properties.get( tree.sink.property );
                 if ( property ) {
                     destinations.push( {
-                        id: property.collection.quiddity.id + '.' + property.id,
+                        id:       property.collection.quiddity.id + '.' + property.id,
                         property: property
                     } );
                 }
@@ -73,7 +74,7 @@ define( [
 
             // By resetting we are simplifying the control connection update process
             // It would be better to just update (set) but then it doesn't trigger when the properties stay the same
-            this.reset( destinations );
+            this.reset( destinations, { scenic: this.scenic } );
         }
     } );
 

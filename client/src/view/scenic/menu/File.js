@@ -34,7 +34,7 @@ define( [
          * Initialize
          */
         initialize: function () {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+
         },
 
         loadFile: function() {
@@ -46,7 +46,7 @@ define( [
         removeFile: function(event) {
             event.stopImmediatePropagation();
             var self = this;
-            this.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to delete __file__?', {file:this.model.get('name')}), function( confirmed ) {
+            this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to delete __file__?', {file:this.model.get('name')}), function( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }

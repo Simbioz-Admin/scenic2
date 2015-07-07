@@ -3,10 +3,9 @@
 define( [
     'underscore',
     'backbone',
-    'app',
     'model/Page',
     'model/Quiddity'
-], function ( _, Backbone, app, Page, Quiddity ) {
+], function ( _, Backbone, Page, Quiddity ) {
 
     /**
      * Table Page
@@ -22,7 +21,6 @@ define( [
          */
         initialize: function ( attributes, options ) {
             Page.prototype.initialize.apply( this, arguments );
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.set( 'filter', null );
         },
 

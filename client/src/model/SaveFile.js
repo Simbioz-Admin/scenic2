@@ -3,9 +3,8 @@
 define( [
     'underscore',
     'backbone',
-    'app',
     'model/base/ScenicModel'
-], function ( _, Backbone, app, ScenicModel ) {
+], function ( _, Backbone, ScenicModel ) {
 
     /**
      * SaveFile
@@ -60,7 +59,7 @@ define( [
             var self = this;
             this.scenic.socket.emit( 'file.save', this.get( 'name' ), function ( error ) {
                 if ( error ) {
-                    self.scenicChannel.vent.trigger( 'error', error );
+                    self.scenic.sessionChannel.vent.trigger( 'error', error );
                     return callback ? callback( error ) : null;
                 }
                 callback ? callback() : null;
@@ -69,7 +68,7 @@ define( [
 
         _onLoading: function(file) {
             if ( this.id == file ) {
-                this.scenicChannel.vent.trigger( 'file:loading', this );
+                this.scenic.sessionChannel.vent.trigger( 'file:loading', this );
             }
         },
 
@@ -80,10 +79,10 @@ define( [
                 this.scenic.quiddities.reset();
                 this.scenic.quiddities.fetch( {
                     success: function () {
-                        self.scenicChannel.vent.trigger( 'file:loaded', self );
+                        self.scenic.sessionChannel.vent.trigger( 'file:loaded', self );
                     },
                     error:   function ( error ) {
-                        self.scenicChannel.vent.trigger( 'error', error );
+                        self.scenic.sessionChannel.vent.trigger( 'error', error );
                     }
                 } );
             }
@@ -91,7 +90,7 @@ define( [
 
         _onLoadError: function(file) {
             if ( this.id == file ) {
-                this.scenicChannel.vent.trigger( 'file:load:error', this );
+                this.scenic.sessionChannel.vent.trigger( 'file:load:error', this );
             }
         },
 
@@ -105,7 +104,7 @@ define( [
         _onDeleted: function ( file ) {
             if ( this.id == file ) {
                 // Broadcast first so that everyone has a change to identify
-                this.scenicChannel.vent.trigger( 'file:removed', this );
+                this.scenic.sessionChannel.vent.trigger( 'file:removed', this );
 
                 // Destroy ourselves
                 this.trigger( 'destroy', this, this.collection );

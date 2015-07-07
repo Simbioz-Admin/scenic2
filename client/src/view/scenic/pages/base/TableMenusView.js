@@ -4,17 +4,16 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'app',
     'text!template/scenic/pages/base/menu/subMenu.html'
-], function ( _, Backbone, Marionette, app, SubMenuTemplate ) {
+], function ( _, Backbone, Marionette, SubMenuTemplate ) {
 
     /**
      *  @constructor
      *  @augments module:Marionette.LayoutView
      */
     var TableMenusView = Marionette.ItemView.extend( {
-        initialize: function () {
-            this.scenicChannel   = Backbone.Wreqr.radio.channel( 'scenic' );
+        initialize: function ( options ) {
+            this.scenic = options.scenic;
             this.subMenuTemplate = _.template( SubMenuTemplate );
         },
 
@@ -51,7 +50,7 @@ define( [
                 groups: data
             } ) );
 
-            $( '#sub-menu .content' ).accordion( {
+            $( '.sub-menu .content' ).accordion( {
                 collapsible: true,
                 active:      activeIndex != null ? activeIndex : false,
                 heightStyle: 'content',
@@ -60,7 +59,7 @@ define( [
             } );
 
             //TODO: Just style the link correctly
-            $( '#sub-menu a' ).button();
+            $( '.sub-menu a' ).button();
 
             this.bodyClickHandler = _.bind(this.closeMenu, this);
             $('.overlay').on( 'click', this.bodyClickHandler);
@@ -72,7 +71,7 @@ define( [
          * @param event
          */
         closeMenu: function ( event ) {
-            $( '#sub-menu' ).remove();
+            $( '.sub-menu' ).remove();
             $('.overlay').off( 'click', this.bodyClickHandler);
         },
 
@@ -83,9 +82,9 @@ define( [
          */
         createSourceQuiddity: function ( event ) {
             this.closeMenu();
-            this.scenicChannel.commands.execute(
+            this.scenic.sessionChannel.commands.execute(
                 'quiddity:create',
-                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         },
@@ -97,9 +96,9 @@ define( [
          */
         createDestinationQuiddity: function ( event ) {
             this.closeMenu();
-            this.scenicChannel.commands.execute(
+            this.scenic.sessionChannel.commands.execute(
                 'quiddity:create',
-                app.classDescriptions.get( $( event.currentTarget ).data( 'id' ) ),
+                this.model.scenic.classes.get( $( event.currentTarget ).data( 'id' ) ),
                 _.bind( this.model.createQuiddity, this.model )
             );
         }

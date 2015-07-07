@@ -4,11 +4,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'app',
     'view/scenic/menu/Files',
     'view/scenic/menu/file/SaveAs',
     'text!template/scenic/menu.html'
-], function ( _, Backbone, Marionette, app, FilesView, SaveAsView, MenuTemplate ) {
+], function ( _, Backbone, Marionette, FilesView, SaveAsView, MenuTemplate ) {
 
     /**
      * Menu
@@ -42,10 +41,6 @@ define( [
          */
         initialize: function (options) {
             this.scenic = options.scenic;
-
-            // Main communication channel
-            // We cheat the system a little bit here, but we want our errors to bubble back to the UI
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
         },
 
         onAttach: function () {
@@ -84,7 +79,7 @@ define( [
         },
 
         changeLanguage: function ( event ) {
-            this.scenicChannel.commands.execute( 'set:language', $( event.currentTarget ).data( 'lang' ) );
+            this.scenic.sessionChannel.commands.execute( 'set:language', $( event.currentTarget ).data( 'lang' ) );
         }
     } );
 

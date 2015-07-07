@@ -4,11 +4,10 @@ define( [
     'underscore',
     'backbone',
     'marionette',
-    'app',
     'view/scenic/pages/base/table/SourceView',
     'view/scenic/pages/sip/SIPShmdataContactView',
     'text!template/scenic/pages/sip/source.html'
-], function ( _, Backbone, Marionette, app, SourceView, SIPShmdataContactView, SIPSourceTemplate ) {
+], function ( _, Backbone, Marionette, SourceView, SIPShmdataContactView, SIPSourceTemplate ) {
 
     /**
      * SIP Source View

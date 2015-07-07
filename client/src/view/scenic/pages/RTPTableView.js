@@ -22,8 +22,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function( ) {
-            TableView.prototype.initialize.apply(this,arguments);
+        initialize: function () {
+            TableView.prototype.initialize.apply( this, arguments );
         },
 
         /**
@@ -31,19 +31,22 @@ define( [
          *
          * @private
          */
-        onBeforeShow: function( ) {
-            this.showChildView('menus', new RTPMenus({
-                model: this.model
-            }));
-            this.showChildView('sources', new SourcesView({
-                table: this.model,
-                collection: this.model.getSourceCollection(),
+        onBeforeShow: function () {
+            this.showChildView( 'menus', new RTPMenus( {
+                scenic: this.scenic,
+                model:  this.model
+            } ) );
+            this.showChildView( 'sources', new SourcesView( {
+                scenic: this.scenic,
+                table:          this.model,
+                collection:     this.model.getSourceCollection(),
                 connectionView: RTPConnectionView
-            }));
-            this.showChildView('destinations', new RTPDestinationsView({
-                table: this.model,
+            } ) );
+            this.showChildView( 'destinations', new RTPDestinationsView( {
+                scenic: this.scenic,
+                table:      this.model,
                 collection: this.model.getDestinationCollection()
-            }));
+            } ) );
         }
     } );
 

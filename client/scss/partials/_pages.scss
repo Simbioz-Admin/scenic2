@@ -1,4 +1,4 @@
-#page {
+.page {
   position: absolute;
   left: $tabsWidth;
   top: $sessionsHeight + $headerHeight;
@@ -69,7 +69,7 @@
   cursor: default;
 }
 
-#sub-menu {
+.sub-menu {
   position: absolute;
   width: 180px;
   float: left;
@@ -110,6 +110,6 @@
   }
 }
 
-.sip #page {
+.sip .page {
   right: $contactsWidth;
 }

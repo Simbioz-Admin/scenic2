@@ -231,7 +231,9 @@ SwitcherController.prototype.getFileList = function ( cb ) {
                 log.error( error );
                 return cb( error );
             }
-            files = _.map( files, function ( file ) {
+            files = _.map( _.filter( files, function( file ) {
+                return path.extname( file ) == '.json';
+            }), function ( file ) {
                 var stat = fs.statSync( savePath + file );
                 return {
                     name: file.replace( path.extname( file ), '' ),

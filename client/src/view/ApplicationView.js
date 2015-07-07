@@ -25,16 +25,16 @@ define( [
 
         regions: {
             sessions: '#sessions',
-            session:   '#session',
-            modal:     '#modal'
+            session:  '#session-container',
+            modal:    '#modal'
         },
 
         initialize: function ( options ) {
             this.sessions = options.sessions;
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.sessions.on( 'change:current', _.bind( this.showSession, this ) );
 
             // Wreqr Handlers
+            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.scenicChannel.commands.setHandler( 'confirm', this._onConfirm, this );
         },
 
@@ -43,7 +43,7 @@ define( [
          * Special case for the moment as we don't use a master application view to render us
          */
         onRender: function () {
-            this.showChildView( 'sessions', new SessionsView( {collection: this.sessions} ) );
+            //MULTISESSION: this.showChildView( 'sessions', new SessionsView( { collection: this.sessions } ) );
             this.showSession( this.sessions.getCurrentSession() );
             this.$el.fadeIn( 500 );
         },
@@ -52,7 +52,7 @@ define( [
          * Current session change handler
          * Displays the current session
          *
-         * @param {Scenic} session
+         * @param {Session} session
          * @private
          */
         showSession: function ( session ) {
@@ -60,7 +60,7 @@ define( [
                 this.$el.removeClass( this.currentSession.id );
             }
             if ( session ) {
-                this.showChildView( 'session', new ScenicView( session ) );
+                this.showChildView( 'session', new ScenicView( { model: session } ) );
                 this.currentSession = session;
             } else {
                 this.getRegion( 'session' ).empty();
@@ -113,7 +113,7 @@ define( [
             setTimeout( function () {
                 self.getRegion( 'modal' ).empty();
             }, 500 );
-        },
+        }
 
     } );
 

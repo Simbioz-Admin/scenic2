@@ -38,20 +38,19 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
             this.listenTo(this.model.sip.contacts, 'update', this.showSelf);
         },
 
         onBeforeShow: function () {
             this.showChildView( 'contacts', new ContactsView( {
                 table:      this.model,
-                collection: this.model.sip.gcontacts
+                collection: this.model.sip.contacts
             } ) );
             this.showSelf();
         },
 
         showSelf: function() {
-            var self = this.model.sip.get('contacts' ).findWhere({self:true});
+            var self = this.model.sip.contacts.findWhere({self:true});
             if ( self ) {
                 this.showChildView( 'self', new SelfView( { model: self } ) );
             } else {
@@ -64,7 +63,7 @@ define( [
         },
 
         addContact: function() {
-            this.scenicChannel.commands.execute(
+            this.scenic.sessionChannel.commands.execute(
                 'contact:add',
                 _.bind( this.model.sip.addContact, this.model )
             );

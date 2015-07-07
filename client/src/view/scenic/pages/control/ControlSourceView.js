@@ -21,7 +21,7 @@ define( [
          */
         initialize: function (options) {
             SourceView.prototype.initialize.apply(this, arguments);
-            this.collection    = this.model.get( 'properties' );
+            this.collection    = this.model.properties;
         },
 
         /**

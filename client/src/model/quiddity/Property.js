@@ -93,7 +93,7 @@ define( [
                 if ( error ) {
                     // There was an error setting the value, go back to the last synced value or the default
                     self.set( 'value', self.lastSyncedValue !== undefined ? self.lastSyncedValue : self.get( 'default' ) );
-                    return self.scenicChannel.vent.trigger( 'error', error );
+                    return self.scenic.sessionChannel.vent.trigger( 'error', error );
                 }
             } );
         }

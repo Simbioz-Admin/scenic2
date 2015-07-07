@@ -42,8 +42,8 @@ define( [
             }
         },
 
-        initialize: function () {
-            this.scenicChannel = Backbone.Wreqr.radio.channel( 'scenic' );
+        initialize: function ( options ) {
+            this.scenic = options.scenic;
 
             // Draggable
             this.$el.draggable( {
@@ -55,18 +55,18 @@ define( [
             // We need absolute at the start... to align right
             this.$el.css('position', '');
 
-            this.scenicChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
-            this.scenicChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'quiddity:create', _.bind( this._onQuiddityCreate, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'quiddity:edit', _.bind( this._onQuiddityEdit, this ) );
 
-            this.scenicChannel.commands.setHandler( 'rtp:create', _.bind( this._onRTPCreate, this ) );
-            this.scenicChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
-            this.scenicChannel.commands.setHandler( 'rtp:edit', _.bind( this._onRTPEdit, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'rtp:create', _.bind( this._onRTPCreate, this ) );
+            this.scenic.sessionChannel.vent.on( 'rtp:created', _.bind( this._onRTPCreated, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'rtp:edit', _.bind( this._onRTPEdit, this ) );
 
-            this.scenicChannel.commands.setHandler( 'contact:add', _.bind( this._onContactAdd, this ) );
-            this.scenicChannel.commands.setHandler( 'contact:edit', _.bind( this._onContactEdit, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'contact:add', _.bind( this._onContactAdd, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'contact:edit', _.bind( this._onContactEdit, this ) );
 
-            this.scenicChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
-            this.scenicChannel.commands.setHandler( 'inspector:close', _.bind( this.close, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'shmdata:info', _.bind( this._onShmdataInfo, this ) );
+            this.scenic.sessionChannel.commands.setHandler( 'inspector:close', _.bind( this.close, this ) );
         },
 
         close: function () {

@@ -15,8 +15,7 @@ define( [
      */
     var ShutdownView = Marionette.ItemView.extend( {
         template: _.template( ShutdownTemplate ),
-        el:       'body',
-
+        className: 'shutdown',
         initialize: function ( ) {}
     } );
     return ShutdownView;

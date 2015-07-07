@@ -21,29 +21,30 @@ define( [
             'create': '#create'
         },
         events:    {
-            'click @ui.create': 'create',
-            'keydown': 'checkForEscapeKey',
+            'click @ui.create':  'create',
+            'keydown':           'checkForEscapeKey',
             'keypress @ui.name': 'checkForEnterKey'
         },
 
-        initialize: function ( config ) {
-            this.title         = i18n.t( 'Create __quiddityClass__', {quiddityClass: this.model.get( 'class' )} );
-            this.callback      = config.callback;
+        initialize: function ( options ) {
+            this.scenic   = options.scenic;
+            this.title    = i18n.t( 'Create __quiddityClass__', { quiddityClass: this.model.get( 'class' ) } );
+            this.callback = options.callback;
 
             //TODO: Handle devices stuff
             /*classDescription.loadDevices( function ( error, devices ) {
-                                              if ( error ) {
-                                                  return;
-                                              }
-                                          }
-            );*/
+             if ( error ) {
+             return;
+             }
+             }
+             );*/
         },
 
-        onAttach: function() {
+        onAttach: function () {
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 
-        checkForEscapeKey: function( event ) {
+        checkForEscapeKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
@@ -51,7 +52,7 @@ define( [
             }
         },
 
-        checkForEnterKey: function( event ) {
+        checkForEnterKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 13 ) {
                 event.preventDefault();

@@ -85,7 +85,7 @@ define( [
          * @private
          */
         _onQuiddityCreate: function ( classDescription, callback ) {
-            this.currentPanel = new CreateQuiddityView( { model: classDescription, callback: callback} );
+            this.currentPanel = new CreateQuiddityView( { scenic: this.scenic, model: classDescription, callback: callback} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn(250);
         },
@@ -98,7 +98,7 @@ define( [
          * @private
          */
         _onQuiddityEdit: function ( quiddity ) {
-            this.currentPanel = new EditQuiddityView( {model: quiddity} );
+            this.currentPanel = new EditQuiddityView( {scenic: this.scenic, model: quiddity} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },
@@ -112,7 +112,7 @@ define( [
          * @private
          */
         _onRTPCreate: function ( callback ) {
-            this.currentPanel = new CreateRTPView({ callback: callback });
+            this.currentPanel = new CreateRTPView({ scenic: this.scenic, callback: callback });
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },
@@ -135,7 +135,7 @@ define( [
          * @private
          */
         _onRTPEdit: function ( rtpDestination, callback ) {
-            this.currentPanel = new EditRTPView( {model: rtpDestination, callback: callback} );
+            this.currentPanel = new EditRTPView( {scenic: this.scenic, model: rtpDestination, callback: callback} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },
@@ -147,7 +147,7 @@ define( [
          * @private
          */
         _onShmdataInfo: function ( shmdata ) {
-            this.currentPanel = new ShmdataInfoView( {model: shmdata} );
+            this.currentPanel = new ShmdataInfoView( {scenic: this.scenic, model: shmdata} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },
@@ -159,7 +159,7 @@ define( [
          * @private
          */
         _onContactAdd: function ( callback ) {
-            this.currentPanel = new AddContactView( {callback: callback} );
+            this.currentPanel = new AddContactView( {scenic: this.scenic, callback: callback} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         },
@@ -172,7 +172,7 @@ define( [
          * @private
          */
         _onContactEdit: function ( contact, callback ) {
-            this.currentPanel = new EditContactView( {model: contact, callback: callback} );
+            this.currentPanel = new EditContactView( {  scenic: this.scenic, model: contact, callback: callback} );
             this.showChildView( 'content', this.currentPanel );
             this.$el.fadeIn( 250 );
         }

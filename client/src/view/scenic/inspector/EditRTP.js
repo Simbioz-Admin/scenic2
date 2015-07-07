@@ -13,19 +13,19 @@ define( [
      * @extends module:Marionette.ItemView
      */
     var EditRTP = Marionette.ItemView.extend( {
-        template: _.template( EditRTPTemplate ),
+        template:  _.template( EditRTPTemplate ),
         className: 'edit-rtp',
 
-        ui:       {
-            'name': '.name',
-            'host': '.host',
-            'port': '.port',
+        ui: {
+            'name':   '.name',
+            'host':   '.host',
+            'port':   '.port',
             'update': '#update'
         },
 
-        events:   {
-            'click @ui.update': 'update',
-            'keydown': 'checkForEscapeKey',
+        events: {
+            'click @ui.update':  'update',
+            'keydown':           'checkForEscapeKey',
             'keypress @ui.name': 'checkForEnterKey',
             'keypress @ui.host': 'checkForEnterKey',
             'keypress @ui.port': 'checkForEnterKey'
@@ -35,16 +35,17 @@ define( [
             'destroy': '_onRTPDestinationRemoved'
         },
 
-        initialize: function ( config ) {
-            this.title = i18n.t('Edit an RTP destination');
-            this.callback = config.callback;
+        initialize: function ( options ) {
+            this.scenic   = options.scenic;
+            this.title    = i18n.t( 'Edit an RTP destination' );
+            this.callback = options.callback;
         },
 
-        onAttach: function() {
+        onAttach: function () {
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 
-        checkForEscapeKey: function( event ) {
+        checkForEscapeKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
@@ -52,24 +53,24 @@ define( [
             }
         },
 
-        checkForEnterKey: function( event ) {
+        checkForEnterKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 13 ) {
                 event.preventDefault();
                 this.update();
             }
         },
-        
-        update: function() {
+
+        update: function () {
             this.callback( {
                 name: this.ui.name.val(),
                 host: this.ui.host.val(),
                 port: this.ui.port.val()
-            });
+            } );
             this.scenic.sessionChannel.commands.execute( 'inspector:close' );
         },
 
-        _onRTPDestinationRemoved: function(  ) {
+        _onRTPDestinationRemoved: function () {
             this.scenic.sessionChannel.commands.execute( 'inspector:close' );
         }
 

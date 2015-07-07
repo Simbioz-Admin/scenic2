@@ -15,12 +15,12 @@ define( [
      * @extends module:Marionette.LayoutView
      */
     var EditQuiddity = Marionette.LayoutView.extend( {
-        template: _.template( EditQuiddityTemplate ),
+        template:  _.template( EditQuiddityTemplate ),
         className: 'edit-quiddity',
 
         regions: {
             properties: '.properties',
-            methods: '.methods'
+            methods:    '.methods'
         },
 
         modelEvents: {
@@ -32,16 +32,17 @@ define( [
         },
 
         initialize: function ( options ) {
+            this.scenic    = options.scenic;
             this.inspector = options.inspector;
-            this.title = i18n.t('Edit __quiddityName__', { quiddityName: this.model.id});
+            this.title     = i18n.t( 'Edit __quiddityName__', { quiddityName: this.model.id } );
         },
 
-        onBeforeShow: function() {
-            this.showChildView('properties', new PropertiesView({collection: this.model.properties}));
-            this.showChildView('methods', new MethodsView({collection: this.model.methods}));
+        onBeforeShow: function () {
+            this.showChildView( 'properties', new PropertiesView( { collection: this.model.properties } ) );
+            this.showChildView( 'methods', new MethodsView( { collection: this.model.methods } ) );
         },
 
-        checkForEscapeKey: function( event ) {
+        checkForEscapeKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
@@ -49,7 +50,7 @@ define( [
             }
         },
 
-        _onQuiddityRemoved: function( quiddity ) {
+        _onQuiddityRemoved: function ( quiddity ) {
             this.scenic.sessionChannel.commands.execute( 'inspector:close' );
         }
 

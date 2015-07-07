@@ -13,19 +13,19 @@ define( [
      * @extends module:Marionette.ItemView
      */
     var EditContact = Marionette.ItemView.extend( {
-        template: _.template( EditContactTemplate ),
+        template:  _.template( EditContactTemplate ),
         className: 'edit-contact',
 
-        ui:       {
-            'name': '.name',
+        ui: {
+            'name':   '.name',
             'update': '#update',
             'delete': '#delete'
         },
 
-        events:   {
-            'click @ui.update': 'update',
-            'click @ui.delete': 'delete',
-            'keydown': 'checkForEscapeKey',
+        events: {
+            'click @ui.update':  'update',
+            'click @ui.delete':  'delete',
+            'keydown':           'checkForEscapeKey',
             'keypress @ui.name': 'checkForEnterKey'
         },
 
@@ -33,16 +33,17 @@ define( [
             'destroy': '_onContactRemoved'
         },
 
-        initialize: function ( config ) {
-            this.title = i18n.t('Edit Contact');
-            this.callback = config.callback;
+        initialize: function ( options ) {
+            this.scenic   = options.scenic;
+            this.title    = i18n.t( 'Edit Contact' );
+            this.callback = options.callback;
         },
 
-        onAttach: function() {
+        onAttach: function () {
             _.defer( _.bind( this.ui.name.focus, this.ui.name ) );
         },
 
-        checkForEscapeKey: function( event ) {
+        checkForEscapeKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 27 ) {
                 event.preventDefault();
@@ -50,7 +51,7 @@ define( [
             }
         },
 
-        checkForEnterKey: function( event ) {
+        checkForEnterKey: function ( event ) {
             var key = event.which || event.keyCode;
             if ( key == 13 ) {
                 event.preventDefault();
@@ -58,8 +59,8 @@ define( [
             }
         },
 
-        update: function() {
-            if ( this.ui.name.val() != this.model.get('name')) {
+        update: function () {
+            if ( this.ui.name.val() != this.model.get( 'name' ) ) {
                 this.callback( {
                     name: this.ui.name.val()
                 } );
@@ -67,16 +68,16 @@ define( [
             this.scenic.sessionChannel.commands.execute( 'inspector:close' );
         },
 
-        delete: function() {
+        delete: function () {
             var self = this;
-            this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove __contact__ from your contacts?', {contact:this.model.get('name')}), function( confirmed ) {
+            this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t( 'Are you sure you want to remove __contact__ from your contacts?', { contact: this.model.get( 'name' ) } ), function ( confirmed ) {
                 if ( confirmed ) {
                     self.model.destroy();
                 }
-            });
+            } );
         },
 
-        _onContactRemoved: function(  ) {
+        _onContactRemoved: function () {
             this.scenic.sessionChannel.commands.execute( 'inspector:close' );
         }
 

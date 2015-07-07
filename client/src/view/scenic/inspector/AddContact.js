@@ -27,9 +27,10 @@ define( [
             'keypress @ui.uri': 'checkForEnterKey'
         },
 
-        initialize: function ( config ) {
+        initialize: function ( options ) {
+            this.scenic = options.scenic;
             this.title = i18n.t('Add Contact');
-            this.callback = config.callback;
+            this.callback = options.callback;
         },
 
         onAttach: function() {

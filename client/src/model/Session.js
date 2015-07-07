@@ -174,11 +174,19 @@ define( [
         },
 
         _onShutdown: function () {
-            this.set('connected', false);
-            this.set('shutdown', true);
-            this.sessionChannel.vent.trigger( 'shutdown' );
-            this.socket.close();
-            //Destroy models!
+            if ( !this.get('shutdown') ) {
+                this.set( 'connected', false );
+                this.set( 'shutdown', true );
+                this.sessionChannel.vent.trigger( 'shutdown' );
+                this.socket.close();
+                this.socket.removeAllListeners();
+                this.sessionChannel.reset();
+                this.saveFiles.reset();
+                this.classes.reset();
+                this.quiddities.reset();
+                this.sip.destroy();
+                //TODO: Destroy even more!
+            }
         }
     } );
 

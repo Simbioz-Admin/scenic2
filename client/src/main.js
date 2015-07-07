@@ -110,7 +110,7 @@ require( {
 
             // Create the default session
             this.defaultSession = new Session({default: true});
-            window.scenic = this.defaultSession.scenic;
+            window.scenic = this.defaultSession;
 
             this.sessions.add( this.defaultSession ); // Default session
 

@@ -59,8 +59,13 @@ define( [
             if ( this.scenic.quiddities.get(this.scenic.config.sip.quiddName)) {
                 this._registerSipQuiddity(this.scenic.quiddities.get(this.scenic.config.sip.quiddName));
             }
+
+            this.on( 'destroy', function() {
+                console.log('destroy');
+                this.contacts.reset();
+            });
         },
-        
+
         _registerSipQuiddity: function( sipQuiddity ) {
             this.quiddity = sipQuiddity;
             this.contacts.setSipQuiddity( this.quiddity );

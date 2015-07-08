@@ -70,7 +70,7 @@ define( [
          */
         removeDestination: function( event ) {
             var self = this;
-            this.scenic.sessionChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
+            this.scenic.scenicChannel.commands.execute( 'confirm', i18n.t('Are you sure you want to remove the __destinationName__ destination?', {destinationName:this.model.get('name')}), function( confirmed ) {
                 if ( confirmed ) {
                     self.model.disconnectAll();
                 }

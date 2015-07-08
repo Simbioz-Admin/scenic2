@@ -38,6 +38,7 @@ define( [
          * Initialize
          */
         initialize: function ( options ) {
+            this.scenic = options.scenic;
             this.listenTo(this.model.sip.contacts, 'update', this.showSelf);
         },
 

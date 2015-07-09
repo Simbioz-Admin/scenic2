@@ -105,6 +105,11 @@ SwitcherController.prototype.initialize = function ( callback ) {
                         callback( error );
                         return process.exit();
                     }
+                    if ( self.config.soap.port == null ) {
+                        log.error("SOAP Port Required.");
+                        callback( error );
+                        return process.exit();
+                    }
                     self.switcher.invoke( self.config.soap.quiddName, 'set_port', [self.config.soap.port] );
                     callback();
                 } );

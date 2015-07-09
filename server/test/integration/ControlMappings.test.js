@@ -9,7 +9,7 @@ chai.use( sinonChai );
 
 var quiddities = require( '../fixtures/quiddities' );
 
-describe.skip( 'Control Mappings', function () {
+describe( 'Control Mappings', function () {
 
     var config;
     var io;
@@ -18,27 +18,27 @@ describe.skip( 'Control Mappings', function () {
     var fs;
     var control;
 
-    beforeEach( function (done) {
+    beforeEach( function ( done ) {
         config                 = require( '../fixtures/config' );
         io                     = {};
         io.emit                = sinon.spy();
         checkPort              = sinon.stub();
         checkPort.yields();
         fs                     = {};
+        fs.existsSync          = sinon.stub();
+        fs.existsSync.returns( true );
         var SwitcherController = proxyquire( '../../src/switcher/SwitcherController', {
             'fs':                  fs,
             '../utils/check-port': checkPort
         } );
         switcherController     = new SwitcherController( config, io );
         control                = switcherController.controlManager;
-        switcherController.initialize(done);
+        switcherController.initialize( done );
     } );
 
     afterEach( function () {
-        console.log('closing');
         switcherController.close();
         switcherController = null;
-        console.log('closed');
         config             = null;
         io                 = null;
         switcherController = null;
@@ -51,32 +51,32 @@ describe.skip( 'Control Mappings', function () {
         it( 'should map properties', function () {
             switcherController.quiddityManager.create( 'audiotestsrc', 'a1' );
             switcherController.quiddityManager.create( 'audiotestsrc', 'a2' );
-            var result     = control.addMapping( 'a1', 'volume', 'a2', 'volume' );
+            var result = control.addMapping( 'a1', 'volume', 'a2', 'volume' );
             should.exist( result );
             result.should.be.true;
-            var mapper = _.findWhere( switcherController.quiddityManager.getQuiddities(), {'class':'property-mapper'});
+            var mapper = _.findWhere( switcherController.quiddityManager.getQuiddities(), { 'class': 'property-mapper' } );
             should.exist( mapper );
-            should.exist(mapper.tree);
-            should.exist(mapper.tree.source);
-            should.exist(mapper.tree.source.quiddity);
-            mapper.tree.source.quiddity.should.equal('a1');
-            should.exist(mapper.tree.source.property);
-            mapper.tree.source.property.should.equal('volume');
-            should.exist(mapper.tree.sink);
-            should.exist(mapper.tree.sink.quiddity);
-            mapper.tree.sink.quiddity.should.equal('a2');
-            should.exist(mapper.tree.sink.property);
-            mapper.tree.sink.property.should.equal('volume');
+            should.exist( mapper.tree );
+            should.exist( mapper.tree.source );
+            should.exist( mapper.tree.source.quiddity );
+            mapper.tree.source.quiddity.should.equal( 'a1' );
+            should.exist( mapper.tree.source.property );
+            mapper.tree.source.property.should.equal( 'volume' );
+            should.exist( mapper.tree.sink );
+            should.exist( mapper.tree.sink.quiddity );
+            mapper.tree.sink.quiddity.should.equal( 'a2' );
+            should.exist( mapper.tree.sink.property );
+            mapper.tree.sink.property.should.equal( 'volume' );
         } );
 
         it( 'should remove mapping when removing source quiddity', function ( done ) {
 
-            var original = switcherController.quiddityManager._onRemoved;
-            switcherController.quiddityManager._onRemoved = function( quiddityId ) {
+            var original                                  = switcherController.quiddityManager._onRemoved;
+            switcherController.quiddityManager._onRemoved = function ( quiddityId ) {
                 original.apply( switcherController.quiddityManager, arguments );
 
                 if ( quiddityId == 'property-mapper0' ) {
-                    var mapper = _.findWhere( switcherController.quiddityManager.getQuiddities({}), { 'class': 'property-mapper' } );
+                    var mapper = _.findWhere( switcherController.quiddityManager.getQuiddities( {} ), { 'class': 'property-mapper' } );
                     should.not.exist( mapper );
                     done();
                 }
@@ -90,8 +90,8 @@ describe.skip( 'Control Mappings', function () {
 
         it( 'should remove mapping when removing sink quiddity', function ( done ) {
 
-            var originalRemoved = switcherController.quiddityManager._onRemoved;
-            switcherController.quiddityManager._onRemoved = function( quiddityId ) {
+            var originalRemoved                           = switcherController.quiddityManager._onRemoved;
+            switcherController.quiddityManager._onRemoved = function ( quiddityId ) {
                 originalRemoved.apply( switcherController.quiddityManager, arguments );
                 if ( quiddityId == 'property-mapper0' ) {
                     var mapper = _.findWhere( switcherController.quiddityManager.getQuiddities(), { 'class': 'property-mapper' } );

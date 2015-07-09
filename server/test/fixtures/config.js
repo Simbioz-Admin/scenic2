@@ -39,7 +39,7 @@ var config = {
             min: 8085,
             max: 8089
         },
-        port: null, //Automatic
+        port: 9000, //Automatic, but supplied for the tests
         quiddName: 'soap',
         controlClientPrefix: 'soapControlClient-'
     },

@@ -26,7 +26,8 @@ define( [
             name: {
                 transient: true,
                 get: function() {
-                    return this.get( 'path' ).split('_')[3];
+                    var name = this.get( 'path' ).split('_')[3];
+                    return name ? name : this.get('path');
                 }
             }
         },

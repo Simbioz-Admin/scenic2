@@ -33,8 +33,8 @@ define( [
         /**
          * Initialize
          */
-        initialize: function () {
-
+        initialize: function (options) {
+            this.scenic = options.scenic;
         },
 
         loadFile: function() {

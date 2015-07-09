@@ -20,6 +20,11 @@ define( [
         className: 'file-open',
         childView: FileView,
         childViewContainer: '.files',
+        childViewOptions: function() {
+            return {
+                scenic: this.scenic
+            }
+        },
 
         childEvents: {
             'closeList': 'close'

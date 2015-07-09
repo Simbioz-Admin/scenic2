@@ -90,7 +90,7 @@ dev:
 	bower update
 
 test:
-	$(NODE_PATH) mocha server/test/**/*.test.js
+	$(NODE_PATH) mocha --recursive server/test
 
 test-qm:
 	$(NODE_PATH) mocha server/test/integration/QuiddityLifecycle.test.js

@@ -33,7 +33,8 @@ define( [
          * @returns {boolean}
          */
         filter: function (method) {
-            return !_.contains( this.excludedMethods, method.get('name') );
+
+            return !_.contains( this.excludedMethods, method.id );
         }
     } );
 

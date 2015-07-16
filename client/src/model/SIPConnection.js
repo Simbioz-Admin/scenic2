@@ -169,8 +169,8 @@ define( [
          */
         addContact: function ( uri ) {
             var self    = this;
-            var contact = new Contact();
-            contact.save( { uri: uri }, {
+            var contact = new Contact( { uri: uri }, { scenic: self.scenic } );
+            contact.save( null, {
                 success: function () {
                     //no-op
                 },

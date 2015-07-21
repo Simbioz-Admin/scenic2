@@ -51,8 +51,8 @@ define( [
 
             // Setup child collections
 
-            this.properties                   = new Properties( this.get('properties'), {scenic: this.scenic, quiddity: this} );
-            this.methods                      = new Methods( this.get('methods'), {scenic: this.scenic, quiddity: this} );
+            this.properties                   = new Properties( this.get('properties'), {scenic: this.scenic, quiddity: this, parse: true} );
+            this.methods                      = new Methods( this.get('methods'), {scenic: this.scenic, quiddity: this, parse: true} );
             this.shmdatas                     = new Shmdatas( this.get('tree' ) ? this.get('tree' ).shmdata : null, {scenic: this.scenic, quiddity: this, parse: true} );
 
             /*this.listenTo(this, 'sync', function( model, value, options ) {

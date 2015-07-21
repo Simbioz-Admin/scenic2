@@ -41,7 +41,7 @@ define( [
          */
         parse: function ( response ) {
             //Parse arguments into a collection
-            response.args = new Arguments( response.args );
+            //response.args = new Arguments( response.args );
             return response;
         },
 
@@ -51,8 +51,7 @@ define( [
         initialize: function () {
             ScenicModel.prototype.initialize.apply( this, arguments );
 
-            this.args = new Arguments(null, {scenic: this.scenic});
-            this.args.method = this;
+            this.args = new Arguments( this.get('args'), {scenic: this.scenic, method: this, parse: true});
 
             // Only bind to socket if we aren't new
             // We don't want temporary models staying referenced by socket.io

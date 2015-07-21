@@ -14,7 +14,16 @@ define( [
      * @extends BaseCollection
      */
     var Arguments = BaseCollection.extend( {
-        model: Argument
+        model: Argument,
+
+        /**
+         * Initialize
+         */
+        initialize: function (models, options) {
+            BaseCollection.prototype.initialize.apply( this, arguments );
+            this.scenic = options.scenic;
+            this.method = options.method;
+        }
     } );
 
     return Arguments;

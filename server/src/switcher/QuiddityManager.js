@@ -48,7 +48,8 @@ function QuiddityManager( switcherController) {
  * Initialize
  */
 QuiddityManager.prototype.initialize = function () {
-
+    this.changedProperties = {};
+    setInterval( _.bind( this.publishChangedProperties, this ), 1000 / 30 );
 };
 
 //  ██████╗  █████╗ ██████╗ ███████╗███████╗██████╗ ███████╗
@@ -177,17 +178,17 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
     }
 
     // General
-    property.id          = property.name;
-    property.name        = property['long name'];
-    property.description = property['short description'];
-    property.order       = property['position weight'];
+    //property.id          = property.name;
+    //property.name        = property['long name'];
+    //property.description = property['short description'];
+    //property.order       = property['position weight'];
     property.writable    = property.writable == 'true';
 
     delete property['default value'];
-    delete property['long name'];
-    delete property['short description'];
-    delete property['position category'];
-    delete property['position weight'];
+    //delete property['long name'];
+    //delete property['short description'];
+    //delete property['position category'];
+    //delete property['position weight'];
 
     return property;
 };
@@ -200,19 +201,19 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
  */
 QuiddityManager.prototype._parseMethod = function ( method ) {
     // General
-    method.id                = method.name;
-    method.name              = method['long name'];
+    //method.id                = method.name;
+    //method.name              = method['long name'];
     method.returnType        = method['return type'];
     method.returnDescription = method['return description'];
-    method.order             = method['position weight'];
+    //method.order             = method['position weight'];
 
     delete method['default value'];
-    delete method['long name'];
-    delete method['short description'];
+    //delete method['long name'];
+    //delete method['short description'];
     delete method['return type'];
     delete method['return description'];
-    delete method['position category'];
-    delete method['position weight'];
+    //delete method['position category'];
+    //delete method['position weight'];
 
     // Arguments
     if ( method['arguments'] ) {
@@ -519,25 +520,37 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     // We exclude byte-rate because it dispatches every second
     log.debug( 'Property:', quiddityId + '.' + property + '=' + value );
 
-    // We have to get the property info in order to parse its value correctly
-    // This looks like it isn't necessary but we need the description to handle the value type
-    try {
-        var propertyInfo = this.switcher.get_property_description( quiddityId, property );
-    } catch ( e ) {
-        return log.error( e );
+    if ( this.changedProperties[quiddityId] == null ) {
+        this.changedProperties[quiddityId] = {};
     }
-    if ( !propertyInfo || !_.isObject( propertyInfo ) || propertyInfo.error ) {
-        return log.error( 'Could not get property description for', quiddityId, property, value, propertyInfo ? propertyInfo.error : '' );
-    }
+    this.changedProperties[quiddityId][property] = value;
+};
 
-    // Parse property
-    this._parseProperty( propertyInfo );
+QuiddityManager.prototype.publishChangedProperties = function() {
+    _.each( this.changedProperties, function( properties, quiddityId ) {
+        _.each( properties, function( value, property ) {
+            // We have to get the property info in order to parse its value correctly
+            // This looks like it isn't necessary but we need the description to handle the value type
+            try {
+                var propertyInfo = this.switcher.get_property_description( quiddityId, property );
+            } catch ( e ) {
+                return log.error( e );
+            }
+            if ( !propertyInfo || !_.isObject( propertyInfo ) || propertyInfo.error ) {
+                return log.error( 'Could not get property description for', quiddityId, property, value, propertyInfo ? propertyInfo.error : '' );
+            }
 
-    // Use the parsed value from now on
-    value = propertyInfo.value;
+            // Parse property
+            this._parseProperty( propertyInfo );
 
-    // Send to clients
-    this.io.emit( 'propertyChanged', quiddityId, property, value );
+            // Use the parsed value from now on
+            value = propertyInfo.value;
+
+            // Send to clients
+            this.io.emit( 'propertyChanged', quiddityId, property, value );
+        }, this );
+    }, this );
+    this.changedProperties = {};
 };
 
 /**

@@ -20,6 +20,7 @@ define( [
                 'description':       null,
                 'returnDescription': null,
                 'returnType':        null,
+                'parent':            null,
                 'order':             0
             }
         },

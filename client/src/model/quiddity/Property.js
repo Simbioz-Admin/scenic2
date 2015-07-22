@@ -21,6 +21,7 @@ define( [
             'description': null,
             'default':     null,
             'value':       null,
+            'parent':      null,
             'order':       0
         },
 

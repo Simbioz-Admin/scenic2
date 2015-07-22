@@ -554,21 +554,21 @@ module.exports = {
         return {
             "properties": [
                 {
-                    "long name":         "Started",
-                    "name":              "started",
-                    "short description": "started or not",
-                    "position category": "",
-                    "position weight":   0,
+                    "name":         "Started",
+                    "id":              "started",
+                    "description": "started or not",
+                    "parent": "",
+                    "order":   0,
                     "writable":          "true",
                     "type":              "boolean",
                     "default value":     "false"
                 },
                 {
-                    "long name":         "Volume",
-                    "name":              "volume",
-                    "short description": "Volume of test signal",
-                    "position category": "",
-                    "position weight":   20,
+                    "name":         "Volume",
+                    "id":              "volume",
+                    "description": "Volume of test signal",
+                    "parent": "",
+                    "order":   20,
                     "writable":          "true",
                     "type":              "double",
                     "minimum":           "0",
@@ -576,11 +576,11 @@ module.exports = {
                     "default value":     "0.8"
                 },
                 {
-                    "long name":         "Frequency",
-                    "name":              "freq",
-                    "short description": "Frequency of test signal",
-                    "position category": "",
-                    "position weight":   40,
+                    "name":         "Frequency",
+                    "id":              "freq",
+                    "description": "Frequency of test signal",
+                    "parent": "",
+                    "order":   40,
                     "writable":          "true",
                     "type":              "double",
                     "minimum":           "0",
@@ -588,17 +588,17 @@ module.exports = {
                     "default value":     "440"
                 },
                 {
-                    "long name":         "Signal Form",
-                    "name":              "wave",
-                    "short description": "Oscillator waveform",
-                    "position category": "",
-                    "position weight":   60,
+                    "name":         "Signal Form",
+                    "id":              "wave",
+                    "description": "Oscillator waveform",
+                    "parent": "",
+                    "order":   60,
                     "writable":          "true",
                     "type":              "enum",
                     "default value":     {
                         "value": "0",
                         "nick":  "sine",
-                        "name":  "Sine"
+                        "id":  "Sine"
                     },
                     "values":            [
                         {
@@ -678,6 +678,7 @@ module.exports = {
                 "name":        "Started",
                 "id":          "started",
                 "description": "started or not",
+                "parent": null,
                 "order":       0,
                 "writable":    true,
                 "type":        "boolean",
@@ -688,6 +689,7 @@ module.exports = {
                 "name":        "Volume",
                 "id":          "volume",
                 "description": "Volume of test signal",
+                "parent": null,
                 "order":       20,
                 "writable":    true,
                 "type":        "double",
@@ -700,6 +702,7 @@ module.exports = {
                 "name":        "Frequency",
                 "id":          "freq",
                 "description": "Frequency of test signal",
+                "parent": null,
                 "order":       40,
                 "writable":    true,
                 "type":        "double",
@@ -712,6 +715,7 @@ module.exports = {
                 "name":        "Signal Form",
                 "id":          "wave",
                 "description": "Oscillator waveform",
+                "parent": null,
                 "order":       60,
                 "writable":    true,
                 "type":        "enum",
@@ -790,11 +794,11 @@ module.exports = {
 
     property_bool: function () {
         return {
-            "long name":         "Started",
-            "name":              "started",
-            "short description": "started or not",
-            "position category": "",
-            "position weight":   0,
+            "name":         "Started",
+            "id":              "started",
+            "description": "started or not",
+            "parent": "",
+            "order":   0,
             "writable":          "true",
             "type":              "boolean",
             "default value":     "false"
@@ -806,6 +810,7 @@ module.exports = {
             "name":        "Started",
             "id":          "started",
             "description": "started or not",
+            "parent": null,
             "order":       0,
             "writable":    true,
             "type":        "boolean",
@@ -816,11 +821,11 @@ module.exports = {
 
     property_double: function () {
         return {
-            "long name":         "Volume",
-            "name":              "volume",
-            "short description": "Volume of test signal",
-            "position category": "",
-            "position weight":   20,
+            "name":         "Volume",
+            "id":              "volume",
+            "description": "Volume of test signal",
+            "parent": "",
+            "order":   20,
             "writable":          "true",
             "type":              "double",
             "minimum":           "0",
@@ -834,6 +839,7 @@ module.exports = {
             "name":        "Volume",
             "id":          "volume",
             "description": "Volume of test signal",
+            "parent": null,
             "order":       20,
             "writable":    true,
             "type":        "double",
@@ -846,11 +852,11 @@ module.exports = {
 
     property_float: function () {
         return {
-            "long name":         "Volume",
-            "name":              "volume",
-            "short description": "Volume of test signal",
-            "position category": "",
-            "position weight":   20,
+            "name":         "Volume",
+            "id":              "volume",
+            "description": "Volume of test signal",
+            "parent": "",
+            "order":   20,
             "writable":          "true",
             "type":              "float",
             "minimum":           "0",
@@ -864,6 +870,7 @@ module.exports = {
             "name":        "Volume",
             "id":          "volume",
             "description": "Volume of test signal",
+            "parent": null,
             "order":       20,
             "writable":    true,
             "type":        "float",
@@ -876,11 +883,11 @@ module.exports = {
 
     property_int: function () {
         return {
-            "long name":         "Volume",
-            "name":              "volume",
-            "short description": "Volume of test signal",
-            "position category": "",
-            "position weight":   20,
+            "name":         "Volume",
+            "id":              "volume",
+            "description": "Volume of test signal",
+            "parent": "",
+            "order":   20,
             "writable":          "true",
             "type":              "int",
             "minimum":           "0",
@@ -894,6 +901,7 @@ module.exports = {
             "name":        "Volume",
             "id":          "volume",
             "description": "Volume of test signal",
+            "parent": null,
             "order":       20,
             "writable":    true,
             "type":        "int",
@@ -906,11 +914,11 @@ module.exports = {
 
     property_uint: function () {
         return {
-            "long name":         "Volume",
-            "name":              "volume",
-            "short description": "Volume of test signal",
-            "position category": "",
-            "position weight":   20,
+            "name":         "Volume",
+            "id":              "volume",
+            "description": "Volume of test signal",
+            "parent": "",
+            "order":   20,
             "writable":          "true",
             "type":              "uint",
             "minimum":           "0",
@@ -924,6 +932,7 @@ module.exports = {
             "name":        "Volume",
             "id":          "volume",
             "description": "Volume of test signal",
+            "parent": null,
             "order":       20,
             "writable":    true,
             "type":        "uint",
@@ -936,11 +945,11 @@ module.exports = {
 
     property_string_json: function () {
         return {
-            "long name":         "Destinations",
-            "name":              "destinations-json",
-            "short description": "json formated description of destinations",
-            "position category": "",
-            "position weight":   140,
+            "name":         "Destinations",
+            "id":              "destinations-json",
+            "description": "json formated description of destinations",
+            "parent": "",
+            "order":   140,
             "writable":          "false",
             "type":              "string",
             "default value":     "{\n  \"destinations\" : [\n  ]\n}"
@@ -952,6 +961,7 @@ module.exports = {
             "name":        "Destinations",
             "id":          "destinations-json",
             "description": "json formated description of destinations",
+            "parent": null,
             "order":       140,
             "writable":    false,
             "type":        "string",
@@ -966,11 +976,11 @@ module.exports = {
 
     property_string: function () {
         return {
-            "long name":         "Destinations",
-            "name":              "destinations-json",
-            "short description": "json formated description of destinations",
-            "position category": "",
-            "position weight":   140,
+            "name":         "Destinations",
+            "id":              "destinations-json",
+            "description": "json formated description of destinations",
+            "parent": "",
+            "order":   140,
             "writable":          "false",
             "type":              "string",
             "default value":     "some default value"
@@ -982,6 +992,7 @@ module.exports = {
             "name":        "Destinations",
             "id":          "destinations-json",
             "description": "json formated description of destinations",
+            "parent": null,
             "order":       140,
             "writable":    false,
             "type":        "string",
@@ -992,11 +1003,11 @@ module.exports = {
 
     property_enum: function () {
         return {
-            "long name":         "mode",
-            "name":              "mode",
-            "short description": "Mode",
-            "position category": "",
-            "position weight":   160,
+            "name":         "mode",
+            "id":              "mode",
+            "description": "Mode",
+            "parent": "",
+            "order":   160,
             "writable":          "true",
             "type":              "enum",
             "default value":     {
@@ -1024,6 +1035,7 @@ module.exports = {
             "name":        "mode",
             "id":          "mode",
             "description": "Mode",
+            "parent": null,
             "order":       160,
             "writable":    true,
             "type":        "enum",
@@ -1048,11 +1060,11 @@ module.exports = {
         return {
             "methods": [
                 {
-                    "long name":          "To Shmdata",
-                    "name":               "to_shmdata",
+                    "name":          "To Shmdata",
+                    "id":               "to_shmdata",
                     "description":        "get streams from sdp description over http, accept also base64 encoded SDP string",
-                    "position category":  "",
-                    "position weight":    0,
+                    "parent":  "",
+                    "order":    0,
                     "return type":        "gboolean",
                     "return description": "success or fail",
                     "arguments":          [
@@ -1074,6 +1086,7 @@ module.exports = {
                 "name":              "To Shmdata",
                 "id":                "to_shmdata",
                 "description":       "get streams from sdp description over http, accept also base64 encoded SDP string",
+                "parent": null,
                 "order":             0,
                 "returnType":        "gboolean",
                 "returnDescription": "success or fail",
@@ -1091,11 +1104,11 @@ module.exports = {
 
     method: function () {
         return {
-            "long name":          "Write SDP File",
-            "name":               "write_sdp_file",
+            "name":          "Write SDP File",
+            "id":               "write_sdp_file",
             "description":        "print sdp for the given destination",
-            "position category":  "",
-            "position weight":    120,
+            "parent":  "",
+            "order":    120,
             "return type":        "gboolean",
             "return description": "success or fail",
             "arguments":          [
@@ -1114,6 +1127,7 @@ module.exports = {
             "name":              "Write SDP File",
             "id":                "write_sdp_file",
             "description":       "print sdp for the given destination",
+            "parent": null,
             "order":             120,
             "returnType":        "gboolean",
             "returnDescription": "success or fail",

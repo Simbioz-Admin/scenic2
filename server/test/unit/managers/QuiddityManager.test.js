@@ -165,10 +165,11 @@ describe( 'Quiddity Manager', function () {
 
             switcher.subscribe_to_property.callCount.should.eql( quiddities.properties().properties.length );
             quiddities.properties().properties.forEach( function ( property ) {
-                switcher.subscribe_to_property.should.have.been.calledWith( id, property.name );
+                switcher.subscribe_to_property.should.have.been.calledWith( id, property.id );
             } );
 
             io.emit.should.have.been.calledOnce;
+            io.emit.args[0][1].should.eql( resultBundle );
             io.emit.should.have.been.calledWith( 'quiddity.created', resultBundle );
         } );
 
@@ -245,31 +246,77 @@ describe( 'Quiddity Manager', function () {
 
     describe( 'Properties Events', function () {
 
-        it( 'should follow protocol for changed property values', function () {
-            var quiddity = 'quidd';
-            var property = 'prop';
-            var value    = 'val';
+        var quiddity;
+        var property;
+        var value;
 
-            switcher.get_property_description.returns( quiddities.property_double() );
+        beforeEach( function() {
+            quiddity = 'quidd';
+            property = 'prop';
+            value = 'val';
+        });
+
+        it( 'should follow protocol for changed property values', function () {
+
+            should.exist( quiddityManager.changedProperties );
+            quiddityManager.changedProperties.should.eql({});
 
             quiddityManager.onSwitcherProperty( quiddity, property, value );
 
-            switcher.get_property_description.should.have.been.calledOnce;
-            switcher.get_property_description.should.have.been.calledWith( quiddity, property );
-
-            io.emit.should.have.been.calledOnce;
-            io.emit.should.have.been.calledWith( 'propertyChanged', quiddity, property, quiddities.property_double_parsed().value );
+            should.exist( quiddityManager.changedProperties[ quiddity ] );
+            should.exist( quiddityManager.changedProperties[ quiddity ][ property ] );
+            quiddityManager.changedProperties[ quiddity ][ property ].should.eql( value );
         } );
 
+        it( 'should overwrite previous unsent value when property changes again', function () {
+            var other    = 'val2';
+
+            should.exist( quiddityManager.changedProperties );
+            quiddityManager.changedProperties.should.eql({});
+
+            quiddityManager.onSwitcherProperty( quiddity, property, value );
+            quiddityManager.onSwitcherProperty( quiddity, property, other );
+
+            should.exist( quiddityManager.changedProperties[ quiddity ] );
+            should.exist( quiddityManager.changedProperties[ quiddity ][ property ] );
+            quiddityManager.changedProperties[ quiddity ][ property].should.eql( other );
+        } );
+
+        it( 'publishing should not happen when nothing has changed', function () {
+            quiddityManager.publishChangedProperties();
+            switcher.get_property_description.should.not.have.been.called;
+            io.emit.should.not.have.been.called;
+        });
+
+        it( 'publishing should emit the changed properties', function () {
+            switcher.get_property_description.returns( quiddities.property_double() );
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.changedProperties[quiddity][property] = value;
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
+            switcher.get_property_description.should.have.been.calledOnce;
+            switcher.get_property_description.should.have.been.calledWith( quiddity, property );
+            io.emit.should.have.been.calledOnce;
+            io.emit.should.have.been.calledWith( 'propertyChanged', quiddity, property, quiddities.property_double_parsed().value );
+        });
+
+        it( 'publishing should silently fail if changed property has ba values', function () {
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
+            switcher.get_property_description.should.not.have.been.called;
+            io.emit.should.not.have.been.called;
+        });
+
         it( 'should bail for changed property when throwing', function () {
-            var quiddity = 'quidd';
-            var property = 'prop';
-            var value    = 'val';
             var error    = 'some error';
 
             switcher.get_property_description.throws( error );
 
-            quiddityManager.onSwitcherProperty( quiddity, property, value );
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.changedProperties[quiddity][property] = value;
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
 
             switcher.get_property_description.should.have.been.calledOnce;
             switcher.get_property_description.should.have.been.calledWith( quiddity, property );
@@ -278,14 +325,14 @@ describe( 'Quiddity Manager', function () {
         } );
 
         it( 'should bail for changed property when returning error', function () {
-            var quiddity = 'quidd';
-            var property = 'prop';
-            var value    = 'val';
             var error    = 'some error';
 
             switcher.get_property_description.returns( { error: error } );
 
-            quiddityManager.onSwitcherProperty( quiddity, property, value );
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.changedProperties[quiddity][property] = value;
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
 
             switcher.get_property_description.should.have.been.calledOnce;
             switcher.get_property_description.should.have.been.calledWith( quiddity, property );
@@ -294,14 +341,14 @@ describe( 'Quiddity Manager', function () {
         } );
 
         it( 'should bail for changed property when returning null', function () {
-            var quiddity = 'quidd';
-            var property = 'prop';
-            var value    = 'val';
             var error    = 'some error';
 
             switcher.get_property_description.returns( null );
 
-            quiddityManager.onSwitcherProperty( quiddity, property, value );
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.changedProperties[quiddity][property] = value;
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
 
             switcher.get_property_description.should.have.been.calledOnce;
             switcher.get_property_description.should.have.been.calledWith( quiddity, property );
@@ -310,14 +357,14 @@ describe( 'Quiddity Manager', function () {
         } );
 
         it( 'should bail for changed property when returning garbage', function () {
-            var quiddity = 'quidd';
-            var property = 'prop';
-            var value    = 'val';
             var error    = 'some error';
 
             switcher.get_property_description.returns( 'salkjhflak' );
 
-            quiddityManager.onSwitcherProperty( quiddity, property, value );
+            quiddityManager.changedProperties[quiddity] = {};
+            quiddityManager.changedProperties[quiddity][property] = value;
+            quiddityManager.publishChangedProperties();
+            quiddityManager.changedProperties.should.eql({});
 
             switcher.get_property_description.should.have.been.calledOnce;
             switcher.get_property_description.should.have.been.calledWith( quiddity, property );

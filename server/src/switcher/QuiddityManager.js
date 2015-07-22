@@ -9,7 +9,7 @@ var log = require( '../lib/logger' );
  * @param switcherController
  * @constructor
  */
-function QuiddityManager( switcherController) {
+function QuiddityManager( switcherController ) {
     this.switcherController = switcherController;
     this.config             = this.switcherController.config;
     this.switcher           = this.switcherController.switcher;
@@ -42,13 +42,20 @@ function QuiddityManager( switcherController) {
      * @type {string[]}
      */
     this.shmdataTypes = ['reader', 'writer'];
+
+    /**
+     * Changed properties
+     *
+     * @type {object[]}
+     */
+    this.changedProperties = {};
 }
 
 /**
  * Initialize
  */
 QuiddityManager.prototype.initialize = function () {
-    this.changedProperties = {};
+    // Watch changed properties
     setInterval( _.bind( this.publishChangedProperties, this ), 1000 / 30 );
 };
 
@@ -58,38 +65,6 @@ QuiddityManager.prototype.initialize = function () {
 //  ██╔═══╝ ██╔══██║██╔══██╗╚════██║██╔══╝  ██╔══██╗╚════██║
 //  ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║███████║
 //  ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝
-
-/**
- * Parse a class description into a format more manageable by the front end
- *
- * @deprecated
- * @param classDescription
- * @returns {*}
- */
-/*QuiddityManager.prototype._parseClass = function ( classDescription ) {
-    classDescription.id          = classDescription['class name'];
-    classDescription.name        = classDescription['long name'];
-    delete classDescription['long name'];
-    classDescription.class       = classDescription['class name'];
-    delete classDescription['class name'];
-    classDescription.description = classDescription['short description'];
-    delete classDescription['short description'];
-    return classDescription;
-};*/
-
-/**
- * Parse a quiddity into a format more manageable by the front end
- *
- * @deprecated
- * @param quiddity
- * @returns {*}
- */
-/*QuiddityManager.prototype._parseQuiddity = function ( quiddity ) {
-    quiddity.id   = quiddity.name;
-    quiddity.name = quiddity['long name'];
-    delete quiddity['long name'];
-    return quiddity;
-};*/
 
 /**
  * Parse a shmdata into a format more manageable by the front end
@@ -178,17 +153,10 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
     }
 
     // General
-    //property.id          = property.name;
-    //property.name        = property['long name'];
-    //property.description = property['short description'];
-    //property.order       = property['position weight'];
-    property.writable    = property.writable == 'true';
+    property.parent   = _.isEmpty( property.parent ) ? null : property.parent;
+    property.writable = property.writable == 'true';
 
     delete property['default value'];
-    //delete property['long name'];
-    //delete property['short description'];
-    //delete property['position category'];
-    //delete property['position weight'];
 
     return property;
 };
@@ -201,19 +169,13 @@ QuiddityManager.prototype._parseProperty = function ( property ) {
  */
 QuiddityManager.prototype._parseMethod = function ( method ) {
     // General
-    //method.id                = method.name;
-    //method.name              = method['long name'];
+    method.parent   = _.isEmpty( method.parent ) ? null : method.parent;
     method.returnType        = method['return type'];
     method.returnDescription = method['return description'];
-    //method.order             = method['position weight'];
 
     delete method['default value'];
-    //delete method['long name'];
-    //delete method['short description'];
     delete method['return type'];
     delete method['return description'];
-    //delete method['position category'];
-    //delete method['position weight'];
 
     // Arguments
     if ( method['arguments'] ) {
@@ -245,7 +207,7 @@ QuiddityManager.prototype._parseMethod = function ( method ) {
  * @returns {Quiddity}
  * @private
  */
-QuiddityManager.prototype._fillQuiddity = function( quiddity, config ) {
+QuiddityManager.prototype._fillQuiddity = function ( quiddity, config ) {
 
     // Get all properties
     if ( !config || config.properties ) {
@@ -352,7 +314,7 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
     try {
         this.switcherController.controlManager.removeMappingsByQuiddity( quiddityId );
     } catch ( e ) {
-        log.error( 'Error while removing quiddity mappings', quiddityId, e);
+        log.error( 'Error while removing quiddity mappings', quiddityId, e );
     }
 
     // Broadcast to clients
@@ -361,12 +323,12 @@ QuiddityManager.prototype._onRemoved = function ( quiddityId ) {
 
 /**
  * Tree Grafted Handler
- * 
+ *
  * @param quiddityId
  * @param path
  * @private
  */
-QuiddityManager.prototype._onTreeGrafted = function( quiddityId, path ) {
+QuiddityManager.prototype._onTreeGrafted = function ( quiddityId, path ) {
     var graftedPath = path.split( '.' );
     // Remove the first empty value, because paths start with a dot
     graftedPath.shift();
@@ -378,12 +340,12 @@ QuiddityManager.prototype._onTreeGrafted = function( quiddityId, path ) {
         if ( !_.isEmpty( graftedShmdataPath ) && _.contains( this.shmdataTypes, graftedShmdataType ) ) {
 
             //TODO: Merge into a more unified tree management
-            var key = graftedPath[graftedPath.length-1];
+            var key = graftedPath[graftedPath.length - 1];
             if ( key == 'byte_rate' ) {
                 // This is a special case done to send less data over the network
                 // It should eventually be merged into a better tree management
-                var value = this.getTreeInfo(quiddityId, path );
-                this.io.emit('shmdata.update.rate', quiddityId, graftedShmdataType + '.' + graftedShmdataPath, parseInt(value) );
+                var value = this.getTreeInfo( quiddityId, path );
+                this.io.emit( 'shmdata.update.rate', quiddityId, graftedShmdataType + '.' + graftedShmdataPath, parseInt( value ) );
             } else {
                 try {
                     var shmdataInfo = this.getTreeInfo( quiddityId, '.shmdata.' + graftedShmdataType + '.' + graftedShmdataPath );
@@ -409,12 +371,12 @@ QuiddityManager.prototype._onTreeGrafted = function( quiddityId, path ) {
 
 /**
  * Tree Pruned Handler
- * 
+ *
  * @param quiddityId
  * @param value
  * @private
  */
-QuiddityManager.prototype._onTreePruned = function( quiddityId, value ) {
+QuiddityManager.prototype._onTreePruned = function ( quiddityId, value ) {
     var prunedPath = value.split( '.' );
     prunedPath.shift();
 
@@ -445,30 +407,30 @@ QuiddityManager.prototype._onTreePruned = function( quiddityId, value ) {
 
 /**
  * Property Added Handler
- * 
+ *
  * @param quiddityId
  * @param property
  * @private
  */
-QuiddityManager.prototype._onPropertyAdded = function( quiddityId, property ) {
+QuiddityManager.prototype._onPropertyAdded = function ( quiddityId, property ) {
     log.debug( 'Property added', quiddityId, property );
     this.switcher.subscribe_to_property( quiddityId, property );
     var propertyDescription = this.getPropertyDescription( quiddityId, property );
     if ( propertyDescription ) {
         this.io.emit( 'quiddity.property.added', quiddityId, propertyDescription );
     } else {
-        log.warn('Could not get property description', quiddityId, property );
+        log.warn( 'Could not get property description', quiddityId, property );
     }
 };
 
 /**
  * Property Removed Handler
- * 
+ *
  * @param quiddityId
  * @param property
  * @private
  */
-QuiddityManager.prototype._onPropertyRemoved = function( quiddityId, property ) {
+QuiddityManager.prototype._onPropertyRemoved = function ( quiddityId, property ) {
     log.debug( 'Property removed', quiddityId, property );
     this.io.emit( 'quiddity.property.removed', quiddityId, property );
 };
@@ -480,13 +442,13 @@ QuiddityManager.prototype._onPropertyRemoved = function( quiddityId, property ) 
  * @param method
  * @private
  */
-QuiddityManager.prototype._onMethodAdded = function( quiddityId, method ) {
+QuiddityManager.prototype._onMethodAdded = function ( quiddityId, method ) {
     log.debug( 'Method added', quiddityId, method );
     var methodDescription = this.getMethodDescription( quiddityId, method );
     if ( methodDescription ) {
         this.io.emit( 'quiddity.method.added', quiddityId, methodDescription );
     } else {
-        log.warn('Could not get method description', quiddityId, method );
+        log.warn( 'Could not get method description', quiddityId, method );
     }
 };
 
@@ -497,7 +459,7 @@ QuiddityManager.prototype._onMethodAdded = function( quiddityId, method ) {
  * @param method
  * @private
  */
-QuiddityManager.prototype._onMethodRemoved = function( quiddityId, method ) {
+QuiddityManager.prototype._onMethodRemoved = function ( quiddityId, method ) {
     log.debug( 'Method removed', quiddityId, method );
     this.io.emit( 'quiddity.method.removed', quiddityId, method );
 };
@@ -526,9 +488,14 @@ QuiddityManager.prototype.onSwitcherProperty = function ( quiddityId, property, 
     this.changedProperties[quiddityId][property] = value;
 };
 
-QuiddityManager.prototype.publishChangedProperties = function() {
-    _.each( this.changedProperties, function( properties, quiddityId ) {
-        _.each( properties, function( value, property ) {
+/**
+ * Publishes the changed properties
+ * This is done at a fixed rate to prevent large number of changes of the same property
+ * overflowing the client with updates
+ */
+QuiddityManager.prototype.publishChangedProperties = function () {
+    _.each( this.changedProperties, function ( properties, quiddityId ) {
+        _.each( properties, function ( value, property ) {
             // We have to get the property info in order to parse its value correctly
             // This looks like it isn't necessary but we need the description to handle the value type
             try {
@@ -567,28 +534,28 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
     } else {
         log.verbose( 'Signal:', quiddityId + '.' + signal + '=' + value );
     }
-    
-    switch( signal ) {
+
+    switch ( signal ) {
         case 'on-tree-grafted':
-            this._onTreeGrafted( quiddityId, value[0]);
+            this._onTreeGrafted( quiddityId, value[0] );
             break;
-        
+
         case  'on-tree-pruned':
-            this._onTreePruned( quiddityId, value[0]);
+            this._onTreePruned( quiddityId, value[0] );
             break;
-        
+
         case 'on-quiddity-created':
-            this._onCreated(value[0]);
+            this._onCreated( value[0] );
             break;
-        
+
         case 'on-quiddity-removed':
-            this._onRemoved(value[0]);
+            this._onRemoved( value[0] );
             break;
-        
+
         case 'on-property-added' :
             this._onPropertyAdded( quiddityId, value[0] );
             break;
-        
+
         case 'on-property-removed':
             this._onPropertyRemoved( quiddityId, value[0] );
             break;
@@ -600,7 +567,7 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
         case 'on-method-removed':
             this._onMethodRemoved( quiddityId, value[0] );
             break;
-        
+
         default:
             // We could send other signals to the client but we'll stay silent for now
             //this.io.emit( 'quiddity.signal', quiddityId, signal, value[0] );
@@ -621,8 +588,8 @@ QuiddityManager.prototype.onSwitcherSignal = function ( quiddityId, signal, valu
  * @param {String} quiddityId - Id of the quiddity
  * @returns {Boolean} If the quiddity exists or not
  */
-QuiddityManager.prototype.exists = function( quiddityId ) {
-   return this.switcher.has_quiddity( quiddityId );
+QuiddityManager.prototype.exists = function ( quiddityId ) {
+    return this.switcher.has_quiddity( quiddityId );
 };
 
 /**
@@ -646,7 +613,7 @@ QuiddityManager.prototype.create = function ( className, quiddityName, socketId 
             //TODO Move that into the client
             this.quidditySocketMap[quiddityId] = socketId;
         }
-        quiddityDescription                = this.getQuiddityDescription( quiddityId );
+        quiddityDescription = this.getQuiddityDescription( quiddityId );
     }
 
     return quiddityDescription;
@@ -717,7 +684,7 @@ QuiddityManager.prototype.getQuiddities = function ( config ) {
     }
 
     // Fill quiddities with their properties, methods and tree before sending
-    _.each( quiddities, function( quiddity ) {
+    _.each( quiddities, function ( quiddity ) {
         this._fillQuiddity( quiddity, config );
     }, this );
 

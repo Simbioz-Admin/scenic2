@@ -247,7 +247,7 @@ $boxWidth: $sourceWidth;
       .action {
         float: left;
         width: 50%;
-        height: 100%;
+        height: $rowMinHeight;
         opacity: 0.8;
         cursor: pointer;
 

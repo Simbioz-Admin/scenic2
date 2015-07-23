@@ -29,12 +29,15 @@ define( [
          *
          * @param {ClassDescription} classDescription
          * @param {String[]} filterTags
+         * @param {boolean} [allTagsShouldMatch] Set to true to AND tags instead of the default OR
          * @returns {boolean} Is the class allowed by the filter tags
          * @private
          */
-        _filterClass: function ( classDescription, filterTags ) {
-            return _.some( classDescription.get( 'tags' ), function ( tag ) {
-                return _.contains( filterTags, tag );
+        _filterClass: function ( classDescription, filterTags, allTagsShouldMatch ) {
+            var f = allTagsShouldMatch ? _.every : _.some;
+            var tags = classDescription.get( 'tags' );
+            return f( filterTags, function ( tag ) {
+                return _.contains( tags, tag );
             } );
         },
 
@@ -43,18 +46,24 @@ define( [
          *
          * @param {Quiddity} quiddity - Quiddity to test
          * @param {string[]} [filterTags] - List of allowed tags
-         * @param {boolean} filterCategory - Use category filter
+         * @param {boolean} [allTagsShouldMatch] Set to true to AND tags instead of the default OR
+         * @param {boolean} [filterCategory] - Use category filter
          * @returns {boolean} Is the quiddity allowed by the filter tags and/or filter category
+         * @private
          */
-        _filterQuiddity: function ( quiddity, filterTags, filterCategory ) {
+        _filterQuiddity: function ( quiddity, filterTags, allTagsShouldMatch, filterCategory ) {
             var classDescription = quiddity.get('classDescription');
-            var classIncluded = filterTags ? this._filterClass(classDescription, filterTags) : true;
+            var classIncluded = filterTags ? this._filterClass(classDescription, filterTags, allTagsShouldMatch) : true;
             var categoryIncluded = classIncluded && filterCategory && this.get('filter') ? this.get('filter') == classDescription.get('category') : true;
             return classIncluded && categoryIncluded;
         },
 
         /**
          * Get source collection
+         *
+         * This is the collection from which sources are picked/filtered. This is not
+         * the actual displayed sources, only the collection from where they are chosen.
+         *
          * Override in concrete table classes to retrieve the actual collection
          *
          * @returns {Quiddities}
@@ -64,7 +73,8 @@ define( [
         },
 
         /**
-         * Get a list of possible source classes
+         * Get a list of possible source classes for the menu
+         *
          * Override in concrete table classes to retrieve the actual collection
          *
          * @returns {ClassDescription[]}
@@ -77,6 +87,7 @@ define( [
 
         /**
          * Filter source for this table
+         *
          * Override in concrete table classes to filter the actual collection
          *
          * @param {Shmdata} source
@@ -84,11 +95,15 @@ define( [
          * @returns {Quiddity[]}
          */
         filterSource: function ( source, useFilter ) {
-            return this._filterQuiddity( source, ['writer'], useFilter );
+            return this._filterQuiddity( source, ['writer'], false, useFilter );
         },
 
         /**
          * Get destination collection
+         *
+         * This is the collection from which destinations are picked/filtered. This is not
+         * the actual displayed destinations, only the collection from where they are chosen.
+         *
          * Override in concrete table classes to retrieve the actual collection
          *
          * @returns {Quiddities}
@@ -98,7 +113,8 @@ define( [
         },
 
         /**
-         * Get a list of possible destination classes
+         * Get a list of possible destination classes for the menu.
+         *
          * Override in concrete table classes to retrieve the actual collection
          *
          * @returns {ClassDescription[]}
@@ -111,6 +127,7 @@ define( [
 
         /**
          * Filter destination for this table
+         *
          * Override in concrete table classes to filter the actual collection
          *
          * @param {Quiddity|Object} destination
@@ -118,7 +135,7 @@ define( [
          * @returns {Quiddity[]}
          */
         filterDestination: function ( destination, useFilter ) {
-            return this._filterQuiddity( destination, ['reader'], useFilter );
+            return this._filterQuiddity( destination, ['reader'], false, useFilter );
         },
 
         /**

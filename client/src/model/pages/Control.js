@@ -36,6 +36,33 @@ define( [
         },
 
         /**
+         * Get a list of possible source classes for the menu
+         *
+         * We only want to display HID devices as sources, even though it is possible to
+         * connect any properties together.
+         *
+         * @returns {ClassDescription[]}
+         */
+        getSources: function () {
+            return this.scenic.classes.filter( function ( classDescription ) {
+                return this._filterClass( classDescription, ['writer', 'hid'], true );
+            }, this );
+        },
+
+        /**
+         * Filter source for this table
+         *
+         * Override in concrete table classes to filter the actual collection
+         *
+         * @param {Shmdata} source
+         * @param {boolean} useFilter
+         * @returns {Quiddity[]}
+         */
+        filterSource: function ( source, useFilter ) {
+            return this._filterQuiddity( source, ['writer', 'hid'], true, useFilter );
+        },
+
+        /**
          * Get destination collection
          * Override in concrete table classes to retrieve the actual collection
          *

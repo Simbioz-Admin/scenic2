@@ -1,9 +1,8 @@
 VERSION := $(shell ./scenic -v | cut -d ' ' -f3)
 
-
 PREFIX := /usr
 SCENICDIR := $(PREFIX)/share/scenic
-ARCHIVE := scenic-$(VERSION)
+ARCHIVE := scenic_$(VERSION)
 
 SERVER := server
 SERVER_SOURCE := $(SERVER)/src
@@ -24,7 +23,7 @@ REQUIREJS := node_modules/.bin/r.js
 COMPASS := compass
 NODE_PATH := NODE_PATH=/usr/local/lib/nodejs:/usr/lib/nodejs
 
-.PHONY: setup dev test build dist i18n
+.PHONY: setup dev test build package install dist i18n
 
 build:
 	@echo Cleaning previous build
@@ -76,10 +75,31 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 dist:
-	@mkdir -p $(DIST_DIR)
-	@cp -r $(BUILD_DIR) $(DIST_DIR)/$(ARCHIVE)
-	cd $(DIST_DIR) && tar czf $(ARCHIVE).tar.gz $(ARCHIVE)
-	@rm -r $(DIST_DIR)/$(ARCHIVE)
+	@rm -rf $(DIST_DIR)/$(ARCHIVE)
+	mkdir -p $(DIST_DIR)/$(ARCHIVE)$(SCENICDIR)
+	cp -r $(BUILD_DIR)/* $(DIST_DIR)/$(ARCHIVE)$(SCENICDIR)
+	@echo Creating Run Script
+	mkdir -p $(DIST_DIR)/$(ARCHIVE)$(PREFIX)/bin
+	@echo "#!/bin/bash\nNODE_ENV=production $(NODE_PATH) node $(DESTDIR)$(SCENICDIR)/server.js \$$@" > $(DIST_DIR)/$(ARCHIVE)$(PREFIX)/bin/scenic
+	chmod +x $(DIST_DIR)/$(ARCHIVE)$(PREFIX)/bin/scenic
+	@echo Installing Launcher
+	mkdir -p $(DIST_DIR)/$(ARCHIVE)$(PREFIX)/share/applications
+	install -D scenic-launcher.desktop $(DIST_DIR)/$(ARCHIVE)$(PREFIX)/share/applications/
+	@echo Creating Debian metadata
+	mkdir -p $(DIST_DIR)/$(ARCHIVE)/DEBIAN
+	@echo "Package: scenic" > $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Version: $(VERSION)" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Section: misc" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Priority: optional" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Architecture: all" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Depends: libshmdata, switcher, nodejs-legacy, npm" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Maintainer: Metalab <metalab@sat.qc.ca>" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo "Description: Scenic" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/control
+	@echo Creating post install script
+	@echo "cd $(DESTDIR)$(SCENICDIR) && npm update" >> $(DIST_DIR)/$(ARCHIVE)/DEBIAN/postinst
+	chmod 755 $(DIST_DIR)/$(ARCHIVE)/DEBIAN/postinst
+	dpkg-deb --build $(DIST_DIR)/$(ARCHIVE)
+	#@cd $(DIST_DIR) && tar czf $(ARCHIVE).tar.gz $(ARCHIVE)
 	@echo $(ARCHIVE).orig.tar.gz is done!
 
 setup:

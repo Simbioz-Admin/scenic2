@@ -1,6 +1,20 @@
 Scenic release notes
 ===================
 
+Scenic 2.3.0 (2015-07-23)
+-------------------------
+This release is a minor release in the stable 2.0 series.
+
+New Features:
+
+* Entire rewrite of the MIDI/Control functionality (property mapping)
+
+Fixes & enhancements:
+
+* Improved session management in the client
+* Rate-limited property updates from server
+* Property tree improvements
+
 Scenic 2.2.4 (2015-06-22)
 -------------------------
 This release is a minor release in the stable 2.0 series.

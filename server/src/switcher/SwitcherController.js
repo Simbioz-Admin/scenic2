@@ -289,7 +289,11 @@ SwitcherController.prototype.saveFile = function ( name ) {
         log.warn( 'Could not save scenic file', filePath );
     } else {
         log.info( 'Scenic file saved', filePath );
-        this.io.emit( 'file.saved', fileName );
+        var file = {
+            name: fileName,
+            date: new Date(fs.statSync( filePath ).mtime)
+        };
+        this.io.emit( 'file.saved', file );
     }
     return saved;
 };

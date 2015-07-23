@@ -44,10 +44,10 @@ define( [
          * Listens to file creations and add/merge new files to the collection
          *
          * @private
-         * @param file
+         * @param attributes
          */
-        _onSaved: function ( file ) {
-            var file = this.add( {name: file}, {merge: true} );
+        _onSaved: function ( attributes ) {
+            var file = this.add( attributes, {merge: true} );
             this.scenic.sessionChannel.vent.trigger( 'file:added', file );
         }
     } );

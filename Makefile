@@ -29,7 +29,7 @@ build:
 	@echo Cleaning previous build
 	@rm -rf $(BUILD_DIR)
 	@echo Updating Bower Dependencies
-	bower update
+	bower update --allow-root
 	@echo Building Scenic
 	@mkdir -p $(BUILD_DIR)
 	@echo Installing server files
@@ -107,7 +107,7 @@ setup:
 
 dev:
 	npm update
-	bower update
+	bower update --allow-root
 
 test:
 	$(NODE_PATH) mocha --recursive server/test
